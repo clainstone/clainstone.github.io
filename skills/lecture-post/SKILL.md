@@ -60,13 +60,28 @@ Italian. The post is always in English.
    make check-post POST=<thread>/<slug>
    ```
 
-   Then open both screenshots it writes and look at them yourself: the
+   Then open the screenshot it writes and look at it yourself: the
    mathematics renders, every animation draws, nothing overflows at 1280 px.
    Start the local server with `make start` when it is not running.
-8. **Report to Alessandro** in Italian, briefly: the local address of the post,
+8. **Verify against the sources.** Codex (GPT-5.6 Sol, high effort) checks
+   whether anything the post writes diverges from the sources: formulas,
+   statements, numbers, figure data, additions. It has no other task.
+
+   ```
+   make verify-post POST=<thread>/<slug> SRC=<source file>[,<file>] PAGES=<pages of the lecture>
+   ```
+
+   Fix every DIVERGENT and ADDED finding that is the post's fault, then run it
+   again, until the last line is `VERDICT: OK`. When you are sure the verifier
+   is wrong (a misread handwritten symbol, a correction of a real slip), do not
+   change the post to please it: keep the finding for the report. After three
+   runs without an OK, stop and report the open findings. The report of each
+   run is in `.astro/verify/<slug>.md`.
+9. **Report to Alessandro** in Italian, briefly: the local address of the post,
    the visuals added, every passage left out because it was unreadable or
-   ambiguous with its place in the notes, every slip corrected, and what was
-   omitted as off topic in one sentence. Do not commit, push or publish unless
+   ambiguous with its place in the notes, every slip corrected, what was
+   omitted as off topic in one sentence, and the verifier's last verdict with
+   any finding left open. Do not commit, push or publish unless
    he asks.
 
 A notes file that covers several lectures gives one post per lecture.

@@ -8,6 +8,8 @@
 #   make dev       dev server in the foreground (Ctrl-C to stop)
 #   make build     static site in dist/
 #   make check-post POST=<thread>/<slug>   build and check one lecture post
+#   make verify-post POST=<thread>/<slug> SRC=<file>[,<file>] [PAGES=1-4]
+#                  Codex checks the post against its sources
 #
 # Both servers listen on port 4300. From the laptop see README.md.
 
@@ -15,10 +17,10 @@ export PATH := $(HOME)/.local/node/bin:$(PATH)
 ASTRO := ./node_modules/.bin/astro
 
 .DEFAULT_GOAL := help
-.PHONY: help start preview stop status logs dev build check-post
+.PHONY: help start preview stop status logs dev build check-post verify-post
 
 help:
-	@sed -n '3,12p' Makefile | sed 's/^# \{0,1\}//'
+	@sed -n '3,14p' Makefile | sed 's/^# \{0,1\}//'
 
 node_modules/.package-lock.json: package.json package-lock.json
 	npm install --no-audit --no-fund
@@ -52,3 +54,7 @@ build: node_modules/.package-lock.json
 check-post: node_modules/.package-lock.json
 	@test -n "$(POST)" || { echo "usage: make check-post POST=<thread>/<slug>"; exit 2; }
 	node skills/lecture-post/scripts/check_post.mjs $(POST)
+
+verify-post:
+	@test -n "$(POST)" -a -n "$(SRC)" || { echo "usage: make verify-post POST=<thread>/<slug> SRC=<file>[,<file>] [PAGES=1-4]"; exit 2; }
+	node skills/lecture-post/scripts/verify_post.mjs $(POST) --source "$(SRC)" $(if $(PAGES),--pages $(PAGES))

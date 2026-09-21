@@ -257,6 +257,9 @@ Run every line; fix or justify in the report.
 10. Visual count ≥ words / 300; every source drawing reproduced; every `##`
     part has a visual or a stated reason.
 11. First and last paragraph reread against 7.1 and 7.7.
+12. `make verify-post POST=<thread>/<slug> SRC=<source> PAGES=<pages>` ends
+    with `VERDICT: OK`, or every open finding is in the report with the reason
+    the post is right (`SKILL.md`, step 8).
 
 ## 9. Precedence over the older rules
 

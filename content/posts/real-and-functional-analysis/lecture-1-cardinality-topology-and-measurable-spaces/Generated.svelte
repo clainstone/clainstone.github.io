@@ -1,10 +1,11 @@
 <script>
-  // The proof of Theorem 23: every σ-algebra Q of the family W contains F and
-  // is contained in P(X); their intersection is σ0(F), the smallest of them.
+  // The proof of Theorem 26: every σ-algebra Q of the family W contains F and
+  // is contained in P(X). Three members are drawn; σ0(F), the intersection of
+  // all the members of W, lies inside each of them and contains F.
 </script>
 
 <figure class="anim generated">
-  <svg viewBox="0 0 520 300" role="img" aria-label="P(X) as the outer box; three sigma-algebras Q1, Q2, Q3 of W, all containing F; their common part, the intersection, labelled sigma0(F)">
+  <svg viewBox="0 0 520 300" role="img" aria-label="P(X) as the outer box; three of the sigma-algebras of W, Q1, Q2, Q3, all containing F; inside their common part, sigma0(F), the intersection of all the members of W, which contains F">
     <rect class="outer" x="10" y="10" width="500" height="280" rx="6" />
     <text class="lab" x="30" y="38"><tspan font-style="italic">P</tspan>(<tspan font-style="italic">X</tspan>)</text>
     <ellipse class="q" cx="215" cy="160" rx="150" ry="100" />
