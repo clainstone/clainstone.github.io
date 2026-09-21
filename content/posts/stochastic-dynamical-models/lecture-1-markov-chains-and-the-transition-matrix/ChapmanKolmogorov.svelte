@@ -1,7 +1,8 @@
 <script>
   // The Chapman–Kolmogorov equations on the frog chain: to go from i to j in
   // n + m steps the chain is in some state k at time n. Each k contributes
-  // p_ik^(n) p_kj^(m); the contributions add up to p_ij^(n+m).
+  // p_ik^(n) p_kj^(m); the contributions add up to p_ij^(n+m). All seven
+  // paths are always drawn, so that none disappears when its product is 0.
   import Slider from '@toolkit/Slider.svelte';
   import { P, powers } from './frog.js';
 
@@ -22,11 +23,14 @@
 
 <figure class="anim ck">
   <svg viewBox="0 0 620 350" role="img" aria-label="Three columns of the seven states at times 0, n and n plus m; lines from i to every state k and from k to j, drawn thicker for larger contributions">
+    <!-- Every path i -> k -> j is drawn. A step of probability 0 is dashed and
+         faint; a path that contributes is thicker when p_ik^(n) p_kj^(m) is larger. -->
     {#each terms as t}
-      {#if t.c > 0}
-        <line class="path" x1={xs[0]} y1={y(i - 1)} x2={xs[1]} y2={y(t.k)} style:stroke-width={1 + 10 * t.c / Math.max(total, 1e-9)} />
-        <line class="path" x1={xs[1]} y1={y(t.k)} x2={xs[2]} y2={y(j - 1)} style:stroke-width={1 + 10 * t.c / Math.max(total, 1e-9)} />
-      {/if}
+      {@const w = t.c > 0 ? 1 + (10 * t.c) / total : 1.2}
+      <path class="step" class:on={t.a > 0} class:path={t.c > 0} style:stroke-width={t.c > 0 ? w : null}
+        d="M{xs[0]},{y(i - 1)} L{(xs[0] + xs[1]) / 2},{(y(i - 1) + y(t.k)) / 2} L{xs[1]},{y(t.k)}" />
+      <path class="step" class:on={t.b > 0} class:path={t.c > 0} style:stroke-width={t.c > 0 ? w : null}
+        d="M{xs[1]},{y(t.k)} L{(xs[1] + xs[2]) / 2},{(y(t.k) + y(j - 1)) / 2} L{xs[2]},{y(j - 1)}" />
     {/each}
     {#each xs as x, c}
       {#each P as _, s}
@@ -55,7 +59,9 @@
 <style>
   .ck { margin: 1.5rem auto; max-width: 34rem; }
   svg { font-family: var(--anim-font); }
-  .path { stroke: var(--anim-accent); stroke-opacity: 0.55; stroke-linecap: round; }
+  .step { fill: none; stroke: var(--anim-rule); stroke-width: 1.2; stroke-dasharray: 3 4; }
+  .step.on { stroke: var(--anim-muted); stroke-opacity: 0.7; stroke-dasharray: none; }
+  .step.path { stroke: var(--anim-accent); stroke-opacity: 0.55; stroke-linecap: round; stroke-dasharray: none; }
   .node { fill: var(--page, #fff); stroke: var(--anim-muted); stroke-width: 1.4; }
   .node.on { stroke: var(--anim-accent); stroke-width: 3; }
   .name { fill: var(--anim-ink); font-size: 15px; text-anchor: middle; dominant-baseline: central; }

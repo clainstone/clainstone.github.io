@@ -119,8 +119,6 @@ $$
 
 which establishes (ii). $\blacksquare$
 
-**Details.** The first computation divides by ${P(X_0 = i_0, \dots, X_{n-1} = i_{n-1}),}$ so it needs this probability to be positive. When it is zero, both sides of (1.1) are zero: the left-hand side is at most this probability, and if $m$ is the smallest index with ${P(X_0 = i_0, \dots, X_m = i_m) = 0,}$ then ${\lambda_{i_0} = 0}$ when ${m = 0}$ and ${p_{i_{m-1} i_m} = 0}$ when ${m \ge 1,}$ by the same computation up to time $m.$ In the converse, the middle term of (ii) equals $p_{i_{n-1} i_n}$ as well, because summing (1.1) over ${i_0, \dots, i_{n-2}}$ gives ${P(X_{n-1} = i_{n-1}, X_n = i_n) = P(X_{n-1} = i_{n-1}) \, p_{i_{n-1} i_n}.}$
-
 By (1.1), the probability of a sequence of jumps is a product of entries of $P$ along it. For question (a) of Example 1.1, the only sequence of 3 jumps from state 1 back to state 1 with positive probability visits the states 1, 2, 3, 1, and its probability is ${1 \cdot \frac12 \cdot \frac12 = \frac14 = p^{(3)}_{11}.}$ Figure 3 computes the product for any sequence of states.
 
 <FrogPath client:visible />
@@ -196,7 +194,7 @@ They are obvious because the right-hand side is the entry $(i, j)$ of ${P^n P^m 
 
 <ChapmanKolmogorov client:visible />
 
-**Figure 5.** The Chapman–Kolmogorov equations on the chain of Example 1.1. A line through state $k$ at time $n$ is drawn thicker when ${p^{(n)}_{ik} p^{(m)}_{kj}}$ is larger, and the sliders set $i,$ $j,$ $n$ and $m.$ The sum over $k$ equals $p^{(n+m)}_{ij}.$
+**Figure 5.** The Chapman–Kolmogorov equations on the chain of Example 1.1. Every path from $i$ through a state $k$ at time $n$ to $j$ is drawn: a step with probability 0 is dashed, and a path is thicker when ${p^{(n)}_{ik} p^{(m)}_{kj}}$ is larger. The sliders set $i,$ $j,$ $n$ and $m.$ The sum over $k$ equals $p^{(n+m)}_{ij}.$
 
 In Example 1.1, as ${n \to \infty,}$
 

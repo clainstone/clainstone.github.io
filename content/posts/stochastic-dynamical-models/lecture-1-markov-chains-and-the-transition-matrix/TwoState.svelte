@@ -90,7 +90,7 @@
     for (const [x, y] of pts) { ctx.beginPath(); ctx.arc(x, y, 2.6, 0, 2 * Math.PI); ctx.fill(); }
     ctx.textAlign = 'left';
     ctx.font = p.font;
-    ctx.fillText(`p₁₁⁽ⁿ⁾,  1 − α − β = ${(1 - a - b).toFixed(2)}`, left + 6, top + p.px * 0.2);
+    ctx.fillText('p₁₁⁽ⁿ⁾', left + 6, top + p.px * 0.2);
   }
 </script>
 
