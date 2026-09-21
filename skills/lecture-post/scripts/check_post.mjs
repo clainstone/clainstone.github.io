@@ -4,8 +4,8 @@
 //   make check-post POST=<thread>/<slug>
 //   node skills/lecture-post/scripts/check_post.mjs <thread>/<slug> [--no-build] [--no-browser] [--site DIR]
 //
-// 1. Frontmatter: title "Lecture <n>, <subject>", slug, date, summary, thread,
-//    no second post with the same lecture number.
+// 1. Frontmatter: title (the subject, no lecture number), slug, date, summary,
+//    thread, no second post with the same title.
 // 2. Prose of the MDX source, mathematics and code removed: no lists, no
 //    arrows, em dashes or double hyphens, no first person singular, no
 //    sentence about the professor, the exam or the notes. Leftover shorthand,
@@ -85,35 +85,31 @@ function frontmatter(source) {
 
 const source = readFileSync(mdxPath, 'utf8');
 const { data: fm, raw, length: fmLength } = frontmatter(source);
-let lecture = null;
 
 if (!THREADS.includes(thread)) error(`thread "${thread}" is not one of ${THREADS.join(', ')}`);
 if (!fm) {
   error('the file has no frontmatter block');
 } else {
-  const t = (fm.title ?? '').match(/^Lecture ([1-9]\d*), (\S.*)$/);
-  if (!t) error(`title "${fm.title ?? ''}" does not match "Lecture <n>, <subject>"`);
-  else {
-    lecture = Number(t[1]);
-    if (/^[a-z]/.test(t[2]) && !t[2].startsWith('$')) warn('the subject in the title should start with a capital letter');
-  }
-  if (lecture !== null && !new RegExp(`^lecture-${lecture}-[a-z0-9]+(-[a-z0-9]+){0,5}$`).test(slug)) {
-    error(`slug "${slug}" should be "lecture-${lecture}-" followed by at most six lowercase words`);
-  }
+  // The title is the subject alone, without a lecture number (21 September 2026).
+  const title = (fm.title ?? '').trim();
+  if (!title) error('title is missing');
+  else if (/^Lecture\s*\d/i.test(title)) error(`title "${title}" carries a lecture number: the title is the subject alone`);
+  else if (/^[a-z]/.test(title)) warn('the title should start with a capital letter');
+  // Published slugs keep their old "lecture-<n>-" prefix; new ones are the subject.
+  if (!/^[a-z0-9]+(-[a-z0-9]+){0,7}$/.test(slug)) error(`slug "${slug}" should be at most six lowercase ASCII words of the subject, joined by hyphens`);
   if (!/^\d{4}-\d{2}-\d{2}$/.test(fm.date ?? '') || Number.isNaN(Date.parse(fm.date))) error(`date "${fm.date ?? ''}" is not YYYY-MM-DD`);
   if (!(fm.summary ?? '').trim()) error('summary is missing');
   for (const [key, value] of Object.entries(raw)) {
     if (value.startsWith('"') && value.includes('\\')) error(`frontmatter ${key}: a backslash inside double quotes breaks YAML, use single quotes`);
   }
-  // Another post of the thread with the same lecture number.
+  // Another post of the thread with the same title.
   const threadDir = join(SITE, 'content/posts', thread);
   for (const other of existsSync(threadDir) ? readdirSync(threadDir) : []) {
     if (other === slug) continue;
     const p = join(threadDir, other, 'index.mdx');
     if (!existsSync(p)) continue;
-    const title = frontmatter(readFileSync(p, 'utf8')).data?.title ?? '';
-    const n = title.match(/^Lecture ([1-9]\d*),/);
-    if (n && lecture !== null && Number(n[1]) === lecture) error(`lecture ${lecture} already exists: ${thread}/${other}`);
+    const otherTitle = frontmatter(readFileSync(p, 'utf8')).data?.title ?? '';
+    if (otherTitle && otherTitle === (fm.title ?? '').trim()) error(`the title already exists in ${thread}/${other}`);
   }
 }
 

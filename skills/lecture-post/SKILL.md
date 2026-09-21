@@ -44,7 +44,7 @@ Italian. The post is always in English.
    defined. Read `references/VISUALS.md` before building any animation or
    figure.
 2. **Read the whole notes file first.** Read every page of a PDF or every
-   image. Find the lecture number, the date, the main subject and the order of
+   image. Find the date, the main subject and the order of
    definitions, results, proofs, examples and remarks.
 3. **Make a working map, not published.** For each item of the notes write what
    it becomes in the post. List every abbreviation with its expansion. List
@@ -90,30 +90,27 @@ A notes file that covers several lectures gives one post per lecture.
 
 ```
 ---
-title: 'Lecture 4, Completeness of $L^p$ spaces'
+title: 'Completeness of $L^p$ spaces'
 date: 2026-10-07
 summary: 'The spaces $L^p$ with $1 \le p < \infty$ are complete. The proof extracts a fast subsequence and controls it with a telescoping series.'
 ---
 ```
 
-**Title.** `Lecture <n>, <subject>`. The number is an Arabic numeral. The
-subject is in sentence case and names the main topic in a few words.
-Mathematics goes between `$` signs.
-
-**Lecture number.** Take it from the notes, from a heading or the file name.
-When the notes do not give it, use the highest lecture number already in the
-thread plus one, and say so in the report. When a post with that number already
-exists in the thread, stop and ask Alessandro.
+**Title.** The subject alone, in sentence case, naming the main topic in a few
+words. No lecture number (Alessandro, 21 September 2026). Mathematics goes
+between `$` signs.
 
 **Date.** The date of the lecture when the notes give it. Otherwise the date
 Alessandro gives. Otherwise today in Europe/Rome, and say so in the report.
+Posts of a thread are listed by date.
 
 **Summary.** One or two sentences on what the lecture establishes, with no
 opinion. The site uses it as the page description and in the feed.
 
-**Slug.** `lecture-<n>-` followed by at most six lowercase words of the
-subject, joined by hyphens, ASCII only. Example:
-`lecture-4-completeness-of-lp-spaces`.
+**Slug.** At most six lowercase words of the subject, joined by hyphens, ASCII
+only. Example: `completeness-of-lp-spaces`. The two Lecture 1 posts keep their
+published `lecture-1-` slugs so that their links still work. When a post with
+the same title already exists in the thread, stop and ask Alessandro.
 
 ## Rules that are never bent
 
