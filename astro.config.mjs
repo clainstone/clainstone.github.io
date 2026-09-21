@@ -37,7 +37,7 @@ export default defineConfig({
   integrations: [mdx(), svelte()],
   markdown: {
     processor: unified(math),
-    shikiConfig: { theme: 'github-light' },
+    shikiConfig: { themes: { light: 'github-light', dark: 'github-dark' } },
   },
   vite: {
     // Fail instead of moving to another port the tunnel does not reach.

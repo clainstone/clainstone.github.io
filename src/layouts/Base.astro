@@ -38,9 +38,50 @@ const canonical = new URL(cleanPath, Astro.site);
     <meta property="og:url" content={canonical} />
     <meta name="twitter:card" content="summary" />
     <slot name="head" />
+    <script is:inline>
+      // Theme before the first paint: the reader's choice, else the system's.
+      (() => {
+        const root = document.documentElement;
+        const system = matchMedia('(prefers-color-scheme: dark)');
+        const saved = () => { try { return localStorage.getItem('theme'); } catch { return null; } };
+        const pick = () => (saved() === 'dark' || saved() === 'light' ? saved() : system.matches ? 'dark' : 'light');
+        root.dataset.theme = pick();
+        system.addEventListener('change', () => { if (!saved()) root.dataset.theme = pick(); });
+      })();
+    </script>
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
+    <button class="theme-toggle" type="button" aria-label="Switch to dark mode" title="Dark mode">
+      <svg class="theme-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <mask id="theme-moon">
+          <rect x="-4" y="-4" width="32" height="32" fill="white" />
+          <circle class="shadow" cx="16.5" cy="7.5" r="9" fill="black" />
+        </mask>
+        <circle class="core" cx="12" cy="12" r="9" mask="url(#theme-moon)" />
+        <g class="rays">
+          <line x1="19.60" y1="12.00" x2="21.90" y2="12.00" /><line x1="17.37" y1="17.37" x2="19.00" y2="19.00" /><line x1="12.00" y1="19.60" x2="12.00" y2="21.90" /><line x1="6.63" y1="17.37" x2="5.00" y2="19.00" /><line x1="4.40" y1="12.00" x2="2.10" y2="12.00" /><line x1="6.63" y1="6.63" x2="5.00" y2="5.00" /><line x1="12.00" y1="4.40" x2="12.00" y2="2.10" /><line x1="17.37" y1="6.63" x2="19.00" y2="5.00" />
+        </g>
+      </svg>
+    </button>
+    <script is:inline>
+      (() => {
+        const root = document.documentElement;
+        const button = document.querySelector('.theme-toggle');
+        const label = () => {
+          const dark = root.dataset.theme === 'dark';
+          button.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+          button.title = dark ? 'Light mode' : 'Dark mode';
+        };
+        label();
+        button.addEventListener('click', () => {
+          const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+          root.dataset.theme = next;
+          try { localStorage.setItem('theme', next); } catch {}
+        });
+        new MutationObserver(label).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+      })();
+    </script>
     <header class="bar">
       <nav aria-label="Sections">
         <ul>

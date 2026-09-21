@@ -117,6 +117,9 @@ export function loop(canvas, draw, options = {}) {
 
   const ro = new ResizeObserver(resize);
   ro.observe(canvas);
+  // The page switched between light and dark: take the new palette at once.
+  const mo = new MutationObserver(() => { size = { ...size, p: palette(canvas) }; render(0); });
+  mo.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
   const io = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; sync(); }, { threshold: 0.05 });
   io.observe(canvas);
   onState(wanted);
@@ -131,6 +134,6 @@ export function loop(canvas, draw, options = {}) {
     get time() { return t; },
     set time(v) { t = v; render(0); },
     reduced,
-    destroy() { stop(); ro.disconnect(); io.disconnect(); },
+    destroy() { stop(); ro.disconnect(); io.disconnect(); mo.disconnect(); },
   };
 }
