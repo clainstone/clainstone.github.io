@@ -12,8 +12,9 @@
 //    evaluative words and logic symbols in prose are warnings.
 // 3. Build of the whole site with `make build`.
 // 4. The built page: visible text without KaTeX, KaTeX errors.
-// 5. A headless browser at 1280 and 390 px: console errors, horizontal
-//    overflow, screenshots after every client:visible component has mounted.
+// 5. A headless browser at 1280 px (the site is desktop only): console errors,
+//    horizontal overflow, displays that scroll, inline formulas split across
+//    two lines, a screenshot after every client:visible component has mounted.
 //
 // Exit status 1 when any error is found. Screenshots go to
 // <site>/.astro/lecture-check/, which the site's git ignores.
@@ -266,8 +267,8 @@ if (!flags.has('--no-browser')) {
     let browser;
     try {
       browser = await pw.chromium.launch({ env: browserEnv, args: ['--no-sandbox', '--use-gl=swiftshader', '--enable-webgl', '--ignore-gpu-blocklist'] });
-      for (const width of [1280, 390]) {
-        const ctx = await browser.newContext({ viewport: { width, height: width > 800 ? 800 : 844 }, deviceScaleFactor: 1, colorScheme: 'light' });
+      for (const width of [1280]) {
+        const ctx = await browser.newContext({ viewport: { width, height: 800 }, deviceScaleFactor: 1, colorScheme: 'light' });
         const page = await ctx.newPage();
         const problems = [];
         page.on('console', (m) => { if (m.type() === 'error') problems.push(m.text()); });
@@ -289,10 +290,19 @@ if (!flags.has('--no-browser')) {
           islands: document.querySelectorAll('astro-island').length,
           unmounted: document.querySelectorAll('astro-island[ssr]').length,
           emptyCanvases: [...document.querySelectorAll('canvas')].filter((c) => c.width === 0 || c.height === 0).length,
+          // A display must fit the column (STYLE.md 5.5).
+          scrolling: [...document.querySelectorAll('.body .katex-display')].filter((d) => d.scrollWidth > d.clientWidth + 1)
+            .map((d) => (d.querySelector('annotation')?.textContent ?? '').replace(/\s+/g, ' ').slice(0, 60)),
+          // An inline formula never breaks across lines (STYLE.md 5.2).
+          split: [...document.querySelectorAll('.body p .katex')].filter((k) => !k.closest('.katex-display'))
+            .filter((k) => new Set([...k.querySelector('.katex-html').getClientRects()].filter((r) => r.width > 0).map((r) => Math.round(r.bottom / 8))).size > 1)
+            .map((k) => (k.querySelector('annotation')?.textContent ?? '').slice(0, 60)),
         }));
         if (state.overflow > 1) error(`${width} px: the page scrolls horizontally by ${state.overflow} px`);
         if (state.unmounted) error(`${width} px: ${state.unmounted} of ${state.islands} component(s) did not mount`);
         if (state.emptyCanvases) error(`${width} px: ${state.emptyCanvases} canvas(es) have zero size`);
+        for (const t of state.scrolling) error(`${width} px: a display scrolls horizontally: ${t}`);
+        for (const t of state.split) error(`${width} px: an inline formula breaks across lines: ${t}`);
         for (const p of problems) error(`${width} px console: ${p.slice(0, 300)}`);
         const shot = join(out, `${slug}-${width}.png`);
         await page.screenshot({ path: shot, fullPage: true });

@@ -60,7 +60,7 @@ fonts, so labels go into the caption.
   }
 </script>
 
-<Canvas {draw} ratio={2} narrowRatio={1.4} label="The functions f_n for the chosen n" deps={[n]}>
+<Canvas {draw} ratio={2} label="The functions f_n for the chosen n" deps={[n]}>
   <Slider label="n" min={1} max={64} step={1} bind:value={n} />
 </Canvas>
 ```
@@ -119,10 +119,10 @@ lecture post: it contains first-person remarks that a lecture post never has.
 
 ## Checking a visual
 
-`scripts/check_post.mjs` builds the site, opens the post at 1280 and 390 px,
+`scripts/check_post.mjs` builds the site, opens the post at 1280 px,
 scrolls it so that every `client:visible` component mounts, and records console
-errors and horizontal overflow. Look at both screenshots. A visual that does
-not read at 390 px needs a `narrowRatio` or fewer labels.
+errors and horizontal overflow. Look at the screenshot: every label of a
+visual must read at 1280 px. The site is desktop only.
 
 The headless browser in this container needs the font configuration under
 `~/.local/chrome-libs`. The script sets it. Without it, text measures zero

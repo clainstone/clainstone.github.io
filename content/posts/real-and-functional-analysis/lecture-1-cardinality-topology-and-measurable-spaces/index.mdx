@@ -43,16 +43,14 @@ $$
 \overline{\mathbb{R}} = [-\infty, +\infty] := \mathbb{R} \cup \{+\infty\} \cup \{-\infty\},
 $$
 
-with the following operations, for ${a \in \mathbb{R}:}$
+with the following operations in $\overline{\mathbb{R}}{:}$
 
 $$
 \begin{aligned}
-&a + \infty = +\infty, \quad a - \infty = -\infty, \\
-&a > 0\colon \ a \cdot (+\infty) = +\infty, \\
-&\phantom{a > 0\colon \ } a \cdot (-\infty) = -\infty, \\
-&a < 0\colon \ a \cdot (+\infty) = -\infty, \\
-&\phantom{a < 0\colon \ } a \cdot (-\infty) = +\infty, \\
-&0 \cdot (+\infty) = 0 \cdot (-\infty) = 0.
+&a \in \mathbb{R} & &\Longrightarrow \quad a + \infty = +\infty, \quad a - \infty = -\infty, \\
+&a > 0 & &\Longrightarrow \quad a \cdot (+\infty) = +\infty, \quad a \cdot (-\infty) = -\infty, \\
+&a < 0 & &\Longrightarrow \quad a \cdot (+\infty) = -\infty, \quad a \cdot (-\infty) = +\infty, \\
+& & &\phantom{\Longrightarrow \quad} 0 \cdot (+\infty) = 0 \cdot (-\infty) = 0.
 \end{aligned}
 $$
 
@@ -68,7 +66,7 @@ $$
 
 **Remark 7.** If ${\#X = n \in \mathbb{N},}$ then ${\#\mathcal{P}(X) = 2^n.}$
 
-**Notation.** For a set $X,$ $2^X$ is the set of all functions from $X$ to the set with 2 elements $\{0, 1\}:$
+**Notation.** For a set $X,$ $2^X$ is the set of all functions from $X$ to the set with 2 elements $\{0, 1\}{:}$
 
 $$
 2^X := \{ f \colon X \to \{0, 1\} \}.
@@ -81,13 +79,7 @@ $$
 **Proof (complete).** (i) Define
 
 $$
-\phi \colon \mathcal{P}(X) \to 2^X, \qquad A \mapsto f_A,
-$$
-
-where
-
-$$
-f_A(x) := \begin{cases} 1 & x \in A, \\ 0 & x \notin A. \end{cases}
+\phi \colon \mathcal{P}(X) \to 2^X, \qquad A \mapsto f_A \colon X \to \{0, 1\}, \qquad f_A(x) := \begin{cases} 1 & x \in A, \\ 0 & x \notin A. \end{cases}
 $$
 
 The map $\phi$ is a bijection. Indeed, its inverse sends ${f \in 2^X}$ to the set ${\{ x \in X : f(x) = 1 \}.}$
@@ -108,7 +100,7 @@ Figure 1 is the bijection $\phi$ of part (i) on a set of 3 elements, and Figure 
 
 <PowerSet client:visible />
 
-**Figure 1.** An instance with ${X = \{1, 2, 3\}:}$ the ${2^3 = 8}$ subsets $A$ of $X$ and the values of $f_A = \phi(A).$ The buttons choose the elements of $A$ and highlight its row.
+**Figure 1.** An instance with ${X = \{1, 2, 3\}{:}}$ the ${2^3 = 8}$ subsets $A$ of $X$ and the values of $f_A = \phi(A).$ The buttons choose the elements of $A$ and highlight its row.
 
 <Diagonal client:visible />
 
@@ -136,7 +128,7 @@ The sets in $\tau$ are called *open*, and the couple $(X, \tau)$ is called a *to
 
 **Example 11.** On $\mathbb{R}^n$ the *Euclidean topology* $\tau_E$ is defined as follows. We say that ${U \in \tau_E}$ if for every ${x \in U}$ there exists ${r > 0}$ with ${B_r(x) \subset U.}$ Here $B_r(x)$ is the open ball of centre $x$ and radius $r.$ Two other topologies on $\mathbb{R}^n$ are ${\tau = \{ \emptyset, \mathbb{R}^n \}}$ and ${\tau = \mathcal{P}(\mathbb{R}^n).}$
 
-**Definition 12 (Closed set, closure, interior, boundary).** Let $(X, \tau)$ be a topological space. A set ${V \subset X}$ is *closed* if ${X \setminus V}$ is open. For ${V \subset X:}$\
+**Definition 12 (Closed set, closure, interior, boundary).** Let $(X, \tau)$ be a topological space. A set ${V \subset X}$ is *closed* if ${X \setminus V}$ is open. For ${V \subset X{:}}$\
 **(i)** the *closure* $\overline{V}$ of $V$ is the smallest closed set containing $V;$\
 **(ii)** the *interior* ${\operatorname{int}(V) = \mathring{V}}$ of $V$ is the biggest open set contained in $V;$\
 **(iii)** the *boundary* of $V$ is ${\partial V = \overline{V} \cap \overline{X \setminus V}.}$
@@ -157,7 +149,7 @@ The closure and the interior exist. Indeed, $\overline{V}$ is the intersection o
 
 **Theorem 15 ([Heine–Borel](https://en.wikipedia.org/wiki/Heine%E2%80%93Borel_theorem)).** A set ${K \subset \mathbb{R}^n}$ is compact if and only if $K$ is closed and bounded, that is, contained in a ball $B_r(0).$
 
-**Example 16 (Topology on the extended real line).** The following subsets of $\overline{\mathbb{R}}$ are open in $\overline{\mathbb{R}}:$ the intervals $(a, b)$ with ${a, b \in \mathbb{R};}$ every set that is open in $\mathbb{R},$ which is also defined to be open in $\overline{\mathbb{R}};$ and the sets $[-\infty, a)$ and $(a, +\infty]$ for every ${a \in \mathbb{R},}$ which are also defined to be open.
+**Example 16 (Topology on the extended real line).** The following subsets of $\overline{\mathbb{R}}$ are open in $\overline{\mathbb{R}}{:}$ the intervals $(a, b)$ with ${a, b \in \mathbb{R};}$ every set that is open in $\mathbb{R},$ which is also defined to be open in $\overline{\mathbb{R}};$ and the sets $[-\infty, a)$ and $(a, +\infty]$ for every ${a \in \mathbb{R},}$ which are also defined to be open.
 
 <ExtendedLine />
 
@@ -226,10 +218,7 @@ Real analysis begins here, following Folland, with the families of sets on which
 **Proof (sketch).** Intersections are written through complements and unions:
 
 $$
-\begin{aligned}
-E \cap F &= X \setminus \big( X \setminus (E \cap F) \big) \\
-&= X \setminus \big( (X \setminus E) \cup (X \setminus F) \big).
-\end{aligned}
+E \cap F = X \setminus \big( X \setminus (E \cap F) \big) = X \setminus \big( (X \setminus E) \cup (X \setminus F) \big).
 $$
 
 **Details.** The sets ${X \setminus E}$ and ${X \setminus F}$ belong to $\mathcal{M}$ by (iii) of Definition 22, their union by (iv) applied to ${X \setminus E, X \setminus F, \emptyset, \emptyset, \dots,}$ and its complement by (iii) again. Then ${E \setminus F = E \cap (X \setminus F),}$ and in the same way ${\bigcap_n E_n = X \setminus \bigcup_n (X \setminus E_n).}$ $\blacksquare$
@@ -256,10 +245,7 @@ In words, $\mathcal{M}$ is the smallest $\sigma$-algebra containing $\mathcal{F}
 **Proof (sketch).** Consider
 
 $$
-\begin{aligned}
-W := \{ \mathcal{Q} \subset \mathcal{P}(X) : {} &\mathcal{Q} \text{ is a } \sigma\text{-algebra}, \\
-&\mathcal{F} \subset \mathcal{Q} \}.
-\end{aligned}
+W := \{ \mathcal{Q} \subset \mathcal{P}(X) : \mathcal{Q} \text{ is a } \sigma\text{-algebra}, \ \mathcal{F} \subset \mathcal{Q} \}.
 $$
 
 Then ${W \neq \emptyset,}$ as ${\mathcal{P}(X) \in W.}$ Define

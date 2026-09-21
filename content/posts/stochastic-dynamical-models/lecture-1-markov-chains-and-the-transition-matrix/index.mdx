@@ -58,7 +58,7 @@ $$
 X^{-1}(B) = \{ \omega \in \Omega : X(\omega) \in B \} \in \mathscr{F}.
 $$
 
-**Definition (Distribution).** The *probability distribution* of a random variable $X$ describes how probability is assigned to the values of $X:$ it assigns to every ${B \in \mathscr{E}}$ the number ${P(X \in B).}$
+**Definition (Distribution).** The *probability distribution* of a random variable $X$ describes how probability is assigned to the values of $X{:}$ it assigns to every ${B \in \mathscr{E}}$ the number ${P(X \in B).}$
 
 **Example (The outcome of 10 jumps).** An experiment of exactly 11 positions of the frog, that is, 10 jumps, is an outcome ${\omega \in \Omega = \{1, \dots, 7\}^{11},}$ and $\mathscr{F}$ is a set of subsets of $\Omega.$ Take
 
@@ -89,12 +89,7 @@ with the entry 1 in position $i.$ We also have a *transition matrix* ${P = (p_{i
 **(ii)** Whenever ${P(X_0 = i_0, \dots, X_n = i_n) > 0,}$
 
 $$
-\begin{aligned}
-&P(X_{n+1} = i_{n+1} \mid {} \\
-&\qquad X_0 = i_0, \dots, X_n = i_n) \\
-&\quad = P(X_{n+1} = i_{n+1} \mid X_n = i_n) \\
-&\quad = p_{i_n i_{n+1}}.
-\end{aligned}
+P(X_{n+1} = i_{n+1} \mid X_0 = i_0, \dots, X_n = i_n) = P(X_{n+1} = i_{n+1} \mid X_n = i_n) = p_{i_n i_{n+1}}.
 $$
 
 For short, we say that $(X_n)_{n \ge 0}$ is $\mathrm{Markov}(\lambda, P).$ Checking conditions (i) and (ii) is usually the most helpful way to determine whether or not a given random process $(X_n)_{n \ge 0}$ is a Markov chain. It can also be helpful to have the alternative description provided by Theorem 1.3.
@@ -102,10 +97,7 @@ For short, we say that $(X_n)_{n \ge 0}$ is $\mathrm{Markov}(\lambda, P).$ Check
 **Theorem 1.3.** A sequence $(X_n)_{n \ge 0}$ of random variables with values in $I$ is $\mathrm{Markov}(\lambda, P)$ if and only if, for all ${n \ge 0}$ and ${i_0, \dots, i_n \in I,}$
 
 $$
-\begin{aligned}
-&P(X_0 = i_0, \dots, X_n = i_n) \\
-&\quad = \lambda_{i_0} p_{i_0 i_1} \cdots p_{i_{n-1} i_n}.
-\end{aligned} \tag{1.1}
+P(X_0 = i_0, \dots, X_n = i_n) = \lambda_{i_0} p_{i_0 i_1} \cdots p_{i_{n-1} i_n}. \tag{1.1}
 $$
 
 **Proof (sketch).** Suppose that $(X_n)_{n \ge 0}$ is $\mathrm{Markov}(\lambda, P).$ Then, for ${n \ge 1,}$
@@ -113,30 +105,21 @@ $$
 $$
 \begin{aligned}
 &P(X_0 = i_0, \dots, X_n = i_n) \\
-&\quad = P(X_n = i_n \mid {} \\
-&\qquad\quad X_0 = i_0, \dots, X_{n-1} = i_{n-1}) \\
-&\qquad \times P(X_0 = i_0, \dots, X_{n-1} = i_{n-1}) \\
-&\quad = P(X_0 = i_0) \, P(X_1 = i_1 \mid X_0 = i_0) \\
-&\qquad \cdots P(X_n = i_n \mid {} \\
-&\qquad\quad X_0 = i_0, \dots, X_{n-1} = i_{n-1}) \\
+&\quad = P(X_n = i_n \mid X_0 = i_0, \dots, X_{n-1} = i_{n-1}) \, P(X_0 = i_0, \dots, X_{n-1} = i_{n-1}) \\
+&\quad = P(X_0 = i_0) \, P(X_1 = i_1 \mid X_0 = i_0) \cdots P(X_n = i_n \mid X_0 = i_0, \dots, X_{n-1} = i_{n-1}) \\
 &\quad = \lambda_{i_0} p_{i_0 i_1} \cdots p_{i_{n-1} i_n},
 \end{aligned}
 $$
 
-and for ${n = 0}$ (1.1) is condition (i). On the other hand, if (1.1) holds, summing it over all ${i_1, \dots, i_n}$ gives ${P(X_0 = i_0) = \lambda_{i_0},}$ that is, (i). Then summing (1.1) over $i_n$ gives ${P(X_0 = i_0, \dots, X_{n-1} = i_{n-1})}$ ${= \lambda_{i_0} p_{i_0 i_1} \cdots p_{i_{n-2} i_{n-1}}.}$ Hence
+and for ${n = 0}$ (1.1) is condition (i). On the other hand, if (1.1) holds, summing it over all ${i_1, \dots, i_n}$ gives ${P(X_0 = i_0) = \lambda_{i_0},}$ that is, (i). Then summing (1.1) over $i_n$ gives ${P(X_0 = i_0, \dots, X_{n-1} = i_{n-1}) = \lambda_{i_0} p_{i_0 i_1} \cdots p_{i_{n-2} i_{n-1}}.}$ Hence
 
 $$
-\begin{aligned}
-&P(X_n = i_n \mid {} \\
-&\qquad X_0 = i_0, \dots, X_{n-1} = i_{n-1}) \\
-&\quad = \frac{P(X_0 = i_0, \dots, X_n = i_n)}{P(X_0 = i_0, \dots, X_{n-1} = i_{n-1})} \\
-&\quad = p_{i_{n-1} i_n},
-\end{aligned}
+P(X_n = i_n \mid X_0 = i_0, \dots, X_{n-1} = i_{n-1}) = \frac{P(X_0 = i_0, \dots, X_n = i_n)}{P(X_0 = i_0, \dots, X_{n-1} = i_{n-1})} = p_{i_{n-1} i_n},
 $$
 
 which establishes (ii). $\blacksquare$
 
-**Details.** The first computation divides by ${P(X_0 = i_0, \dots, X_{n-1} = i_{n-1}),}$ so it needs this probability to be positive. When it is zero, both sides of (1.1) are zero: the left-hand side is at most this probability, and if $m$ is the smallest index with ${P(X_0 = i_0, \dots, X_m = i_m) = 0,}$ then ${\lambda_{i_0} = 0}$ when ${m = 0}$ and ${p_{i_{m-1} i_m} = 0}$ when ${m \ge 1,}$ by the same computation up to time $m.$ In the converse, the middle term of (ii) equals $p_{i_{n-1} i_n}$ as well, because summing (1.1) over ${i_0, \dots, i_{n-2}}$ gives ${P(X_{n-1} = i_{n-1}, X_n = i_n)}$ ${= P(X_{n-1} = i_{n-1}) \, p_{i_{n-1} i_n}.}$
+**Details.** The first computation divides by ${P(X_0 = i_0, \dots, X_{n-1} = i_{n-1}),}$ so it needs this probability to be positive. When it is zero, both sides of (1.1) are zero: the left-hand side is at most this probability, and if $m$ is the smallest index with ${P(X_0 = i_0, \dots, X_m = i_m) = 0,}$ then ${\lambda_{i_0} = 0}$ when ${m = 0}$ and ${p_{i_{m-1} i_m} = 0}$ when ${m \ge 1,}$ by the same computation up to time $m.$ In the converse, the middle term of (ii) equals $p_{i_{n-1} i_n}$ as well, because summing (1.1) over ${i_0, \dots, i_{n-2}}$ gives ${P(X_{n-1} = i_{n-1}, X_n = i_n) = P(X_{n-1} = i_{n-1}) \, p_{i_{n-1} i_n}.}$
 
 By (1.1), the probability of a sequence of jumps is a product of entries of $P$ along it. For question (a) of Example 1.1, the only sequence of 3 jumps from state 1 back to state 1 with positive probability visits the states 1, 2, 3, 1, and its probability is ${1 \cdot \frac12 \cdot \frac12 = \frac14 = p^{(3)}_{11}.}$ Figure 3 computes the product for any sequence of states.
 
@@ -160,10 +143,8 @@ Label the states ${1, 2, \dots.}$ Use a computer to simulate ${U_1, U_2, \dots}$
 
 $$
 \begin{aligned}
-&U \in [0, p_{i1}) \\
-&\qquad \Longrightarrow \ J = 1, \\
-&U \in \Big[ \sum_{k=1}^{j-1} p_{ik}, \ \sum_{k=1}^{j} p_{ik} \Big) \\
-&\qquad \Longrightarrow \ J = j, \quad j \ge 2.
+U &\in [0, p_{i1}) & &\Longrightarrow \quad J = 1, \\
+U &\in \Big[ \sum_{k=1}^{j-1} p_{ik}, \ \sum_{k=1}^{j} p_{ik} \Big), \quad j \ge 2 & &\Longrightarrow \quad J = j.
 \end{aligned}
 $$
 
@@ -191,10 +172,8 @@ Similarly,
 
 $$
 \begin{aligned}
-P_i(X_2 = j) &= \sum_{k} P_i(X_1 = k, X_2 = j) \\
-&= \sum_{k} p_{ik} p_{kj} = (P^2)_{ij}, \\
-P(X_2 = j) &= \sum_{i, k} \lambda_i P_i(X_1 = k, X_2 = j) \\
-&= \sum_{i, k} \lambda_i p_{ik} p_{kj} = (\lambda P^2)_j.
+P_i(X_2 = j) &= \sum_{k} P_i(X_1 = k, X_2 = j) = \sum_{k} p_{ik} p_{kj} = (P^2)_{ij}, \\
+P(X_2 = j) &= \sum_{i, k} \lambda_i P_i(X_1 = k, X_2 = j) = \sum_{i, k} \lambda_i p_{ik} p_{kj} = (\lambda P^2)_j.
 \end{aligned}
 $$
 
@@ -203,8 +182,7 @@ Continuing in this way,
 $$
 \begin{aligned}
 P_i(X_n = j) &= (\delta_i P^n)_j = (P^n)_{ij} = p^{(n)}_{ij}, \\
-P(X_n = j) &= \sum_{i_0, \dots, i_{n-1}} \lambda_{i_0} p_{i_0 i_1} \cdots p_{i_{n-1} j} \\
-&= (\lambda P^n)_j.
+P(X_n = j) &= \sum_{i_0, \dots, i_{n-1}} \lambda_{i_0} p_{i_0 i_1} \cdots p_{i_{n-1} j} = (\lambda P^n)_j.
 \end{aligned}
 $$
 
@@ -249,30 +227,22 @@ $$
 The eigenvalues of $P$ are 1 and ${1 - \alpha - \beta,}$ which are distinct because ${\alpha + \beta > 0.}$ So we can write
 
 $$
-\begin{aligned}
-&P = U \begin{pmatrix} 1 & 0 \\ 0 & 1 - \alpha - \beta \end{pmatrix} U^{-1} \\[4pt]
-&\quad \Longrightarrow \quad P^n = U \begin{pmatrix} 1 & 0 \\ 0 & (1 - \alpha - \beta)^n \end{pmatrix} U^{-1}.
-\end{aligned}
+P = U \begin{pmatrix} 1 & 0 \\ 0 & 1 - \alpha - \beta \end{pmatrix} U^{-1} \quad \Longrightarrow \quad P^n = U \begin{pmatrix} 1 & 0 \\ 0 & (1 - \alpha - \beta)^n \end{pmatrix} U^{-1}.
 $$
 
-Hence ${p^{(n)}_{11} = A + B (1 - \alpha - \beta)^n}$ for some constants $A$ and $B.$ Since ${p^{(0)}_{11} = 1 = A + B}$ and ${p^{(1)}_{11} = 1 - \alpha}$ ${= A + B (1 - \alpha - \beta),}$ we get ${(A, B) = (\beta, \alpha)/(\alpha + \beta),}$ that is,
+Hence ${p^{(n)}_{11} = A + B (1 - \alpha - \beta)^n}$ for some constants $A$ and $B.$ Since ${p^{(0)}_{11} = 1 = A + B}$ and ${p^{(1)}_{11} = 1 - \alpha = A + B (1 - \alpha - \beta),}$ we get ${(A, B) = (\beta, \alpha)/(\alpha + \beta),}$ that is,
 
 $$
-\begin{aligned}
-P_1(X_n = 1) = p^{(n)}_{11} &= \frac{\beta}{\alpha + \beta} \\
-&\quad + \frac{\alpha}{\alpha + \beta} (1 - \alpha - \beta)^n.
-\end{aligned}
+P_1(X_n = 1) = p^{(n)}_{11} = \frac{\beta}{\alpha + \beta} + \frac{\alpha}{\alpha + \beta} (1 - \alpha - \beta)^n.
 $$
 
 When ${\alpha + \beta < 2,}$ this tends exponentially fast to a limit of ${\beta/(\alpha + \beta).}$ The other components of $P^n$ can be computed similarly, and
 
 $$
-\begin{aligned}
-p^{(n)}_{11} &= \tfrac{\beta}{\alpha + \beta} + \tfrac{\alpha}{\alpha + \beta} (1 - \alpha - \beta)^n, \\
-p^{(n)}_{12} &= \tfrac{\alpha}{\alpha + \beta} - \tfrac{\alpha}{\alpha + \beta} (1 - \alpha - \beta)^n, \\
-p^{(n)}_{21} &= \tfrac{\beta}{\alpha + \beta} - \tfrac{\beta}{\alpha + \beta} (1 - \alpha - \beta)^n, \\
-p^{(n)}_{22} &= \tfrac{\alpha}{\alpha + \beta} + \tfrac{\beta}{\alpha + \beta} (1 - \alpha - \beta)^n.
-\end{aligned}
+P^n = \begin{pmatrix}
+\frac{\beta}{\alpha + \beta} + \frac{\alpha}{\alpha + \beta} (1 - \alpha - \beta)^n & \frac{\alpha}{\alpha + \beta} - \frac{\alpha}{\alpha + \beta} (1 - \alpha - \beta)^n \\[6pt]
+\frac{\beta}{\alpha + \beta} - \frac{\beta}{\alpha + \beta} (1 - \alpha - \beta)^n & \frac{\alpha}{\alpha + \beta} + \frac{\beta}{\alpha + \beta} (1 - \alpha - \beta)^n
+\end{pmatrix}.
 $$
 
 <TwoState client:visible />
@@ -282,10 +252,7 @@ $$
 **Note.** We might have reached the same answer by arguing that
 
 $$
-\begin{aligned}
-p^{(n)}_{11} &= p^{(n-1)}_{11} p_{11} + p^{(n-1)}_{12} p_{21} \\
-&= p^{(n-1)}_{11} (1 - \alpha) + \big( 1 - p^{(n-1)}_{11} \big) \beta.
-\end{aligned}
+p^{(n)}_{11} = p^{(n-1)}_{11} p_{11} + p^{(n-1)}_{12} p_{21} = p^{(n-1)}_{11} (1 - \alpha) + \big( 1 - p^{(n-1)}_{11} \big) \beta.
 $$
 
 This gives the linear recurrence relation, an equation that expresses each element of a sequence as a function of the preceding ones,

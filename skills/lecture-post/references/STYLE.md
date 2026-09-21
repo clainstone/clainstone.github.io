@@ -48,27 +48,27 @@ This section outranks every other rule in this file and in the skill.
 
 ## 2. Page and width
 
-1. The text column is 62ch (620 px) of 19 px Source Serif 4 at leading 1.55,
-   about 62–70 characters per line on desktop and 38–45 on a 390 px phone.
-   These values are right. NEVER try to change them, and NEVER edit a style,
-   layout or toolkit file.
+1. The site is desktop only; phones are not supported (Alessandro,
+   21 September 2026). NEVER split, shorten or rearrange a formula, a figure
+   or a paragraph for a narrow screen.
+   A post's text column is 40rem (760 px) of 19 px Source Serif 4 at leading
+   1.55, about 80 characters of prose per line. NEVER try to change these
+   values, and NEVER edit a style, layout or toolkit file.
 2. Character counts taken from `textContent` are wrong on this site (KaTeX
    writes each formula twice). Judge the measure from the screenshots.
-3. Display mathematics stays in the text column at every width.
-4. A visual MAY use the wide track (44rem on desktop) when it sets two
+3. Display mathematics stays in the 760 px text column.
+4. A visual MAY use the wide track (48rem, 912 px) when it sets two
    representations side by side (graph and matrix) or carries seven or more
    labels on one axis: wrap it as
    `<div class="wide"><Name client:visible /></div>`. Everything else stays in
-   the column. On a phone every visual is column width; give it a
-   `narrowRatio` of 1.2–1.5 and check that every label is readable.
+   the column. `narrowRatio` is not needed.
 
 ## 3. Paragraphs and line breaks
 
 1. One paragraph is one line of MDX source. NEVER hard-wrap prose. The only
    newline inside a paragraph is a hard break (`\` at the end of the line)
    before an item label.
-2. Paragraphs of prose have 2 to 6 sentences and at most 8 lines at 1280 px and
-   14 lines at 390 px. A sentence has at most 40 words and at most 3 inline
+2. Paragraphs of prose have 2 to 6 sentences and at most 8 lines at 1280 px. A sentence has at most 40 words and at most 3 inline
    formulas that contain a relation.
 3. A one-sentence paragraph is allowed only as a labelled statement, a lead-in
    to a display, or a caption. At 1280 px at most 10 % of paragraphs are one
@@ -125,23 +125,28 @@ This section outranks every other rule in this file and in the skill.
 
 1. Punctuation that follows inline mathematics goes INSIDE the dollars:
    `${\#X \le \#Y,}$` or `$\tau.$`. Always, single symbols included. (Outside,
-   the browser can start the next line with the comma.)
+   the browser can start the next line with the comma.) A colon is written
+   `{:}` (`$\overline{\mathbb{R}}{:}$`), otherwise it is spaced as a relation.
 2. An inline formula NEVER breaks across lines. If it contains a relation or a
    binary operator, wrap its body in one brace group: `${j \neq i}$`.
-3. Inline budget: at most about 22 rendered characters, no big operator with
-   limits, no stacked fraction with symbols (write `\beta/(\alpha+\beta)`;
-   numeric `\frac12` is fine). Over budget means display. A long expression
-   needed repeatedly is displayed once, tagged, and referred to by its tag.
+3. Inline budget: at most about 45 rendered characters (the site's CSS never
+   breaks an inline formula, so a longer one leaves a hole at the end of the
+   line), no big operator with limits, no stacked fraction with symbols (write
+   `\beta/(\alpha+\beta)`; numeric `\frac12` is fine). Over budget means
+   display. A long expression needed repeatedly is displayed once, tagged, and
+   referred to by its tag.
 4. Maps are `f \colon X \to Y`. Conditioning is `\mid`. Set-builder is
    `\{ x \in X \colon \dots \}` or ` : ` consistently within a thread.
-5. Every display fits 346 px at 390 px without scrolling. The only exception
-   is a single matrix that cannot be split.
-6. Breaking a display: `aligned`; break BEFORE a relation and align relations
-   with `&`; break before a binary operator and indent `\quad`; one implication
-   per line; inside a conditional probability break AFTER `\mid` and indent
-   `\qquad`; quantifiers and side conditions go in the prose before the
-   display or on its last line. NEVER break inside a fraction, a subscript, or
-   between a function and its argument. At most 6 rows.
+5. Every display fits the 760 px column without scrolling, and is laid out
+   as in the source: a formula the source writes on one line stays on one
+   line, a chain the source writes on several lines keeps its lines. Break a
+   formula only when it does not fit 760 px.
+6. Breaking a display, when it must: `aligned`; break BEFORE a relation and
+   align relations with `&`, or put the left-hand side alone on the first line
+   and start each following line with `\quad =`; break before a binary
+   operator and indent `\quad`; one implication per line; NEVER break inside a
+   conditional probability, a fraction, a subscript, or between a function and
+   its argument. At most 6 rows.
 7. `\tag` only on displays cited later. Displays end with their punctuation.
 8. In a canvas, variables are italic and use the source's letters.
 9. Sentences added by you use the thread's declared symbols (`\subset` in Real
@@ -243,14 +248,12 @@ Run every line; fix or justify in the report.
    zero hits.
 6. Every `**Example` / `**Remark` follows 4.2; labels have the source's kind.
 7. Count markers (7.4) and links (4.10).
-8. `make check-post POST=<thread>/<slug>` passes. Then, in the 390 px page:
-   `[...document.querySelectorAll('.katex-display')].filter(e => e.scrollWidth > e.clientWidth + 1)`
-   is empty except for a lone matrix, and in both widths
-   `[...document.querySelectorAll('.body p .katex')].filter(k => !k.closest('.katex-display') && k.getClientRects().length > 1)`
-   is empty.
-9. Look at every slice of both screenshots: no line begins with a punctuation
-   mark, no label alone, no paragraph over 8 lines (desktop) or 14 (phone),
-   every visual drawn and captioned, at most 3 screens between visuals.
+8. `make check-post POST=<thread>/<slug>` passes. It fails on a display that
+   scrolls and on an inline formula split across two lines, at 1280 px.
+9. Look at the whole 1280 px screenshot: no line begins with a punctuation
+   mark, no label alone, no paragraph over 8 lines, no display broken where the
+   source keeps one line, every visual drawn and captioned, at most 3 screens
+   between visuals.
 10. Visual count ≥ words / 300; every source drawing reproduced; every `##`
     part has a visual or a stated reason.
 11. First and last paragraph reread against 7.1 and 7.7.
@@ -273,3 +276,5 @@ Run every line; fix or justify in the report.
    1.4 and 1.5; what exceeds them goes in the report.
 8. `SKILL.md` rule 1, "unless a small reordering makes a proof readable":
    narrowed to 1.6.
+9. Every mention of 390 px, of phones and of `narrowRatio` in `SKILL.md`,
+   `VISUALS.md` and `WRITING.md` is void: the site is desktop only (2.1).

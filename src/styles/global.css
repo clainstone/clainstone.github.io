@@ -34,6 +34,9 @@
   --serif: 'Source Serif 4', 'Source Serif Fallback', Georgia, 'Times New Roman', serif;
   --mono: 'Source Code Pro', 'Source Code Fallback', ui-monospace, Menlo, Consolas, monospace;
   --measure: 62ch;
+  /* Posts are wider, 40rem = 760 px at 19 px: every display of a proof fits
+     on its source's lines. The site is designed for desktop only. */
+  --post-measure: 40rem;
   --gutter: 1.25rem;
   --top: 3.5rem;
   --text: clamp(1.0625rem, 1rem + 0.4vw, 1.1875rem);
@@ -283,8 +286,7 @@ main > section + section { margin-top: var(--section); }
 /* An inline formula never breaks across lines: a long one is displayed
    instead (skills/lecture-post/references/STYLE.md). */
 .body :not(.katex-display) > .katex { white-space: nowrap; }
-/* The one sanctioned scrolling display (an unsplittable matrix) shows that it
-   scrolls: shadows at the clipped edges. */
+/* A display that scrolls (it should not) shows it: shadows at the clipped edges. */
 .katex-display {
   scrollbar-width: thin;
   background:
@@ -304,19 +306,18 @@ main > section + section { margin-top: var(--section); }
   font-size: var(--small);
   color: var(--muted);
 }
+/* A post page uses the wider column. */
+:root:has(article.post) { --measure: var(--post-measure); }
 /* Opt-in wide track for a visual: <div class="wide">...</div>. */
-:root { --wide: 44rem; }
-@media (min-width: 60em) {
+:root { --wide: 48rem; }
+@media (min-width: 64em) {
   .body > .wide {
     width: var(--wide);
     margin-left: calc(50% - var(--wide) / 2);
     margin-right: calc(50% - var(--wide) / 2);
   }
 }
-/* Phone: words around unbreakable formulas may hyphenate. */
-@media (max-width: 40em) {
-  .body p { hyphens: auto; hyphenate-limit-chars: 7 3 3; }
-}
+
 
 /* ---- animations (layout and margins from the toolkit, colours from here) */
 

@@ -61,7 +61,7 @@ Italian. The post is always in English.
    ```
 
    Then open both screenshots it writes and look at them yourself: the
-   mathematics renders, every animation draws, nothing overflows at 390 px.
+   mathematics renders, every animation draws, nothing overflows at 1280 px.
    Start the local server with `make start` when it is not running.
 8. **Report to Alessandro** in Italian, briefly: the local address of the post,
    the visuals added, every passage left out because it was unreadable or
