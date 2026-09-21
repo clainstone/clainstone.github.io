@@ -1,0 +1,334 @@
+/* 02 · Serif
+   A page of a well-set book: Source Serif 4 on cream paper, larger type,
+   generous leading. Lining figures throughout, proportional in running text
+   and tabular in counts and dates. */
+
+/* Sized fallbacks: system faces adjusted to the webfonts' metrics (from the
+   fonts' own hhea tables), so the swap does not move the text. */
+@font-face {
+  font-family: 'Source Serif Fallback';
+  src: local('Georgia'), local('Times New Roman'), local('Liberation Serif');
+  size-adjust: 96%;
+  ascent-override: 107.9%;
+  descent-override: 34.9%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Source Code Fallback';
+  src: local('Courier New'), local('Liberation Mono');
+  size-adjust: 100%;
+  ascent-override: 98.4%;
+  descent-override: 27.3%;
+  line-gap-override: 0%;
+}
+
+:root {
+  --page: #fbf8f2;
+  --ink: #221f1c;
+  --muted: #6f6a63;
+  --rule: #e5dfd4;
+  --link: #2f4f8f;
+  --link-hover: #1f3766;
+  --code-bg: #f3efe6;
+  --control-bg: #ebe5d9;
+  --serif: 'Source Serif 4', 'Source Serif Fallback', Georgia, 'Times New Roman', serif;
+  --mono: 'Source Code Pro', 'Source Code Fallback', ui-monospace, Menlo, Consolas, monospace;
+  --measure: 62ch;
+  --gutter: 1.25rem;
+  --top: 3.5rem;
+  --text: clamp(1.0625rem, 1rem + 0.4vw, 1.1875rem);
+  --small: 0.9375rem;
+  --heading: 1.125rem;
+  --page-heading: 1.5rem;
+  --thread: 1.25rem;
+  --name: 1.75rem;
+  --title: 2rem;
+  --leading: 1.55;
+  --row: 0.75rem;
+  --section: 2.5rem;
+  /* The animation toolkit draws with these: the page's colours and text face. */
+  --anim-ink: var(--ink);
+  --anim-muted: var(--muted);
+  --anim-rule: var(--rule);
+  --anim-accent: var(--link);
+  --anim-font: var(--serif);
+}
+
+/* ---- base ------------------------------------------------------------- */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  font-size: var(--text);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: var(--top) auto 4rem;
+  max-width: calc(var(--measure) + 2 * var(--gutter));
+  padding: 0 var(--gutter);
+  background: var(--page);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-variant-numeric: lining-nums proportional-nums;
+  line-height: var(--leading);
+}
+
+@media (max-width: 40em) {
+  :root { --top: 2rem; }
+}
+
+a {
+  color: var(--link);
+  text-decoration: none;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.12em;
+}
+a:hover { color: var(--link-hover); }
+
+:focus-visible {
+  outline: 2px solid var(--link);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+img { max-width: 100%; height: auto; }
+
+ul, ol { list-style: none; margin: 0; padding: 0; }
+
+p { margin: 0; text-wrap: pretty; }
+
+h1, h2, h3, h4 {
+  margin: 0;
+  font-size: var(--heading);
+  font-weight: 600;
+  line-height: 1.3;
+  text-wrap: balance;
+}
+/* Page headings (Threads, a thread's title, Not found) above the 1.25 rem rows. */
+main > h1 { font-size: var(--page-heading); line-height: 1.2; }
+
+em, i { font-style: italic; }
+
+/* Counts, dates and tables use tabular figures. */
+.meta, .count, time, table, .anim-slider output {
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.nowrap { white-space: nowrap; }
+.notfound { margin-top: 0.75rem; }
+
+/* ---- shell ------------------------------------------------------------ */
+
+.skip {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  padding: 0.4rem 0.7rem;
+  background: var(--page);
+  color: var(--ink);
+  font-size: var(--small);
+}
+.skip:not(:focus) {
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.bar {
+  padding-bottom: var(--row);
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: var(--section);
+}
+.bar ul { display: flex; justify-content: center; gap: 2rem; }
+.bar a { font-size: var(--small); color: var(--muted); }
+.bar a:hover { color: var(--ink); }
+.bar a[aria-current='page'] { color: var(--ink); }
+
+main > section + section { margin-top: var(--section); }
+
+/* ---- main page -------------------------------------------------------- */
+
+.who { text-align: center; }
+.photo {
+  display: block;
+  width: 112px;
+  height: 112px;
+  margin: 0 auto;
+  border-radius: 6px;
+}
+.who h1 {
+  margin-top: 1rem;
+  font-size: var(--name);
+  line-height: 1.2;
+}
+.who .email, .who .line { color: var(--muted); }
+.who .email { margin-top: 0.35rem; }
+.who .email a { color: var(--muted); }
+.who .email a:hover { color: var(--ink); }
+
+.bio p + p { margin-top: 1em; }
+
+/* ---- rows ------------------------------------------------------------- */
+
+.rows > li {
+  padding: var(--row) 0;
+  border-top: 1px solid var(--rule);
+}
+.rows > li:first-child { border-top: 0; }
+
+/* Latest posts: the title on the left, its date on the right, always on the
+   same line. A long title wraps inside its own column. */
+.latest .rows > li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+}
+.latest .date {
+  flex: none;
+  white-space: nowrap;
+  color: var(--muted);
+  font-size: var(--small);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.meta, .count { color: var(--muted); font-size: var(--small); }
+
+.threads > li, .posts > li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+}
+.threads a { font-size: var(--thread); }
+.threads .count, .posts .meta { flex: none; white-space: nowrap; }
+
+@media (max-width: 40em) {
+  .posts > li { display: block; }
+  .posts .meta { display: block; margin-top: 0.1rem; white-space: normal; }
+}
+
+.contacts .rows > li { padding: 0.35rem 0; border-top: 0; }
+.contacts .label {
+  display: inline-block;
+  min-width: 4.5rem;
+  color: var(--muted);
+}
+
+/* ---- post ------------------------------------------------------------- */
+
+.post header .thread { color: var(--muted); font-style: italic; }
+.post header .thread a { color: var(--muted); }
+.post header .thread a:hover { color: var(--ink); }
+.post h1 {
+  margin-top: 0.4rem;
+  font-size: var(--title);
+  line-height: 1.15;
+}
+.post .meta { margin-top: 0.6rem; }
+.post .body { margin-top: 2rem; }
+
+.body > * + * { margin-top: 1em; }
+.body h2 { font-size: 1.25rem; margin-top: 2em; }
+.body h3 { font-size: var(--heading); margin-top: 1.6em; }
+.body h2 + *, .body h3 + * { margin-top: 0.5em; }
+.body a:hover { text-decoration: underline; }
+.body strong { font-weight: 600; }
+.body code { font-family: var(--mono); font-size: 0.85em; }
+.body :not(pre) > code {
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+  background: var(--code-bg);
+}
+.body pre {
+  margin-top: 1.25em;
+  padding: 0.9rem 1rem;
+  border-radius: 3px;
+  background-color: var(--code-bg) !important; /* Shiki writes its own inline background */
+  font-size: 0.85em;
+  line-height: 1.5;
+  overflow-x: auto;
+}
+.body pre code { font-size: 1em; padding: 0; background: none; }
+.body blockquote {
+  margin: 1em 0 0;
+  padding-left: 1rem;
+  border-left: 2px solid var(--rule);
+}
+.body figure { margin: 1.5em 0 0; }
+.body img { display: block; }
+.body figcaption { margin-top: 0.5rem; font-size: var(--small); color: var(--muted); }
+.body table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--small);
+}
+.body th, .body td {
+  padding: 0.45rem 1rem 0.45rem 0;
+  border-bottom: 1px solid var(--rule);
+  text-align: left;
+  vertical-align: top;
+}
+.body th { font-weight: 600; }
+.body hr { height: 1px; margin: 2em 0 0; border: 0; background: var(--rule); }
+
+/* ---- mathematics ------------------------------------------------------ */
+
+.katex { font-size: 1.05em; }
+.katex-display { overflow-x: auto; overflow-y: hidden; padding: 0.1em 0; }
+.body .katex-display { margin: 1.25em 0; }
+
+/* ---- animations (layout and margins from the toolkit, colours from here) */
+
+.anim-toggle {
+  padding: 0.45em 0.8em;
+  border: 0;
+  border-radius: 3px;
+  background: var(--code-bg);
+  color: var(--muted);
+}
+.anim-toggle:hover, .anim-toggle:focus-visible {
+  background: var(--control-bg);
+  color: var(--ink);
+}
+.anim-slider {
+  color: var(--muted);
+  font-size: var(--small);
+}
+.anim-slider input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 1.25rem;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.anim-slider input[type='range']::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; background: var(--rule); }
+.anim-slider input[type='range']::-moz-range-track { height: 4px; border-radius: 2px; background: var(--rule); }
+.anim-slider input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  margin-top: -5px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--muted);
+}
+.anim-slider input[type='range']::-moz-range-thumb { width: 14px; height: 14px; border: 0; border-radius: 50%; background: var(--muted); }
+.anim-slider input[type='range']:hover::-webkit-slider-thumb { background: var(--ink); }
+.anim-slider input[type='range']:hover::-moz-range-thumb { background: var(--ink); }
+.anim-figure figcaption { font-size: var(--small); color: var(--muted); }
+
+/* ---- print ------------------------------------------------------------ */
+
+@media print {
+  .bar, .skip, .anim-toggle { display: none; }
+  body { margin: 0 auto; background: #fff; color: #000; }
+  a { color: #000; text-decoration: underline; }
+  .body a[href^='http']::after { content: ' (' attr(href) ')'; font-size: 0.85em; }
+  .body pre { white-space: pre-wrap; }
+}

@@ -1,0 +1,30 @@
+---
+title: "RWKV-7 in one screen"
+date: 2026-09-09
+sample: true
+summary: "The state is a matrix per head. Each token decays it channel by channel, subtracts a rank-one correction scaled by an in-context learning rate, and adds a new key\u2013value outer product."
+---
+
+RWKV-7 replaces attention with a recurrent state. For each head the state $S_t$ is a small square matrix, and at every token it is updated in place. Written schematically, one head does
+
+$$
+S_t \;=\; S_{t-1}\,\big(\operatorname{diag}(w_t) \;-\; \hat\kappa_t\,(a_t \odot \hat\kappa_t)^{\!\top}\big) \;+\; v_t\, k_t^{\!\top},
+\qquad
+o_t \;=\; S_t\, r_t .
+$$
+
+Three things happen in that line.
+
+**Decay.** $\operatorname{diag}(w_t)$ scales each channel of the state by a data-dependent factor. Old information fades at a rate the model chooses per token.
+
+**Correction.** The rank-one term removes part of the state along the direction $\hat\kappa_t$, with strength set by $a_t$. The paper calls $a_t$ an in-context learning rate. It lets the model overwrite what it stored earlier rather than only letting it fade.
+
+**Write.** $v_t k_t^\top$ adds the new key–value pair.
+
+The read is a matrix–vector product with $r_t$. Everything else in the block, from the token shift to the projections that produce $w_t, k_t, v_t, r_t, a_t$ and $\hat\kappa_t$, is ordinary dense computation.
+
+For an engine this is good news and a constraint at once. Good news: the per-token cost is fixed, there is no growing cache, and the state fits in a known amount of memory. Constraint: the update is a sequence of small matrix operations on a per-head state, and the accelerator has to be fed that shape efficiently.
+
+The formulas here follow the RWKV-7 paper by the RWKV team. My contribution is the engine, not the model.
+
+Still open: Which of the per-token vectors are cheap enough to compute on the NPU and which should stay on the host. That decision is what the first measurement has to inform.

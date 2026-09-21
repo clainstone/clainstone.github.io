@@ -1,0 +1,26 @@
+---
+import Base from '../../../layouts/Base.astro';
+import M from '../../../components/M.astro';
+import { getThreads, postsOf, postUrl, wordCount, formatDate, isoDate, type Thread } from '../../../lib/site';
+
+export async function getStaticPaths() {
+  const threads = await getThreads();
+  return threads.map(({ thread }) => ({ params: { thread: thread.id }, props: { thread } }));
+}
+const { thread } = Astro.props as { thread: Thread };
+const posts = await postsOf(thread.id);
+---
+<Base title={thread.data.title} description={`${thread.data.title}: ${posts.length} ${posts.length === 1 ? 'post' : 'posts'}.`} section="threads">
+  <h1><M text={thread.data.title} /></h1>
+  <ul class="rows posts">
+    {posts.map((post) => (
+      <li>
+        <a href={postUrl(post)}><M text={post.data.title} /></a>{' '}
+        <span class="meta">
+          <span class="words">{wordCount(post.body)} words</span>{', '}
+          <time datetime={isoDate(post.data.date)}>{formatDate(post.data.date)}</time>
+        </span>
+      </li>
+    ))}
+  </ul>
+</Base>

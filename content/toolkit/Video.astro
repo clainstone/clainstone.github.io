@@ -1,0 +1,9 @@
+---
+/** A silent looping video, for animations rendered outside the site. */
+interface Props { src: string; caption?: string; poster?: string; ratio?: string; }
+const { src, caption, poster, ratio = '16 / 9' } = Astro.props;
+---
+<figure class="anim-figure">
+  <video src={src} poster={poster} autoplay muted loop playsinline controls style={`aspect-ratio: ${ratio}`}></video>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>

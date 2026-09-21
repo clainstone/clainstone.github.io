@@ -1,0 +1,17 @@
+---
+import Base from '../../layouts/Base.astro';
+import M from '../../components/M.astro';
+import { getThreads, threadUrl } from '../../lib/site';
+const threads = await getThreads();
+---
+<Base title="Threads" description="The active threads: sequences of posts on one subject each." section="threads">
+  <h1>Threads</h1>
+  <ul class="rows threads">
+    {threads.map(({ thread, count }) => (
+      <li>
+        <a href={threadUrl(thread)}><M text={thread.data.title} /></a>{' '}
+        <span class="count">{count} {count === 1 ? 'post' : 'posts'}</span>
+      </li>
+    ))}
+  </ul>
+</Base>

@@ -1,0 +1,33 @@
+---
+title: "BPE is a merge loop"
+date: 2026-09-11
+sample: true
+summary: "Training is a loop that counts adjacent pairs and merges the most frequent one. Encoding replays the merges in rank order. Both are simple to state and expensive to do fast."
+---
+
+import Merge from './Merge.svelte';
+
+The chapter builds a tokenizer by hand, and the algorithm is smaller than its reputation.
+
+**Training.** Start from a vocabulary of single bytes. Count every adjacent pair of tokens in the corpus. Merge the most frequent pair into a new token, record the merge, and repeat until the vocabulary has the size you want. The vocabulary is the ordered list of merges.
+
+<Merge client:visible={{ rootMargin: '600px' }} />
+
+```python
+def train(tokens, n_merges):
+    merges = []
+    for _ in range(n_merges):
+        pairs = count_adjacent_pairs(tokens)
+        best = max(pairs, key=pairs.get)
+        tokens = merge_pair(tokens, best)
+        merges.append(best)
+    return merges
+```
+
+**Encoding.** Split the text into bytes, then apply the merges in the order they were learned. At each step, the pair with the lowest merge rank wins. The output is a sequence of token ids.
+
+Stated like that, both loops are obvious. The cost is in the details the book does not need to optimize. Counting pairs over a corpus at every merge is quadratic if done naively, so real implementations keep the pair counts incremental. Encoding a long string by scanning for the lowest-rank pair at every step is also quadratic in the worst case, so real implementations keep the candidates in a priority structure.
+
+This is the loop my tokenizer has to make fast. The design entry in its own thread lists the choices; the numbers will follow with the corpus, the vocabulary, the machine and the command.
+
+Still open: Where the pre-tokenization regex fits and how byte-level handling changes the merge statistics.

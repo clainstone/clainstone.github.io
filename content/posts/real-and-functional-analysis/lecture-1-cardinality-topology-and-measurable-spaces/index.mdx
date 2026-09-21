@@ -1,0 +1,255 @@
+---
+title: 'Lecture 1, Cardinality, topology and measurable spaces'
+date: 2026-09-16
+summary: 'Cardinalities are compared through injections, and $\#\mathcal{P}(X) > \#X$ for every set $X$. Topological and metric spaces are introduced, and every family of subsets generates a $\sigma$-algebra, the Borel $\sigma$-algebra when the family is a topology.'
+---
+
+import Diagonal from './Diagonal.svelte';
+import OpenBall from './OpenBall.svelte';
+import Compact from './Compact.svelte';
+
+Sets are compared by cardinality, which distinguishes between different infinite sets. Open, closed and compact sets are defined for an abstract topology and for the topology induced by a distance. A $\sigma$-algebra on a set $X$ is a family of subsets of $X$ that contains $\emptyset$ and is closed under complements and countable unions, and every family of subsets of $X$ generates one.
+
+Throughout, $A \subset B$ means that $A$ is contained in $B$ or equal to it, while $A \subsetneq B$ means that $A$ is strictly contained in $B$. The symbol $:=$ marks a definition.
+
+## Cardinality
+
+The aim is to distinguish between sets with infinitely many elements.
+
+**Definition 1 (Comparison of cardinalities).** Let $X$ and $Y$ be sets. We write $\#X \le \#Y$, and say that the cardinality of $X$ is less than or equal to the cardinality of $Y$, if there exists an injective map $f : X \to Y$. We write $\#X = \#Y$ if there exists a bijective map $f : X \to Y$. Finally, $\#X < \#Y$, also written $\#Y > \#X,$ means that $\#X \le \#Y$ and $\#X \neq \#Y.$
+
+**Remark 2.** Let $X$ and $Y$ be sets with $X$ nonempty. Then $\#X \le \#Y$ if and only if there exists a surjective map $f : Y \to X.$
+
+**Theorem 3 (Cantor–Bernstein).** Let $X$ and $Y$ be sets. If $\#X \le \#Y$ and $\#Y \le \#X,$ then $\#X = \#Y.$
+
+**Definition 4 (Countable and uncountable sets).** A set $X$ is *countable* if $X$ is finite or $\#X = \#\mathbb{N}.$ A set $X$ is *uncountable* if $X$ is infinite and $\#\mathbb{N} < \#X.$
+
+**Example.** The natural numbers, the integers and the rational numbers have the same cardinality, $\#\mathbb{N} = \#\mathbb{Z} = \#\mathbb{Q},$ so $\mathbb{Z}$ and $\mathbb{Q}$ are countable. The real line is uncountable, since $\#\mathbb{R} > \#\mathbb{N}.$
+
+## The extended real line
+
+**Definition 5 (Extended real line).** The *extended real line* is the set
+
+$$
+\overline{\mathbb{R}} = [-\infty, +\infty] := \mathbb{R} \cup \{+\infty\} \cup \{-\infty\}.
+$$
+
+The following sums and products involving the infinite elements are defined. For every $a \in \mathbb{R},$ $a + \infty = +\infty$ and $a - \infty = -\infty.$ For every $a \in \mathbb{R}$ with $a > 0,$ $a \cdot (+\infty) = +\infty$ and $a \cdot (-\infty) = -\infty.$ For every $a \in \mathbb{R}$ with $a < 0,$ $a \cdot (+\infty) = -\infty$ and $a \cdot (-\infty) = +\infty.$ Finally, $0 \cdot (+\infty) = 0 \cdot (-\infty) = 0.$
+
+## The power set
+
+**Definition 6 (Power set).** Let $X$ be a set. The *power set* of $X$ is the family of all subsets of $X$,
+
+$$
+\mathcal{P}(X) = \{ A : A \subset X \}.
+$$
+
+**Remark 7.** If $X$ is finite with $n \in \mathbb{N}$ elements, $\#X = n,$ then $\#\mathcal{P}(X) = 2^n.$
+
+For a set $X$, let $2^X$ denote the set of all functions from $X$ to the two-element set $\{0, 1\}$:
+
+$$
+2^X := \{ f : X \to \{0, 1\} \}.
+$$
+
+**Proposition 8.** Let $X$ be a set.
+
+**(i)** The sets $\mathcal{P}(X)$ and $2^X$ have the same cardinality, $\#\mathcal{P}(X) = \#2^X.$
+
+**(ii)** The power set of $X$ has strictly larger cardinality than $X$, that is, $\#\mathcal{P}(X) > \#X.$ In particular, there is no largest infinite cardinality. Indeed, for every infinite set $Y$ the set $\mathcal{P}(Y)$ is infinite and $\#\mathcal{P}(Y) > \#Y.$
+
+**Proof (complete).** (i) Define
+
+$$
+\phi : \mathcal{P}(X) \to 2^X, \qquad A \mapsto f_A,
+$$
+
+where
+
+$$
+f_A(x) := \begin{cases} 1 & \text{if } x \in A, \\ 0 & \text{if } x \notin A. \end{cases}
+$$
+
+The map $\phi$ is a bijection. Indeed, its inverse sends a function $f \in 2^X$ to the set $\{ x \in X : f(x) = 1 \}.$
+
+(ii) Suppose, by contradiction, that $\#\mathcal{P}(X) \le \#X.$ Then Remark 2 gives a surjective map $f : X \to \mathcal{P}(X).$ Indeed, $\mathcal{P}(X)$ is nonempty, since it contains $\emptyset.$ Define
+
+$$
+U := \{ x \in X : x \notin f(x) \} \subset X.
+$$
+
+Since $f$ is surjective, there exists $y \in X$ with $f(y) = U.$ We ask whether $y \in U.$
+
+**Case 1.** If $y \in U,$ then $y \notin f(y)$ by the definition of $U$. Since $f(y) = U,$ this says $y \notin U,$ which is impossible.
+
+**Case 2.** If $y \notin U,$ then $y \notin f(y)$ because $f(y) = U.$ By the definition of $U$ this gives $y \in U,$ which is impossible.
+
+Both cases lead to a contradiction, hence $\#\mathcal{P}(X) \le \#X$ is false and $\#\mathcal{P}(X) > \#X.$ Indeed, the map $x \mapsto \{x\}$ from $X$ to $\mathcal{P}(X)$ is injective, so $\#X \le \#\mathcal{P}(X),$ and $\#X = \#\mathcal{P}(X)$ would give $\#\mathcal{P}(X) \le \#X. \quad \blacksquare$
+
+The figure runs the construction of $U$ for $X = \{1, \dots, 6\}$ and a map $f : X \to \mathcal{P}(X).$ Row $f(x)$ is the indicator function of the set $f(x)$, as in part (i): its entry in column $z$ is $1$ if $z \in f(x)$ and $0$ otherwise. The entry of row $U$ in column $x$ is the opposite of the diagonal entry of row $f(x)$, so for each $y$ the sets $U$ and $f(y)$ differ at the element $y$. The highlight runs through the elements $y$, and the button draws a new map $f$.
+
+<Diagonal client:visible />
+
+## Countable and uncountable sets
+
+**Proposition 9.**
+
+**(i)** The power set of $\mathbb{N}$ and the real line have the same cardinality, which is strictly larger than the cardinality of $\mathbb{N}$, that is, $\#\mathbb{R} = \#\mathcal{P}(\mathbb{N}) > \#\mathbb{N}.$
+
+**(ii)** If $X$ and $Y$ are countable, then the product $X \times Y = \{ (x, y) : x \in X, \ y \in Y \}$ is countable.
+
+**(iii)** Let $X_0, X_1, X_2, \dots$ be a sequence of sets such that $X_n$ is countable for every $n$. Then $\bigcup_{n=0}^{\infty} X_n$ is countable. In words, a countable union of countable sets is countable.
+
+**Notation.** A countable union is written $\bigcup_{n=0}^{\infty} X_n$ or $\bigcup_n X_n.$ A sequence is written $(x_n).$ A family of sets indexed by a set $A$ is written $\mathcal{F} = \{ X_\alpha \}_{\alpha \in A}.$
+
+## Topology
+
+The idea is an abstract theory of open, closed and related subsets of an ambient space.
+
+**Definition 10 (Topology).** Let $X$ be a set. A *topology* on $X$ is a family of subsets $\tau \subset \mathcal{P}(X)$ with the following properties.
+
+**(i)** The sets $\emptyset$ and $X$ belong to $\tau$.
+
+**(ii)** For every family $\mathcal{F} = \{ U_\alpha \}_{\alpha \in A} \subset \tau,$ the union $\bigcup_{\alpha \in A} U_\alpha$ belongs to $\tau$.
+
+**(iii)** For every integer $k \ge 1$, if $U_1, U_2, \dots, U_k \in \tau,$ then $\bigcap_{n=1}^{k} U_n \in \tau.$
+
+The sets in $\tau$ are called *open*, and the pair $(X, \tau)$ is called a *topological space*.
+
+**Example.** Let $n \ge 1$ be an integer. On $\mathbb{R}^n$ the *Euclidean topology* $\tau_E$ is defined as follows: a set $U \subset \mathbb{R}^n$ belongs to $\tau_E$ if for every $x \in U$ there exists $r > 0$ such that $B_r(x) \subset U,$ where $B_r(x) = \{ y \in \mathbb{R}^n : \lVert y - x \rVert < r \}$, with $\lVert \cdot \rVert$ the Euclidean norm, is the open ball of centre $x$ and radius $r$. Two other topologies on $\mathbb{R}^n$ are $\tau = \{ \emptyset, \mathbb{R}^n \}$ and $\tau = \mathcal{P}(\mathbb{R}^n).$
+
+**Definition 11 (Closed set, closure, interior, boundary).** Let $(X, \tau)$ be a topological space. A set $V \subset X$ is *closed* if $X \setminus V$ is open. Let $V \subset X.$
+
+**(i)** The *closure* of $V$ is the smallest closed set containing $V$, denoted $\overline{V}.$
+
+**(ii)** The *interior* of $V$ is the largest open set contained in $V$, denoted $\operatorname{int}(V)$ or $\mathring{V}.$
+
+**(iii)** The *boundary* of $V$ is the set $\partial V = \overline{V} \cap \overline{X \setminus V}.$
+
+Indeed, the closure and the interior exist: $\overline{V}$ is the intersection of the closed sets containing $V$, a nonempty family since $X$ is closed, and this intersection is closed because its complement is a union of open sets, while $\mathring{V}$ is the union of the open sets contained in $V$.
+
+**Definition 12 (Compact set).** Let $(X, \tau)$ be a topological space and $K \subset X.$ The set $K$ is *compact* if for every family $\mathcal{F} = \{ U_\alpha \}_{\alpha \in A} \subset \tau$ such that $\bigcup_{\alpha \in A} U_\alpha \supset K$ there exist an integer $m \ge 0$ and a finite subfamily $\tilde{\mathcal{F}} = \{ V_1, \dots, V_m \} \subset \mathcal{F}$ such that $\bigcup_{n=1}^{m} V_n \supset K.$
+
+In the figure, $K$ is a closed triangle in the plane and the disks are open sets whose union contains $K$. The disks of a finite subfamily are then highlighted, and their union still contains $K$. The button draws a new family of disks.
+
+<Compact client:visible />
+
+**Definition 13 (Precompact set).** Let $(X, \tau)$ be a topological space. A set $V \subset X$ is *precompact* if its closure $\overline{V}$ is compact.
+
+**Theorem 14 (Heine–Borel).** Let $n \ge 1$ be an integer and let $\mathbb{R}^n$ carry the Euclidean topology. A set $K \subset \mathbb{R}^n$ is compact if and only if $K$ is closed and bounded with respect to the Euclidean distance $d(x, y) = \lVert x - y \rVert.$
+
+**Example (Topology on the extended real line).** The topology on $\overline{\mathbb{R}}$ is the smallest topology on $\overline{\mathbb{R}}$ in which the following sets are open: the intervals $(a, b)$ with $a, b \in \mathbb{R},$ every set that is open in $\mathbb{R},$ and the sets $[-\infty, a)$ and $(a, +\infty]$ for every $a \in \mathbb{R}.$ Indeed, such a topology exists: it is the intersection of all topologies on $\overline{\mathbb{R}}$ in which these sets are open, a nonempty family that contains $\mathcal{P}(\overline{\mathbb{R}}),$ and an intersection of topologies is a topology.
+
+**Definition 15 (Continuous map).** Let $(X, \tau_X)$ and $(Y, \tau_Y)$ be topological spaces and let $f : X \to Y.$ The map $f$ is *continuous* if $f^{-1}(A) \in \tau_X$ for every $A \in \tau_Y,$ that is, if the preimage of every open set is open.
+
+## Metric spaces
+
+**Definition 16 (Metric space).** A *metric space* is a pair $(X, d)$ where $X$ is a set and $d$ is a *distance* on $X$, that is, a function $d : X \times X \to [0, +\infty)$ such that for all $x, y, z \in X$
+
+$$
+\begin{aligned}
+&d(x, y) = 0 \iff x = y, \\
+&d(x, y) = d(y, x), \\
+&d(x, y) \le d(x, z) + d(z, y).
+\end{aligned}
+$$
+
+**Definition 17 (Topology induced by a distance).** Let $(X, d)$ be a metric space. For $x \in X$ and $r > 0$ the *open ball* of centre $x$ and radius $r$ is
+
+$$
+B_r(x) := \{ y \in X : d(x, y) < r \}.
+$$
+
+A set $U \subset X$ is *open* if for every $x \in U$ there exists $r > 0$ such that $B_r(x) \subset U.$ These open sets form the *topology induced by the distance* $d$.
+
+The figure shows an open set $U$ of the plane with the Euclidean distance. Its boundary is dashed because it does not belong to $U$. The radius drawn is a fixed fraction of the distance from the moving point $x$ to the boundary, so the ball $B_r(x)$ lies in $U$, shrinks as $x$ approaches the boundary, and has positive radius at every point of $U$.
+
+<OpenBall client:visible />
+
+**Lemma 18.** Let $(X, d)$ be a metric space with the topology induced by $d$. A sequence $(x_n) \subset X$ *converges* to $x_0 \in X$, written $x_n \to x_0,$ if $\lim_{n \to \infty} d(x_n, x_0) = 0.$
+
+**(i)** A set $V \subset X$ is closed if and only if $V$ is *sequentially closed*, that is, whenever $(x_n) \subset V$ and $x_n \to x_0$ for some $x_0 \in X,$ then $x_0 \in V.$
+
+**(ii)** A set $K \subset X$ is compact if and only if $K$ is *sequentially compact*, that is, every sequence $(x_n) \subset K$ has a subsequence $(x_{n_k})$ such that $x_{n_k} \to x_0$ for some $x_0 \in K.$
+
+**(iii)** If $V \subset X$ is closed, $K \subset X$ is compact and $V \subset K,$ then $V$ is compact.
+
+**Lemma 19.** Let $(X, d_X)$ and $(Y, d_Y)$ be metric spaces and let $f : X \to Y.$ The following are equivalent.
+
+**(i)** The map $f$ is continuous with respect to the topologies induced by $d_X$ and $d_Y.$
+
+**(ii)** For every $x_0 \in X$ and every $\varepsilon > 0$ there exists $\delta > 0$ such that $d_Y(f(x), f(x_0)) < \varepsilon$ for every $x \in X$ with $d_X(x, x_0) < \delta.$
+
+**(iii)** For every $x_0 \in X$ and every sequence $(x_n) \subset X$ with $x_n \to x_0,$ that is, $d_X(x_n, x_0) \to 0,$ the sequence $(f(x_n)) \subset Y$ satisfies $f(x_n) \to f(x_0),$ that is, $d_Y(f(x_n), f(x_0)) \to 0.$
+
+## Measurable spaces
+
+**Definition 20 ($\sigma$-algebra, measurable space).** Let $X$ be a set. A family $\mathcal{M} \subset \mathcal{P}(X)$ is a *$\sigma$-algebra* on $X$ if it has the following properties.
+
+**(i)** The empty set belongs to $\mathcal{M}$, that is, $\emptyset \in \mathcal{M}.$
+
+**(ii)** If $A \in \mathcal{M},$ then $X \setminus A \in \mathcal{M}.$
+
+**(iii)** If $(A_n) \subset \mathcal{M},$ then $\bigcup_n A_n \in \mathcal{M}.$
+
+A *measurable space* is a pair $(X, \mathcal{M})$ where $\mathcal{M}$ is a $\sigma$-algebra on $X$.
+
+**Example.** For every set $X$, both $\mathcal{P}(X)$ and $\{ \emptyset, X \}$ are $\sigma$-algebras on $X$. A topology is in general not a $\sigma$-algebra, for example the Euclidean topology on $\mathbb{R}$. Indeed, it contains $(0, 1)$ but not its complement $\mathbb{R} \setminus (0, 1).$
+
+**Remark 21.** Let $(X, \mathcal{M})$ be a measurable space.
+
+**(i)** If $E, F \in \mathcal{M},$ then $E \cap F \in \mathcal{M}$ and $E \setminus F \in \mathcal{M}.$
+
+**(ii)** If $(E_n) \subset \mathcal{M},$ then $\bigcap_n E_n \in \mathcal{M}.$
+
+**Proof (sketch).** Intersections are written through complements and unions:
+
+$$
+\begin{aligned}
+E \cap F &= X \setminus \big( X \setminus (E \cap F) \big) \\
+&= X \setminus \big( (X \setminus E) \cup (X \setminus F) \big).
+\end{aligned}
+$$
+
+**Details.** The sets $X \setminus E$ and $X \setminus F$ belong to $\mathcal{M}$ by property (ii) of Definition 20, and their union belongs to $\mathcal{M}$ by property (iii) applied to the sequence $X \setminus E, X \setminus F, \emptyset, \emptyset, \dots.$ By property (ii) again, $E \cap F \in \mathcal{M}.$ Then $E \setminus F = E \cap (X \setminus F) \in \mathcal{M}.$ In the same way, $\bigcap_n E_n = X \setminus \bigcup_n (X \setminus E_n)$ belongs to $\mathcal{M}$. $\blacksquare$
+
+**Definition 22 (Restricted $\sigma$-algebra).** Let $(X, \mathcal{M})$ be a measurable space and $\Omega \subset X.$ The *restricted $\sigma$-algebra* is
+
+$$
+\mathcal{M}_\Omega = \mathcal{M}|_\Omega := \{ E \cap \Omega : E \in \mathcal{M} \}.
+$$
+
+The pair $(\Omega, \mathcal{M}_\Omega)$ is a measurable space. Indeed, for $E \in \mathcal{M}$ and every sequence $(E_n) \subset \mathcal{M}$ we have $\emptyset = \emptyset \cap \Omega,$ $\Omega \setminus (E \cap \Omega) = (X \setminus E) \cap \Omega$ and $\bigcup_n (E_n \cap \Omega) = \big( \bigcup_n E_n \big) \cap \Omega,$ where $\emptyset,$ $X \setminus E$ and $\bigcup_n E_n$ belong to $\mathcal{M}$.
+
+**Theorem 23 (Generated $\sigma$-algebra).** Let $X$ be a set and $\mathcal{F} \subset \mathcal{P}(X).$ There exists a $\sigma$-algebra $\mathcal{M}$ on $X$ with the following properties.
+
+**(i)** The family $\mathcal{F}$ is contained in $\mathcal{M}$.
+
+**(ii)** For every $\sigma$-algebra $\mathcal{Q}$ on $X$ with $\mathcal{F} \subset \mathcal{Q},$ we have $\mathcal{M} \subset \mathcal{Q}.$
+
+In words, $\mathcal{M}$ is the smallest $\sigma$-algebra containing $\mathcal{F}$. Such an $\mathcal{M}$ is unique. Indeed, two $\sigma$-algebras with properties (i) and (ii) contain each other. This $\mathcal{M}$ is denoted $\sigma_0(\mathcal{F}).$
+
+**Proof (sketch).** Let $W$ be the family of all $\sigma$-algebras $\mathcal{Q}$ on $X$ such that $\mathcal{F} \subset \mathcal{Q}.$ The family $W$ is nonempty, because $\mathcal{P}(X) \in W.$ Define
+
+$$
+\mathcal{M} := \bigcap \{ \mathcal{Q} : \mathcal{Q} \in W \},
+$$
+
+the family of the sets that belong to every $\mathcal{Q} \in W.$
+
+**Details.** The set $\emptyset$ belongs to every $\mathcal{Q} \in W.$ If $A$ belongs to every $\mathcal{Q} \in W,$ so does $X \setminus A.$ If every $A_n$ belongs to every $\mathcal{Q} \in W,$ so does $\bigcup_n A_n.$ Hence $\mathcal{M}$ is a $\sigma$-algebra. It contains $\mathcal{F}$ because every $\mathcal{Q} \in W$ does, which is (i). If $\mathcal{Q}$ is a $\sigma$-algebra on $X$ with $\mathcal{F} \subset \mathcal{Q},$ then $\mathcal{Q} \in W,$ and therefore $\mathcal{M} \subset \mathcal{Q},$ which is (ii). $\blacksquare$
+
+**Definition 24 (Borel $\sigma$-algebra).** Let $(X, \tau)$ be a topological space. The *Borel $\sigma$-algebra* of $X$ is $\sigma_0(\tau),$ the $\sigma$-algebra generated by the open sets. It is denoted $\mathcal{B}(X).$
+
+**Remark 25.** The Borel $\sigma$-algebra of $\mathbb{R}$ with the Euclidean topology $\tau_E$ is generated by each of the following families of sets:
+
+$$
+\begin{aligned}
+\mathcal{B}(\mathbb{R}) &= \sigma_0(\tau_E) \\
+&= \sigma_0\big( \{ (a, b) : a, b \in \mathbb{R}, \ a < b \} \big) \\
+&= \sigma_0\big( \{ [a, b] : a, b \in \mathbb{R}, \ a < b \} \big) \\
+&= \sigma_0\big( \{ (a, +\infty) : a \in \mathbb{R} \} \big).
+\end{aligned}
+$$
+
+Similarly, $\mathcal{B}(\overline{\mathbb{R}}) = \sigma_0\big( \{ (a, +\infty] : a \in \mathbb{R} \} \big),$ and, for every integer $N \ge 1$, $\mathcal{B}(\mathbb{R}^N) = \sigma_0\big( \{ \text{open rectangles} \} \big),$ where an *open rectangle* is a set of the form $(a_1, b_1) \times (a_2, b_2) \times \dots \times (a_N, b_N)$ with $a_i, b_i \in \mathbb{R}$ and $a_i < b_i$ for every $i$.

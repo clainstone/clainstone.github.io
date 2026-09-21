@@ -1,0 +1,17 @@
+{
+  "name": "Alessandro Palliccia",
+  "email": "clainstone@outlook.it",
+  "emailIsPlaceholder": false,
+  "photo": "photo.jpg",
+  "line": "Mathematical Engineering, Politecnico di Milano. Milan.",
+  "bio": [
+    "I study Mathematical Engineering at Politecnico di Milano on the Statistical Learning track, after earning a degree in Computer Science. I am equally interested in understanding why machine learning models work and in making them run well on real hardware.",
+    "I am building SpikeFlow8, an inference engine that runs natively on AMD Ryzen AI chips and uses both their GPU and NPU. This site collects my notes as threads about what I study and build."
+  ],
+  "contacts": [
+    { "label": "Email", "text": "clainstone@outlook.it", "href": "mailto:clainstone@outlook.it" },
+    { "label": "X", "text": "@cclainstone", "href": "https://x.com/cclainstone" },
+    { "label": "GitHub", "text": "clainstone", "href": "https://github.com/clainstone" }
+  ],
+  "language": "en"
+}

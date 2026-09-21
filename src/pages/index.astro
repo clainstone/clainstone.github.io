@@ -1,0 +1,36 @@
+---
+import Base from '../layouts/Base.astro';
+import M from '../components/M.astro';
+import { SITE, PHOTO, getPosts, postUrl, formatDate, isoDate } from '../lib/site';
+const latest = (await getPosts()).slice(0, 10);
+---
+<Base section="main">
+  <section class="who">
+    <img class="photo" src={PHOTO.src} width="112" height="112" alt={`Portrait of ${SITE.name}`} />
+    <h1>{SITE.name}</h1>
+    <p class="email"><a href={`mailto:${SITE.email}`}>{SITE.email}</a></p>
+    <p class="line">{SITE.line}</p>
+  </section>
+  <section class="bio">
+    {SITE.bio.map((p) => <p>{p}</p>)}
+  </section>
+  <section class="latest" aria-labelledby="latest-h">
+    <h2 id="latest-h">Latest posts</h2>
+    <ul class="rows">
+      {latest.map((post) => (
+        <li>
+          <a href={postUrl(post)}><M text={post.data.title} /></a>{' '}
+          <time class="date" datetime={isoDate(post.data.date)}>{formatDate(post.data.date)}</time>
+        </li>
+      ))}
+    </ul>
+  </section>
+  <section class="contacts" aria-labelledby="contacts-h">
+    <h2 id="contacts-h">Contacts</h2>
+    <ul class="rows">
+      {SITE.contacts.map((c) => (
+        <li><span class="label">{c.label}</span>{' '}<a href={c.href}>{c.text}</a></li>
+      ))}
+    </ul>
+  </section>
+</Base>

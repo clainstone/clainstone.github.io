@@ -1,0 +1,41 @@
+---
+title: "Work and span, a parallel algorithm has two costs"
+date: 2026-09-18
+sample: true
+summary: "Work is the total operations, span is the longest dependency chain. Brent's bound turns the pair into a running time for any number of processors."
+---
+
+import WorkSpan from './WorkSpan.svelte';
+
+A sequential algorithm has one cost, its running time. A parallel algorithm has two.
+
+**Work** $T_1$: the total number of operations, the time on one processor.
+
+**Span** $T_\infty$: the length of the longest chain of dependent operations, the time on infinitely many processors.
+
+The ratio $T_1 / T_\infty$ is the parallelism: the largest number of processors that can be kept busy. Brent's bound gives the running time on $p$ processors under a greedy scheduler:
+
+$$
+T_p \;\le\; \frac{T_1}{p} + T_\infty .
+$$
+
+The first term is the perfectly shared work, the second is the part no amount of hardware shortens.
+
+The example that made this concrete for me is summing $n$ numbers with a tree of pairwise additions.
+
+<WorkSpan client:visible={{ rootMargin: '240px' }} />
+
+```
+sum(a[0..n)):
+    if n == 1: return a[0]
+    left  = spawn sum(a[0..n/2))
+    right = sum(a[n/2..n))
+    sync
+    return left + right
+```
+
+Work is $\Theta(n)$: every element is added once. Span is $\Theta(\log n)$: the tree has $\log_2 n$ levels and each level depends on the one below. Parallelism is $\Theta(n / \log n)$, which is enormous, so the reduction scales until $p$ approaches that ratio.
+
+The sequential loop has the same work and a span of $\Theta(n)$. Same answer, same operation count, a completely different second cost. That is the whole point of the model: two algorithms with identical work can differ by a factor of $n / \log n$ in how much a parallel machine can help them.
+
+Still open: Brent's bound assumes a greedy scheduler. I want to know how far real runtimes fall from it.

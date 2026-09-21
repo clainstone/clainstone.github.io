@@ -1,0 +1,26 @@
+---
+title: "Two thousand sprites in a terminal"
+date: 2026-09-08
+sample: true
+summary: "The Kitty graphics protocol lets a program transmit an image once and place it many times. The flock is one sprite and about 2,000 placements per frame."
+---
+
+import Boids from './Boids.svelte';
+
+[Boids](https://en.wikipedia.org/wiki/Boids) is three rules. Each bird steers away from neighbours that are too close, aligns its heading with the average of its neighbours, and moves toward their centre of mass. Sum the three steering vectors, clamp the speed, step. Reynolds published the rules in 1987 and nothing in my implementation improves on them.
+
+<Boids client:visible />
+
+The interesting part is the terminal. Kitty's graphics protocol lets a program send an image through escape sequences, give it an id, and then place that image at a cell position, with an optional pixel offset inside the cell, as many times as it wants. Transmission and placement are separate operations. That separation is the whole design.
+
+**Transmit once.** The bird sprite is a small PNG, uploaded a single time and kept by the terminal.
+
+**Place many.** Every frame emits about 2,000 placement commands, one per bird, each with a cell position and a sub-cell offset. The terminal composites them.
+
+**Delete and repeat.** The previous frame's placements are cleared by id before the next batch is written.
+
+The simulator never draws a pixel itself. It computes positions, converts them to cells plus offsets, and writes text to standard output. Moving the flock costs the same as printing a long string.
+
+The recording will go here. Until then, the claim is only the design: one image, many placements, a flock of about 2,000 birds in a terminal window.
+
+Still open: A clean recording. The simulator works; this thread needs the artifact before it needs more words.

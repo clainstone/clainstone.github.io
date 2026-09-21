@@ -1,0 +1,22 @@
+---
+title: "Why depth, the composition argument"
+date: 2026-09-13
+sample: true
+summary: "A network of ReLU layers computes a piecewise-linear function. Composition multiplies the number of linear regions; adding width only adds to it."
+---
+
+import Depth from './Depth.svelte';
+
+A network with ReLU activations computes a piecewise-linear function. The input space is divided into regions, and on each region the network is an affine map. The number of regions is one way to measure how complicated a function the network can represent.
+
+The book's argument for depth is a counting argument. A single hidden layer with $D$ units cuts the input space with $D$ hyperplanes. In one dimension, that gives at most $D + 1$ regions. Adding units adds regions additively.
+
+Stacking layers does something different. Each layer folds the output of the previous one, and every region of the earlier layer can be subdivided again by the next. With $K$ layers of width $D$ in one dimension, the number of regions can grow like $(D + 1)^K$. Depth multiplies where width adds.
+
+<Depth client:visible={{ rootMargin: '600px' }} />
+
+The chapter is careful about the word *can*. The count is an upper bound, reached by a specific construction. A trained network typically uses far fewer regions than the bound allows. So the argument establishes that deep networks are more expressive per parameter, and it establishes nothing about whether training reaches that expressiveness.
+
+I take two things from it. First, the composition view is the honest way to say what depth buys: repeated folding, with a multiplicative count. Second, every result of this kind has to be paired with a statement about optimization before it explains anything I observe on a real model.
+
+Still open: The argument is about what the network can represent. It says nothing about what gradient descent finds, and that is the question I care about.

@@ -1,0 +1,22 @@
+---
+title: "What runs on the NPU today, and what does not"
+date: 2026-09-12
+sample: true
+summary: "RWKV-7 runs on an AMD NPU through IRON. Nothing else is supported. The first public measurement will arrive with its full conditions or not at all."
+---
+
+A project thread accumulates claims, so I want the claim status on record before the first result.
+
+**Current.** SpikeFlow8 runs RWKV-7 on an AMD Ryzen AI NPU through IRON. The engine is a command-line program, about 95% C11.
+
+**Measured.** Nothing public yet. Internal runs exist; they do not count until they are reproducible with the model, the quantization, the machine, the context length and the command.
+
+**Planned.** A capable Transformer or MoE model. RWKV-8. Experiments on other hardware, including the two RTX 5070 Ti in my workstation. These are directions, not features.
+
+**Not supported.** Everything not listed above. If a model or a backend does not appear under *current*, the engine does not run it.
+
+**Release.** The full source will be published under the MIT license when the demonstration, the architecture explanation, one reproducible measurement, an English README and an explicit limitations section are all ready. There is no date, because the gate is the artifact, not the calendar.
+
+I will edit this entry when a status changes, with the date of the change. That is what a living thread is for.
+
+Still open: The measurement protocol. I have to fix the prompt set, the context lengths and the timing points before the first number exists.

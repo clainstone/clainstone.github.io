@@ -1,0 +1,28 @@
+---
+title: "Coalescing in one picture"
+date: 2026-09-10
+sample: true
+summary: "A warp issues one memory request. Contiguous addresses fill it; strided addresses fragment it into many. The rule is about transactions, not bytes."
+---
+
+import Coalesce from './Coalesce.svelte';
+
+The chapter on memory access states a rule that looks like a detail and turns out to be the whole game. Threads in a warp execute the same load instruction at the same time. The hardware groups their addresses and issues as few memory transactions as it can. If the thirty-two addresses are contiguous and aligned, they fit in a minimal number of transactions. If they are spread out, each thread can end up costing its own.
+
+The picture I keep in my head is a row of threads and a row of memory.
+
+```
+thread   0  1  2  3  4  5  6  7 ...
+coalesced address  a  a+1  a+2  a+3  ...      one request, few transactions
+strided  address   a  a+s  a+2s a+3s ...      one request, many transactions
+```
+
+<Coalesce client:visible={{ rootMargin: '600px' }} />
+
+The same number of bytes is delivered to the threads in both cases. The cost differs because the memory system moves fixed-size blocks, and a strided pattern touches many blocks to use a few bytes from each.
+
+The consequence for layout is immediate. A matrix stored row-major and read column by column across a warp is the strided case. Either transpose the data or transpose the mapping from threads to elements, and the same kernel becomes the coalesced case. The book's examples do exactly this, and the shared-memory tiling of the later chapters is one more way of buying a coalesced global read and paying for the reshuffle on chip.
+
+What I want from my own measurement is the shape of the curve: bytes per second as a function of stride, on one 5070 Ti, for a plain copy kernel. The book gives the mechanism; the number belongs to the card.
+
+Still open: The exact transaction size and the behaviour of the L2 on the RTX 5070 Ti. The book states a rule; I will measure it on my own cards.

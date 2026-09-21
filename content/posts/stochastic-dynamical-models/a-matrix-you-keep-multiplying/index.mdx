@@ -1,0 +1,36 @@
+---
+title: "A Markov chain is a matrix you keep multiplying"
+date: 2026-09-14
+sample: true
+summary: "The state keeps moving. The distribution over states is what settles, and it settles as a fixed point of a linear map."
+---
+
+import Chain from './Chain.svelte';
+
+A finite [Markov chain](https://en.wikipedia.org/wiki/Markov_chain) is a matrix $P$ whose rows sum to one. Row $i$ is the distribution of the next state given that the current state is $i$. If $\mu_n$ is the row vector of probabilities over states at time $n$, then
+
+$$
+\mu_{n+1} = \mu_n P, \qquad \mu_n = \mu_0 P^n.
+$$
+
+That single line is the whole object. Simulating the chain means sampling from a row; analyzing it means multiplying by $P$ forever.
+
+<Chain client:visible />
+
+A stationary distribution is a fixed point of the multiplication:
+
+$$
+\pi P = \pi, \qquad \sum_i \pi_i = 1 .
+$$
+
+It is a left eigenvector of $P$ with eigenvalue $1$. The state of the chain does not stop moving when the distribution is stationary. The chain keeps jumping; what stays constant is the probability of finding it in each place.
+
+The smallest example has two states. Let the chain leave state $1$ with probability $p$ and leave state $2$ with probability $q$:
+
+$$
+P = \begin{pmatrix} 1 - p & p \\ q & 1 - q \end{pmatrix}, \qquad \pi = \left( \frac{q}{p+q},\ \frac{p}{p+q} \right).
+$$
+
+The check is one multiplication: $\pi_1 (1-p) + \pi_2 q = \frac{q(1-p) + pq}{p+q} = \frac{q}{p+q} = \pi_1$. The state that is harder to leave carries more of the mass. That reading survives in every larger chain I have seen so far.
+
+Still open: Existence and uniqueness for infinite state spaces. The finite case hides how much the matrix is doing.

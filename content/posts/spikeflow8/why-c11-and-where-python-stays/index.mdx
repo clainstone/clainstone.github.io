@@ -1,0 +1,20 @@
+---
+title: "Why C11, and where Python stays"
+date: 2026-09-05
+sample: true
+summary: "The engine is C11 because I want control of memory layout and no runtime between me and the hardware. Python stays only where the AMD IRON toolchain requires it."
+---
+
+SpikeFlow8 is about 95% C11. The remaining Python is not a convenience; it is the part of the AMD IRON toolchain that only exists in Python. This entry records where the line sits and why.
+
+**Why C.** An inference engine is a program about memory. Where the weights live, how the state is laid out, which buffers are reused, when data crosses to the accelerator. In C, every one of those decisions is mine and visible in the source. There is no runtime, no allocator I did not choose, no hidden copy. The cost is that I write more, and I accept that cost because the alternative is not understanding my own numbers.
+
+**Why C11 specifically.** Standard atomics and threads are enough for what the engine needs, and the standard is old enough that every compiler I care about implements it without flags.
+
+**Where Python stays.** IRON describes the NPU's dataflow and generates the artifacts the hardware runs. That description is written in Python, and the generator is Python. So the build step that produces the kernels is Python. The engine that loads them and runs the model is C.
+
+The boundary is therefore a file, not a function call. Python produces artifacts at build time; the C engine loads them at run time. The two never share a process.
+
+What I want to check next is whether the run-time side can be made fully independent of the Python environment on the target machine. If yes, the boundary becomes a clean build dependency and nothing more.
+
+Still open: Whether the boundary can move further, so that a built artifact runs with no Python at all on the target machine.

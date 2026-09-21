@@ -1,0 +1,22 @@
+---
+title: "Design notes before any number"
+date: 2026-09-11
+sample: true
+summary: "Byte-level input, a flat merge table indexed by pair, a priority structure for encoding, and one pass of pre-tokenization. Numbers come with the corpus, the vocabulary, the machine and the command."
+---
+
+The book thread describes what a byte-pair tokenizer computes. This entry records how mine is built, before it has produced a single number, so that the number can be read against the decisions.
+
+**Byte-level input.** The base vocabulary is the 256 byte values. No unicode normalization inside the tokenizer, no unknown token. Any input encodes.
+
+**Merges as a flat table.** The learned merges are stored as a table from a pair of token ids to the merged id and its rank. Lookup is one hash probe; the rank decides which merge applies first.
+
+**Encoding with a priority structure.** Within a pre-token, all adjacent pairs enter a heap keyed by rank. Pop the lowest rank, merge, update the two neighbouring pairs, repeat. The naive scan is quadratic in the pre-token length; the heap makes it logarithmic per merge.
+
+**One pass of pre-tokenization.** Text is split into pre-tokens once, before any merge, with a fixed rule. The split is where compatibility with an existing vocabulary lives or dies, because a different split produces different tokens even with identical merges.
+
+**Batch, not stream.** The tokenizer takes a buffer and returns ids. Streaming is a later concern.
+
+Every one of these choices can be wrong for a given corpus. The measurement that decides will state the corpus, the vocabulary, the machine and the command, and it will compare against whatever is fast that month under the same four conditions.
+
+Still open: Whether compatibility with existing vocabularies is worth the constraints it imposes on the pre-tokenizer.

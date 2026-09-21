@@ -1,0 +1,32 @@
+---
+title: "Amdahl's law is a budget"
+date: 2026-09-15
+sample: true
+summary: "The serial fraction caps the speed-up no matter how many processors you add. On an accelerator, the serial fraction is usually the host."
+---
+
+import Amdahl from './Amdahl.svelte';
+
+[Amdahl's law](https://en.wikipedia.org/wiki/Amdahl%27s_law) is one line. Let a fraction $f$ of a program's time be parallelizable and the rest serial. With $p$ processors the speed-up is
+
+$$
+S(p) = \frac{1}{(1 - f) + \dfrac{f}{p}} .
+$$
+
+As $p \to \infty$ the second term vanishes and $S \to 1 / (1 - f)$. If ten percent of the time is serial, no machine on earth gives more than a factor of ten.
+
+<Amdahl client:visible />
+
+I read the law as a budget, not as a prediction. It tells me where the ceiling is and which part of the program owns it. The parallel part can be made arbitrarily fast; the serial part is the account I actually have to manage.
+
+On an accelerator the picture maps cleanly. The kernels are the parallel fraction. Everything on the host, from preparing buffers to launching work and reading results back, is serial with respect to the accelerator. When an engine like the one I am building moves a layer onto the NPU, the question is never only how fast the layer runs. It is how much of the step remains on the host afterwards, because that remainder is $1 - f$.
+
+Gustafson's reading turns the same algebra around. Fix the wall time instead of the problem size, let the parallel part grow with $p$, and the scaled speed-up is
+
+$$
+S'(p) = (1 - f) + f\, p .
+$$
+
+Both are true. Amdahl answers "how much faster can I run this problem"; Gustafson answers "how much bigger a problem can I run in the same time". For inference at a fixed model size I live under Amdahl.
+
+Still open: How to measure the serial fraction honestly when the serial part itself changes with the number of processors.

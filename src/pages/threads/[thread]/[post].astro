@@ -1,0 +1,34 @@
+---
+import { render } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import M from '../../../components/M.astro';
+import { getPosts, threadOf, threadUrl, wordCount, formatDate, isoDate, type Post } from '../../../lib/site';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((post) => {
+    const [thread, slug] = post.id.split('/');
+    return { params: { thread, post: slug }, props: { post } };
+  });
+}
+const { post } = Astro.props as { post: Post };
+const thread = await threadOf(post);
+const { Content } = await render(post);
+const words = wordCount(post.body);
+---
+<Base title={post.data.title} description={post.data.summary ?? `${post.data.title}, a post in ${thread.data.title}.`} section="threads">
+  <article class="post">
+    <header>
+      <p class="thread"><a href={threadUrl(thread)}><M text={thread.data.title} /></a></p>
+      <h1><M text={post.data.title} /></h1>
+      <p class="meta">
+        <span class="words">{words} words</span>{', '}
+        <time datetime={isoDate(post.data.date)}>{formatDate(post.data.date)}</time>
+        {post.data.updated && <>{', updated '}<time datetime={isoDate(post.data.updated)}>{formatDate(post.data.updated)}</time></>}
+      </p>
+    </header>
+    <div class="body">
+      <Content />
+    </div>
+  </article>
+</Base>

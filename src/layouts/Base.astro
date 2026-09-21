@@ -1,0 +1,56 @@
+---
+import 'katex/dist/katex.min.css';
+import '@toolkit/toolkit.css';
+import '@fontsource/source-serif-4/400.css';
+import '@fontsource/source-serif-4/400-italic.css';
+import '@fontsource/source-serif-4/600.css';
+import '@fontsource/source-code-pro/400.css';
+import '../styles/global.css';
+import { SITE, plain } from '../lib/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** main | threads, for aria-current in the bar */
+  section?: 'main' | 'threads';
+}
+const { title, description: rawDescription = SITE.line, section } = Astro.props;
+const description = plain(rawDescription);
+const fullTitle = title ? `${plain(title)} · ${SITE.name}` : SITE.name;
+// The build writes page.html files, but links and GitHub Pages use the
+// address without the extension: /threads, not /threads.html.
+const cleanPath = Astro.url.pathname.replace(/(^|\/)index\.html$/, '$1').replace(/\.html$/, '');
+const canonical = new URL(cleanPath, Astro.site);
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={SITE.name} />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" type="application/rss+xml" title={SITE.name} href="/feed.xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary" />
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="bar">
+      <nav aria-label="Sections">
+        <ul>
+          <li><a href="/" aria-current={section === 'main' ? 'page' : undefined}>Main</a></li>
+          <li><a href="/threads" aria-current={section === 'threads' ? 'page' : undefined}>Threads</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main id="main">
+      <slot />
+    </main>
+  </body>
+</html>

@@ -1,0 +1,41 @@
+/* Base styles for the animation toolkit.
+   A site sets the five properties on :root from its own tokens; the
+   animations read them (loop.js `palette`) for every stroke, fill and label,
+   so a canvas draws in the page's colours and type. The layout below stays. */
+:root {
+  --anim-ink: #1a1a1a;
+  --anim-muted: #7a7a7a;
+  --anim-rule: #cfcfcf;
+  --anim-accent: #1e5ac8;
+  --anim-font: system-ui, sans-serif;
+}
+
+astro-island { display: block; }
+
+.anim { position: relative; margin: 1.5rem 0; }
+.anim canvas { display: block; width: 100%; height: auto; }
+.anim svg { display: block; width: 100%; height: auto; }
+
+/* One row of controls: the button at the left, the sliders at its right,
+   further sliders under the first. */
+.anim-controls { display: flex; align-items: flex-start; gap: 0.5rem 1rem; margin-top: 0.6rem; }
+.anim-toggle {
+  flex: none;
+  font: inherit; font-size: 0.8125rem; line-height: 1;
+  padding: 0.45em 0.7em; border: 1px solid var(--anim-rule); border-radius: 2px;
+  background: transparent; color: var(--anim-muted); cursor: pointer;
+}
+.anim-toggle:hover, .anim-toggle:focus-visible { color: var(--anim-ink); border-color: var(--anim-ink); }
+.anim-sliders { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 0.35rem; }
+.anim-slider { display: flex; align-items: center; gap: 0.75rem; margin: 0; font-size: 0.8125rem; line-height: 1.6; color: var(--anim-muted); }
+.anim-slider-label { flex: none; min-width: 6ch; }
+.anim-slider input[type='range'] { flex: 1 1 auto; min-width: 0; margin: 0; accent-color: var(--anim-accent); }
+.anim-slider output { flex: none; min-width: 4ch; text-align: right; font-variant-numeric: tabular-nums; color: var(--anim-ink); }
+@media (max-width: 500px) {
+  .anim-controls { flex-wrap: wrap; }
+  .anim-sliders { flex-basis: 100%; }
+}
+
+.anim-figure { margin: 1.5rem 0; }
+.anim-figure img, .anim-figure video { display: block; width: 100%; height: auto; }
+.anim-figure figcaption { margin-top: 0.5rem; font-size: 0.9em; color: var(--anim-muted); }

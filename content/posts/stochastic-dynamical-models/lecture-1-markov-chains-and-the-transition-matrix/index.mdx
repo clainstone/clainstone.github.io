@@ -1,0 +1,328 @@
+---
+title: 'Lecture 1, Markov chains and the transition matrix'
+date: 2026-09-19
+summary: 'A Markov chain on a countable state space $I$ is determined by an initial distribution $\lambda$ and a stochastic matrix $P$. The probability of a path is the initial probability of its first state times a product of entries of $P$, the $n$-step transition matrix is the power $P^n$, and for a chain with two states $P^n$ has a closed form.'
+---
+
+import FrogGraph from './FrogGraph.svelte';
+import FrogSim from './FrogSim.svelte';
+import FrogPowers from './FrogPowers.svelte';
+import TwoState from './TwoState.svelte';
+
+A Markov chain is a sequence of random variables $X_0, X_1, X_2, \dots$ with values in a countable set, in which the distribution of the next value depends only on the current one. The chain is determined by the distribution of $X_0$ and by a matrix of one-step transition probabilities, and the probabilities after $n$ steps are the entries of the $n$-th power of that matrix.
+
+[Markov chains](https://en.wikipedia.org/wiki/Markov_chain) were introduced in 1906 by Andrey Andreyevich Markov (1856–1922) and are named after him.
+
+## A frog on seven lily pads
+
+**Example 1.1.** A frog hops among 7 lily pads, numbered from 1 to 7. The number next to each arrow of the diagram is the probability that, at the next jump, the frog moves along that arrow to a neighbouring pad. When the probabilities on the arrows leaving a pad sum to less than 1, the frog stays where it is with the remaining probability, which the diagram draws as a loop.
+
+<FrogGraph />
+
+The pads are the 7 *states*. The probabilities of the jumps form the matrix
+
+$$
+P = \begin{pmatrix}
+0 & 1 & 0 & 0 & 0 & 0 & 0 \\[4pt]
+0 & \frac12 & \frac12 & 0 & 0 & 0 & 0 \\[4pt]
+\frac12 & 0 & \frac12 & 0 & 0 & 0 & 0 \\[4pt]
+0 & 0 & \frac14 & \frac12 & \frac14 & 0 & 0 \\[4pt]
+0 & 0 & 0 & 0 & 0 & \frac12 & \frac12 \\[4pt]
+0 & 0 & 0 & 1 & 0 & 0 & 0 \\[4pt]
+0 & 0 & 0 & 0 & 0 & 0 & 1
+\end{pmatrix},
+$$
+
+whose entry $p_{ij}$, in row $i$ and column $j$, is the probability that the next jump takes the frog to state $j$ when it is in state $i$. For example, $p_{57} = \frac12$ is the probability that, starting in state 5, the next jump takes the frog to state 7.
+
+We would like to know where the frog goes, how long it takes to get there, and what happens in the long run. Write $p^{(n)}_{11}$ for the probability that the frog, starting in state 1, is in state 1 after $n$ jumps. The questions below come with their answers.
+
+**(a)** Starting in state 1, what is the probability that the frog is in state 1 after 3 jumps, after 5 jumps, after 1000 jumps? The answers are $p^{(3)}_{11} = \frac14$, $p^{(5)}_{11} = \frac{3}{16}$, and approximately $\frac15$ after 1000 jumps, since $\lim_{n \to \infty} p^{(n)}_{11} = \frac15$. Indeed, for $n = 3$ the only sequence of jumps from state 1 back to state 1 with positive probability visits the states 1, 2, 3, 1, and its probability is $1 \cdot \frac12 \cdot \frac12 = \frac14$.
+
+**(b)** Starting in state 4, what is the probability that the frog ever reaches state 7? The answer is $\frac13$.
+
+**(c)** Starting in state 4, what is the expected number of jumps until the frog reaches either state 3 or state 7? The answer is $\frac{11}{3}$.
+
+**(d)** Starting in state 2, what is the long-run proportion of time that the frog spends in state 3? The answer is $\frac25$.
+
+**Remark.** Markov chain models and methods answer questions such as the following. How long does it take to shuffle a deck of cards? How likely is a queue to overflow its buffer? A knight moves on a chessboard, choosing each move uniformly at random among its legal moves: how long does it take to return to its initial square? The expected number of moves is 168 when the knight starts in a corner and 42 when it starts on one of the sixteen central squares. What do the hyperlinks between web pages say about their relative popularity?
+
+## Probability spaces and random variables
+
+The following standard definitions fix the language used below.
+
+**Definition (Probability space).** A [probability space](https://en.wikipedia.org/wiki/Probability_space) is a triple $(\Omega, \mathscr{F}, P)$. The *sample space* $\Omega$ is the set of all possible outcomes of a random process. The *event space* $\mathscr{F}$ is a family of subsets of $\Omega$, called *events*, which contains $\Omega$ and is closed under complements and countable unions, that is, a $\sigma$-algebra on $\Omega$. The *probability* $P : \mathscr{F} \to [0, 1]$ assigns to every event a number between 0 and 1, with $P(\Omega) = 1$ and
+
+$$
+P\Big( \bigcup_{k=1}^{\infty} A_k \Big) = \sum_{k=1}^{\infty} P(A_k)
+$$
+
+for every sequence $A_1, A_2, \dots$ of pairwise disjoint events.
+
+**Definition (Random variable).** Let $(E, \mathscr{E})$ be a measurable space, that is, a set $E$ together with a $\sigma$-algebra $\mathscr{E}$ of subsets of $E$. A [random variable](https://en.wikipedia.org/wiki/Random_variable) with values in $E$ is a measurable function $X : \Omega \to E$, that is, a function such that
+
+$$
+X^{-1}(B) = \{ \omega \in \Omega : X(\omega) \in B \} \in \mathscr{F} \quad \text{for every } B \in \mathscr{E}.
+$$
+
+When $E$ is a countable set $I$ and $\mathscr{E}$ is the family of all subsets of $I$, a function $X : \Omega \to I$ is a random variable if and only if the set $\{ X = i \} = \{ \omega \in \Omega : X(\omega) = i \}$ belongs to $\mathscr{F}$ for every $i \in I$. Indeed, every subset of $I$ is a countable union of singletons, and $\mathscr{F}$ is closed under countable unions.
+
+**Definition (Distribution).** The [probability distribution](https://en.wikipedia.org/wiki/Probability_distribution) of a random variable $X$ with values in $E$ describes how probability is assigned to the values of $X$. It is the probability $B \mapsto P(X \in B)$ on $(E, \mathscr{E})$. When $E$ is a countable set $I$, the distribution of $X$ is determined by the numbers $P(X = i)$ with $i \in I$. Indeed, $P(X \in B) = \sum_{i \in B} P(X = i)$ for every $B \subseteq I$, by countable additivity.
+
+**Example.** A sequence of positions of the frog of Example 1.1 is the outcome of a random experiment. To observe the frog for ten jumps, take as sample space the set $\Omega = \{1, \dots, 7\}^{11}$ of all sequences $\omega = (\omega_0, \omega_1, \dots, \omega_{10})$ of eleven pads, as event space $\mathscr{F}$ the family of all subsets of $\Omega$, and as $P$ a probability on $\mathscr{F}$. For $n = 0, 1, \dots, 10$, the position of the frog after $n$ jumps is the random variable $X_n(\omega) = \omega_n$. The outcome
+
+$$
+\omega = (1, 2, 2, 3, 1, 2, 3, 3, 1, 2, 3)
+$$
+
+gives $X_0(\omega) = 1$, $X_1(\omega) = 2$, $X_2(\omega) = 2$ and $X_3(\omega) = 3$. A random variable takes as input an outcome, which is a single element of $\Omega$ and not an event, and returns a value. An event is a set of outcomes, for example $\{ X_{10} = 3 \} = \{ \omega \in \Omega : \omega_{10} = 3 \}$.
+
+## Markov chains
+
+Let $I$ be a countable set, with elements denoted $i, j, k, \dots$. Each $i \in I$ is called a *state* and $I$ is called the *state space*.
+
+We work in a probability space $(\Omega, \mathscr{F}, P)$: $\Omega$ is a set of outcomes, $\mathscr{F}$ is a set of subsets of $\Omega$, and for $A \in \mathscr{F}$ the number $P(A)$ is the probability of $A$. The object of study is a sequence of random variables $X_0, X_1, \dots$ with values in $I$ whose joint distribution is determined by simple rules. A random variable $X$ with values in $I$ is a function $X : \Omega \to I$, measurable in the sense above.
+
+A row vector $\lambda = (\lambda_i : i \in I)$ is called a *measure* if $\lambda_i \ge 0$ for all $i \in I$. If moreover $\sum_{i \in I} \lambda_i = 1$, it is called a *distribution*, or probability measure. The chain starts from an *initial distribution* $\lambda$ over $I$, that is, numbers $\lambda_i$ with $0 \le \lambda_i \le 1$ for all $i \in I$ and $\sum_{i \in I} \lambda_i = 1$. The initial distribution is the initial condition of the chain. When the chain starts in state $i$ with probability 1, the initial distribution is denoted
+
+$$
+\lambda = \delta_i = (0, \dots, 0, 1, 0, \dots),
+$$
+
+with the entry 1 in position $i$. In other words, $(\delta_i)_j = 1$ if $j = i$ and $(\delta_i)_j = 0$ if $j \neq i$.
+
+The chain also has a *transition matrix* $P = (p_{ij} : i, j \in I)$ with $p_{ij} \ge 0$ for all $i, j \in I$. It is a [stochastic matrix](https://en.wikipedia.org/wiki/Stochastic_matrix), meaning that $p_{ij} \ge 0$ for all $i, j \in I$ and $\sum_{j \in I} p_{ij} = 1$ for all $i \in I$. In other words, each row of $P$ is a distribution over $I$. The letter $P$ denotes both the probability on $\mathscr{F}$ and the transition matrix. The probability is always applied to an event, as in $P(A)$, while the matrix appears through its entries $p_{ij}$ or in matrix products.
+
+**Definition 1.2.** Let $\lambda$ be a distribution over $I$ and $P$ a stochastic matrix. A sequence $(X_n)_{n \ge 0}$ of random variables with values in $I$ is a *Markov chain* with initial distribution $\lambda$ and transition matrix $P$ if the following two conditions hold.
+
+**(i)** For every $i_0 \in I$, $P(X_0 = i_0) = \lambda_{i_0}$.
+
+**(ii)** For every $n \ge 0$ and all $i_0, \dots, i_{n+1} \in I$ with $P(X_0 = i_0, \dots, X_n = i_n) > 0$,
+
+$$
+\begin{aligned}
+&P(X_{n+1} = i_{n+1} \mid X_0 = i_0, \dots, X_n = i_n) \\
+&\qquad = P(X_{n+1} = i_{n+1} \mid X_n = i_n) = p_{i_n i_{n+1}}.
+\end{aligned}
+$$
+
+Indeed, the condition $P(X_0 = i_0, \dots, X_n = i_n) > 0$ implies $P(X_n = i_n) > 0$, so both conditional probabilities in (ii) are defined. For short, we say that $(X_n)_{n \ge 0}$ is *Markov*$(\lambda, P)$.
+
+Checking conditions (i) and (ii) is usually the most direct way to decide whether a given random process $(X_n)_{n \ge 0}$ is a Markov chain. The following theorem gives an equivalent description.
+
+**Theorem 1.3.** A sequence $(X_n)_{n \ge 0}$ of random variables with values in $I$ is *Markov*$(\lambda, P)$ if and only if, for all $n \ge 0$ and $i_0, \dots, i_n \in I$,
+
+$$
+\begin{aligned}
+&P(X_0 = i_0, \dots, X_n = i_n) \\
+&\quad = \lambda_{i_0} p_{i_0 i_1} \cdots p_{i_{n-1} i_n}.
+\end{aligned} \tag{1.1}
+$$
+
+For $n = 0$ the right-hand side of (1.1) is $\lambda_{i_0}$.
+
+**Proof (complete).** Suppose that $(X_n)_{n \ge 0}$ is *Markov*$(\lambda, P)$. For $n = 0$, (1.1) is condition (i). For $n \ge 1$,
+
+$$
+\begin{aligned}
+&P(X_0 = i_0, \dots, X_n = i_n) \\
+&\quad = P(X_n = i_n \mid X_0 = i_0, \dots, X_{n-1} = i_{n-1}) \\
+&\qquad \times P(X_0 = i_0, \dots, X_{n-1} = i_{n-1}) \\
+&\quad = P(X_0 = i_0) \, P(X_1 = i_1 \mid X_0 = i_0) \\
+&\qquad \cdots P(X_n = i_n \mid X_0 = i_0, \dots, X_{n-1} = i_{n-1}) \\
+&\quad = \lambda_{i_0} p_{i_0 i_1} \cdots p_{i_{n-1} i_n}.
+\end{aligned}
+$$
+
+Indeed, the first equality is the definition of conditional probability, the second repeats the same step for the events $\{ X_0 = i_0, \dots, X_m = i_m \}$ with $m = n - 1, n - 2, \dots, 1$, and the third follows from (i) and (ii). These steps require $P(X_0 = i_0, \dots, X_{n-1} = i_{n-1}) > 0$, which makes every conditioning event have positive probability.
+
+Indeed, when $P(X_0 = i_0, \dots, X_{n-1} = i_{n-1}) = 0$, both sides of (1.1) are zero. The left-hand side is at most this probability. For the right-hand side, let $m$ be the smallest index with $P(X_0 = i_0, \dots, X_m = i_m) = 0$. If $m = 0$, then $\lambda_{i_0} = 0$ by (i). If $m \ge 1$, the first equality of the computation above and condition (ii), with $m$ in place of $n$, give $0 = p_{i_{m-1} i_m} P(X_0 = i_0, \dots, X_{m-1} = i_{m-1})$ with a positive second factor, so $p_{i_{m-1} i_m} = 0$.
+
+On the other hand, suppose that (1.1) holds for all $n \ge 0$ and $i_0, \dots, i_n \in I$. Summing (1.1) over all $i_1, \dots, i_n \in I$ gives $P(X_0 = i_0) = \lambda_{i_0}$, that is, (i). Indeed, the events $\{ X_0 = i_0, X_1 = i_1, \dots, X_n = i_n \}$ with $(i_1, \dots, i_n) \in I^n$ form a countable family of pairwise disjoint events whose union is $\{ X_0 = i_0 \}$. On the right-hand side, the sum of $p_{i_{n-1} i_n}$ over $i_n$ is 1, then the sum of $p_{i_{n-2} i_{n-1}}$ over $i_{n-1}$ is 1, and so on down to $i_1$.
+
+Then, for $n \ge 1$, summing (1.1) over $i_n$ gives $P(X_0 = i_0, \dots, X_{n-1} = i_{n-1}) = \lambda_{i_0} p_{i_0 i_1} \cdots p_{i_{n-2} i_{n-1}}$. Hence, whenever this probability is positive,
+
+$$
+\begin{aligned}
+&P(X_n = i_n \mid X_0 = i_0, \dots, X_{n-1} = i_{n-1}) \\
+&\qquad = \frac{P(X_0 = i_0, \dots, X_n = i_n)}{P(X_0 = i_0, \dots, X_{n-1} = i_{n-1})} = p_{i_{n-1} i_n},
+\end{aligned}
+$$
+
+which establishes (ii), with $n - 1$ in place of $n$. Indeed, the middle term of (ii) also equals $p_{i_{n-1} i_n}$. For $n = 1$ it coincides with the first term. For $n \ge 2$, summing (1.1) over $i_0, \dots, i_{n-2}$ gives $P(X_{n-1} = i_{n-1}, X_n = i_n) = P(X_{n-1} = i_{n-1}) \, p_{i_{n-1} i_n}$, because the same sum of (1.1) at time $n - 1$ equals $P(X_{n-1} = i_{n-1})$, which is positive. $\blacksquare$
+
+## Construction from independent random variables
+
+At each time, a new source of randomness determines the next step, through a rule that depends only on the current state. Let $U_1, U_2, \dots$ be [independent and identically distributed](https://en.wikipedia.org/wiki/Independent_and_identically_distributed_random_variables) random variables with values in a measurable space $(E, \mathscr{E})$: every $U_n$ has the same distribution, and the $U_n$ are mutually independent. Let $F : I \times E \to I$ be a function such that $u \mapsto F(j, u)$ is measurable for every $j \in I$.
+
+Take $i \in I$. Set $X_0 = i$ and define recursively
+
+$$
+X_{n+1} = F(X_n, U_{n+1}), \qquad n \ge 0.
+$$
+
+Then $(X_n)_{n \ge 0}$ is *Markov*$(\delta_i, P)$, where $p_{jk} = P(F(j, U) = k)$ for all $j, k \in I$ and $U$ is a random variable with the common distribution of the $U_n$.
+
+Indeed, $P$ is a stochastic matrix, because the events $\{ F(j, U) = k \}$ with $k \in I$ are pairwise disjoint with union $\Omega$. The variables $X_0, \dots, X_n$ are functions of $U_1, \dots, U_n$, so $U_{n+1}$ is independent of them, and on the event $\{ X_n = j \}$ we have $X_{n+1} = F(j, U_{n+1})$. Hence both conditional probabilities in condition (ii) equal $P(F(j, U_{n+1}) = k) = p_{jk}$, while condition (i) holds with $\lambda = \delta_i$ because $X_0 = i$.
+
+## Simulation
+
+Label the states with positive integers, so that $I = \{1, 2, \dots\}$ or $I = \{1, \dots, m\}$. A computer simulates $U_1, U_2, \dots$ independent and uniformly distributed on $[0, 1]$, written $U[0,1]$. Define $F(i, U) = J$ by the rules
+
+$$
+\begin{aligned}
+U &\in [0, p_{i1}) & &\Longrightarrow \quad J = 1, \\
+U &\in \Big[ \sum_{k=1}^{j-1} p_{ik}, \ \sum_{k=1}^{j} p_{ik} \Big), \quad j \ge 2 & &\Longrightarrow \quad J = j.
+\end{aligned}
+$$
+
+Indeed, for fixed $i$ these intervals are pairwise disjoint, the interval of $J = j$ has length $p_{ij}$, and their union is $[0, 1)$ because $\sum_{j} p_{ij} = 1$. The value $U = 1$ has probability zero and may be assigned to any state. The map $u \mapsto F(i, u)$ is measurable, since it is constant on each interval. Hence $P(F(i, U) = j) = p_{ij}$ for all $i, j \in I$, and the construction of the previous section, with $E = [0, 1]$, produces a chain that is *Markov*$(\delta_i, P)$.
+
+The figure runs these rules on the frog chain of Example 1.1. The row of the current state $X_n$ splits $[0, 1)$ into one interval for each state $j$ with $p_{X_n j} > 0$. The vertical mark is the value of $U_{n+1}$, and the interval containing it gives $X_{n+1}$. The slider sets $X_0$, the button draws new uniform variables, and a path starts again after 24 jumps.
+
+<FrogSim client:visible />
+
+## The $n$-step transition matrix
+
+Let $A$ be an event. A convenient notation is
+
+$$
+P_i(A) = P(A \mid X_0 = i),
+$$
+
+for every state $i$ with $\lambda_i = P(X_0 = i) > 0$. For example, $P_i(X_1 = j) = p_{ij}$ by condition (ii) with $n = 0$.
+
+Given the initial distribution $\lambda$, we treat it as a row vector. Then
+
+$$
+P(X_1 = j) = \sum_{i \in I} \lambda_i P_i(X_1 = j) = \sum_{i \in I} \lambda_i p_{ij}.
+$$
+
+Here and below, a term $\lambda_i P_i(\cdot)$ with $\lambda_i = 0$ is read as 0, because $P_i$ is defined only when $\lambda_i > 0$. Indeed, the events $\{ X_0 = i \}$ with $i \in I$ are pairwise disjoint with union $\Omega$, and $P(X_0 = i, X_1 = j) = \lambda_i p_{ij}$ by (1.1). This equals $\lambda_i P_i(X_1 = j)$ when $\lambda_i > 0$ and is zero when $\lambda_i = 0$. Similarly,
+
+$$
+\begin{aligned}
+P_i(X_2 = j) &= \sum_{k \in I} P_i(X_1 = k, X_2 = j) \\
+&= \sum_{k \in I} p_{ik} p_{kj} = (P^2)_{ij}, \\
+P(X_2 = j) &= \sum_{i, k \in I} \lambda_i P_i(X_1 = k, X_2 = j) \\
+&= \sum_{i, k \in I} \lambda_i p_{ik} p_{kj} = (\lambda P^2)_j.
+\end{aligned}
+$$
+
+Indeed, (1.1) gives $P(X_0 = i, X_1 = k, X_2 = j) = \lambda_i p_{ik} p_{kj}$, and dividing by $\lambda_i$ gives $P_i(X_1 = k, X_2 = j) = p_{ik} p_{kj}$.
+
+Write $p^{(n)}_{ij}$ for the entry $(i, j)$ of the matrix $P^n$, which depends on $P$ and not on $\lambda$. Continuing in this way,
+
+$$
+\begin{aligned}
+P_i(X_n = j) &= (\delta_i P^n)_j = (P^n)_{ij} = p^{(n)}_{ij}, \\
+P(X_n = j) &= \sum_{i_0, \dots, i_{n-1} \in I} \lambda_{i_0} p_{i_0 i_1} \cdots p_{i_{n-1} j} \\
+&= (\lambda P^n)_j,
+\end{aligned}
+$$
+
+where the first line holds for every state $i$ with $\lambda_i > 0$. Indeed, the second line sums (1.1), with $i_n = j$, over $i_0, \dots, i_{n-1}$, and this sum is the entry $j$ of the row vector $\lambda P^n$. For the first line with $n = 0$, $P_i(X_0 = j) = (\delta_i)_j$. For $n \ge 1$, summing (1.1) with $i_0 = i$ and $i_n = j$ over $i_1, \dots, i_{n-1}$ and dividing by $\lambda_i$ gives $P_i(X_n = j) = \sum_{i_1, \dots, i_{n-1} \in I} p_{i i_1} \cdots p_{i_{n-1} j} = (P^n)_{ij}$. The right-hand side $(\delta_i P^n)_j$ of the first line is the right-hand side $(\lambda P^n)_j$ of the second one for the initial distribution $\lambda = \delta_i$, a special case of $\lambda$.
+
+When $I$ is infinite, these matrix products are series of nonnegative terms, and they converge. Indeed, by induction on $n$, every row of $P^n$ has nonnegative entries with sum 1, since $\sum_{j} (P^{n+1})_{ij} = \sum_{k} (P^n)_{ik} \sum_{j} p_{kj} = \sum_{k} (P^n)_{ik} = 1$, where the order of summation can be exchanged because all terms are nonnegative. So every entry of $P^n$ lies in $[0, 1]$, and every series above has partial sums bounded by 1.
+
+Thus $P^{(n)} = (p^{(n)}_{ij} : i, j \in I)$, the *$n$-step transition matrix*, is simply $P^n$, the matrix $P$ raised to the power $n$, and $p^{(n)}_{ij} = P_i(X_n = j)$ is the probability of moving from state $i$ to state $j$ in $n$ steps whenever $\lambda_i > 0$. For $n = 0$, $P^0$ is the identity matrix, so $p^{(0)}_{ij}$ is 1 if $j = i$ and 0 otherwise.
+
+Also, for all $i, j \in I$ and $n, m \ge 0$, the *Chapman–Kolmogorov equations* hold:
+
+$$
+p^{(n+m)}_{ij} = \sum_{k \in I} p^{(n)}_{ik} p^{(m)}_{kj}.
+$$
+
+Indeed, the right-hand side is the entry $(i, j)$ of $P^n P^m = P^{n+m}$. The [Chapman–Kolmogorov equations](https://en.wikipedia.org/wiki/Chapman%E2%80%93Kolmogorov_equation) are named after Sydney Chapman (1888–1970) and Andrey Kolmogorov (1903–1987), who formulated them independently.
+
+In Example 1.1, as $n \to \infty$ the matrix $P^{(n)} = P^n$ converges entrywise:
+
+$$
+P^{(n)} \to \begin{pmatrix}
+\frac15 & \frac25 & \frac25 & 0 & 0 & 0 & 0 \\[6pt]
+\frac15 & \frac25 & \frac25 & 0 & 0 & 0 & 0 \\[6pt]
+\frac15 & \frac25 & \frac25 & 0 & 0 & 0 & 0 \\[6pt]
+\frac{2}{15} & \frac{4}{15} & \frac{4}{15} & 0 & 0 & 0 & \frac13 \\[6pt]
+\frac{1}{15} & \frac{2}{15} & \frac{2}{15} & 0 & 0 & 0 & \frac23 \\[6pt]
+\frac{2}{15} & \frac{4}{15} & \frac{4}{15} & 0 & 0 & 0 & \frac13 \\[6pt]
+0 & 0 & 0 & 0 & 0 & 0 & 1
+\end{pmatrix}.
+$$
+
+The figure shows $P^n$ for the frog chain. The slider sets $n$ from 0 to 60, each entry is shaded by its value, and the entry $p^{(n)}_{11}$ is written above the grid, as an exact fraction for $n \le 12$ and rounded to six decimals for larger $n$. For example, $n = 3$ and $n = 5$ give the values $\frac14$ and $\frac{3}{16}$ of question (a).
+
+<FrogPowers client:visible />
+
+## $P^{(n)}$ for a two-state Markov chain
+
+**Example 1.4 (A two-state Markov chain).** Let $\alpha, \beta \in [0, 1]$ with $\alpha + \beta > 0$, and consider the chain on $I = \{1, 2\}$ with transition matrix
+
+$$
+P = \begin{pmatrix} 1 - \alpha & \alpha \\ \beta & 1 - \beta \end{pmatrix}.
+$$
+
+From state 1 the chain moves to state 2 with probability $\alpha$, and from state 2 it moves to state 1 with probability $\beta$. The hypothesis $\alpha + \beta > 0$ excludes only the identity matrix, and it is needed because the formulas below divide by $\alpha + \beta$.
+
+The eigenvalues of $P$ are $1$ and $1 - \alpha - \beta$. Indeed, $\det(x \, \mathrm{Id} - P) = (x - 1)(x - 1 + \alpha + \beta)$, where $\mathrm{Id}$ is the $2 \times 2$ identity matrix. So we can write
+
+$$
+\begin{aligned}
+&P = U \begin{pmatrix} 1 & 0 \\ 0 & 1 - \alpha - \beta \end{pmatrix} U^{-1} \\[4pt]
+&\quad \Longrightarrow \quad P^n = U \begin{pmatrix} 1 & 0 \\ 0 & (1 - \alpha - \beta)^n \end{pmatrix} U^{-1}
+\end{aligned}
+$$
+
+for an invertible $2 \times 2$ matrix $U$. Indeed, the two eigenvalues are distinct because $\alpha + \beta > 0$, so $P$ is diagonalizable, and in the product of $n$ copies of $P$ the inner factors $U^{-1} U$ cancel.
+
+So $p^{(n)}_{11} = A + B (1 - \alpha - \beta)^n$ for some constants $A$ and $B$ that do not depend on $n$, with the convention $0^0 = 1$. Indeed, each entry of $P^n$ is a linear combination of $1$ and $(1 - \alpha - \beta)^n$ with coefficients taken from $U$ and $U^{-1}$.
+
+But $p^{(0)}_{11} = 1 = A + B$ and $p^{(1)}_{11} = 1 - \alpha = A + B (1 - \alpha - \beta)$. So $(A, B) = (\beta, \alpha)/(\alpha + \beta)$, that is, for a chain with $\lambda_1 > 0$, for instance with $\lambda = \delta_1$,
+
+$$
+\begin{aligned}
+P_1(X_n = 1) = p^{(n)}_{11} &= \frac{\beta}{\alpha + \beta} \\
+&\quad + \frac{\alpha}{\alpha + \beta} (1 - \alpha - \beta)^n.
+\end{aligned}
+$$
+
+Indeed, subtracting the two equations gives $B (\alpha + \beta) = \alpha$, and then $A = 1 - B$.
+
+When $\alpha + \beta < 2$, this tends exponentially fast to the limit $\beta/(\alpha + \beta)$. Indeed, then $|1 - \alpha - \beta| < 1$ and
+
+$$
+\Big| p^{(n)}_{11} - \frac{\beta}{\alpha + \beta} \Big| = \frac{\alpha}{\alpha + \beta} \, |1 - \alpha - \beta|^n.
+$$
+
+For $\alpha = \beta = 1$ the formula gives $p^{(n)}_{11} = \frac{1 + (-1)^n}{2}$, which alternates between 1 and 0 and has no limit.
+
+The other entries of $P^n$ are computed in the same way, and
+
+$$
+P^n = \begin{pmatrix}
+\frac{\beta}{\alpha + \beta} + \frac{\alpha}{\alpha + \beta} (1 - \alpha - \beta)^n & \frac{\alpha}{\alpha + \beta} - \frac{\alpha}{\alpha + \beta} (1 - \alpha - \beta)^n \\[6pt]
+\frac{\beta}{\alpha + \beta} - \frac{\beta}{\alpha + \beta} (1 - \alpha - \beta)^n & \frac{\alpha}{\alpha + \beta} + \frac{\beta}{\alpha + \beta} (1 - \alpha - \beta)^n
+\end{pmatrix}.
+$$
+
+Indeed, $p^{(n)}_{12} = 1 - p^{(n)}_{11}$ because the rows of $P^n$ sum to 1. Exchanging the two states, which exchanges $\alpha$ and $\beta$, gives $p^{(n)}_{22}$, and then $p^{(n)}_{21} = 1 - p^{(n)}_{22}$.
+
+The figure draws the chain for the values of $\alpha$ and $\beta$ set by the sliders, and plots $p^{(n)}_{11}$ for $n = 0, 1, \dots, 30$ together with the level $\beta/(\alpha + \beta)$ when $\alpha + \beta > 0$. When $\alpha + \beta > 1$ the factor $1 - \alpha - \beta$ is negative, and the values alternate above and below the level.
+
+<TwoState client:visible />
+
+**Remark.** The same answer can be reached through a recurrence. For $n \ge 1$,
+
+$$
+\begin{aligned}
+p^{(n)}_{11} &= p^{(n-1)}_{11} p_{11} + p^{(n-1)}_{12} p_{21} \\
+&= p^{(n-1)}_{11} (1 - \alpha) + \big( 1 - p^{(n-1)}_{11} \big) \beta.
+\end{aligned}
+$$
+
+Indeed, the first equality is the Chapman–Kolmogorov equation with $n - 1$ and $1$ in place of $n$ and $m$, and the second uses $p^{(n-1)}_{12} = 1 - p^{(n-1)}_{11}$. This gives the linear [recurrence relation](https://en.wikipedia.org/wiki/Recurrence_relation)
+
+$$
+p^{(n)}_{11} = \beta + (1 - \alpha - \beta) \, p^{(n-1)}_{11},
+$$
+
+an equation that expresses each term of the sequence $\big( p^{(n)}_{11} \big)_{n \ge 0}$ after the first as a function of the preceding one. Its solution has the form $p^{(n)}_{11} = A + B (1 - \alpha - \beta)^n$. Indeed, the constant $\frac{\beta}{\alpha + \beta}$ satisfies the recurrence, so the difference $d_n = p^{(n)}_{11} - \frac{\beta}{\alpha + \beta}$ satisfies $d_n = (1 - \alpha - \beta) \, d_{n-1}$ and therefore $d_n = (1 - \alpha - \beta)^n d_0$.

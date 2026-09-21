@@ -1,0 +1,32 @@
+---
+title: "Stationary is not the same as convergent"
+date: 2026-09-17
+sample: true
+summary: "A chain can have a stationary distribution and never approach it. Periodicity is the obstruction, and it shows up as an eigenvalue of modulus one other than 1."
+---
+
+import Flip from './Flip.svelte';
+
+The first entry ended with a fixed point $\pi$. The natural next claim is that $\mu_n \to \pi$ for every starting distribution. It is false, and the counterexample fits in one matrix.
+
+$$
+P = \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}.
+$$
+
+The chain swaps states at every step. The stationary distribution exists and is $\pi = (\tfrac12, \tfrac12)$. Start from $\mu_0 = (1, 0)$:
+
+$$
+\mu_1 = (0, 1), \quad \mu_2 = (1, 0), \quad \mu_3 = (0, 1), \ \dots
+$$
+
+The distribution never settles. It alternates forever, and its time average is $\pi$ even though the sequence has no limit.
+
+<Flip client:visible={{ rootMargin: '600px' }} />
+
+The linear-algebra view explains why. The eigenvalues of $P$ are $1$ and $-1$. Convergence of $\mu_0 P^n$ needs every eigenvalue other than $1$ to have modulus strictly less than one, so that its contribution decays. An eigenvalue at $-1$ does not decay; it flips sign.
+
+The chain-level name for this is periodicity. State $1$ can only return to itself in an even number of steps, so its period is $2$. The theorem the course is heading toward says: irreducible plus aperiodic gives convergence to the unique stationary distribution from every start. Irreducible alone gives only the time average.
+
+Exercise I set myself: take $P_\varepsilon$ with entries $1 - \varepsilon$ off the diagonal and $\varepsilon$ on it. The second eigenvalue is $1 - 2\varepsilon$, strictly inside the unit circle for any $\varepsilon > 0$, and the alternation turns into a damped oscillation. The chain forgets its start at rate $|1 - 2\varepsilon|^n$.
+
+Still open: How the period interacts with the whole spectrum in general. The Perron–Frobenius part of the course has not started yet.
