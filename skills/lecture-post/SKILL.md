@@ -13,6 +13,11 @@ the subject of the lecture.
 Alessandro decided these rules on 17 September 2026. Paths below are relative
 to the root of the site repository, `/workspace/site` on homelab.
 
+**The style sheet `references/STYLE.md` (21 September 2026) is binding and
+wins over this file, `references/WRITING.md` and `references/VISUALS.md`
+wherever they differ.** Its first rule: never depart from the source
+Alessandro sends for the task. Run its final checklist before finishing.
+
 ## Where things are
 
 | What | Where |
@@ -24,6 +29,7 @@ to the root of the site repository, `/workspace/site` on homelab.
 | Animation toolkit | `content/toolkit/` |
 | Writing rules for this skill | [references/WRITING.md](references/WRITING.md) |
 | Animations and figures | [references/VISUALS.md](references/VISUALS.md) |
+| Style sheet, binding, wins over the two above | [references/STYLE.md](references/STYLE.md) |
 | Page check | [scripts/check_post.mjs](scripts/check_post.mjs) |
 
 The notes file is whatever Alessandro names: Markdown, LaTeX, a PDF, or photos
@@ -32,7 +38,7 @@ Italian. The post is always in English.
 
 ## Workflow
 
-1. **Read the context.** Read this file, `references/WRITING.md`, the site's
+1. **Read the context.** Read this file, `references/STYLE.md`, `references/WRITING.md`, the site's
    `content/README.md`, and every earlier lecture post of the same thread. The
    earlier posts fix the notation, the numbering and what has already been
    defined. Read `references/VISUALS.md` before building any animation or

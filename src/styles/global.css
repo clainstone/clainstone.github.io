@@ -279,7 +279,44 @@ main > section + section { margin-top: var(--section); }
 
 .katex { font-size: 1.05em; }
 .katex-display { overflow-x: auto; overflow-y: hidden; padding: 0.1em 0; }
-.body .katex-display { margin: 1.25em 0; }
+.body .katex-display { margin: 1.1em 0; }
+/* An inline formula never breaks across lines: a long one is displayed
+   instead (skills/lecture-post/references/STYLE.md). */
+.body :not(.katex-display) > .katex { white-space: nowrap; }
+/* The one sanctioned scrolling display (an unsplittable matrix) shows that it
+   scrolls: shadows at the clipped edges. */
+.katex-display {
+  scrollbar-width: thin;
+  background:
+    linear-gradient(to right, var(--page) 40%, transparent) left / 2rem 100% no-repeat local,
+    linear-gradient(to left, var(--page) 40%, transparent) right / 2rem 100% no-repeat local,
+    linear-gradient(to right, var(--rule), transparent) left / 0.6rem 100% no-repeat scroll,
+    linear-gradient(to left, var(--rule), transparent) right / 0.6rem 100% no-repeat scroll;
+}
+
+/* ---- statements, captions, wide visuals ---------------------------------- */
+/* More air above a labelled statement than inside it. */
+.body > p:has(> strong:first-child) { margin-top: 1.6em; }
+.body > :is(h2, h3) + p { margin-top: 0.5em; }
+/* A caption is a "**Figure n.** ..." paragraph right after a visual. */
+.body > :is(.anim, .wide, astro-island, figure) + p:has(> strong:first-child) {
+  margin-top: 0.5rem;
+  font-size: var(--small);
+  color: var(--muted);
+}
+/* Opt-in wide track for a visual: <div class="wide">...</div>. */
+:root { --wide: 44rem; }
+@media (min-width: 60em) {
+  .body > .wide {
+    width: var(--wide);
+    margin-left: calc(50% - var(--wide) / 2);
+    margin-right: calc(50% - var(--wide) / 2);
+  }
+}
+/* Phone: words around unbreakable formulas may hyphenate. */
+@media (max-width: 40em) {
+  .body p { hyphens: auto; hyphenate-limit-chars: 7 3 3; }
+}
 
 /* ---- animations (layout and margins from the toolkit, colours from here) */
 

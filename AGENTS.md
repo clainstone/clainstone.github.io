@@ -9,7 +9,9 @@ https://clainstone.com. `README.md` explains how to run it and
 
 - `skills/lecture-post/SKILL.md`: write the post of one lecture of Real and
   Functional Analysis or Stochastic Dynamical Models from the notes file
-  Alessandro names. Read it completely before starting.
+  Alessandro names. Read it completely before starting, together with
+  `skills/lecture-post/references/STYLE.md`, the binding style sheet: never
+  depart from the source you are given.
 
 ## Boundaries
 
