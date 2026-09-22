@@ -1,0 +1,371 @@
+---
+title: 'Measure spaces, completeness and outer measures'
+date: 2026-09-17
+summary: 'A measure is a $\sigma$-additive function on a $\sigma$-algebra with values in $[0, +\infty]$; it is monotone and $\sigma$-subadditive, and continuous along increasing sequences and along decreasing sequences of finite measure. Every measure space has a complete extension, and Carathéodory''s construction turns an outer measure into a complete measure on its measurable sets.'
+---
+
+import Volumes from './Volumes.svelte';
+import Dirac from './Dirac.svelte';
+import Monotone from './Monotone.svelte';
+import Increasing from './Increasing.svelte';
+import Decreasing from './Decreasing.svelte';
+import Cover from './Cover.svelte';
+import NullSet from './NullSet.svelte';
+import Sandwich from './Sandwich.svelte';
+import Plan from './Plan.svelte';
+import Split from './Split.svelte';
+import Disjoint from './Disjoint.svelte';
+import Pair from './Pair.svelte';
+import Symmetric from './Symmetric.svelte';
+
+The lecture defines measures on $\sigma$-algebras, extends a measure space so that its negligible sets become measurable, and constructs measures from outer measures.
+
+## Measure spaces
+
+The main goal is a flexible theory of computing volumes, such as the volumes of the sets of $\mathbb{R}^n$ in Figure 1.
+
+<Volumes />
+
+**Figure 1.** Two sets $E$ and $A$ of $\mathbb{R}^n,$ and a line that crosses $E.$
+
+**Definition 1 (Measure).** Let $X$ be a set and $\mathcal{M}$ a $\sigma$-algebra on $X.$ A *measure* is a function ${\mu \colon \mathcal{M} \to [0, +\infty]}$ such that:\
+**(i)** ${\mu(\emptyset) = 0;}$
+
+**(ii)** (*$\sigma$-additivity*) for every sequence ${(E_n) \subset \mathcal{M}}$ that is *pairwise disjoint*, that is, such that ${E_i \cap E_j = \emptyset}$ for every ${i \neq j,}$
+
+$$
+\mu\Big( \bigcup_n E_n \Big) = \sum_{n=0}^{\infty} \mu(E_n).
+$$
+
+**Remark 2.** It will turn out to be impossible to construct “interesting” measures defined on the whole power set $\mathcal{P}(X).$
+
+**Example 3 (Counting measure).** The *counting measure* is the function ${\mu \colon \mathcal{P}(\mathbb{R}) \to [0, +\infty]}$ given by
+
+$$
+\mu(E) = \begin{cases} \#E & \text{if } E \text{ is finite}, \\ +\infty & \text{if } E \text{ is infinite}. \end{cases}
+$$
+
+**Example 4 (Dirac delta measure).** Let ${x_0 \in \mathbb{R}.}$ The *Dirac delta measure* at $x_0$ is the function ${\delta_{x_0} \colon \mathcal{P}(\mathbb{R}) \to [0, +\infty]}$ given by
+
+$$
+\delta_{x_0}(E) = \begin{cases} 1 & \text{if } x_0 \in E, \\ 0 & \text{if } x_0 \notin E. \end{cases}
+$$
+
+Figure 2 shows the two cases on the real line, with a set $E$ around 0 and a set $F$ around $x_0.$
+
+<Dirac client:visible />
+
+**Figure 2.** An instance: $E$ and $F$ are intervals of $\mathbb{R},$ and the values of $\delta_{x_0}$ on them are written above. The slider moves $x_0.$
+
+**Remark 5 (Basic properties).** A triple $(X, \mathcal{M}, \mu)$ of a set $X,$ a $\sigma$-algebra $\mathcal{M}$ on $X$ and a measure $\mu$ on $\mathcal{M}$ is called a *measure space*. Let $(X, \mathcal{M}, \mu)$ be a measure space.\
+**(i)** (*Monotonicity*) If ${E, F \in \mathcal{M}}$ and ${E \subset F,}$ then ${\mu(E) \le \mu(F).}$\
+**(ii)** (*Excision*) If ${E, F \in \mathcal{M},}$ ${E \subset F}$ and ${\mu(F) < +\infty,}$ then ${\mu(F \setminus E) = \mu(F) - \mu(E).}$
+
+**Proof (sketch).** (i) For the sets $E \subset F$ of Figure 3,
+
+$$
+\mu(E) \le \mu(E) + \mu(F \setminus E) = \mu\big( E \cup (F \setminus E) \big) = \mu(F).
+$$
+
+<Monotone />
+
+**Figure 3.** A set $E$ inside a set $F,$ and the difference ${F \setminus E.}$
+
+**Details.** The inequality holds because ${\mu(F \setminus E) \ge 0.}$ The set ${F \setminus E}$ belongs to $\mathcal{M}$ and is disjoint from $E,$ so $\sigma$-additivity applied to ${E, F \setminus E, \emptyset, \emptyset, \dots}$ gives the first equality, since ${\mu(\emptyset) = 0;}$ the second holds because ${E \cup (F \setminus E) = F}$ when ${E \subset F.}$ (ii) The same computation gives ${\mu(F) = \mu(E) + \mu(F \setminus E),}$ where ${\mu(E) \le \mu(F) < +\infty}$ by (i), and subtracting $\mu(E)$ gives the claim. $\blacksquare$
+
+**Proposition 6 (Continuity of measures).** Let $(X, \mathcal{M}, \mu)$ be a measure space.\
+**(i)** Let ${(E_n) \subset \mathcal{M}}$ be such that ${E_n \subset E_{n+1}}$ for every $n,$ and let ${E = \bigcup_n E_n.}$ Then ${\mu(E) = \lim_{n \to +\infty} \mu(E_n).}$\
+**(ii)** Let ${(E_n) \subset \mathcal{M}}$ be such that ${E_{n+1} \subset E_n}$ for every $n,$ suppose ${\mu(E_0) < +\infty,}$ and let ${E = \bigcap_n E_n.}$ Then ${\mu(E) = \lim_{n \to +\infty} \mu(E_n).}$
+
+**Proof (complete).** (i) Without loss of generality, ${\mu(E_n) < +\infty}$ for every $n.$ Indeed, if ${\mu(E_m) = +\infty}$ for some $m,$ then ${\mu(E_n) = +\infty}$ for every ${n \ge m}$ and ${\mu(E) = +\infty}$ by Remark 5 (i), so both sides equal $+\infty.$ Let ${F_0 = E_0}$ and ${F_{n+1} = E_{n+1} \setminus E_n}$ for every ${n \ge 0,}$ as in Figure 4. Then ${F_i \in \mathcal{M}}$ for every $i,$ ${F_i \cap F_j = \emptyset}$ for every ${i \neq j,}$ and ${E = \bigcup_n E_n = \bigcup_n F_n.}$ Hence
+
+$$
+\begin{aligned}
+\mu(E) &= \mu\Big( \bigcup_n F_n \Big) = \sum_{n=0}^{\infty} \mu(F_n) \\
+&= \lim_{N \to \infty} \sum_{n=0}^{N} \mu(F_n) = \lim_{N \to \infty} \mu(E_N),
+\end{aligned}
+$$
+
+where the second equality is $\sigma$-additivity and the last one holds because the sum of the $\mu(F_n)$ with ${n \le N}$ equals ${\mu(E_N),}$ as $E_N$ is the union of the pairwise disjoint sets ${F_0, \dots, F_N}$ and $\sigma$-additivity applies as in the proof of Remark 5.
+
+<Increasing client:visible />
+
+**Figure 4.** An instance of an increasing sequence: the sets ${E_0 \subset E_1 \subset \dots}$ and their union $E,$ dashed. The slider sets $N;$ the rings ${F_0, \dots, F_N}$ are shaded, and their union is $E_N.$
+
+(ii) Let ${A_n := E_0 \setminus E_n}$ for every $n,$ as in Figure 5. Then ${A_n \subset A_{n+1}}$ and ${A_n \in \mathcal{M}}$ for every $n.$ Let
+
+$$
+A = \bigcup_n A_n = \bigcup_n (E_0 \setminus E_n) = E_0 \setminus \bigcap_n E_n = E_0 \setminus E.
+$$
+
+Then
+
+$$
+\begin{aligned}
+\mu(E_0 \setminus E) &= \mu(E_0) - \mu(E) \\
+&= \mu(A) = \mu\Big( \bigcup_n A_n \Big) \\
+&= \lim_{n \to \infty} \mu(A_n) \\
+&= \lim_{n \to \infty} \mu(E_0 \setminus E_n) \\
+&= \lim_{n \to \infty} \big( \mu(E_0) - \mu(E_n) \big) \\
+&= \mu(E_0) - \lim_{n \to \infty} \mu(E_n).
+\end{aligned}
+$$
+
+Here the first and the fifth equality are Remark 5 (ii), which applies because $E$ and $E_n$ are contained in $E_0$ and ${\mu(E_0) < +\infty,}$ and the third is (i) applied to $(A_n).$ Comparing ${\mu(E_0) - \mu(E)}$ with the last line and cancelling the finite number $\mu(E_0)$ gives ${\mu(E) = \lim_{n \to \infty} \mu(E_n).}$ $\blacksquare$
+
+<Decreasing client:visible />
+
+**Figure 5.** An instance of a decreasing sequence: the sets ${E_0 \supset E_1 \supset \dots}$ and their intersection $E,$ dashed. The slider sets $n;$ the shaded set is ${A_n = E_0 \setminus E_n.}$
+
+**Proposition 7 ($\sigma$-subadditivity).** Let $(X, \mathcal{M}, \mu)$ be a measure space, ${(E_n) \subset \mathcal{M}}$ and ${E \in \mathcal{M}}$ with ${E \subset \bigcup_n E_n.}$ Then
+
+$$
+\mu(E) \le \sum_{n=0}^{\infty} \mu(E_n).
+$$
+
+<Cover name="E" />
+
+**Figure 6.** A set $E$ contained in the union of sets $E_n.$
+
+**Definition 8 (Finite, probability and $\sigma$-finite measures).** Let $(X, \mathcal{M}, \mu)$ be a measure space.\
+**(i)** The measure $\mu$ is called *finite* if ${\mu(X) < +\infty.}$\
+**(ii)** The measure $\mu$ is called a *probability measure* if ${\mu(X) = 1.}$\
+**(iii)** The measure $\mu$ is called *$\sigma$-finite* if there exists ${(E_n) \subset \mathcal{M}}$ such that ${\mu(E_n) < +\infty}$ for every $n$ and ${\bigcup_n E_n = X.}$
+
+## Complete measure spaces
+
+Consider the measure space ${(\mathbb{R}, \{\emptyset, \mathbb{R}\}, \mu)}$ with ${\mu(\emptyset) = 0}$ and ${\mu(\mathbb{R}) = 0.}$ An interval ${(a, b) \subset \mathbb{R}}$ is contained in a set of measure zero, but ${\mu((a, b)) = 0}$ cannot be written, because ${(a, b) \notin \{\emptyset, \mathbb{R}\}.}$
+
+In a measure space $(X, \mathcal{M}, \mu),$ let ${A \in \mathcal{M},}$ let ${C \in \mathcal{M}}$ with ${\mu(C) = 0,}$ and let ${B \subset C,}$ as in Figure 7. One would like to write ${\mu(A) = \mu(A \cup B),}$ but $\mu(A \cup B)$ cannot be written, because ${A \cup B}$ may not belong to $\mathcal{M}.$
+
+<NullSet />
+
+**Figure 7.** A set ${A \in \mathcal{M},}$ a set ${C \in \mathcal{M}}$ with ${\mu(C) = 0,}$ dashed, and a set ${B \subset C.}$
+
+**Definition 9 (Negligible set, complete measure space).** Let $(X, \mathcal{M}, \mu)$ be a measure space.\
+**(i)** A set ${E \in \mathcal{M}}$ is called a *set of zero measure* if ${\mu(E) = 0.}$\
+**(ii)** A set ${F \subset X}$ is called *negligible* if there exists ${E \in \mathcal{M}}$ such that ${\mu(E) = 0}$ and ${F \subset E.}$\
+**(iii)** The measure space is called *complete* if every negligible set belongs to $\mathcal{M}.$
+
+**Theorem 10 (Completion of measure spaces).** Let $(X, \mathcal{M}, \mu)$ be a measure space. There exists a measure space ${(X, \overline{\mathcal{M}}, \overline{\mu})}$ such that:\
+**(i)** ${(X, \overline{\mathcal{M}}, \overline{\mu})}$ is complete;\
+**(ii)** ${\mathcal{M} \subset \overline{\mathcal{M}};}$\
+**(iii)** ${\overline{\mu}(E) = \mu(E)}$ for every ${E \in \mathcal{M}.}$
+
+**Proof (sketch).** One defines
+
+$$
+\overline{\mathcal{M}} = \{ E \subset X : \text{there exist } F_1, F_2 \in \mathcal{M} \text{ such that } F_1 \subset E \subset F_2 \text{ and } \mu(F_2 \setminus F_1) = 0 \}.
+$$
+
+For such sets $E,$ $F_1$ and $F_2,$ as in Figure 8, one defines
+
+$$
+\overline{\mu}(E) := \mu(F_1) = \mu(F_2).
+$$
+
+<Sandwich />
+
+**Figure 8.** A set $E$ between two sets ${F_1 \subset E \subset F_2}$ of $\mathcal{M}$ with ${\mu(F_2 \setminus F_1) = 0.}$
+
+**Details.** The two values agree, since ${\mu(F_2) = \mu(F_1) + \mu(F_2 \setminus F_1) = \mu(F_1)}$ as in the proof of Remark 5. They do not depend on the choice of $F_1$ and $F_2{:}$ if also ${G_1 \subset E \subset G_2}$ with ${G_1, G_2 \in \mathcal{M}}$ and ${\mu(G_2 \setminus G_1) = 0,}$ then ${\mu(F_1) \le \mu(G_2) = \mu(G_1) \le \mu(F_2) = \mu(F_1)}$ by Remark 5 (i). $\blacksquare$
+
+**Remark 11.** Negligible sets in $(X, \mathcal{M}, \mu)$ become measurable in ${(X, \overline{\mathcal{M}}, \overline{\mu}).}$
+
+**Proof (complete).** Let ${F \subset X}$ be negligible. Then there exists ${E \in \mathcal{M}}$ such that ${F \subset E}$ and ${\mu(E) = 0.}$ To check that ${F \in \overline{\mathcal{M}},}$ notice that ${\emptyset \subset F \subset E,}$ that ${\mu(\emptyset) = \mu(E) = 0}$ and that ${\mu(E \setminus \emptyset) = \mu(E) = 0.}$ Hence ${F \in \overline{\mathcal{M}}}$ and ${\overline{\mu}(F) = 0.}$ $\blacksquare$
+
+## Outer measures
+
+The plan starts from a function ${f \colon \mathcal{F} \to [0, +\infty]}$ on a family ${\mathcal{F} \subset \mathcal{P}(X)}$ and ends with a measure ${\mu \colon \mathcal{M} \to [0, +\infty]}$ with ${\mathcal{F} \subset \mathcal{M}.}$ As Figure 9 shows, the way from the start to the end passes through outer measures, not directly.
+
+<Plan />
+
+**Figure 9.** The plan: from a function $f$ on $\mathcal{F}$ to outer measures, and from outer measures to a measure $\mu$ on a $\sigma$-algebra ${\mathcal{M} \supset \mathcal{F}.}$ The direct way is crossed out.
+
+**Definition 12 (Outer measure).** Let $X$ be a set. An *outer measure* is a function ${\mu^* \colon \mathcal{P}(X) \to [0, +\infty]}$ such that:\
+**(i)** ${\mu^*(\emptyset) = 0;}$
+
+**(ii)** (*$\sigma$-subadditivity*) for every ${(E_n) \subset \mathcal{P}(X)}$ and every ${E \subset \bigcup_n E_n,}$
+
+$$
+\mu^*(E) \le \sum_{n=0}^{\infty} \mu^*(E_n).
+$$
+
+**Remark 13 (Monotonicity).** If $\mu^*$ is an outer measure and ${E \subset F,}$ then ${\mu^*(E) \le \mu^*(F).}$ Indeed, (ii) of Definition 12 applies with ${E_0 = F}$ and ${E_n = \emptyset}$ for ${n \ge 1,}$ and ${\mu^*(\emptyset) = 0.}$
+
+**Theorem 14 (Construction of outer measure).** Let $X$ be a set, let ${\mathcal{F} \subset \mathcal{P}(X)}$ be such that ${\emptyset \in \mathcal{F},}$ and let ${f \colon \mathcal{F} \to [0, +\infty]}$ be such that ${f(\emptyset) = 0.}$ For every ${E \subset X}$ define
+
+$$
+\mu^*(E) := \inf \Big\{ \sum_{n=0}^{\infty} f(A_n) : (A_n) \subset \mathcal{F}, \ E \subset \bigcup_n A_n \Big\}.
+$$
+
+Then $\mu^*$ is an outer measure.
+
+<Cover name="A" />
+
+**Figure 10.** A set $E$ and a sequence of sets $A_n$ whose union contains $E,$ one of the sequences in the definition of $\mu^*(E).$
+
+**Remark 15.** If there is no ${(A_n) \subset \mathcal{F}}$ such that ${E \subset \bigcup_n A_n,}$ then ${\mu^*(E) = +\infty.}$
+
+**Definition 16 ($\mu^*$-measurable set).** Let $X$ be a set and $\mu^*$ an outer measure on $X.$ A set ${E \subset X}$ is called a *$\mu^*$-measurable set* if, for every ${Z \subset X,}$
+
+$$
+\mu^*(Z) = \mu^*(Z \cap E) + \mu^*(Z \setminus E).
+$$
+
+<Split />
+
+**Figure 11.** A set $E$ and a set $Z,$ split into ${Z \cap E}$ and ${Z \setminus E.}$
+
+**Remark 17.** For every ${E, Z \subset X}$ it is always true that
+
+$$
+\mu^*(Z) = \mu^*\big( (Z \cap E) \cup (Z \setminus E) \big) \le \mu^*(Z \cap E) + \mu^*(Z \setminus E).
+$$
+
+Indeed, the inequality is (ii) of Definition 12 with ${E_0 = Z \cap E,}$ ${E_1 = Z \setminus E}$ and ${E_n = \emptyset}$ for ${n \ge 2.}$
+
+**Theorem 18 (Carathéodory’s construction of measures).** Let $X$ be a set and $\mu^*$ an outer measure on $X.$ Let
+
+$$
+\mathcal{M} := \{ E \subset X : E \text{ is } \mu^*\text{-measurable} \},
+$$
+
+and let ${\mu = \mu^*|_{\mathcal{M}}.}$ Then:\
+**(i)** $\mathcal{M}$ is a $\sigma$-algebra;\
+**(ii)** $(X, \mathcal{M}, \mu)$ is a measure space;\
+**(iii)** $(X, \mathcal{M}, \mu)$ is complete.
+
+**Proof (sketch).** Parts (ii) and (iii) are proved; part (i) is not.
+
+(ii) Since ${\mu = \mu^*|_{\mathcal{M}},}$ what needs to be proved is that $\mu^*$ is $\sigma$-additive on $\mathcal{M},$ the family of the $\mu^*$-measurable sets.
+
+Step 1. If ${E, F \in \mathcal{M}}$ and ${E \cap F = \emptyset,}$ then ${\mu^*(E \cup F) = \mu^*(E) + \mu^*(F).}$ Let ${Z = E \cup F,}$ as in Figure 12. Since ${E \in \mathcal{M},}$
+
+$$
+\mu^*(E \cup F) = \mu^*(Z) = \mu^*(Z \cap E) + \mu^*(Z \setminus E) = \mu^*(E) + \mu^*(F).
+$$
+
+Indeed, ${Z \cap E = E}$ and ${Z \setminus E = F}$ because ${E \cap F = \emptyset.}$
+
+<Disjoint />
+
+**Figure 12.** Two disjoint sets $E$ and $F$ and their union $Z.$
+
+Step 2. Let ${(E_n) \subset \mathcal{M}}$ with ${E_i \cap E_j = \emptyset}$ for every ${i \neq j.}$ Then
+
+$$
+\begin{aligned}
+\mu^*\Big( \bigcup_n E_n \Big) &\le \sum_{n=0}^{\infty} \mu^*(E_n) = \lim_{N \to \infty} \Big( \sum_{n=0}^{N} \mu^*(E_n) \Big) \\
+&= \lim_{N \to \infty} \mu^*\Big( \bigcup_{n=0}^{N} E_n \Big) \le \mu^*\Big( \bigcup_{n=0}^{\infty} E_n \Big),
+\end{aligned}
+$$
+
+where the first inequality is $\sigma$-subadditivity, the second equality is Step 1, and the last inequality is monotonicity, as ${\bigcup_{n=0}^{N} E_n \subset \bigcup_{n=0}^{\infty} E_n.}$ Indeed, Step 1 extends to ${N + 1}$ sets by induction on $N,$ because ${\bigcup_{n=0}^{N-1} E_n}$ belongs to $\mathcal{M}$ by (i) and is disjoint from $E_N.$ The chain starts and ends with the same number, hence
+
+$$
+\mu^*\Big( \bigcup_{n=0}^{\infty} E_n \Big) = \sum_{n=0}^{\infty} \mu^*(E_n).
+$$
+
+(iii) Step 1. If ${\mu^*(E) = 0,}$ then ${E \in \mathcal{M},}$ that is, $E$ is $\mu^*$-measurable. Let ${Z \subset X.}$ Then
+
+$$
+\begin{aligned}
+\mu^*(Z \cap E) + \mu^*(Z \setminus E) &\le \mu^*(E) + \mu^*(Z) \\
+&= \mu^*(Z) \\
+&\le \mu^*(Z \cap E) + \mu^*(Z \setminus E),
+\end{aligned}
+$$
+
+where the first inequality is monotonicity, as ${Z \cap E \subset E}$ and ${Z \setminus E \subset Z,}$ the equality uses ${\mu^*(E) = 0,}$ and the last inequality is the one of Remark 17. Hence equality holds throughout.
+
+Step 2. Let $F$ be negligible in $(X, \mathcal{M}, \mu),$ that is, let there exist ${E \in \mathcal{M}}$ such that ${F \subset E}$ and ${\mu(E) = 0,}$ where ${\mu(E) = \mu^*(E).}$ By monotonicity, ${0 \le \mu^*(F) \le \mu^*(E) = 0,}$ so ${\mu^*(F) = 0}$ and ${F \in \mathcal{M}}$ by Step 1. $\blacksquare$
+
+## Exercises
+
+The first exercise computes a generated $\sigma$-algebra, and the second checks Definition 1 on a $\sigma$-algebra of subsets of $\mathbb{R}.$
+
+### A family of subsets of the integers
+
+**Example 19.** Let ${\mathcal{F} \subset \mathcal{P}(\mathbb{Z})}$ be
+
+$$
+\begin{aligned}
+\mathcal{F} &:= \big\{ \emptyset, \{0\}, \{-1, 0, 1\}, \{-2, -1, 0, 1, 2\}, \dots \big\} \\
+&= \{ \emptyset \} \cup \big\{ \{-k, -k+1, \dots, k-1, k\} : k \in \mathbb{N} \big\}.
+\end{aligned}
+$$
+
+What is $\sigma_0(\mathcal{F})$? The guess is ${\sigma_0(\mathcal{F}) = S,}$ where
+
+$$
+S := \{ A \subset \mathbb{Z} : x \in A \iff -x \in A \}.
+$$
+
+The sets of $S$ are the *symmetric* subsets of $\mathbb{Z}.$
+
+Step 1. The claim is ${S \subset \sigma_0(\mathcal{F}).}$ First, ${\{-k, k\} \in \sigma_0(\mathcal{F})}$ for every ${k \in \mathbb{N},}$ because, as in Figure 13,
+
+$$
+\{-k, k\} = \{-k, \dots, k\} \setminus \{-k+1, \dots, k-1\}.
+$$
+
+Indeed, for ${k \ge 1}$ both sets on the right belong to $\mathcal{F},$ for ${k = 0}$ the second set is empty and ${\{0\} \in \mathcal{F},}$ and a $\sigma$-algebra is closed under differences by Remark 24 of the previous post.
+
+<Pair client:visible />
+
+**Figure 13.** The sets $\{-k, \dots, k\}$ and $\{-k+1, \dots, k-1\}$ of $\mathbb{Z},$ and their difference $\{-k, k\}.$ The slider sets $k.$
+
+Now take ${E \in S,}$ as in Figure 14. The set $E$ is a countable union of sets of the form $\{-k, k\}$ with ${k \in \mathbb{N},}$ so ${E \in \sigma_0(\mathcal{F}),}$ and therefore ${S \subset \sigma_0(\mathcal{F}).}$ Indeed, since $E$ is symmetric, it is the union of the sets $\{-k, k\}$ over the ${k \in \mathbb{N}}$ that belong to $E.$
+
+<Symmetric />
+
+**Figure 14.** An instance of a set ${E \in S{:}}$ its points are filled, and each arc joins the two points of a set $\{-k, k\}.$
+
+Step 2. The set $S$ is a $\sigma$-algebra. This concludes, as $\sigma_0(\mathcal{F})$ is the smallest $\sigma$-algebra containing $\mathcal{F}.$ Indeed, every set of $\mathcal{F}$ is symmetric, so ${\mathcal{F} \subset S}$ and ${\sigma_0(\mathcal{F}) \subset S}$ by Theorem 26 (ii) of the previous post. Now ${\emptyset \in S,}$ the complement ${\mathbb{Z} \setminus A}$ of a set ${A \in S}$ is also symmetric, as in Figure 15, and any union of symmetric sets is symmetric as well.
+
+<Symmetric complement />
+
+**Figure 15.** An instance of a set ${A \in S}$ and, below it, its complement ${\mathbb{Z} \setminus A,}$ which is symmetric too.
+
+### Countable sets and their complements
+
+**Example 20.** Let
+
+$$
+\mathcal{M} := \{ A \subset \mathbb{R} : A \text{ is countable or } \mathbb{R} \setminus A \text{ is countable} \}.
+$$
+
+(i) Is $\mathcal{M}$ a $\sigma$-algebra? The countable union property is checked: let ${(A_n) \subset \mathcal{M};}$ what needs to be proved is ${\bigcup_n A_n \in \mathcal{M}.}$ The other properties of a $\sigma$-algebra hold as well. Indeed, $\emptyset$ is countable, and the definition of $\mathcal{M}$ does not change when $A$ is replaced by ${\mathbb{R} \setminus A.}$
+
+Case 1. Suppose that $A_n$ is countable for every $n.$ Then $\bigcup_n A_n$ is countable, hence ${\bigcup_n A_n \in \mathcal{M}.}$
+
+Case 2. Suppose that there exists $n_0$ such that ${\mathbb{R} \setminus A_{n_0}}$ is countable. Then
+
+$$
+\mathbb{R} \setminus \bigcup_n A_n = \bigcap_n (\mathbb{R} \setminus A_n) \subset \mathbb{R} \setminus A_{n_0}, \tag{1}
+$$
+
+so ${\mathbb{R} \setminus \bigcup_n A_n}$ is countable, and ${\bigcup_n A_n \in \mathcal{M}.}$
+
+(ii) Let ${\mu \colon \mathcal{M} \to [0, +\infty]}$ be
+
+$$
+\mu(A) = \begin{cases} 0 & \text{if } A \text{ is countable}, \\ 1 & \text{if } \mathbb{R} \setminus A \text{ is countable}. \end{cases}
+$$
+
+Is $\mu$ a measure? The property to check is $\sigma$-additivity: let ${(A_n) \subset \mathcal{M}}$ be such that ${A_i \cap A_j = \emptyset}$ for every ${i \neq j.}$ Indeed, $\mu$ is well defined, because $A$ and ${\mathbb{R} \setminus A}$ are not both countable, otherwise $\mathbb{R}$ would be countable, against Proposition 9 (i) of the previous post; and ${\mu(\emptyset) = 0.}$
+
+Case 1. Suppose that $A_n$ is countable for every $n.$ Then $\bigcup_n A_n$ is countable, so both ${\mu(\bigcup_n A_n) = 0}$ and ${\mu(A_n) = 0}$ for every $n,$ and
+
+$$
+\mu\Big( \bigcup_n A_n \Big) = 0 = \sum_{n=0}^{\infty} \mu(A_n).
+$$
+
+Case 2. Suppose that there exists $n_0$ such that ${\mathbb{R} \setminus A_{n_0}}$ is countable. Also ${A_n \cap A_{n_0} = \emptyset}$ for every ${n \neq n_0,}$ so ${A_n \subset \mathbb{R} \setminus A_{n_0},}$ and $A_n$ is countable for every ${n \neq n_0.}$ Now
+
+$$
+\sum_{n=0}^{\infty} \mu(A_n) = \mu(A_{n_0}) = 1 \qquad \text{and} \qquad \mu\Big( \bigcup_n A_n \Big) = 1,
+$$
+
+where the last equality holds because, by (1), ${\mathbb{R} \setminus \bigcup_n A_n}$ is contained in the countable set ${\mathbb{R} \setminus A_{n_0}.}$
