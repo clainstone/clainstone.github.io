@@ -1,0 +1,138 @@
+---
+title: "The boids algorithm"
+date: 2026-09-23
+sample: true
+summary: "How cbirds turns local rules, screen edges and a limit on turning into a flock of terminal birds."
+---
+
+import Figure from '@toolkit/Figure.astro';
+import demo from './demo.gif?url';
+import Sight from './Sight.astro';
+import Rules from './Rules.astro';
+import Flock from './Flock.svelte';
+
+[cbirds](https://github.com/clainstone/cbirds) is my C program for drawing a flock of birds in a terminal that speaks the Kitty graphics protocol, and it has no dependencies and one job. This post covers the part that decides where each bird goes next, while the next one will cover the drawing. Figure 1 shows the result.
+
+The algorithm is Craig Reynolds' [boids](https://en.wikipedia.org/wiki/Boids), from the 1987 SIGGRAPH paper, "Flocks, Herds, and Schools: A Distributed Behavioral Model," and [Reynolds' page](https://www.red3d.com/cwr/boids/) covers it too. Each bird keeps its distance, follows its neighbours, and drifts towards their middle, while I add pushes from the edges and the pointer, plus a limit on how far it can turn in one frame. Nothing in the code knows what a flock looks like, and Figure 4 runs the same model with the same constants in JavaScript.
+
+<Figure src={demo} alt="cbirds: 250 birds write BOIDS in a terminal, then flock" />
+
+**Figure 1.** `cbirds` recorded this headless with its own GIF encoder, using 250 birds, 12 px sprites, the murmuration preset with tails, and 8 seconds at 25 frames a second in a 960 by 512 px viewport. The first 3 seconds write BOIDS, and then the rules take over.
+
+## What a bird sees
+
+A bird has position $p$ and heading $\theta,$ and although its speed is constant, the rules choose its heading before it moves a fixed step. The default is 800 birds, with at most 4096.
+
+The perception radius $r$ defaults to 36 px, and its 12 notches run from 12 to 60 px in steps of 4 px. Every frame, a counting sort rebuilds a uniform grid of 12 px cells by counting the birds in each cell, taking prefix sums, and then filling the cells.
+
+A bird scans the cells within ${r / 12}$ of its own, rounded up, so at 36 px it looks 3 cells each way through a 7 by 7 block of 49. It then keeps only birds that satisfy ${dx^2 + dy^2 < r^2,}$ and Figure 2 shows both tests. Since the block is centred on the bird's cell while the circle is centred on the bird, it can reach one cell past the radius on each side.
+
+<Sight />
+
+**Figure 2.** Of the 12 other birds, 6 are within 36 px and count, while another 3 lie in the scanned 7 by 7 block of 12 px cells but fail the distance test. The last 3 are outside the block and are never examined; the circle is centred on the bird, while the block is centred on its cell.
+
+## Three rules
+
+For a bird at $p$ with heading $\theta,$ I use every neighbour inside the perception radius $r$ described above. There are $n$ of them, so separation $s$ sums $p$ minus each neighbour's position, while alignment $a$ averages their unit heading vectors. Cohesion $c$ averages their positions before subtracting $p,$ and Figure 3 draws all three directions while the weights set their magnitudes.
+
+<Rules />
+
+**Figure 3.** Each panel has the same bird and the same 5 neighbours, with one arrow for its rule, and the arrows show only directions because the weights set their magnitudes. Separation and cohesion are opposite by construction.
+
+With the edge vector $b$ and pointer vector $m,$ I compute the wanted heading as follows
+
+$$
+\begin{aligned}
+s &= \sum_{j=1}^{n} (p - p_j), \qquad
+a = \frac{1}{n} \sum_{j=1}^{n} (\cos\theta_j,\ \sin\theta_j), \qquad
+c = \frac{1}{n} \sum_{j=1}^{n} p_j - p, \\
+v &= w_s\, s + w_a\, a + w_c\, c + w_b\, b + 4\, m, \qquad
+\theta^\star = \operatorname{atan2}(v_y, v_x).
+\end{aligned}
+$$
+
+Separation $w_s$ defaults to 0.005 and ranges from 0.001 to 0.013, while alignment $w_a$ defaults to 1.5 and ranges from 0.1 to 4.3. Cohesion $w_c$ stays at 0.01, and the edge weight $w_b$ defaults to 0.2 and ranges from 0.01 to 0.58.
+
+The pointer weight is fixed at 4, while the three weight sliders have 12 notches each and put their defaults on notch 4, a third of the bar. Their scales differ because $s$ sums pixel offsets, while $a$ is at most a unit vector.
+
+With one flock, separation and cohesion use the same neighbours, which means ${s = -n c.}$ At the default weights, their sum is ${(0.01 - 0.005 n)c,}$ so it points towards the neighbours' centre with 1 neighbour. It vanishes with 2 and points away with 3 or more, while with 10 neighbours cohesion cancels one fifth of separation.
+
+Cohesion once had a slider, but dragging it end to end moved the mean number of neighbours within 60 px by 4.5, while removing the term moved it by 11. The force did something, but the knob did not, and it cost a row of the panel and two keys. So the knob went, while the weight stayed at 0.01.
+
+Here is one bird for one frame:
+
+```text
+for each bird b, reading the snapshot of the previous frame:
+    s = a = c = (0, 0); n = 0
+    for each bird j != b in the cells within ceil(r / 12) of b's cell:
+        if |p_b - p_j|^2 >= r^2: skip
+        s += p_b - p_j
+        a += (cos theta_j, sin theta_j)
+        c += p_j
+        n += 1
+    if n > 0:
+        a = a / n
+        c = c / n - p_b
+        v = w_s * s + w_a * a + w_c * c
+        v += w_b * edge(p_b) + 4 * pointer(p_b)
+        want = atan2(v)        # theta_b if v is zero
+    else:
+        v = (cos theta_b, sin theta_b)
+        v += w_b * edge(p_b) + 4 * pointer(p_b)
+        want = atan2(v)
+    theta_b = theta_b + clamp(wrap(want - theta_b), -L, +L)
+    p_b = p_b + step * (cos theta_b, sin theta_b)
+```
+
+All birds read the same previous-frame snapshot and then move, with a step of 40 px per frame at pace 1. At the default pace 0.4 and 60 frames a second, that becomes 16 px per frame, or 960 px a second. With no neighbour, only the edges and the pointer nudge a bird, and within 120 px of the pointer it is pushed away with strength 120 minus the distance, over 120, and weight 4. Hawks, wind and other flocks add terms that are zero here, so they belong to a later post.
+
+## The edges
+
+Edge bands turn the flock back, covering a third of the width on both sides, a third of the height at the top, and a sixth at the bottom. The normalized depth $d$ is 0 at a band's inner edge and 1 at the screen edge, and inside the band the push is $12\,d^2.$ With its weight, it is:
+
+$$
+w_b\, b(d) =
+\begin{cases}
+12\, w_b\, d^{2} & 0 \le d \le 1, \\
+12\, w_b + 96\, (d - 1) & d > 1.
+\end{cases}
+$$
+
+I sized 12 against a flocking sum from 1 to 4, and past the edge the push starts at $12 w_b$ before adding 96 per band width. That growth is the same at every boundary notch, so a low weight makes birds turn late rather than leave.
+
+The push used to be a flat 1 throughout the band, but strong enough alignment beat it, and nothing farther out could win a bird back. Most of the flock ended up off screen, so now leaving is possible but staying away is not.
+
+## Turning, not snapping
+
+I wrap the difference between the wanted and old headings, clamp it to $L,$ and then add that turn to the old heading. Elapsed flight time and pace scale the limit:
+
+$$
+\theta' = \theta + \operatorname{clamp}\bigl(\operatorname{wrap}(\theta^\star - \theta),\ -L,\ L\bigr),
+\qquad
+L = \Bigl(\frac{\pi}{6} + \frac{\pi}{3}\cdot\frac{k}{12}\Bigr) \cdot 60\, \Delta t \cdot \mathrm{pace}.
+$$
+
+At pace 1 and 60 frames a second, the limit is 30 degrees a frame at notch 0, and it grows by 5 degrees a notch to 85 at notch 11. Notch 12 is instant, while the default notch 8 gives 70 degrees, which the panel prints as `70°`. At pace 0.4 and 60 frames a second, the default gives 28 degrees per frame, and scaling by elapsed flight time keeps the turning circle equal in pixels at every frame rate.
+
+Without a cap, a bird can take any heading in one frame, so it moves like a particle and the flock becomes a blob that changes shape instantly. A capped bird banks instead, which gives the flock curved fronts, a leading edge, and the look of mass. The code calls this "the single change that makes it read as birds rather than as points."
+
+At a true zero, no bird could turn, which meant the edges could not turn them back either, and the whole flock left the frame within a second. Measured from zero, the bottom third of the slider put between a tenth and all of the flock off screen, so the floor is 30 degrees. The 3 second BOIDS opening overrules both flocking and the limit. In Figure 4, try turning at 12 and 0.
+
+<Flock client:visible />
+
+**Figure 4.** This JavaScript port runs 400 birds on a 760 by 380 px canvas, with 36 px perception, 12 px cells, 16 px per frame, and 28 degrees per frame at the default turn notch. The faint lines mark the inner edges of the bands, while its 4 sliders use the panel's 12 notches, the pointer pushes birds within 120 px away, and Restart restores their starting positions.
+
+## What it costs
+
+The grid makes each frame linear in the number of birds. In practice, each bird checks about 49 cells at the default radius, whatever the size of the flock.
+
+{/* NEEDS RUN: Alessandro re-runs ./cbirds --bench 300 and ./cbirds --bench 300 -n 4096 before publication and confirms the four numbers below. */}
+On 2026-09-22, I ran `./cbirds --bench 300` on one thread of an Intel Core Ultra 7 270K Plus, with 800 birds and a 1600 by 800 px viewport. It built 300 Kitty frames without displaying them, and measured 0.432 ms and 30.2 KB per frame. With `./cbirds --bench 300 -n 4096`, it measured 2.951 ms and 154.2 KB per frame, while 60 frames a second leaves a budget of 16.7 ms. Drawing is the next post.
+
+## Try it
+
+Clone the [repository](https://github.com/clainstone/cbirds) and build it with `git clone https://github.com/clainstone/cbirds && cd cbirds && make && sudo make install`, then run `cbirds` in a terminal that speaks the Kitty graphics protocol. It is C99 with no dependencies and an MIT licence.
+
+Press `h` for the panel, then use `t` and `T` for turning, `s` and `S` for separation, `a` and `A` for alignment, and `p` and `P` for perception. Press `0` for defaults, `Space` to pause, and `.` to step, or use `cbirds --turning 12` for instant turns.
+
+The pointer scatters the flock, while pressing `q` sends it off the top. The next post covers drawing the birds with the Kitty graphics protocol.

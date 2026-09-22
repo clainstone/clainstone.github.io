@@ -1,0 +1,80 @@
+---
+/* Figure 3: the three rules. The same bird and five neighbours in three
+   panels, one arrow each, its direction computed here from the neighbours as
+   boids.c flock_direction does: separation s = sum (p - p_j), alignment a =
+   mean of the unit headings, cohesion c = mean(p_j) - p. Screen coordinates:
+   x right, y down, angles clockwise from east. */
+const R = 36;                 // DEFAULT_VISION_RADIUS, world px
+const K = 2.5;                // screen px per world px
+const CY = 135;
+const centres = [130, 380, 630];
+const ARROW = 60;             // screen px
+const HEAD = 8, HEAD_W = 4;   // arrowhead length and half width
+const deg = Math.PI / 180;
+const f = (v: number) => Math.round(v * 100) / 100;
+
+// Offsets from the bird in world px, headings in degrees.
+const neighbours = [
+  { dx: 24, dy: -10, h: -20 },
+  { dx: 8, dy: 28, h: -35 },
+  { dx: -20, dy: 14, h: -30 },
+  { dx: 26, dy: 16, h: -10 },
+  { dx: 2, dy: -30, h: 5 },
+];
+for (const j of neighbours) {
+  if (j.dx * j.dx + j.dy * j.dy >= R * R) throw new Error(`Rules: neighbour (${j.dx}, ${j.dy}) is not within ${R} px`);
+}
+const n = neighbours.length;
+// The bird is at the origin: p - p_j = -(dx, dy).
+const s = neighbours.reduce((v, j) => ({ x: v.x - j.dx, y: v.y - j.dy }), { x: 0, y: 0 });
+const a = neighbours.reduce((v, j) => ({ x: v.x + Math.cos(j.h * deg) / n, y: v.y + Math.sin(j.h * deg) / n }), { x: 0, y: 0 });
+const c = neighbours.reduce((v, j) => ({ x: v.x + j.dx / n, y: v.y + j.dy / n }), { x: 0, y: 0 });
+const angle = (v: { x: number; y: number }) => Math.atan2(v.y, v.x) / deg;
+const angles = [angle(s), angle(a), angle(c)];
+// With one flock s = -n c, so separation and cohesion are opposite.
+const gap = (((angles[0] - angles[2]) % 360) + 360) % 360;
+if (Math.abs(gap - 180) > 1e-9) throw new Error(`Rules: separation and cohesion differ by ${gap} degrees, not 180`);
+
+const tri = (x: number, y: number, hDeg: number, len: number, wid: number) => {
+  const ux = Math.cos(hDeg * deg), uy = Math.sin(hDeg * deg);
+  const nx = -uy, ny = ux;
+  const tip = [x + ux * len / 2, y + uy * len / 2];
+  const b1 = [x - ux * len / 2 + nx * wid / 2, y - uy * len / 2 + ny * wid / 2];
+  const b2 = [x - ux * len / 2 - nx * wid / 2, y - uy * len / 2 - ny * wid / 2];
+  return `M ${f(tip[0])} ${f(tip[1])} L ${f(b1[0])} ${f(b1[1])} L ${f(b2[0])} ${f(b2[1])} Z`;
+};
+
+const titles = ['separation', 'alignment', 'cohesion'];
+const panels = centres.map((cx, i) => {
+  const ux = Math.cos(angles[i] * deg), uy = Math.sin(angles[i] * deg);
+  const nx = -uy, ny = ux;
+  const tip = [cx + ux * ARROW, CY + uy * ARROW];
+  const base = [cx + ux * (ARROW - HEAD), CY + uy * (ARROW - HEAD)];
+  return {
+    cx,
+    title: titles[i],
+    bird: tri(cx, CY, 0, 14, 8),
+    others: neighbours.map((j) => tri(cx + K * j.dx, CY + K * j.dy, j.h, 10, 6)),
+    shaft: { x1: cx, y1: CY, x2: f(base[0] + ux), y2: f(base[1] + uy) },
+    head: `M ${f(tip[0])} ${f(tip[1])} L ${f(base[0] + nx * HEAD_W)} ${f(base[1] + ny * HEAD_W)} L ${f(base[0] - nx * HEAD_W)} ${f(base[1] - ny * HEAD_W)} Z`,
+    mean: i === 2 ? { x: f(cx + K * c.x), y: f(CY + K * c.y) } : null,
+  };
+});
+const text = 'font-family: var(--anim-font); fill: var(--anim-muted)';
+---
+<div class="anim">
+  <svg viewBox="0 0 760 300" width="100%" role="img" aria-label="The same bird and five neighbours in three panels, with one arrow each: away from the neighbours for separation, along their mean heading for alignment, towards their mean position for cohesion.">
+    {panels.map((p) => (
+      <g>
+        <circle cx={p.cx} cy={CY} r={R * K} fill="none" stroke-width="1" style="stroke: var(--anim-rule)" />
+        <line x1={p.cx + 7} y1={CY} x2={p.cx + 47} y2={CY} stroke-width="1" style="stroke: var(--anim-muted)" />
+        {p.others.map((d) => <path d={d} style="fill: var(--anim-muted)" />)}
+        {p.mean && <circle cx={p.mean.x} cy={p.mean.y} r="4" fill="none" stroke-width="1" style="stroke: var(--anim-accent)" />}
+        <line x1={p.shaft.x1} y1={p.shaft.y1} x2={p.shaft.x2} y2={p.shaft.y2} stroke-width="2" style="stroke: var(--anim-accent)" />
+        <path d={p.head} style="fill: var(--anim-accent)" />
+        <path d={p.bird} style="fill: var(--anim-ink)" />
+        <text x={p.cx} y="268" font-size="14" text-anchor="middle" style={text}>{p.title}</text>
+      </g>
+    ))}
+  </svg>
+</div>

@@ -1,0 +1,92 @@
+---
+/* Figure 2: what a bird sees. A patch of sky 15 by 9 cells of 12 px, drawn at
+   4 screen px per world px. The bird scans the cells within ceil(r / 12) of its
+   own cell (a 7 by 7 block at r = 36) and keeps the birds with
+   dx^2 + dy^2 < r^2 (boids.c flock_direction, spatial_grid.c). */
+const CELL = 12;          // SPATIAL_CELL_SIZE, world px
+const R = 36;             // DEFAULT_VISION_RADIUS, world px
+const K = 4;              // screen px per world px
+const COLS = 15, ROWS = 9;
+const OX = 20, OY = 20;   // grid origin in the viewBox
+const reach = Math.ceil(R / CELL); // 3 cells each side
+
+const sx = (x: number) => OX + K * x;
+const sy = (y: number) => OY + K * y;
+const cellOf = (v: number) => Math.floor(v / CELL);
+
+const bird = { x: 86, y: 52 };
+const bc = cellOf(bird.x), br = cellOf(bird.y);
+if (bc !== 7 || br !== 4) throw new Error(`Sight: bird cell is (${bc}, ${br}), expected (7, 4)`);
+const block = { c0: bc - reach, c1: bc + reach, r0: br - reach, r1: br + reach };
+if (block.c0 !== 4 || block.c1 !== 10 || block.r0 !== 1 || block.r1 !== 7)
+  throw new Error('Sight: scanned block is not columns 4 to 10, rows 1 to 7');
+// The circle must sit inside the block (true whenever r is a multiple of 12).
+if (bird.x - R < block.c0 * CELL || bird.x + R > (block.c1 + 1) * CELL ||
+    bird.y - R < block.r0 * CELL || bird.y + R > (block.r1 + 1) * CELL)
+  throw new Error('Sight: the perception circle leaves the scanned block');
+
+// Twelve other birds; the brief's grouping is checked against the code's tests.
+const others: { x: number; y: number; expect: 'reach' | 'scanned' | 'unseen' }[] = [
+  { x: 70, y: 40, expect: 'reach' }, { x: 104, y: 66, expect: 'reach' },
+  { x: 60, y: 62, expect: 'reach' }, { x: 110, y: 36, expect: 'reach' },
+  { x: 92, y: 84, expect: 'reach' }, { x: 54, y: 48, expect: 'reach' },
+  { x: 56, y: 20, expect: 'scanned' }, { x: 126, y: 90, expect: 'scanned' },
+  { x: 124, y: 22, expect: 'scanned' },
+  { x: 24, y: 30, expect: 'unseen' }, { x: 156, y: 70, expect: 'unseen' },
+  { x: 140, y: 100, expect: 'unseen' },
+];
+const colour = { reach: 'var(--anim-accent)', scanned: 'var(--anim-muted)', unseen: 'var(--anim-rule)' };
+const dots = others.map((o) => {
+  const c = cellOf(o.x), r = cellOf(o.y);
+  const inBlock = c >= block.c0 && c <= block.c1 && r >= block.r0 && r <= block.r1;
+  const dx = bird.x - o.x, dy = bird.y - o.y;
+  const inReach = inBlock && dx * dx + dy * dy < R * R;
+  const group = inReach ? 'reach' : inBlock ? 'scanned' : 'unseen';
+  if (group !== o.expect) throw new Error(`Sight: bird (${o.x}, ${o.y}) is ${group}, the brief says ${o.expect}`);
+  return { cx: sx(o.x), cy: sy(o.y), fill: colour[group] };
+});
+const count = (g: string) => others.filter((o) => o.expect === g).length;
+if (count('reach') !== 6 || count('scanned') !== 3 || count('unseen') !== 3)
+  throw new Error('Sight: the groups are not six, three and three');
+
+const gridW = COLS * CELL * K, gridH = ROWS * CELL * K; // 720 by 432
+const vLines = Array.from({ length: COLS + 1 }, (_, i) => OX + i * CELL * K);
+const hLines = Array.from({ length: ROWS + 1 }, (_, i) => OY + i * CELL * K);
+
+const blockRect = {
+  x: sx(block.c0 * CELL), y: sy(block.r0 * CELL),
+  w: (block.c1 - block.c0 + 1) * CELL * K, h: (block.r1 - block.r0 + 1) * CELL * K,
+};
+
+// The bird: an isosceles triangle 14 screen px long pointing east, centred on p.
+const L = 14, W = 8;
+const bx = sx(bird.x), by = sy(bird.y);
+const birdPath = `M ${bx + L / 2} ${by} L ${bx - L / 2} ${by - W / 2} L ${bx - L / 2} ${by + W / 2} Z`;
+
+// Labels. "r = 36 px" in the corner between the circle and the block, outside
+// the circle; "7 by 7 cells scanned" in the row under the block.
+const rLabel = { x: 470, y: 90 };
+{
+  const dx = rLabel.x - bx, dy = rLabel.y - by;
+  if (dx * dx + dy * dy <= (R * K) ** 2) throw new Error('Sight: r label is inside the circle');
+}
+const blockLabel = { x: blockRect.x + blockRect.w / 2, y: blockRect.y + blockRect.h + 29 };
+const text = 'font-family: var(--anim-font); fill: var(--anim-muted)';
+---
+<div class="anim">
+  <svg viewBox="0 0 760 480" width="100%" role="img" aria-label="A bird, its 36 px perception circle, the 7 by 7 block of 12 px cells it scans, and twelve other birds: six within reach, three scanned and rejected, three never looked at.">
+    <g shape-rendering="crispEdges" style="stroke: var(--anim-rule)" stroke-width="1">
+      {vLines.map((x) => <line x1={x} y1={OY} x2={x} y2={OY + gridH} />)}
+      {hLines.map((y) => <line x1={OX} y1={y} x2={OX + gridW} y2={y} />)}
+    </g>
+    <rect x={blockRect.x} y={blockRect.y} width={blockRect.w} height={blockRect.h}
+      fill-opacity="0.08" stroke-width="1" shape-rendering="crispEdges"
+      style="fill: var(--anim-accent); stroke: var(--anim-accent)" />
+    <circle cx={bx} cy={by} r={R * K} fill="none" stroke-width="1.5" style="stroke: var(--anim-accent)" />
+    {dots.map((d) => <circle cx={d.cx} cy={d.cy} r="5" style={`fill: ${d.fill}`} />)}
+    <path d={birdPath} style="fill: var(--anim-ink)" />
+    <text x={rLabel.x} y={rLabel.y} font-size="14" style={text}>r = 36 px</text>
+    <text x={OX} y={OY - 6} font-size="14" style={text}>12 px cells</text>
+    <text x={blockLabel.x} y={blockLabel.y} font-size="14" text-anchor="middle" style={text}>7 by 7 cells scanned</text>
+  </svg>
+</div>
