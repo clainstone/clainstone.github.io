@@ -36,13 +36,23 @@ const FONTS = [
 const FAMILY = 'Serif, SerifExt, SerifGreek, Math, Scripts, ScriptsMath';
 
 // Every character of a card must be drawn by one of the fonts: satori would
-// leave a blank where none has a glyph.
-const PARSED = FONTS.map((f) => opentype.parse(f.data.buffer.slice(f.data.byteOffset, f.data.byteOffset + f.data.byteLength)));
+// leave a blank where none has a glyph. Satori draws a whole grapheme (a
+// letter with its accents) from the first font that has its first code
+// point, so that font must have every code point of the grapheme.
+const PARSED: { charToGlyphIndex(c: string): number }[] = FONTS.map((f) =>
+  opentype.parse(f.data.buffer.slice(f.data.byteOffset, f.data.byteOffset + f.data.byteLength)),
+);
+const GRAPHEMES = new Intl.Segmenter('en', { granularity: 'grapheme' });
 function assertDrawable(text: string) {
-  for (const ch of new Set(text)) {
-    if (/\s/.test(ch)) continue;
-    if (!PARSED.some((p: { charToGlyphIndex(c: string): number }) => p.charToGlyphIndex(ch) !== 0)) {
-      throw new Error(`cards: no font draws "${ch}" (U+${ch.codePointAt(0)!.toString(16).toUpperCase()}) in "${text}"`);
+  for (const { segment } of GRAPHEMES.segment(text)) {
+    if (/^\s+$/.test(segment)) continue;
+    const points = [...segment];
+    const font = PARSED.find((p) => p.charToGlyphIndex(points[0]) !== 0);
+    const missing = font ? points.find((c) => font.charToGlyphIndex(c) === 0) : points[0];
+    if (missing !== undefined) {
+      throw new Error(
+        `cards: no font draws "${segment}" (U+${missing.codePointAt(0)!.toString(16).toUpperCase()}) in "${text}"; write the title without it`,
+      );
     }
   }
 }
@@ -81,6 +91,8 @@ export interface Card {
 
 /** The link-preview card of one page, as a PNG. */
 export async function cardPng(card: Card): Promise<Buffer> {
+  // Precomposed letters (ā, ã) where Unicode has them: the text fonts draw those.
+  card = Object.fromEntries(Object.entries(card).map(([k, v]) => [k, typeof v === 'string' ? v.normalize('NFC') : v])) as Card;
   for (const part of [card.kicker, card.title, card.text, card.note, card.byline]) if (part) assertDrawable(part);
   const size = card.title.length > 70 ? 54 : card.title.length > 44 ? 62 : 70;
   const text = card.text && card.text.length > 190 ? `${card.text.slice(0, 187).replace(/\s+\S*$/, '')}…` : card.text;
