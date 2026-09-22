@@ -27,5 +27,5 @@
   .tri { fill: var(--anim-accent); fill-opacity: 0.18; stroke: var(--anim-accent); stroke-width: 2; }
   text { fill: var(--anim-ink); font-size: 17px; text-anchor: middle; dominant-baseline: central; }
   .lab { font-style: italic; }
-  .tri-lab { fill: var(--anim-accent); }
+  .tri-lab { fill: var(--anim-accent); paint-order: stroke; stroke: var(--page, #fff); stroke-width: 4px; stroke-linejoin: round; }
 </style>

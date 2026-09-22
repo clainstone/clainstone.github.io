@@ -33,9 +33,11 @@ const next = siblings[at + 1];
       <h1><M text={post.data.title} /></h1>
       <p class="meta">
         <span class="words">{formatWords(words)}</span>{', '}
-        <time datetime={isoDate(post.data.date)}>{formatDate(post.data.date)}</time>
-        {post.data.published && isoDate(post.data.published) !== isoDate(post.data.date) && <>{', published '}<time datetime={isoDate(post.data.published)}>{formatDate(post.data.published)}</time></>}
-        {post.data.updated && <>{', updated '}<time datetime={isoDate(post.data.updated)}>{formatDate(post.data.updated)}</time></>}
+        <time datetime={isoDate(post.data.date)}>{formatDate(post.data.date)}</time>{
+          post.data.published && isoDate(post.data.published) !== isoDate(post.data.date) && <>{', published '}<time datetime={isoDate(post.data.published)}>{formatDate(post.data.published)}</time></>
+        }{
+          post.data.updated && <>{', updated '}<time datetime={isoDate(post.data.updated)}>{formatDate(post.data.updated)}</time></>
+        }
       </p>
     </header>
     <div class="body">

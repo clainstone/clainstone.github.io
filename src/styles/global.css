@@ -94,6 +94,8 @@
 
 html {
   font-size: var(--text);
+  /* The same width with or without a scrollbar: the bar does not shift. */
+  scrollbar-gutter: stable;
   -webkit-text-size-adjust: 100%;
 }
 
@@ -259,6 +261,7 @@ main > section + section { margin-top: var(--section); }
   gap: 1rem;
 }
 .threads a { font-size: var(--thread); }
+.rows a { text-wrap: balance; }
 .threads .about { margin-top: 0.3rem; color: var(--muted); }
 .lede { margin-top: 0.6rem; color: var(--muted); }
 .lede + .rows, main > h1 + .rows { margin-top: 1rem; }
@@ -361,7 +364,7 @@ main > section + section { margin-top: var(--section); }
 
 /* ---- statements, captions, wide visuals ---------------------------------- */
 /* More air above a labelled statement than inside it. */
-.body > p:has(> strong:first-child) { margin-top: 1.6em; }
+.body > :not(h2, h3) + p:has(> strong:first-child) { margin-top: 1.6em; }
 .body > :is(h2, h3) + p { margin-top: 0.5em; }
 /* A caption is a "**Figure n.** ..." paragraph right after a visual. */
 .body > :is(.anim, .wide, astro-island, figure) + p:has(> strong:first-child) {

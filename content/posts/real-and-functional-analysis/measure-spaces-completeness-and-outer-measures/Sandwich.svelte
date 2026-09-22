@@ -18,7 +18,7 @@
     <text class="lab" x="50" y="212">E</text>
     <text class="lab muted" x="210" y="115">F<tspan dy="6" font-size="12" font-style="normal">1</tspan></text>
     <text class="lab accent" x="390" y="190">F<tspan dy="6" font-size="12" font-style="normal">2</tspan></text>
-    <text class="note accent" x="462" y="24">μ(F<tspan dy="4" font-size="0.72em" font-style="normal">2</tspan><tspan dy="-4" font-style="normal"> \ </tspan><tspan>F</tspan><tspan dy="4" font-size="0.72em" font-style="normal">1</tspan><tspan dy="-4">) = 0</tspan></text>
+    <text class="note accent" x="462" y="24">μ(F<tspan dy="4" font-size="0.72em" font-style="normal">2</tspan><tspan dy="-4" font-style="normal"> \ </tspan><tspan>F</tspan><tspan dy="4" font-size="0.72em" font-style="normal">1</tspan><tspan dy="-4" font-style="normal">) = 0</tspan></text>
   </svg>
 </figure>
 

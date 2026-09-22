@@ -147,6 +147,17 @@ const script = (body: string, map: Record<string, string>, mark: string) => {
   const chars = [...body.replace(/\s+/g, '')];
   return chars.every((c) => map[c]) ? chars.map((c) => map[c]).join('') : `${mark}(${body})`;
 };
+/** Scripts: ^{...}, ^x, _{...}, _x, innermost braces first. */
+function scripts(s: string): string {
+  for (let k = 0; k < 4; k++) {
+    s = s
+      .replace(/\^\{([^{}\\]*)\}/g, (m, b: string) => script(b, SUP, '^'))
+      .replace(/_\{([^{}\\]*)\}/g, (m, b: string) => script(b, SUB, '_'))
+      .replace(/\^([^{}\s(\\])/g, (m, b: string) => script(b, SUP, '^'))
+      .replace(/_([^{}\s(\\])/g, (m, b: string) => script(b, SUB, '_'));
+  }
+  return s;
+}
 /** A group that needs parentheses when it becomes one side of a slash. */
 const operand = (x: string) => (/^[\p{L}\p{N}.′]+$/u.test(x.trim()) ? x.trim() : `(${x.trim()})`);
 
@@ -162,9 +173,14 @@ function plainTex(tex: string): string {
     .replace(/\\[,;:! ]/g, ' ')
     // Symbols first, so that the arguments below are already plain.
     .replace(/\\([a-zA-Z]+)/g, (m, name: string) => (name in SYMBOLS ? SYMBOLS[name] : m));
-  // Commands with arguments, innermost first.
-  for (let k = 0; k < 4; k++) {
-    s = s
+  // TeX shorthand: \frac12, \sqrt[3]{x}.
+  s = s
+    .replace(/\\(d|t)?frac\s*(\d)\s*(\d)/g, '\\frac{$2}{$3}')
+    .replace(/\\sqrt\[([^\]]*)\]\{([^{}]*)\}/g, (m, n: string, x: string) => `${script(n, SUP, '^')}√${operand(x)}`);
+  // Commands with arguments and scripts, innermost first: an argument may hold
+  // a script (\frac{1}{2^{n}}) and a script an argument (x^{\hat{y}}).
+  for (let k = 0; k < 6; k++) {
+    s = scripts(s)
       .replace(new RegExp(`\\\\mathbb${GROUP}`, 'g'), (m, c: string) => BLACKBOARD[c.trim()] ?? c)
       .replace(new RegExp(`\\\\(?:mathcal|mathscr|mathfrak|mathrm|mathbf|mathit|mathsf|boldsymbol|operatorname|text|textrm|textit|textbf|mbox)${GROUP}`, 'g'), '$1')
       .replace(new RegExp(`\\\\(${Object.keys(ACCENTS).join('|')})${GROUP}`, 'g'), (m, a: string, x: string) => `${x}${ACCENTS[a]}`)
@@ -172,18 +188,16 @@ function plainTex(tex: string): string {
       .replace(new RegExp(`\\\\binom${GROUP}${GROUP}`, 'g'), (m, a: string, b: string) => `C(${a.trim()}, ${b.trim()})`)
       .replace(new RegExp(`\\\\sqrt${GROUP}`, 'g'), (m, x: string) => `√${operand(x)}`);
   }
-  s = s.replace(/\\([a-zA-Z]+)/g, (m, name: string) => {
-    if (name in SYMBOLS) return SYMBOLS[name];
-    throw new Error(`plain(): no plain form for \\${name} in "${tex}"; add it to SYMBOLS in src/lib/site.ts`);
-  });
-  // Scripts: ^{...}, ^x, _{...}, _x; innermost braces first.
-  for (let k = 0; k < 4; k++) {
-    s = s
-      .replace(/\^\{([^{}]*)\}/g, (m, b: string) => script(b, SUP, '^'))
-      .replace(/_\{([^{}]*)\}/g, (m, b: string) => script(b, SUB, '_'))
-      .replace(/\^([^{}\s(])/g, (m, b: string) => script(b, SUP, '^'))
-      .replace(/_([^{}\s(])/g, (m, b: string) => script(b, SUB, '_'));
+  const left = s.match(/\\([a-zA-Z]+)/);
+  if (left) {
+    const known = ['mathbb', 'frac', 'dfrac', 'tfrac', 'binom', 'sqrt', ...Object.keys(ACCENTS)].includes(left[1]);
+    throw new Error(
+      known
+        ? `plain(): unsupported arguments for \\${left[1]} in "${tex}"`
+        : `plain(): no plain form for \\${left[1]} in "${tex}"; add it to SYMBOLS in src/lib/site.ts`,
+    );
   }
+  s = scripts(scripts(s));
   return s
     .replace(/[{}]/g, '')
     // TeX ignores spaces: none inside brackets.
@@ -209,6 +223,11 @@ for (const [tex, text] of [
   ['$L^p$', 'Lᵖ'],
   ['$\\langle x, y \\rangle$', '⟨x, y⟩'],
   ['$\\frac{1}{2}$', '1/2'],
+  ['$\\frac{1}{2^{n}}$', '1/2ⁿ'],
+  ['$\\frac{\\lambda^{k}}{k!}$', 'λᵏ/(k!)'],
+  ['$\\overline{E_{n}}$', 'Eₙ\u0305'],
+  ['$\\frac12$', '1/2'],
+  ['$\\sqrt[3]{x}$', '³√x'],
   ['$\\frac{\\beta}{\\alpha + \\beta}$', 'β/(α + β)'],
   ['$\\sqrt{2}$', '√2'],
   ['$\\hat{f}$', 'f̂'],

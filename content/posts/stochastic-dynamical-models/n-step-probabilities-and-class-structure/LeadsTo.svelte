@@ -41,7 +41,7 @@
     {/each}
   </svg>
   <p class="readout">
-    State {from + 1} leads to the states {list(leads)} and communicates with the states {list(comm)}.
+    State {from + 1} leads to the states <span class="nowrap">{list(leads)}</span> and communicates with the states <span class="nowrap">{list(comm)}.</span>
   </p>
 </figure>
 

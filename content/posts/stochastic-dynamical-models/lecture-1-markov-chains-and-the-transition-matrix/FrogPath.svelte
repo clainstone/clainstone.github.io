@@ -53,7 +53,7 @@
     <p>Path: {path.map((i) => i + 1).join(', ')}</p>
     <p>
       P(X₀ = {path[0] + 1}{#each steps as s, k}, X{sub(k + 1)} = {s.j + 1}{/each}) = λ{sub(path[0] + 1)}{#each steps as s} p{sub(`${s.i + 1}${s.j + 1}`)}{/each}
-      = 1{#each steps as s} · {s.v === 0 ? '0' : fraction(s.v)}{/each} = <strong>{product}</strong>
+      = 1{#each steps as s}{' · '}{s.v === 0 ? '0' : fraction(s.v)}{/each} = <strong>{product}</strong>
     </p>
   </div>
   <div class="anim-controls">

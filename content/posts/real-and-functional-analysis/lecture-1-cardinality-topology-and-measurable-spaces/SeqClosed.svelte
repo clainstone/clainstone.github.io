@@ -70,6 +70,11 @@
     ctx.fillStyle = p.ink;
     ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
+    // A halo in the page colour where the boundary runs under the label.
+    ctx.strokeStyle = getComputedStyle(ctx.canvas).getPropertyValue('--page').trim() || '#fff';
+    ctx.lineWidth = 4;
+    ctx.lineJoin = 'round';
+    ctx.strokeText('x₀ ∈ V', x0 + 9, y0 + 2);
     ctx.fillText('x₀ ∈ V', x0 + 9, y0 + 2);
     const [vx, vy] = at(3.6, 1);
     ctx.fillStyle = p.muted;

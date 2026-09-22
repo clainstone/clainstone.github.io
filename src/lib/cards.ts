@@ -23,15 +23,17 @@ const FONTS = [
   { name: 'Serif', data: serif('source-serif-4-latin-400-normal.woff'), weight: 400 as const, style: 'normal' as const },
   { name: 'Serif', data: serif('source-serif-4-latin-400-italic.woff'), weight: 400 as const, style: 'italic' as const },
   { name: 'Serif', data: serif('source-serif-4-latin-600-normal.woff'), weight: 600 as const, style: 'normal' as const },
-  { name: 'Serif', data: serif('source-serif-4-latin-ext-400-normal.woff'), weight: 400 as const, style: 'normal' as const },
-  { name: 'Serif', data: serif('source-serif-4-latin-ext-600-normal.woff'), weight: 600 as const, style: 'normal' as const },
-  { name: 'Serif', data: serif('source-serif-4-greek-400-normal.woff'), weight: 400 as const, style: 'normal' as const },
-  { name: 'Serif', data: serif('source-serif-4-greek-600-normal.woff'), weight: 600 as const, style: 'normal' as const },
+  { name: 'SerifExt', data: serif('source-serif-4-latin-ext-400-normal.woff'), weight: 400 as const, style: 'normal' as const },
+  { name: 'SerifExt', data: serif('source-serif-4-latin-ext-600-normal.woff'), weight: 600 as const, style: 'normal' as const },
+  { name: 'SerifGreek', data: serif('source-serif-4-greek-400-normal.woff'), weight: 400 as const, style: 'normal' as const },
+  { name: 'SerifGreek', data: serif('source-serif-4-greek-600-normal.woff'), weight: 600 as const, style: 'normal' as const },
   { name: 'Math', data: font('stix-two-math', 'stix-two-math-latin-400-normal.woff'), weight: 400 as const, style: 'normal' as const },
   { name: 'Scripts', data: font('noto-serif', 'noto-serif-latin-ext-400-normal.woff'), weight: 400 as const, style: 'normal' as const },
-  { name: 'Scripts', data: font('noto-serif', 'noto-serif-math-400-normal.woff'), weight: 400 as const, style: 'normal' as const },
+  { name: 'ScriptsMath', data: font('noto-serif', 'noto-serif-math-400-normal.woff'), weight: 400 as const, style: 'normal' as const },
 ];
-const FAMILY = 'Serif, Math, Scripts';
+// Satori draws from one file per family name (the one that best matches
+// weight and style), so every subset has its own name, in fallback order.
+const FAMILY = 'Serif, SerifExt, SerifGreek, Math, Scripts, ScriptsMath';
 
 // Every character of a card must be drawn by one of the fonts: satori would
 // leave a blank where none has a glyph.

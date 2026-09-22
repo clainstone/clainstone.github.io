@@ -25,7 +25,7 @@
       <path class="paren" class:hit={inside(s)} d="M{px(s.a) + 5},{Y - 15} Q{px(s.a) - 5},{Y} {px(s.a) + 5},{Y + 15}" />
       <path class="paren" class:hit={inside(s)} d="M{px(s.b) - 5},{Y - 15} Q{px(s.b) + 5},{Y} {px(s.b) - 5},{Y + 15}" />
       <text class="name" x={(px(s.a) + px(s.b)) / 2} y={Y - 32}>{s.name}</text>
-      <text class="value" class:hit={inside(s)} x={(px(s.a) + px(s.b)) / 2} y={Y - 72}>δ<tspan dy="6" font-size="12" font-style="italic">x</tspan><tspan font-size="9">0</tspan><tspan dy="-6">(</tspan><tspan font-style="italic">{s.name}</tspan>) = {inside(s) ? 1 : 0}</text>
+      <text class="value" class:hit={inside(s)} x={(px(s.a) + px(s.b)) / 2} y={Y - 72}>δ<tspan dy="6" font-size="12" font-style="italic">x</tspan><tspan dy="3" font-size="9">0</tspan><tspan dy="-9">(</tspan><tspan font-style="italic">{s.name}</tspan>) = {inside(s) ? 1 : 0}</text>
     {/each}
     <line class="tick" x1={px(0)} y1={Y + 8} x2={px(0)} y2={Y - 8} />
     <text class="num" x={px(0)} y={Y + 28}>0</text>

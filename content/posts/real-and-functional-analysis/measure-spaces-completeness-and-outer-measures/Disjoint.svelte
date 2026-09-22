@@ -10,7 +10,7 @@
     <text class="lab" x="130" y="80">E</text>
     <text class="lab" x="290" y="80">F</text>
     <path class="brace" d="M70,150 Q70,165 90,165 L190,165 Q210,165 210,180 Q210,165 230,165 L330,165 Q350,165 350,150" />
-    <text class="lab accent" x="210" y="192">Z = E ∪ F</text>
+    <text class="lab accent" x="210" y="192">Z<tspan font-style="normal"> = </tspan>E<tspan font-style="normal"> ∪ </tspan>F</text>
   </svg>
 </figure>
 

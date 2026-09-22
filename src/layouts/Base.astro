@@ -27,7 +27,7 @@ const cleanPath = Astro.url.pathname.replace(/(^|\/)index\.html$/, '$1').replace
 const canonical = new URL(cleanPath, Astro.site);
 // Every page has its link-preview card (src/pages/og); the 404 page shows the main one.
 const card = new URL(noindex || cleanPath === '/' ? '/og/index.png' : `/og${cleanPath}.png`, Astro.site);
-const cardAlt = title && !noindex ? `${plain(title)}, by ${SITE.name}` : `${SITE.name}, ${SITE.line}`;
+const cardAlt = title && !noindex ? `${plain(title)}, by ${SITE.name}` : `${SITE.name}. ${SITE.line}`;
 const locale = SITE.language.replace('-', '_');
 // "page" on the address itself, "true" on the section a deeper page belongs to.
 const current = (href: string, own: boolean) => (cleanPath === href ? 'page' : own ? 'true' : undefined);
