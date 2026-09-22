@@ -2,7 +2,7 @@
 import { render } from 'astro:content';
 import Base from '../../../layouts/Base.astro';
 import M from '../../../components/M.astro';
-import { getPosts, threadOf, threadUrl, wordCount, formatDate, isoDate, type Post } from '../../../lib/site';
+import { getPosts, postsOf, threadOf, threadUrl, postUrl, wordCount, formatWords, formatDate, isoDate, publishedOf, type Post } from '../../../lib/site';
 
 export async function getStaticPaths() {
   const posts = await getPosts();
@@ -15,14 +15,24 @@ const { post } = Astro.props as { post: Post };
 const thread = await threadOf(post);
 const { Content } = await render(post);
 const words = wordCount(post.body);
+// Neighbours in the thread, which reads forward.
+const siblings = await postsOf(thread.id);
+const at = siblings.findIndex((p) => p.id === post.id);
+const previous = siblings[at - 1];
+const next = siblings[at + 1];
 ---
-<Base title={post.data.title} description={post.data.summary ?? `${post.data.title}, a post in ${thread.data.title}.`} section="threads">
+<Base
+  title={post.data.title}
+  description={post.data.summary ?? `${post.data.title}, a post in ${thread.data.title}.`}
+  section="threads"
+  article={{ published: publishedOf(post), modified: post.data.updated, section: thread.data.title }}
+>
   <article class="post">
     <header>
       <p class="thread"><a href={threadUrl(thread)}><M text={thread.data.title} /></a></p>
       <h1><M text={post.data.title} /></h1>
       <p class="meta">
-        <span class="words">{words} words</span>{', '}
+        <span class="words">{formatWords(words)}</span>{', '}
         <time datetime={isoDate(post.data.date)}>{formatDate(post.data.date)}</time>
         {post.data.updated && <>{', updated '}<time datetime={isoDate(post.data.updated)}>{formatDate(post.data.updated)}</time></>}
       </p>
@@ -31,4 +41,15 @@ const words = wordCount(post.body);
       <Content />
     </div>
   </article>
+  <nav class="post-nav" aria-label={`More in ${thread.data.title}`}>
+    <p class="thread-link">More in <a href={threadUrl(thread)}><M text={thread.data.title} /></a>, post {at + 1} of {siblings.length}</p>
+    <ul>
+      {previous && (
+        <li class="previous"><span class="dir">Previous</span> <a href={postUrl(previous)} rel="prev"><M text={previous.data.title} /></a></li>
+      )}
+      {next && (
+        <li class="next"><span class="dir">Next</span> <a href={postUrl(next)} rel="next"><M text={next.data.title} /></a></li>
+      )}
+    </ul>
+  </nav>
 </Base>

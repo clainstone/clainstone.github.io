@@ -11,7 +11,7 @@
 </script>
 
 <figure class="anim three-plot">
-  <svg viewBox="0 0 740 290" role="img" aria-label="The values of p11 after n steps for n from 0 to 16, oscillating around 1/5 inside the band 1/5 plus or minus 2 to the minus n; the values 3/16 at n = 5 and 51/256 at n = 10 are marked">
+  <svg viewBox="0 0 740 300" role="img" aria-label="The values of p11 after n steps for n from 0 to 16, oscillating around 1/5 inside the band 1/5 plus or minus 2 to the minus n; the values 3/16 at n = 5 and 51/256 at n = 10 are marked">
     <line class="axis" x1="60" y1={Y(0)} x2={X(N)} y2={Y(0)} />
     <line class="axis" x1="60" y1={Y(0)} x2="60" y2={Y(1)} />
     {#each [[0, '0'], [0.2, '1/5'], [1, '1']] as [v, t]}
@@ -41,9 +41,9 @@
   .band { fill: none; stroke: var(--anim-accent); stroke-opacity: 0.45; stroke-dasharray: 5 4; stroke-width: 1.3; }
   .pt { fill: var(--anim-ink); }
   .pt.mark { fill: var(--anim-accent); }
-  .tick, .n, .axis-label { fill: var(--anim-muted); font-size: 14px; dominant-baseline: central; }
+  .tick, .n, .axis-label { fill: var(--anim-muted); font-size: 16px; dominant-baseline: central; }
   .tick { text-anchor: end; }
   .n, .axis-label { text-anchor: middle; }
   .axis-label { font-style: italic; }
-  .note { fill: var(--anim-accent); font-size: 15px; text-anchor: middle; }
+  .note { fill: var(--anim-accent); font-size: 16px; text-anchor: middle; }
 </style>

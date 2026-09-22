@@ -26,7 +26,7 @@
 </script>
 
 <figure class="anim leads-to">
-  <svg viewBox="0 0 {W} {H}" role="img" aria-label="The chain of Example 1.1; choose a pad to mark the pads it leads to">
+  <svg viewBox="0 0 {W} {H}" role="group" aria-label="The chain of Example 1.1; choose a pad to mark the pads it leads to">
     {#each loops as l}<circle class="edge" class:on={leads.has(l.i)} cx={l.cx} cy={l.cy} r={LR} />{/each}
     {#each edges as e}
       <line class="edge" class:on={leads.has(e.i)} x1={e.ax} y1={e.ay} x2={e.bx} y2={e.by} />

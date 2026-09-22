@@ -21,7 +21,7 @@
   svg { font-family: var(--anim-font); }
   .ring { fill: var(--anim-accent); fill-opacity: 0.16; stroke: none; }
   .f, .e { fill: none; stroke: var(--anim-ink); stroke-width: 1.5; }
-  text { fill: var(--anim-ink); font-size: 22px; text-anchor: middle; dominant-baseline: central; }
+  text { fill: var(--anim-ink); font-size: 17px; text-anchor: middle; dominant-baseline: central; }
   .lab { font-style: italic; }
   .accent { fill: var(--anim-accent); }
 </style>

@@ -11,7 +11,6 @@
   const COUNT = 7;
   const sets = Array.from({ length: COUNT }, (_, n) => shape(scale(n)));
   const meet = shape(0.42);
-  const sub = (n) => String(n).split('').map((d) => '₀₁₂₃₄₅₆₇₈₉'[d]).join('');
 
   let n = $state(1);
   const at = $derived(blobPoint(260, 130, 205, 102, W, scale(n), 0.35));
@@ -26,11 +25,11 @@
     {/each}
     <path class="limit" d={meet} />
     <text class="lab" x="260" y="130">E</text>
-    {#if n > 0}<text class="lab accent" x={ring[0]} y={ring[1]}>A{sub(n)}</text>{/if}
-    <text class="lab accent" x={at[0] - 10} y={at[1] + 18}>E{sub(n)}</text>
-    <text class="lab" x="478" y="36">E₀</text>
+    {#if n > 0}<text class="lab accent" x={ring[0]} y={ring[1]}>A<tspan dy="5" font-size="0.72em" font-style="normal">{n}</tspan></text>{/if}
+    <text class="lab accent" x={at[0] - 10} y={at[1] + 18}>E<tspan dy="5" font-size="0.72em" font-style="normal">{n}</tspan></text>
+    <text class="lab" x="478" y="36">E<tspan dy="5" font-size="0.72em" font-style="normal">0</tspan></text>
   </svg>
-  <p class="line">A{sub(n)} = E₀ \ E{sub(n)}{n === 0 ? ' = ∅' : ''}</p>
+  <p class="line"><i>A</i><sub>{n}</sub> = <i>E</i><sub>0</sub> \ <i>E</i><sub>{n}</sub>{n === 0 ? ' = ∅' : ''}</p>
   <div class="anim-controls">
     <div class="anim-sliders">
       <Slider label="n" min={0} max={COUNT - 1} step={1} bind:value={n} />
@@ -45,7 +44,7 @@
   .edge { fill: none; stroke: var(--anim-muted); stroke-width: 1.1; }
   .edge.current { stroke: var(--anim-accent); stroke-width: 2.2; }
   .limit { fill: none; stroke: var(--anim-ink); stroke-width: 1.4; stroke-dasharray: 6 5; }
-  text { fill: var(--anim-ink); font-size: 20px; font-style: italic; text-anchor: middle; dominant-baseline: central; }
+  text { fill: var(--anim-ink); font-size: 17px; font-style: italic; text-anchor: middle; dominant-baseline: central; }
   .accent { fill: var(--anim-accent); }
-  .line { margin: 0.3rem 0 0; text-align: center; font-style: italic; color: var(--anim-ink); }
+  .line { margin: 0.3rem 0 0; text-align: center; color: var(--anim-ink); }
 </style>

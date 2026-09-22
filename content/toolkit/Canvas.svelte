@@ -54,11 +54,13 @@
 </script>
 
 <div class="anim">
-  <canvas bind:this={canvas} style:aspect-ratio={aspect} role="img" aria-label={label}></canvas>
+  <div class="anim-canvas" role="img" aria-label={label}>
+    <canvas bind:this={canvas} style:aspect-ratio={aspect}></canvas>
+  </div>
   {#if controls || children}
     <div class="anim-controls">
       {#if controls}
-        <button type="button" class="anim-toggle" onclick={() => anim?.toggle()} aria-pressed={playing}>
+        <button type="button" class="anim-toggle" onclick={() => anim?.toggle()}>
           {playing ? 'Pause' : 'Play'}
         </button>
       {/if}

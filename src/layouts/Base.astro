@@ -6,37 +6,65 @@ import '@fontsource/source-serif-4/400-italic.css';
 import '@fontsource/source-serif-4/600.css';
 import '@fontsource/source-code-pro/400.css';
 import '../styles/global.css';
-import { SITE, plain } from '../lib/site';
+import { SITE, plain, isoDate } from '../lib/site';
 
 interface Props {
   title?: string;
   description?: string;
-  /** main | threads, for aria-current in the bar */
+  /** main | threads: the section of the bar this page belongs to */
   section?: 'main' | 'threads';
+  /** A post: its dates and thread, for the article tags of link previews. */
+  article?: { published: Date; modified?: Date; section: string };
+  /** Keep the page out of search engines (the 404 page). */
+  noindex?: boolean;
 }
-const { title, description: rawDescription = SITE.line, section } = Astro.props;
+const { title, description: rawDescription = SITE.description, section, article, noindex = false } = Astro.props;
 const description = plain(rawDescription);
 const fullTitle = title ? `${plain(title)} · ${SITE.name}` : SITE.name;
 // The build writes page.html files, but links and GitHub Pages use the
 // address without the extension: /threads, not /threads.html.
 const cleanPath = Astro.url.pathname.replace(/(^|\/)index\.html$/, '$1').replace(/\.html$/, '');
 const canonical = new URL(cleanPath, Astro.site);
+// Every page has its link-preview card (src/pages/og); the 404 page shows the main one.
+const card = new URL(noindex || cleanPath === '/' ? '/og/index.png' : `/og${cleanPath}.png`, Astro.site);
+const cardAlt = title ? `${plain(title)}, by ${SITE.name}` : `${SITE.name}, ${SITE.line}`;
+const locale = SITE.language.replace('-', '_');
+// "page" on the address itself, "true" on the section a deeper page belongs to.
+const current = (href: string, own: boolean) => (cleanPath === href ? 'page' : own ? 'true' : undefined);
 ---
 <!doctype html>
-<html lang="en">
+<html lang={SITE.language}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <meta name="author" content={SITE.name} />
-    <link rel="canonical" href={canonical} />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonical} />}
     <link rel="alternate" type="application/rss+xml" title={SITE.name} href="/feed.xml" />
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content={fullTitle} />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#fbf8f2" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1c1a17" media="(prefers-color-scheme: dark)" />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:locale" content={locale} />
+    <meta property="og:type" content={article ? 'article' : 'website'} />
+    <meta property="og:title" content={title ? plain(title) : SITE.name} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical} />
-    <meta name="twitter:card" content="summary" />
+    {!noindex && <meta property="og:url" content={canonical} />}
+    <meta property="og:image" content={card} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={cardAlt} />
+    {article && <meta property="article:published_time" content={isoDate(article.published)} />}
+    {article?.modified && <meta property="article:modified_time" content={isoDate(article.modified)} />}
+    {article && <meta property="article:author" content={SITE.name} />}
+    {article && <meta property="article:section" content={plain(article.section)} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content={SITE.x} />
+    <meta name="twitter:creator" content={SITE.x} />
     <slot name="head" />
     <script is:inline>
       // Theme before the first paint: the reader's choice, else the system's.
@@ -52,22 +80,31 @@ const canonical = new URL(cleanPath, Astro.site);
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
-    <button class="theme-toggle" type="button" aria-label="Switch to dark mode" title="Dark mode">
-      <svg class="theme-icon" viewBox="0 0 24 24" aria-hidden="true">
-        <mask id="theme-moon">
-          <rect x="-4" y="-4" width="32" height="32" fill="white" />
-          <circle class="shadow" cx="16.5" cy="7.5" r="9" fill="black" />
-        </mask>
-        <circle class="core" cx="12" cy="12" r="9" mask="url(#theme-moon)" />
-        <g class="rays">
-          <line x1="19.60" y1="12.00" x2="21.90" y2="12.00" /><line x1="17.37" y1="17.37" x2="19.00" y2="19.00" /><line x1="12.00" y1="19.60" x2="12.00" y2="21.90" /><line x1="6.63" y1="17.37" x2="5.00" y2="19.00" /><line x1="4.40" y1="12.00" x2="2.10" y2="12.00" /><line x1="6.63" y1="6.63" x2="5.00" y2="5.00" /><line x1="12.00" y1="4.40" x2="12.00" y2="2.10" /><line x1="17.37" y1="6.63" x2="19.00" y2="5.00" />
-        </g>
-      </svg>
-    </button>
+    <header class="bar">
+      <a class="home" href="/" aria-current={current('/', section === 'main')}>{SITE.name}</a>
+      <nav aria-label="Sections">
+        <ul>
+          <li><a href="/threads" aria-current={current('/threads', section === 'threads')}>Threads</a></li>
+        </ul>
+      </nav>
+      <button class="theme-toggle" type="button" aria-label="Switch to dark mode" title="Dark mode">
+        <svg class="theme-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <mask id="theme-moon">
+            <rect x="-4" y="-4" width="32" height="32" fill="white" />
+            <circle class="shadow" cx="16.5" cy="7.5" r="9" fill="black" />
+          </mask>
+          <circle class="core" cx="12" cy="12" r="9" mask="url(#theme-moon)" />
+          <g class="rays">
+            <line x1="19.60" y1="12.00" x2="21.90" y2="12.00" /><line x1="17.37" y1="17.37" x2="19.00" y2="19.00" /><line x1="12.00" y1="19.60" x2="12.00" y2="21.90" /><line x1="6.63" y1="17.37" x2="5.00" y2="19.00" /><line x1="4.40" y1="12.00" x2="2.10" y2="12.00" /><line x1="6.63" y1="6.63" x2="5.00" y2="5.00" /><line x1="12.00" y1="4.40" x2="12.00" y2="2.10" /><line x1="17.37" y1="6.63" x2="19.00" y2="5.00" />
+          </g>
+        </svg>
+      </button>
+    </header>
     <script is:inline>
       (() => {
         const root = document.documentElement;
         const button = document.querySelector('.theme-toggle');
+        const system = matchMedia('(prefers-color-scheme: dark)');
         const label = () => {
           const dark = root.dataset.theme === 'dark';
           button.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
@@ -77,21 +114,24 @@ const canonical = new URL(cleanPath, Astro.site);
         button.addEventListener('click', () => {
           const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
           root.dataset.theme = next;
-          try { localStorage.setItem('theme', next); } catch {}
+          // A choice that matches the system is no choice: follow the system again.
+          try {
+            if (next === (system.matches ? 'dark' : 'light')) localStorage.removeItem('theme');
+            else localStorage.setItem('theme', next);
+          } catch {}
         });
         new MutationObserver(label).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
       })();
     </script>
-    <header class="bar">
-      <nav aria-label="Sections">
-        <ul>
-          <li><a href="/" aria-current={section === 'main' ? 'page' : undefined}>Main</a></li>
-          <li><a href="/threads" aria-current={section === 'threads' ? 'page' : undefined}>Threads</a></li>
-        </ul>
-      </nav>
-    </header>
     <main id="main">
       <slot />
     </main>
+    <footer class="foot">
+      <p>
+        <a href="/">{SITE.name}</a>
+        {SITE.contacts.map((c) => <><span class="sep" aria-hidden="true"> · </span><a href={c.href}>{c.label}</a></>)}
+        <span class="sep" aria-hidden="true"> · </span><a href="/feed.xml">RSS feed</a>
+      </p>
+    </footer>
   </body>
 </html>

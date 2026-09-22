@@ -41,5 +41,5 @@
   .prob { fill: var(--anim-accent); font-size: 16px; text-anchor: middle; dominant-baseline: central; }
   .group { fill: var(--anim-muted); fill-opacity: 0.08; stroke: var(--anim-muted); stroke-dasharray: 5 4; stroke-width: 1.2; }
   .group.closed { fill: var(--anim-accent); fill-opacity: 0.1; stroke: var(--anim-accent); stroke-dasharray: none; }
-  .glabel { fill: var(--anim-muted); font-size: 14px; font-style: italic; text-anchor: end; }
+  .glabel { fill: var(--anim-muted); font-size: 16px; font-style: italic; text-anchor: end; }
 </style>

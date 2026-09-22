@@ -42,6 +42,6 @@
   .outline { fill: none; stroke: var(--anim-ink); stroke-width: 1.4; }
   .shade { fill: var(--anim-accent); fill-opacity: 0.18; }
   .shade.strong { fill-opacity: 0.35; }
-  text { fill: var(--anim-ink); font-size: 20px; font-style: italic; text-anchor: middle; dominant-baseline: central; }
+  text { fill: var(--anim-ink); font-size: 14px; font-style: italic; text-anchor: middle; dominant-baseline: central; }
   .step { margin: 0.3rem 0 0; text-align: center; font-size: 0.9375rem; font-style: italic; color: var(--anim-ink); }
 </style>

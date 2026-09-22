@@ -18,7 +18,7 @@ On homelab, from this directory. The Makefile finds Node by itself.
 
 ```
 make start     # dev server in the background on port 4300, reloads on save
-make preview   # the built site, served the way GitHub Pages serves it
+make preview   # the built site in dist/, on Astro's preview server
 make stop
 make status
 ```
@@ -57,4 +57,6 @@ the site and checks one post.
 The workflow builds and deploys. It refuses to build while `SITE_URL` in
 `astro.config.mjs` or the email in `content/site.json` is still a placeholder.
 Posts marked `sample: true` are shown by the dev server only; `make preview`
-shows exactly what gets published.
+shows exactly what gets published. The build also makes the link-preview card
+of every page (`/og/…png`, `src/lib/cards.ts`), the icons, `robots.txt` and
+`sitemap.xml`; none of them is a file in the repository.

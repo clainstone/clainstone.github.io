@@ -18,6 +18,8 @@ export const threads = defineCollection({
   loader: glob({ pattern: '*.md', base: `${CONTENT}/threads` }),
   schema: z.object({
     title: z.string(),
+    /** One sentence on what the thread is, under its title and in link previews. */
+    description: z.string().optional(),
     status: z.enum(['active', 'closed']).default('active'),
   }),
 });
@@ -32,7 +34,10 @@ export const posts = defineCollection({
   }),
   schema: z.object({
     title: z.string(),
+    /** The date of the subject: a lecture's date. Orders the posts of a thread. */
     date: z.coerce.date(),
+    /** The day the post went online, when it differs from `date`. Orders Latest posts and the feed. */
+    published: z.coerce.date().optional(),
     updated: z.coerce.date().optional(),
     summary: z.string().optional(),
     sample: z.boolean().default(false),

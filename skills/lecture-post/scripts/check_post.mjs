@@ -236,8 +236,9 @@ function serve(root) {
   const types = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.woff2': 'font/woff2', '.woff': 'font/woff', '.ttf': 'font/ttf', '.xml': 'application/xml', '.json': 'application/json' };
   const server = createServer((req, res) => {
     let p = join(root, decodeURIComponent(req.url.split('?')[0]));
-    if (existsSync(p) && statSync(p).isDirectory()) p = join(p, 'index.html');
-    if (!existsSync(p) && existsSync(`${p}.html`)) p = `${p}.html`;
+    // As GitHub Pages: /threads is threads.html even though a threads/ folder exists.
+    if (existsSync(`${p}.html`)) p = `${p}.html`;
+    else if (existsSync(p) && statSync(p).isDirectory()) p = join(p, 'index.html');
     if (!existsSync(p)) { res.writeHead(404); res.end(); return; }
     res.writeHead(200, { 'Content-Type': types[extname(p)] ?? 'application/octet-stream' });
     res.end(readFileSync(p));
@@ -289,6 +290,11 @@ if (!flags.has('--no-browser')) {
           // A display must fit the column (STYLE.md 5.5).
           scrolling: [...document.querySelectorAll('.body .katex-display')].filter((d) => d.scrollWidth > d.clientWidth + 1)
             .map((d) => (d.querySelector('annotation')?.textContent ?? '').replace(/\s+/g, ' ').slice(0, 60)),
+          // Labels of SVG figures read at 16 to 19 px (VISUALS.md), size on the page.
+          labels: [...document.querySelectorAll('.body svg text')].map((t) => {
+            const ctm = t.getScreenCTM();
+            return { size: ctm ? parseFloat(getComputedStyle(t).fontSize) * Math.hypot(ctm.a, ctm.b) : 0, text: t.textContent.trim().slice(0, 30) };
+          }).filter((l) => l.size && l.text && (l.size < 15.5 || l.size > 20)),
           // An inline formula never breaks across lines (STYLE.md 5.2).
           split: [...document.querySelectorAll('.body p .katex')].filter((k) => !k.closest('.katex-display'))
             .filter((k) => new Set([...k.querySelector('.katex-html').getClientRects()].filter((r) => r.width > 0).map((r) => Math.round(r.bottom / 8))).size > 1)
@@ -299,6 +305,7 @@ if (!flags.has('--no-browser')) {
         if (state.emptyCanvases) error(`${width} px: ${state.emptyCanvases} canvas(es) have zero size`);
         for (const t of state.scrolling) error(`${width} px: a display scrolls horizontally: ${t}`);
         for (const t of state.split) error(`${width} px: an inline formula breaks across lines: ${t}`);
+        for (const l of state.labels.slice(0, 12)) warn(`${width} px: figure label "${l.text}" is ${l.size.toFixed(1)} px, outside 16 to 19`);
         for (const p of problems) error(`${width} px console: ${p.slice(0, 300)}`);
         const shot = join(out, `${slug}-${width}.png`);
         await page.screenshot({ path: shot, fullPage: true });

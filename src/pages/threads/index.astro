@@ -4,13 +4,16 @@ import M from '../../components/M.astro';
 import { getThreads, threadUrl } from '../../lib/site';
 const threads = await getThreads();
 ---
-<Base title="Threads" description="The active threads: sequences of posts on one subject each." section="threads">
+<Base title="Threads" description="The threads of the site: sequences of posts on one subject each, such as the lectures of one course." section="threads">
   <h1>Threads</h1>
   <ul class="rows threads">
     {threads.map(({ thread, count }) => (
       <li>
-        <a href={threadUrl(thread)}><M text={thread.data.title} /></a>{' '}
-        <span class="count">{count} {count === 1 ? 'post' : 'posts'}</span>
+        <div class="head">
+          <a href={threadUrl(thread)}><M text={thread.data.title} /></a>{' '}
+          <span class="count">{count} {count === 1 ? 'post' : 'posts'}{thread.data.status === 'closed' ? ', closed' : ''}</span>
+        </div>
+        {thread.data.description && <p class="about">{thread.data.description}</p>}
       </li>
     ))}
   </ul>

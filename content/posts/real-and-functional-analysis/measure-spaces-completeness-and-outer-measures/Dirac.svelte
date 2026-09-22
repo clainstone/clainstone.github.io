@@ -21,15 +21,16 @@
     <path class="arrow" d="M{X1 + 10},{Y - 5} L{X1 + 20},{Y} L{X1 + 10},{Y + 5} Z" />
     {#each sets as s}
       <line class="set" class:hit={inside(s)} x1={px(s.a)} y1={Y} x2={px(s.b)} y2={Y} />
-      <text class="paren" class:hit={inside(s)} x={px(s.a)} y={Y}>(</text>
-      <text class="paren" class:hit={inside(s)} x={px(s.b)} y={Y}>)</text>
+      <!-- Open ends drawn as parentheses: the endpoints do not belong to the interval. -->
+      <path class="paren" class:hit={inside(s)} d="M{px(s.a) + 5},{Y - 15} Q{px(s.a) - 5},{Y} {px(s.a) + 5},{Y + 15}" />
+      <path class="paren" class:hit={inside(s)} d="M{px(s.b) - 5},{Y - 15} Q{px(s.b) + 5},{Y} {px(s.b) - 5},{Y + 15}" />
       <text class="name" x={(px(s.a) + px(s.b)) / 2} y={Y - 32}>{s.name}</text>
-      <text class="value" class:hit={inside(s)} x={(px(s.a) + px(s.b)) / 2} y={Y - 72}>δ<tspan dy="6" font-size="14">x₀</tspan><tspan dy="-6">(</tspan><tspan font-style="italic">{s.name}</tspan>) = {inside(s) ? 1 : 0}</text>
+      <text class="value" class:hit={inside(s)} x={(px(s.a) + px(s.b)) / 2} y={Y - 72}>δ<tspan dy="6" font-size="12" font-style="italic">x</tspan><tspan font-size="9">0</tspan><tspan dy="-6">(</tspan><tspan font-style="italic">{s.name}</tspan>) = {inside(s) ? 1 : 0}</text>
     {/each}
     <line class="tick" x1={px(0)} y1={Y + 8} x2={px(0)} y2={Y - 8} />
     <text class="num" x={px(0)} y={Y + 28}>0</text>
     <circle class="pt" cx={px(x0)} cy={Y} r="6" />
-    <text class="num point" x={px(x0)} y={Y + 30}>x₀</text>
+    <text class="num point" x={px(x0)} y={Y + 30}>x<tspan dy="5" font-size="0.72em" font-style="normal">0</tspan></text>
     <text class="num" x={X1 + 12} y={Y + 28}>ℝ</text>
   </svg>
   <div class="anim-controls">
@@ -46,11 +47,11 @@
   .arrow { fill: var(--anim-ink); }
   .set { stroke: var(--anim-muted); stroke-width: 5; stroke-linecap: butt; }
   .set.hit { stroke: var(--anim-accent); }
-  .paren { fill: var(--anim-muted); font-size: 34px; text-anchor: middle; dominant-baseline: central; }
-  .paren.hit { fill: var(--anim-accent); }
+  .paren { fill: none; stroke: var(--anim-muted); stroke-width: 2.4; stroke-linecap: round; }
+  .paren.hit { stroke: var(--anim-accent); }
   .tick { stroke: var(--anim-ink); stroke-width: 1.4; }
   .pt { fill: var(--anim-accent); }
-  text { fill: var(--anim-ink); font-size: 20px; text-anchor: middle; dominant-baseline: central; }
+  text { fill: var(--anim-ink); font-size: 17px; text-anchor: middle; dominant-baseline: central; }
   .name, .point { font-style: italic; }
   .value { fill: var(--anim-muted); }
   .value.hit { fill: var(--anim-accent); }

@@ -19,6 +19,6 @@
   svg { font-family: var(--anim-font); }
   .set { fill: var(--anim-accent); fill-opacity: 0.14; stroke: var(--anim-accent); stroke-width: 1.8; }
   .brace { fill: none; stroke: var(--anim-muted); stroke-width: 1.5; }
-  text { fill: var(--anim-ink); font-size: 21px; font-style: italic; text-anchor: middle; dominant-baseline: central; }
-  .accent { fill: var(--anim-accent); font-size: 19px; }
+  text { fill: var(--anim-ink); font-size: 18px; font-style: italic; text-anchor: middle; dominant-baseline: central; }
+  .accent { fill: var(--anim-accent); font-size: 16px; }
 </style>

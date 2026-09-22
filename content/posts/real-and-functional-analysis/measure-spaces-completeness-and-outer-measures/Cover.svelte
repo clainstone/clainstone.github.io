@@ -16,7 +16,7 @@
     {/each}
     <polygon class="tri" points={T.map((p) => p.join(',')).join(' ')} />
     <text class="lab tri-lab" x="262" y="136">E</text>
-    <text class="lab" x="400" y="80">{name}<tspan dy="6" font-size="15">n</tspan></text>
+    <text class="lab" x="400" y="80">{name}<tspan dy="6" font-size="12">n</tspan></text>
   </svg>
 </figure>
 
@@ -25,7 +25,7 @@
   svg { font-family: var(--anim-font); }
   .set { fill: var(--anim-muted); fill-opacity: 0.08; stroke: var(--anim-muted); stroke-width: 1.3; }
   .tri { fill: var(--anim-accent); fill-opacity: 0.18; stroke: var(--anim-accent); stroke-width: 2; }
-  text { fill: var(--anim-ink); font-size: 21px; text-anchor: middle; dominant-baseline: central; }
+  text { fill: var(--anim-ink); font-size: 17px; text-anchor: middle; dominant-baseline: central; }
   .lab { font-style: italic; }
   .tri-lab { fill: var(--anim-accent); }
 </style>

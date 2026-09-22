@@ -92,6 +92,7 @@ A notes file that covers several lectures gives one post per lecture.
 ---
 title: 'Completeness of $L^p$ spaces'
 date: 2026-10-07
+published: 2026-10-09
 summary: 'The spaces $L^p$ with $1 \le p < \infty$ are complete. The proof extracts a fast subsequence and controls it with a telescoping series.'
 ---
 ```
@@ -103,6 +104,10 @@ between `$` signs.
 **Date.** The date of the lecture when the notes give it. Otherwise the date
 Alessandro gives. Otherwise today in Europe/Rome, and say so in the report.
 Posts of a thread are listed by date.
+
+**Published.** The day the post is written, in Europe/Rome, when it is later
+than the date of the lecture. It puts the post at the top of Latest posts and
+of the feed.
 
 **Summary.** One or two sentences on what the lecture establishes, with no
 opinion. The site uses it as the page description and in the feed.

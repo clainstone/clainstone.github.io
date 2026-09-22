@@ -34,7 +34,7 @@
   .outcome { margin: 1.5rem auto; max-width: 34rem; }
   svg { font-family: var(--anim-font); }
   .grid { stroke: var(--anim-rule); stroke-width: 1; }
-  .state, .time { fill: var(--anim-muted); font-size: 15px; text-anchor: middle; dominant-baseline: central; }
+  .state, .time { fill: var(--anim-muted); font-size: 16px; text-anchor: middle; dominant-baseline: central; }
   .traj { fill: none; stroke: var(--anim-muted); stroke-width: 1.4; }
   .pt { fill: var(--anim-muted); }
   .pt.on { fill: var(--anim-accent); }

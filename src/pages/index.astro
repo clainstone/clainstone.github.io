@@ -1,14 +1,14 @@
 ---
 import Base from '../layouts/Base.astro';
 import M from '../components/M.astro';
-import { SITE, PHOTO, getPosts, postUrl, formatDate, isoDate } from '../lib/site';
-const latest = (await getPosts()).slice(0, 10);
+import { SITE, PHOTO, getRecentPosts, getThreads, postUrl, threadIdOf, formatDate, isoDate, publishedOf } from '../lib/site';
+const latest = (await getRecentPosts()).slice(0, 10);
+const threadTitle = new Map((await getThreads()).map(({ thread }) => [thread.id, thread.data.title]));
 ---
 <Base section="main">
   <section class="who">
-    <img class="photo" src={PHOTO.src} width="112" height="112" alt={`Portrait of ${SITE.name}`} />
+    <img class="photo" src={PHOTO.src} width="112" height="112" alt="" />
     <h1>{SITE.name}</h1>
-    <p class="email"><a href={`mailto:${SITE.email}`}>{SITE.email}</a></p>
     <p class="line">{SITE.line}</p>
   </section>
   <section class="bio">
@@ -19,8 +19,11 @@ const latest = (await getPosts()).slice(0, 10);
     <ul class="rows">
       {latest.map((post) => (
         <li>
-          <a href={postUrl(post)}><M text={post.data.title} /></a>{' '}
-          <time class="date" datetime={isoDate(post.data.date)}>{formatDate(post.data.date)}</time>
+          <span class="entry">
+            <a href={postUrl(post)}><M text={post.data.title} /></a>
+            <span class="in"><M text={threadTitle.get(threadIdOf(post)) ?? ''} /></span>
+          </span>{' '}
+          <time class="date" datetime={isoDate(publishedOf(post))}>{formatDate(publishedOf(post))}</time>
         </li>
       ))}
     </ul>

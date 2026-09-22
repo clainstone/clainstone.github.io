@@ -11,7 +11,6 @@
   const COUNT = 7;
   const sets = Array.from({ length: COUNT }, (_, n) => shape(scale(n)));
   const union = shape(1);
-  const sub = (n) => String(n).split('').map((d) => '₀₁₂₃₄₅₆₇₈₉'[d]).join('');
 
   let N = $state(2);
   const rings = $derived(Array.from({ length: N + 1 }, (_, n) => (n === 0 ? sets[0] : `${sets[n]} ${sets[n - 1]}`)));
@@ -26,10 +25,10 @@
       <path class="edge" class:current={n === N} {d} />
     {/each}
     <path class="limit" d={union} />
-    <text class="lab" x="260" y="130">F₀ = E₀</text>
+    <text class="lab" x="260" y="130">F<tspan dy="5" font-size="0.72em" font-style="normal">0</tspan><tspan dy="-5"> = E</tspan><tspan dy="5" font-size="0.72em" font-style="normal">0</tspan></text>
     <text class="lab" x="478" y="36">E</text>
   </svg>
-  <p class="line">E{sub(N)} = {N === 0 ? 'F₀' : N === 1 ? 'F₀ ∪ F₁' : `F₀ ∪ … ∪ F${sub(N)}`}</p>
+  <p class="line"><i>E</i><sub>{N}</sub> = <i>F</i><sub>0</sub>{#if N === 1}{' ∪ '}<i>F</i><sub>1</sub>{:else if N > 1}{' ∪ … ∪ '}<i>F</i><sub>{N}</sub>{/if}</p>
   <div class="anim-controls">
     <div class="anim-sliders">
       <Slider label="N" min={0} max={COUNT - 1} step={1} bind:value={N} />
@@ -44,7 +43,7 @@
   .edge { fill: none; stroke: var(--anim-muted); stroke-width: 1.1; }
   .edge.current { stroke: var(--anim-accent); stroke-width: 2.2; }
   .limit { fill: none; stroke: var(--anim-ink); stroke-width: 1.4; stroke-dasharray: 6 5; }
-  text { fill: var(--anim-ink); font-size: 20px; font-style: italic; text-anchor: middle; dominant-baseline: central; }
+  text { fill: var(--anim-ink); font-size: 17px; font-style: italic; text-anchor: middle; dominant-baseline: central; }
   .accent { fill: var(--anim-accent); }
-  .line { margin: 0.3rem 0 0; text-align: center; font-style: italic; color: var(--anim-ink); }
+  .line { margin: 0.3rem 0 0; text-align: center; color: var(--anim-ink); }
 </style>

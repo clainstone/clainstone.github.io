@@ -27,7 +27,7 @@
   .out { fill: var(--anim-muted); fill-opacity: 0.16; }
   .e { fill: none; stroke: var(--anim-accent); stroke-width: 1.8; }
   .z { fill: none; stroke: var(--anim-ink); stroke-width: 1.5; }
-  text { fill: var(--anim-ink); font-size: 21px; font-style: italic; text-anchor: middle; dominant-baseline: central; }
+  text { fill: var(--anim-ink); font-size: 17px; font-style: italic; text-anchor: middle; dominant-baseline: central; }
   .accent { fill: var(--anim-accent); }
-  .note { font-size: 19px; }
+  .note { font-size: 16px; }
 </style>

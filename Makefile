@@ -1,7 +1,7 @@
 # Run the site on homelab. Node is installed in ~/.local/node/bin here.
 #
 #   make start     dev server in the background, reloads on every save
-#   make preview   build, then serve dist/ in the background as Pages will
+#   make preview   build, then serve dist/ in the background (Astro's preview)
 #   make stop      stop whichever of the two is running
 #   make status    is a server running?
 #   make logs      follow the dev server's log

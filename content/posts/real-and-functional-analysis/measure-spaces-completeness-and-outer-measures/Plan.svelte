@@ -37,8 +37,8 @@
 <style>
   .plan { margin: 1.5rem auto; max-width: 36rem; }
   svg { font-family: var(--anim-font); }
-  text { fill: var(--anim-ink); font-size: 20px; text-anchor: middle; dominant-baseline: central; }
-  .title { font-size: 21px; font-weight: 600; }
+  text { fill: var(--anim-ink); font-size: 17px; text-anchor: middle; dominant-baseline: central; }
+  .title { font-size: 17px; font-weight: 600; }
   .it { font-style: italic; }
   .accent { fill: var(--anim-accent); }
   .arc { fill: none; stroke: var(--anim-muted); stroke-width: 1.5; }

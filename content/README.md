@@ -5,15 +5,23 @@ post never touches a component or a layout.
 
 ## Files
 
-- `site.json`: name, email, photo file, the one-line description under the
-  name, the bio paragraphs and the contacts.
+- `site.json`: name, email, photo file, `line` (the sentence under the name),
+  `description` (the site in one sentence: search results, link previews and
+  the feed), the bio paragraphs, the contacts, `language` (`en-GB`) and `x`
+  (the X handle for link previews). `emailIsPlaceholder` stops a CI build
+  while the email is still a placeholder.
 - `photo.jpg`: the portrait, square, at least 400 px. To change it, put a new image
   here and set `photo` in `site.json` to its file name.
-- `threads/<slug>.md`: one thread. Frontmatter: `title`, `status`
-  (`active` or `closed`). No body.
+- `threads/<slug>.md`: one thread. Frontmatter: `title`, optional
+  `description` (one sentence, shown under the title and in link previews),
+  `status` (`active` or `closed`; a closed thread keeps its page and is
+  listed after the active ones). No body.
 - `posts/<thread-slug>/<post-slug>/index.mdx`: one post. Frontmatter:
-  `title`, `date`, optional `updated`, optional `summary` (meta description
-  and feed only), optional `sample: true` for a demonstration post that the
+  `title`, `date` (the date of the subject, a lecture's date: it orders the
+  posts of a thread), optional `published` (the day the post went online,
+  when later than `date`: it orders Latest posts and the feed), optional
+  `updated`, optional `summary` (meta description and feed only), optional
+  `sample: true` for a demonstration post that the
   dev server shows and the published site leaves out. A thread with no
   published post does not appear. Body: Markdown with mathematics (`$…$`, `$$…$$`), fenced
   code, images, and MDX imports for animations. The post's own components and

@@ -10,7 +10,7 @@
 </script>
 
 <figure class="anim symmetry">
-  <svg viewBox="0 0 760 290" role="img" aria-label="Left: four states, every pair joined by a line. Right: the values of p11 after n steps for n from 0 to 10, alternating around 1/4 and approaching it">
+  <svg viewBox="0 0 760 300" role="img" aria-label="Left: four states, every pair joined by a line. Right: the values of p11 after n steps for n from 0 to 10, alternating around 1/4 and approaching it">
     {#each pairs as [a, b]}
       <line class="edge" x1={V[a][0]} y1={V[a][1]} x2={V[b][0]} y2={V[b][1]} />
     {/each}
@@ -41,7 +41,7 @@
   .axis { stroke: var(--anim-ink); stroke-width: 1.2; }
   .level { stroke: var(--anim-muted); stroke-width: 1.2; }
   .pt { fill: var(--anim-accent); }
-  .tick, .n, .axis-label { fill: var(--anim-muted); font-size: 14px; dominant-baseline: central; }
+  .tick, .n, .axis-label { fill: var(--anim-muted); font-size: 16px; dominant-baseline: central; }
   .tick { text-anchor: end; }
   .n, .axis-label { text-anchor: middle; }
   .axis-label { font-style: italic; }

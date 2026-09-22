@@ -5,6 +5,7 @@ import svelte from '@astrojs/svelte';
 import { unified } from '@astrojs/markdown-remark';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import headingAnchors from './src/plugins/heading-anchors.mjs';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
@@ -23,7 +24,7 @@ if (process.env.CI) {
 
 const math = {
   remarkPlugins: [remarkMath],
-  rehypePlugins: [[rehypeKatex, { strict: false }]],
+  rehypePlugins: [[rehypeKatex, { strict: false }], headingAnchors],
 };
 
 export default defineConfig({

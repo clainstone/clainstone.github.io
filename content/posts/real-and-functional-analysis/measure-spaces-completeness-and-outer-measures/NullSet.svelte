@@ -23,5 +23,5 @@
   .a { fill: var(--anim-accent); fill-opacity: 0.12; stroke: var(--anim-ink); stroke-width: 1.5; }
   .c { fill: none; stroke: var(--anim-muted); stroke-width: 1.5; stroke-dasharray: 6 5; }
   .b { fill: var(--anim-accent); fill-opacity: 0.3; stroke: var(--anim-accent); stroke-width: 1.5; }
-  text { fill: var(--anim-ink); font-size: 21px; font-style: italic; text-anchor: middle; dominant-baseline: central; }
+  text { fill: var(--anim-ink); font-size: 17px; font-style: italic; text-anchor: middle; dominant-baseline: central; }
 </style>

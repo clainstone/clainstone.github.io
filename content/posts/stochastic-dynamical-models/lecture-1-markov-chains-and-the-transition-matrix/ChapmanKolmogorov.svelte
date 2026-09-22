@@ -64,7 +64,7 @@
   .step.path { stroke: var(--anim-accent); stroke-opacity: 0.55; stroke-linecap: round; stroke-dasharray: none; }
   .node { fill: var(--page, #fff); stroke: var(--anim-muted); stroke-width: 1.4; }
   .node.on { stroke: var(--anim-accent); stroke-width: 3; }
-  .name { fill: var(--anim-ink); font-size: 15px; text-anchor: middle; dominant-baseline: central; }
-  .time { fill: var(--anim-muted); font-size: 15px; text-anchor: middle; }
+  .name { fill: var(--anim-ink); font-size: 16px; text-anchor: middle; dominant-baseline: central; }
+  .time { fill: var(--anim-muted); font-size: 16px; text-anchor: middle; }
   .readout { margin: 0.4rem 0 0; font-size: 0.875rem; color: var(--anim-muted); font-variant-numeric: tabular-nums; }
 </style>

@@ -38,7 +38,7 @@
   .pt { fill: var(--anim-muted); }
   .pt.on { fill: var(--anim-accent); }
   .arc { fill: none; stroke: var(--anim-accent); stroke-width: 1.3; stroke-opacity: 0.7; }
-  text { fill: var(--anim-ink); font-size: 19px; dominant-baseline: central; }
+  text { fill: var(--anim-ink); font-size: 17px; dominant-baseline: central; }
   .name { font-style: italic; text-anchor: start; }
   .dots, .num { fill: var(--anim-muted); text-anchor: middle; }
 </style>

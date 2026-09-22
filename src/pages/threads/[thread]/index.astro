@@ -1,7 +1,7 @@
 ---
 import Base from '../../../layouts/Base.astro';
 import M from '../../../components/M.astro';
-import { getThreads, postsOf, postUrl, wordCount, formatDate, isoDate, type Thread } from '../../../lib/site';
+import { getThreads, postsOf, postUrl, wordCount, formatWords, formatDate, isoDate, type Thread } from '../../../lib/site';
 
 export async function getStaticPaths() {
   const threads = await getThreads();
@@ -9,15 +9,18 @@ export async function getStaticPaths() {
 }
 const { thread } = Astro.props as { thread: Thread };
 const posts = await postsOf(thread.id);
+const count = `${posts.length} ${posts.length === 1 ? 'post' : 'posts'}`;
 ---
-<Base title={thread.data.title} description={`${thread.data.title}: ${posts.length} ${posts.length === 1 ? 'post' : 'posts'}.`} section="threads">
+<Base title={thread.data.title} description={thread.data.description ?? `${thread.data.title}: ${count}.`} section="threads">
   <h1><M text={thread.data.title} /></h1>
+  {thread.data.description && <p class="lede">{thread.data.description}</p>}
+  {thread.data.status === 'closed' && <p class="lede">This thread is closed.</p>}
   <ul class="rows posts">
     {posts.map((post) => (
       <li>
         <a href={postUrl(post)}><M text={post.data.title} /></a>{' '}
         <span class="meta">
-          <span class="words">{wordCount(post.body)} words</span>{', '}
+          <span class="words">{formatWords(wordCount(post.body))}</span>{', '}
           <time datetime={isoDate(post.data.date)}>{formatDate(post.data.date)}</time>
         </span>
       </li>

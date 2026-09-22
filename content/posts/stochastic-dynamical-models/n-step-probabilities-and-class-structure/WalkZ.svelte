@@ -34,8 +34,9 @@
     for (const n of [0, 100, 200, 300, 400]) ctx.fillText(String(n), X(n), B + 8);
     ctx.strokeStyle = pal.muted; ctx.setLineDash([5, 4]); ctx.lineWidth = 1.3;
     ctx.beginPath(); ctx.moveTo(L, Y(2 * p - 1)); ctx.lineTo(R, Y(2 * p - 1)); ctx.stroke(); ctx.setLineDash([]);
-    ctx.textAlign = 'right'; ctx.textBaseline = 'top'; ctx.fillStyle = pal.muted;
-    ctx.fillText(`2p − 1 = ${(2 * p - 1).toFixed(2)}`, R - 4, Y(2 * p - 1) + 6);
+    // Above the level: the path settles on it at the right end.
+    ctx.textAlign = 'right'; ctx.textBaseline = 'bottom'; ctx.fillStyle = pal.muted;
+    ctx.fillText(`2p − 1 = ${(2 * p - 1).toFixed(2)}`, R - 4, Y(2 * p - 1) - 8);
     ctx.strokeStyle = pal.accent; ctx.lineWidth = 1.6; ctx.beginPath();
     let x = 0;
     for (let n = 1; n <= STEPS; n++) {

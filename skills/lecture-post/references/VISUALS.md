@@ -117,6 +117,17 @@ Working examples:
 The stochastic example shows the mechanics only. Its prose is not a model for a
 lecture post: it contains first-person remarks that a lecture post never has.
 
+## Size of the text in a visual
+
+Labels read at 16 to 19 px on the page at 1280 px, a little smaller than the
+19 px text. In an SVG the size on the page is the `font-size` times the scale
+of the `viewBox` (displayed width over viewBox width): a 520-unit viewBox shown
+at 570 px scales by 1.1, so 17 units give about 18.5 px. Canvases get it from
+the toolkit: `p.font` is 17 px and `p.smallFont` 16 px. Write subscripts and
+superscripts in SVG with a `<tspan dy>` and a smaller `font-size`, not with
+Unicode subscript characters, which the site's fonts do not have.
+`check_post.mjs` warns about any SVG label outside 15.5 to 20 px.
+
 ## Checking a visual
 
 `scripts/check_post.mjs` builds the site, opens the post at 1280 px,

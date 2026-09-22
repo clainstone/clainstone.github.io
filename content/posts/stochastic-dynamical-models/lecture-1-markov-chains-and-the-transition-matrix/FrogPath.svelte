@@ -33,7 +33,7 @@
 </script>
 
 <figure class="anim frog-path">
-  <svg viewBox="0 0 {W} {H}" role="img" aria-label="The frog chain with a path highlighted; click a pad to extend the path">
+  <svg viewBox="0 0 {W} {H}" role="group" aria-label="The frog chain with a path highlighted; click a pad to extend the path">
     {#each loops as l}
       <circle class="edge" class:on={used.has(`${l.i}-${l.i}`)} cx={l.cx} cy={l.cy} r={LR} />
     {/each}

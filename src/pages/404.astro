@@ -1,7 +1,11 @@
 ---
 import Base from '../layouts/Base.astro';
 ---
-<Base title="Not found" description="There is no page at this address.">
+<Base title="Not found" description="There is no page at this address." noindex>
+  <script is:inline slot="head">
+    // GitHub Pages serves /threads, not /threads/: drop a trailing slash.
+    if (location.pathname.length > 1 && location.pathname.endsWith('/')) location.replace(location.pathname.replace(/\/+$/, '') + location.search + location.hash);
+  </script>
   <h1>Not found</h1>
-  <p class="notfound">There is no page at this address. Start again from the <a href="/">main page</a>.</p>
+  <p class="notfound">There is no page at this address. Start again from the <a href="/">main page</a> or the <a href="/threads">threads</a>.</p>
 </Base>

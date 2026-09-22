@@ -24,7 +24,7 @@ const DEFAULTS = {
 /**
  * The five animation properties a site sets on `:root` (`--anim-ink`,
  * `--anim-muted`, `--anim-rule`, `--anim-accent`, `--anim-font`), resolved
- * on `el`, plus `font`: a ready `ctx.font` string at 0.75 of the body size,
+ * on `el`, plus `font`: a ready `ctx.font` string at 0.9 of the body size,
  * and `size`, the body size in px.
  */
 export function palette(el) {
@@ -32,7 +32,8 @@ export function palette(el) {
   const get = (name, fallback) => cs.getPropertyValue(name).trim() || fallback;
   const size = parseFloat(cs.fontSize) || 16;
   const fontFamily = get('--anim-font', DEFAULTS.fontFamily);
-  const px = Math.round(size * 0.75);
+  // Labels a little smaller than the text: 17 px and 16 px at the site's 19 px.
+  const px = Math.round(size * 0.9);
   return {
     ink: get('--anim-ink', DEFAULTS.ink),
     muted: get('--anim-muted', DEFAULTS.muted),
@@ -42,7 +43,7 @@ export function palette(el) {
     size,
     px,
     font: `${px}px ${fontFamily}`,
-    smallFont: `${Math.round(size * 0.65)}px ${fontFamily}`,
+    smallFont: `${Math.round(size * 0.84)}px ${fontFamily}`,
   };
 }
 
@@ -120,6 +121,10 @@ export function loop(canvas, draw, options = {}) {
   // The page switched between light and dark: take the new palette at once.
   const mo = new MutationObserver(() => { size = { ...size, p: palette(canvas) }; render(0); });
   mo.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  // A font subset that arrives after the first frame (Greek, say) changes
+  // the labels: draw again once it is in.
+  const onFonts = () => { size = { ...size, p: palette(canvas) }; render(0); };
+  document.fonts?.addEventListener('loadingdone', onFonts);
   const io = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; sync(); }, { threshold: 0.05 });
   io.observe(canvas);
   onState(wanted);
@@ -134,6 +139,6 @@ export function loop(canvas, draw, options = {}) {
     get time() { return t; },
     set time(v) { t = v; render(0); },
     reduced,
-    destroy() { stop(); ro.disconnect(); io.disconnect(); mo.disconnect(); },
+    destroy() { stop(); ro.disconnect(); io.disconnect(); mo.disconnect(); document.fonts?.removeEventListener('loadingdone', onFonts); },
   };
 }

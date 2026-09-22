@@ -98,7 +98,7 @@ html {
 }
 
 body {
-  margin: var(--top) auto 4rem;
+  margin: var(--top) auto 2.5rem;
   max-width: calc(var(--measure) + 2 * var(--gutter));
   padding: 0 var(--gutter);
   background: var(--page);
@@ -171,15 +171,34 @@ em, i { font-style: italic; }
   white-space: nowrap;
 }
 
+/* The bar and the footer have the width of a post on every page, so that
+   they do not move when a post opens; on narrower pages they reach past the
+   text column by the same amount on each side. */
+.bar, .foot { margin-left: calc(50% - var(--post-measure) / 2); margin-right: calc(50% - var(--post-measure) / 2); }
 .bar {
-  padding-bottom: var(--row);
+  display: flex;
+  align-items: center;
+  gap: 1.75rem;
+  padding-bottom: 0.5rem;
   border-bottom: 1px solid var(--rule);
   margin-bottom: var(--section);
 }
-.bar ul { display: flex; justify-content: center; gap: 2rem; }
-.bar a { font-size: var(--small); color: var(--muted); }
-.bar a:hover { color: var(--ink); }
-.bar a[aria-current='page'] { color: var(--ink); }
+.bar .home { margin-right: auto; color: var(--ink); font-weight: 600; }
+.bar ul { display: flex; gap: 1.75rem; }
+.bar nav a { color: var(--muted); }
+.bar a:hover { color: var(--link-hover); }
+.bar nav a[aria-current] { color: var(--ink); }
+
+.foot {
+  margin-top: 4rem;
+  padding-top: var(--row);
+  border-top: 1px solid var(--rule);
+  color: var(--muted);
+  font-size: var(--small);
+  text-align: center;
+}
+.foot a { color: var(--muted); }
+.foot a:hover { color: var(--ink); }
 
 main > section + section { margin-top: var(--section); }
 
@@ -221,6 +240,8 @@ main > section + section { margin-top: var(--section); }
   align-items: baseline;
   gap: 1rem;
 }
+.latest .entry { display: flex; flex-direction: column; min-width: 0; }
+.latest .in { color: var(--muted); font-size: var(--small); font-style: italic; }
 .latest .date {
   flex: none;
   white-space: nowrap;
@@ -231,13 +252,16 @@ main > section + section { margin-top: var(--section); }
 
 .meta, .count { color: var(--muted); font-size: var(--small); }
 
-.threads > li, .posts > li {
+.threads .head, .posts > li {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
   gap: 1rem;
 }
 .threads a { font-size: var(--thread); }
+.threads .about { margin-top: 0.3rem; color: var(--muted); }
+.lede { margin-top: 0.6rem; color: var(--muted); }
+.lede + .rows, main > h1 + .rows { margin-top: 1rem; }
 .threads .count, .posts .meta { flex: none; white-space: nowrap; }
 
 @media (max-width: 40em) {
@@ -266,10 +290,18 @@ main > section + section { margin-top: var(--section); }
 .post .body { margin-top: 2rem; }
 
 .body > * + * { margin-top: 1em; }
-.body h2 { font-size: 1.25rem; margin-top: 2em; }
+.body h2 { font-size: 1.375rem; margin-top: 2em; }
 .body h3 { font-size: var(--heading); margin-top: 1.6em; }
 .body h2 + *, .body h3 + * { margin-top: 0.5em; }
-.body a:hover { text-decoration: underline; }
+.body a, .notfound a, .lede a {
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+  text-underline-offset: 0.15em;
+}
+.body a:hover, .notfound a:hover { text-decoration-color: currentColor; }
+/* A heading's own link, shown on hover. */
+.body .anchor { margin-left: 0.35em; color: var(--muted); font-weight: 400; text-decoration: none; opacity: 0; }
+.body :is(h2, h3):hover .anchor, .body .anchor:focus-visible { opacity: 1; }
 .body strong { font-weight: 600; }
 .body code { font-family: var(--mono); font-size: 0.85em; }
 .body :not(pre) > code {
@@ -375,8 +407,8 @@ main > section + section { margin-top: var(--section); }
   background: transparent;
   cursor: pointer;
 }
-.anim-slider input[type='range']::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; background: var(--rule); }
-.anim-slider input[type='range']::-moz-range-track { height: 4px; border-radius: 2px; background: var(--rule); }
+.anim-slider input[type='range']::-webkit-slider-runnable-track { height: 4px; border-radius: 2px; background: color-mix(in srgb, var(--muted) 45%, var(--page)); }
+.anim-slider input[type='range']::-moz-range-track { height: 4px; border-radius: 2px; background: color-mix(in srgb, var(--muted) 45%, var(--page)); }
 .anim-slider input[type='range']::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
@@ -403,19 +435,16 @@ main > section + section { margin-top: var(--section); }
 }
 
 /* ---- theme switch ------------------------------------------------------ */
-/* Fixed in the top right corner of every page. A sun in thin strokes; in
+/* At the right end of the bar on every page. A sun in thin strokes; in
    dark mode it turns an eighth of a turn, its disc fills, a shadow slides
    across it into a crescent, and the rays fold away. */
 body { transition: background-color 0.3s ease, color 0.3s ease; }
 .theme-toggle {
-  position: fixed;
-  top: 1rem;
-  right: 1.25rem;
-  z-index: 10;
   display: grid;
+  margin: -0.25rem -0.5rem -0.25rem 0;
   place-items: center;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2.25rem;
+  height: 2.25rem;
   padding: 0;
   border: 0;
   border-radius: 50%;
@@ -448,7 +477,7 @@ body { transition: background-color 0.3s ease, color 0.3s ease; }
 @media (prefers-reduced-motion: reduce) {
   body, .theme-toggle, .theme-icon, .theme-icon * { transition: none !important; }
 }
-@media print { .theme-toggle { display: none; } }
+@media print { .theme-toggle, .foot, .post-nav { display: none; } }
 
 /* Code: Shiki writes both themes, the dark one in --shiki-dark. */
 :root[data-theme='dark'] .astro-code,
@@ -457,3 +486,17 @@ body { transition: background-color 0.3s ease, color 0.3s ease; }
   font-style: var(--shiki-dark-font-style) !important;
   font-weight: var(--shiki-dark-font-weight) !important;
 }
+
+/* ---- the end of a post: the thread and its neighbours ------------------ */
+.post-nav {
+  margin-top: 3.5rem;
+  padding-top: var(--row);
+  border-top: 1px solid var(--rule);
+}
+.post-nav .thread-link { color: var(--muted); font-size: var(--small); }
+.post-nav .thread-link a { color: var(--muted); font-style: italic; }
+.post-nav .thread-link a:hover { color: var(--ink); }
+.post-nav ul { display: flex; gap: 2rem; margin-top: 0.9rem; }
+.post-nav li { flex: 1 1 0; }
+.post-nav .next { text-align: right; margin-left: auto; }
+.post-nav .dir { display: block; color: var(--muted); font-size: var(--small); }

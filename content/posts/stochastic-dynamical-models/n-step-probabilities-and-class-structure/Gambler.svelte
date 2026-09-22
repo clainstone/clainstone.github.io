@@ -73,6 +73,6 @@
   .node { fill: var(--page, #fff); stroke: var(--anim-ink); stroke-width: 1.5; }
   .node.mark { stroke: var(--anim-accent); stroke-width: 3; }
   .name { fill: var(--anim-ink); font-size: 16px; text-anchor: middle; dominant-baseline: central; }
-  .prob { fill: var(--anim-muted); font-size: 14px; font-style: italic; text-anchor: middle; dominant-baseline: central; }
+  .prob { fill: var(--anim-muted); font-size: 16px; font-style: italic; text-anchor: middle; dominant-baseline: central; }
   .readout { margin: 0.4rem 0 0; font-size: 0.875rem; color: var(--anim-muted); }
 </style>

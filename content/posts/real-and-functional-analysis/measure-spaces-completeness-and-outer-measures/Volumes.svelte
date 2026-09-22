@@ -13,7 +13,7 @@
     <line class="cut" x1="290" y1="28" x2="372" y2="258" />
     <text class="lab" x="175" y="160">E</text>
     <text class="lab" x="440" y="140">A</text>
-    <text class="space" x="30" y="40">ℝ<tspan dy="-9" font-size="14">n</tspan></text>
+    <text class="space" x="30" y="40">ℝ<tspan dy="-9" font-size="11">n</tspan></text>
   </svg>
 </figure>
 
@@ -23,7 +23,7 @@
   .e { fill: var(--anim-accent); fill-opacity: 0.1; stroke: var(--anim-ink); stroke-width: 1.5; }
   .a { fill: var(--anim-accent); fill-opacity: 0.22; stroke: var(--anim-ink); stroke-width: 1.5; }
   .cut { stroke: var(--anim-ink); stroke-width: 1.5; }
-  text { fill: var(--anim-ink); font-size: 22px; text-anchor: middle; dominant-baseline: central; }
+  text { fill: var(--anim-ink); font-size: 17px; text-anchor: middle; dominant-baseline: central; }
   .lab { font-style: italic; }
   .space { text-anchor: start; }
 </style>

@@ -40,6 +40,6 @@
   .end { fill: var(--page, #fff); stroke: var(--anim-accent); stroke-width: 2; }
   .end.in { fill: var(--anim-accent); }
   .axis-end { stroke: var(--anim-ink); fill: var(--anim-ink) !important; }
-  .lab { fill: var(--anim-accent); font-size: 24px; text-anchor: middle; }
-  .name { fill: var(--anim-ink); font-size: 24px; text-anchor: middle; }
+  .lab { fill: var(--anim-accent); font-size: 18px; text-anchor: middle; }
+  .name { fill: var(--anim-ink); font-size: 18px; text-anchor: middle; }
 </style>

@@ -3,7 +3,8 @@
   "email": "clainstone@outlook.it",
   "emailIsPlaceholder": false,
   "photo": "photo.jpg",
-  "line": "Mathematical Engineering, Politecnico di Milano. Milan.",
+  "line": "Student of Mathematical Engineering at Politecnico di Milano.",
+  "description": "Notes by Alessandro Palliccia: the courses of Mathematical Engineering at Politecnico di Milano, lecture by lecture, with interactive figures.",
   "bio": [
     "I study Mathematical Engineering at Politecnico di Milano on the Statistical Learning track, after earning a degree in Computer Science. I am equally interested in understanding why machine learning models work and in making them run well on real hardware.",
     "I am building SpikeFlow8, an inference engine that runs natively on AMD Ryzen AI chips and uses both their GPU and NPU. This site collects my notes as threads about what I study and build."
@@ -13,5 +14,6 @@
     { "label": "X", "text": "@cclainstone", "href": "https://x.com/cclainstone" },
     { "label": "GitHub", "text": "clainstone", "href": "https://github.com/clainstone" }
   ],
-  "language": "en"
+  "language": "en-GB",
+  "x": "@cclainstone"
 }
