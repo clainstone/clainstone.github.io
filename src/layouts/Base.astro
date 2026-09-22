@@ -27,7 +27,7 @@ const cleanPath = Astro.url.pathname.replace(/(^|\/)index\.html$/, '$1').replace
 const canonical = new URL(cleanPath, Astro.site);
 // Every page has its link-preview card (src/pages/og); the 404 page shows the main one.
 const card = new URL(noindex || cleanPath === '/' ? '/og/index.png' : `/og${cleanPath}.png`, Astro.site);
-const cardAlt = title ? `${plain(title)}, by ${SITE.name}` : `${SITE.name}, ${SITE.line}`;
+const cardAlt = title && !noindex ? `${plain(title)}, by ${SITE.name}` : `${SITE.name}, ${SITE.line}`;
 const locale = SITE.language.replace('-', '_');
 // "page" on the address itself, "true" on the section a deeper page belongs to.
 const current = (href: string, own: boolean) => (cleanPath === href ? 'page' : own ? 'true' : undefined);
@@ -60,7 +60,7 @@ const current = (href: string, own: boolean) => (cleanPath === href ? 'page' : o
     <meta property="og:image:alt" content={cardAlt} />
     {article && <meta property="article:published_time" content={isoDate(article.published)} />}
     {article?.modified && <meta property="article:modified_time" content={isoDate(article.modified)} />}
-    {article && <meta property="article:author" content={SITE.name} />}
+    {article && <meta property="article:author" content={new URL('/', Astro.site)} />}
     {article && <meta property="article:section" content={plain(article.section)} />}
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content={SITE.x} />
@@ -105,6 +105,13 @@ const current = (href: string, own: boolean) => (cleanPath === href ? 'page' : o
         const root = document.documentElement;
         const button = document.querySelector('.theme-toggle');
         const system = matchMedia('(prefers-color-scheme: dark)');
+        // The browser's own bar follows the page, not only the system.
+        const metas = document.querySelectorAll('meta[name="theme-color"]');
+        const paint = () => {
+          const own = (() => { try { return localStorage.getItem('theme'); } catch { return null; } })();
+          metas.forEach((m) => m.setAttribute('content', own ? (own === 'dark' ? '#1c1a17' : '#fbf8f2') : m.media.includes('dark') ? '#1c1a17' : '#fbf8f2'));
+        };
+        paint();
         const label = () => {
           const dark = root.dataset.theme === 'dark';
           button.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
@@ -119,6 +126,7 @@ const current = (href: string, own: boolean) => (cleanPath === href ? 'page' : o
             if (next === (system.matches ? 'dark' : 'light')) localStorage.removeItem('theme');
             else localStorage.setItem('theme', next);
           } catch {}
+          paint();
         });
         new MutationObserver(label).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
       })();

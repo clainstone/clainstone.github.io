@@ -6,7 +6,7 @@ import { unified } from '@astrojs/markdown-remark';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import headingAnchors from './src/plugins/heading-anchors.mjs';
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 // The public address of the site. Links are root-absolute, so the site must
@@ -22,6 +22,27 @@ if (process.env.CI) {
   if (missing.length) throw new Error(`Placeholders left: ${missing.join('; ')}`);
 }
 
+// After the build: every page's link-preview image must exist in dist/, so
+// that a new kind of page cannot publish an og:image that answers 404.
+const checkCards = {
+  name: 'check-cards',
+  hooks: {
+    'astro:build:done': ({ dir }) => {
+      const root = fileURLToPath(dir);
+      const missing = [];
+      for (const file of readdirSync(root, { recursive: true })) {
+        if (!String(file).endsWith('.html')) continue;
+        const html = readFileSync(`${root}/${file}`, 'utf8');
+        for (const m of html.matchAll(/<meta property="og:image" content="([^"]+)"/g)) {
+          const path = new URL(m[1]).pathname;
+          if (!existsSync(`${root}${path}`)) missing.push(`${file}: ${path}`);
+        }
+      }
+      if (missing.length) throw new Error(`og:image missing from dist:\n${missing.join('\n')}`);
+    },
+  },
+};
+
 const math = {
   remarkPlugins: [remarkMath],
   rehypePlugins: [[rehypeKatex, { strict: false }], headingAnchors],
@@ -35,7 +56,7 @@ export default defineConfig({
   compressHTML: true,
   trailingSlash: 'never',
   build: { format: 'file' },
-  integrations: [mdx(), svelte()],
+  integrations: [mdx(), svelte(), checkCards],
   markdown: {
     processor: unified(math),
     shikiConfig: { themes: { light: 'github-light', dark: 'github-dark' } },

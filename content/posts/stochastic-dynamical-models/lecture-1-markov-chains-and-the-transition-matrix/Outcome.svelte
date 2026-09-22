@@ -38,5 +38,5 @@
   .traj { fill: none; stroke: var(--anim-muted); stroke-width: 1.4; }
   .pt { fill: var(--anim-muted); }
   .pt.on { fill: var(--anim-accent); }
-  .read { fill: var(--anim-accent); font-size: 17px; text-anchor: middle; font-style: italic; }
+  .read { fill: var(--anim-accent); font-size: 17px; text-anchor: middle; font-style: italic; paint-order: stroke; stroke: var(--page, #fff); stroke-width: 5px; stroke-linejoin: round; }
 </style>

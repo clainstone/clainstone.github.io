@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import M from '../components/M.astro';
 import { SITE, PHOTO, getRecentPosts, getThreads, postUrl, threadIdOf, formatDate, isoDate, publishedOf } from '../lib/site';
@@ -7,7 +8,7 @@ const threadTitle = new Map((await getThreads()).map(({ thread }) => [thread.id,
 ---
 <Base section="main">
   <section class="who">
-    <img class="photo" src={PHOTO.src} width="112" height="112" alt="" />
+    <Image class="photo" src={PHOTO} width={112} height={112} densities={[1, 2]} format="webp" loading="eager" alt="" />
     <h1>{SITE.name}</h1>
     <p class="line">{SITE.line}</p>
   </section>

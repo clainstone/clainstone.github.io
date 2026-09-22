@@ -8,7 +8,7 @@
   const xs = Array.from({ length: 2 * M + 1 }, (_, i) => i - M);
   const px = (x) => 320 + x * 34;
   const rows = complement
-    ? [{ name: 'A', has: (x) => A.has(x) }, { name: 'ℤ \\ A', has: (x) => !A.has(x) }]
+    ? [{ name: 'A', has: (x) => A.has(x) }, { name: 'ℤ \\ A', has: (x) => !A.has(x) }]
     : [{ name: 'E', has: (x) => A.has(x) }];
   const arc = (k, y) => `M${px(-k)},${y + 8} Q${px(0)},${y + 16 + k * 9} ${px(k)},${y + 8}`;
   const H = rows.length * 120;
@@ -25,7 +25,7 @@
         {#if x > 0 && row.has(x)}<path class="arc" d={arc(x, y)} />{/if}
         <circle class="pt" class:on={row.has(x)} cx={px(x)} cy={y} r={row.has(x) ? 6.5 : 3} />
       {/each}
-      <text class="name" x="16" y={y - 22}>{row.name}</text>
+      <text class="name" x="16" y={y - 22}>{#if row.name.length > 1}<tspan font-style="normal">{row.name.slice(0, -1)}</tspan>{row.name.slice(-1)}{:else}{row.name}{/if}</text>
       <text class="num" x={px(0)} y={y - 20}>0</text>
     {/each}
   </svg>

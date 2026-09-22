@@ -13,7 +13,7 @@ const count = `${posts.length} ${posts.length === 1 ? 'post' : 'posts'}`;
 ---
 <Base title={thread.data.title} description={thread.data.description ?? `${thread.data.title}: ${count}.`} section="threads">
   <h1><M text={thread.data.title} /></h1>
-  {thread.data.description && <p class="lede">{thread.data.description}</p>}
+  {thread.data.description && <p class="lede"><M text={thread.data.description} /></p>}
   {thread.data.status === 'closed' && <p class="lede">This thread is closed.</p>}
   <ul class="rows posts">
     {posts.map((post) => (

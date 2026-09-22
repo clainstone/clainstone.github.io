@@ -11,13 +11,13 @@
     <ellipse class="q" cx="215" cy="160" rx="150" ry="100" />
     <ellipse class="q" cx="305" cy="160" rx="150" ry="100" />
     <ellipse class="q" cx="260" cy="120" rx="130" ry="95" />
-    <text class="qlab" x="85" y="175"><tspan font-style="italic">Q</tspan>₁</text>
-    <text class="qlab" x="440" y="175"><tspan font-style="italic">Q</tspan>₂</text>
-    <text class="qlab" x="260" y="42"><tspan font-style="italic">Q</tspan>₃</text>
+    <text class="qlab" x="85" y="175"><tspan font-style="italic">Q</tspan><tspan dy="5" font-size="0.72em">1</tspan></text>
+    <text class="qlab" x="440" y="175"><tspan font-style="italic">Q</tspan><tspan dy="5" font-size="0.72em">2</tspan></text>
+    <text class="qlab" x="260" y="42"><tspan font-style="italic">Q</tspan><tspan dy="5" font-size="0.72em">3</tspan></text>
     <ellipse class="m" cx="260" cy="150" rx="78" ry="62" />
     <ellipse class="f" cx="260" cy="162" rx="36" ry="24" />
     <text class="flab" x="260" y="162"><tspan font-style="italic">F</tspan></text>
-    <text class="mlab" x="260" y="113">σ₀(<tspan font-style="italic">F</tspan>)</text>
+    <text class="mlab" x="260" y="113">σ<tspan dy="5" font-size="0.72em">0</tspan><tspan dy="-5">(</tspan><tspan font-style="italic">F</tspan>)</text>
   </svg>
 </figure>
 

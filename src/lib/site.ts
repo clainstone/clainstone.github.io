@@ -43,7 +43,7 @@ export async function postsOf(threadId: string): Promise<Post[]> {
 }
 
 /**
- * Threads that have posts, with their counts, most recently active first.
+ * Threads that have posts, with their counts, the one that published last first.
  * Closed threads keep their page and are listed after the active ones.
  */
 export async function getThreads(): Promise<{ thread: Thread; count: number; last: Date }[]> {
@@ -52,7 +52,8 @@ export async function getThreads(): Promise<{ thread: Thread; count: number; las
   const rows = threads
     .map((thread) => {
       const own = posts.filter((p) => threadIdOf(p) === thread.id);
-      return { thread, count: own.length, last: own[0]?.data.date ?? new Date(0) };
+      const last = own.map(publishedOf).sort((a, b) => b.getTime() - a.getTime())[0] ?? new Date(0);
+      return { thread, count: own.length, last };
     })
     .filter((row) => row.count > 0);
   const closed = (row: (typeof rows)[number]) => (row.thread.data.status === 'closed' ? 1 : 0);
@@ -103,41 +104,78 @@ export function mathHtml(s: string): string {
 
 /* ---- the same strings as plain text ------------------------------------ */
 
-const SYMBOLS: Record<string, string> = {
-  infty: '∞', to: '→', mapsto: '↦', le: '≤', leq: '≤', ge: '≥', geq: '≥', ne: '≠', neq: '≠', approx: '≈',
-  times: '×', cdot: '·', pm: '±', in: '∈', notin: '∉', subset: '⊂', subseteq: '⊆', supset: '⊃', setminus: '∖',
-  cup: '∪', cap: '∩', bigcup: '∪', bigcap: '∩', emptyset: '∅', varnothing: '∅', sum: 'Σ', prod: 'Π', int: '∫',
-  forall: '∀', exists: '∃', iff: '⇔', implies: '⇒', mid: '|', colon: ':', dots: '…', ldots: '…', cdots: '⋯',
-  alpha: 'α', beta: 'β', gamma: 'γ', delta: 'δ', varepsilon: 'ε', epsilon: 'ε', lambda: 'λ', mu: 'μ', nu: 'ν',
-  pi: 'π', rho: 'ρ', sigma: 'σ', tau: 'τ', phi: 'φ', varphi: 'φ', omega: 'ω', Omega: 'Ω', Sigma: 'Σ', Delta: 'Δ',
-  ell: 'ℓ', partial: '∂', lim: 'lim', sup: 'sup', inf: 'inf', max: 'max', min: 'min', log: 'log', exp: 'exp',
-  quad: ' ', qquad: ' ', left: '', right: '', big: '', Big: '', bigl: '', bigr: '', Bigl: '', Bigr: '',
+const GREEK: Record<string, string> = {
+  alpha: 'α', beta: 'β', gamma: 'γ', delta: 'δ', epsilon: 'ε', varepsilon: 'ε', zeta: 'ζ', eta: 'η', theta: 'θ',
+  vartheta: 'ϑ', iota: 'ι', kappa: 'κ', lambda: 'λ', mu: 'μ', nu: 'ν', xi: 'ξ', pi: 'π', varpi: 'ϖ', rho: 'ρ',
+  varrho: 'ϱ', sigma: 'σ', varsigma: 'ς', tau: 'τ', upsilon: 'υ', phi: 'φ', varphi: 'φ', chi: 'χ', psi: 'ψ',
+  omega: 'ω', Gamma: 'Γ', Delta: 'Δ', Theta: 'Θ', Lambda: 'Λ', Xi: 'Ξ', Pi: 'Π', Sigma: 'Σ', Upsilon: 'Υ',
+  Phi: 'Φ', Psi: 'Ψ', Omega: 'Ω',
 };
-const BLACKBOARD: Record<string, string> = { N: 'ℕ', Z: 'ℤ', Q: 'ℚ', R: 'ℝ', C: 'ℂ' };
+const SYMBOLS: Record<string, string> = {
+  ...GREEK,
+  infty: '∞', to: '→', rightarrow: '→', leftarrow: '←', gets: '←', Rightarrow: '⇒', Leftarrow: '⇐',
+  Leftrightarrow: '⇔', leftrightarrow: '↔', iff: '⇔', implies: '⇒', mapsto: '↦', uparrow: '↑', downarrow: '↓',
+  nearrow: '↗', searrow: '↘', le: '≤', leq: '≤', ge: '≥', geq: '≥', ne: '≠', neq: '≠', approx: '≈', sim: '∼',
+  simeq: '≃', equiv: '≡', cong: '≅', propto: '∝', ll: '≪', gg: '≫', times: '×', cdot: '·', circ: '∘', ast: '∗',
+  star: '⋆', pm: '±', mp: '∓', div: '÷', in: '∈', notin: '∉', ni: '∋', subset: '⊂', subseteq: '⊆',
+  subsetneq: '⊊', supset: '⊃', supseteq: '⊇', setminus: '∖', cup: '∪', cap: '∩', bigcup: '∪', bigcap: '∩',
+  sqcup: '⊔', emptyset: '∅', varnothing: '∅', sum: 'Σ', prod: 'Π', int: '∫', oint: '∮', partial: '∂',
+  nabla: '∇', forall: '∀', exists: '∃', nexists: '∄', neg: '¬', lnot: '¬', wedge: '∧', land: '∧', vee: '∨',
+  lor: '∨', oplus: '⊕', otimes: '⊗', perp: '⊥', top: '⊤', bot: '⊥', mid: '|', vert: '|', lvert: '|',
+  rvert: '|', Vert: '‖', lVert: '‖', rVert: '‖', langle: '⟨', rangle: '⟩', lfloor: '⌊', rfloor: '⌋',
+  lceil: '⌈', rceil: '⌉', colon: ':', dots: '…', ldots: '…', cdots: '⋯', vdots: '⋮', prime: '′', ell: 'ℓ',
+  hbar: 'ℏ', aleph: 'ℵ', Re: 'ℜ', Im: 'ℑ', triangle: '△', square: '□', blacksquare: '■',
+  lim: 'lim', limsup: 'lim sup', liminf: 'lim inf', sup: 'sup', inf: 'inf', max: 'max', min: 'min',
+  log: 'log', ln: 'ln', exp: 'exp', sin: 'sin', cos: 'cos', tan: 'tan', det: 'det', dim: 'dim', ker: 'ker',
+  deg: 'deg', gcd: 'gcd', arg: 'arg', Pr: 'Pr', mod: 'mod', bmod: 'mod',
+  quad: ' ', qquad: ' ', left: '', right: '', big: '', Big: '', bigg: '', Bigg: '', bigl: '', bigr: '', Bigl: '',
+  Bigr: '', displaystyle: '', textstyle: '', limits: '', nolimits: '',
+};
+const BLACKBOARD: Record<string, string> = { N: 'ℕ', Z: 'ℤ', Q: 'ℚ', R: 'ℝ', C: 'ℂ', P: 'ℙ', E: '𝔼', '1': '1' };
+const ACCENTS: Record<string, string> = { hat: '̂', widehat: '̂', bar: '̄', overline: '̅', tilde: '̃', widetilde: '̃', vec: '⃗', dot: '̇', ddot: '̈' };
 const SUP: Record<string, string> = Object.fromEntries(
   [...'0123456789+-=()niabcdefghjklmoprstuvwxyz*\''].map((c, k) => [c, '⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾ⁿⁱᵃᵇᶜᵈᵉᶠᵍʰʲᵏˡᵐᵒᵖʳˢᵗᵘᵛʷˣʸᶻ*′'[k]]),
 );
 const SUB: Record<string, string> = Object.fromEntries(
   [...'0123456789+-=()aehijklmnoprstuvx'].map((c, k) => [c, '₀₁₂₃₄₅₆₇₈₉₊₋₌₍₎ₐₑₕᵢⱼₖₗₘₙₒₚᵣₛₜᵤᵥₓ'[k]]),
 );
-/** A script as Unicode when every character has a form, else in parentheses. */
+/**
+ * A script as Unicode when every character has a raised or lowered form,
+ * else written out in parentheses: χ_(A), because Unicode has no subscript A.
+ */
 const script = (body: string, map: Record<string, string>, mark: string) => {
   const chars = [...body.replace(/\s+/g, '')];
   return chars.every((c) => map[c]) ? chars.map((c) => map[c]).join('') : `${mark}(${body})`;
 };
+/** A group that needs parentheses when it becomes one side of a slash. */
+const operand = (x: string) => (/^[\p{L}\p{N}.′]+$/u.test(x.trim()) ? x.trim() : `(${x.trim()})`);
 
 /** One TeX formula as plain text: symbols as Unicode, scripts raised or lowered. */
 function plainTex(tex: string): string {
   // Escaped characters wait behind placeholders, so that the braces and
   // underscores of the TeX syntax can be removed without touching them.
-  const ESCAPED = '#{}%&_$';
+  const ESCAPED = '#{}%&_$|';
+  const GROUP = '\\{([^{}]*)\\}';
   let s = tex
-    .replace(/\\([#{}%&_$])/g, (m, c: string) => String.fromCharCode(0xe000 + ESCAPED.indexOf(c)))
+    .replace(/\\([#{}%&_$|])/g, (m, c: string) => (c === '|' ? '‖' : String.fromCharCode(0xe000 + ESCAPED.indexOf(c))))
+    .replace(/\\\\/g, ' ')
     .replace(/\\[,;:! ]/g, ' ')
-    .replace(/\\mathbb\{([A-Z])\}/g, (m, c: string) => BLACKBOARD[c] ?? c)
-    .replace(/\\(?:mathcal|mathscr|mathrm|mathbf|mathit|mathsf|operatorname|text|textrm|textit)\{([^{}]*)\}/g, '$1')
-    .replace(/\\overline\{([^{}]*)\}/g, '$1̄')
-    .replace(/\\([a-zA-Z]+)/g, (m, name: string) => SYMBOLS[name] ?? name);
+    // Symbols first, so that the arguments below are already plain.
+    .replace(/\\([a-zA-Z]+)/g, (m, name: string) => (name in SYMBOLS ? SYMBOLS[name] : m));
+  // Commands with arguments, innermost first.
+  for (let k = 0; k < 4; k++) {
+    s = s
+      .replace(new RegExp(`\\\\mathbb${GROUP}`, 'g'), (m, c: string) => BLACKBOARD[c.trim()] ?? c)
+      .replace(new RegExp(`\\\\(?:mathcal|mathscr|mathfrak|mathrm|mathbf|mathit|mathsf|boldsymbol|operatorname|text|textrm|textit|textbf|mbox)${GROUP}`, 'g'), '$1')
+      .replace(new RegExp(`\\\\(${Object.keys(ACCENTS).join('|')})${GROUP}`, 'g'), (m, a: string, x: string) => `${x}${ACCENTS[a]}`)
+      .replace(new RegExp(`\\\\(?:d|t)?frac${GROUP}${GROUP}`, 'g'), (m, a: string, b: string) => `${operand(a)}/${operand(b)}`)
+      .replace(new RegExp(`\\\\binom${GROUP}${GROUP}`, 'g'), (m, a: string, b: string) => `C(${a.trim()}, ${b.trim()})`)
+      .replace(new RegExp(`\\\\sqrt${GROUP}`, 'g'), (m, x: string) => `√${operand(x)}`);
+  }
+  s = s.replace(/\\([a-zA-Z]+)/g, (m, name: string) => {
+    if (name in SYMBOLS) return SYMBOLS[name];
+    throw new Error(`plain(): no plain form for \\${name} in "${tex}"; add it to SYMBOLS in src/lib/site.ts`);
+  });
   // Scripts: ^{...}, ^x, _{...}, _x; innermost braces first.
   for (let k = 0; k < 4; k++) {
     s = s
@@ -148,7 +186,10 @@ function plainTex(tex: string): string {
   }
   return s
     .replace(/[{}]/g, '')
-    .replace(/[\ue000-\ue006]/g, (c) => ESCAPED[c.charCodeAt(0) - 0xe000])
+    // TeX ignores spaces: none inside brackets.
+    .replace(/([⟨(\[⌊⌈])\s+/g, '$1')
+    .replace(/\s+([⟩)\]⌋⌉])/g, '$1')
+    .replace(/[\ue000-\ue007]/g, (c) => ESCAPED[c.charCodeAt(0) - 0xe000])
     .replace(/\s+/g, ' ')
     .trim();
 }
@@ -158,4 +199,24 @@ export function plain(s: string): string {
   const out = s.replace(/\$([^$]+)\$/g, (_, tex: string) => plainTex(tex));
   if (/\\/.test(out)) throw new Error(`plain(): TeX left in "${out}"`);
   return out;
+}
+
+// Checked on every build: a change that breaks one of these stops it.
+for (const [tex, text] of [
+  ['$\\#\\mathcal{P}(X) > \\#X$', '#P(X) > #X'],
+  ['$p^{(n)}_{ij}$', 'p⁽ⁿ⁾ᵢⱼ'],
+  ['$\\mathbb{R}^n$', 'ℝⁿ'],
+  ['$L^p$', 'Lᵖ'],
+  ['$\\langle x, y \\rangle$', '⟨x, y⟩'],
+  ['$\\frac{1}{2}$', '1/2'],
+  ['$\\frac{\\beta}{\\alpha + \\beta}$', 'β/(α + β)'],
+  ['$\\sqrt{2}$', '√2'],
+  ['$\\hat{f}$', 'f̂'],
+  ['$\\mathbf{1}_A$', '1_(A)'],
+  ['$\\{ x \\in X : f(x) = 1 \\}$', '{ x ∈ X : f(x) = 1 }'],
+  ['$\\mu^*$', 'μ*'],
+  ['$\\sigma$-algebra', 'σ-algebra'],
+]) {
+  const got = plain(tex);
+  if (got !== text) throw new Error(`plain() self-test: "${tex}" gave "${got}", expected "${text}"`);
 }

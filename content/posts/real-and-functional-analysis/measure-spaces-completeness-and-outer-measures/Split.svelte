@@ -15,8 +15,8 @@
     <ellipse class="z" cx="340" cy="162" rx="150" ry="68" />
     <text class="lab accent" x="64" y="66">E</text>
     <text class="lab" x="506" y="170">Z</text>
-    <text class="note accent" x="270" y="118">Z ∩ E</text>
-    <text class="note" x="390" y="190">Z \ E</text>
+    <text class="note accent" x="270" y="118">Z<tspan font-style="normal"> ∩ </tspan>E</text>
+    <text class="note" x="390" y="190">Z<tspan font-style="normal"> \ </tspan>E</text>
   </svg>
 </figure>
 

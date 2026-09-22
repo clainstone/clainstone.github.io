@@ -13,7 +13,7 @@
     <line class="cut" x1="290" y1="28" x2="372" y2="258" />
     <text class="lab" x="175" y="160">E</text>
     <text class="lab" x="440" y="140">A</text>
-    <text class="space" x="30" y="40">ℝ<tspan dy="-9" font-size="11">n</tspan></text>
+    <text class="space" x="30" y="40">ℝ<tspan dy="-9" font-size="12" font-style="italic">n</tspan></text>
   </svg>
 </figure>
 

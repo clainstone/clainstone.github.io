@@ -1,11 +1,15 @@
 /**
  * Images made at build time: the 1200×630 link-preview card of every page and
- * the site icons. Satori lays out the card in the site's own type (Source
- * Serif 4, with KaTeX's faces for mathematical symbols) and resvg turns it
- * into a PNG.
+ * the site icons. Satori lays out the card in the site's own type, Source
+ * Serif 4, and resvg turns it into a PNG. The plain text of a formula
+ * (`plain()`: ℝⁿ, p⁽ⁿ⁾ᵢⱼ) takes its symbols from STIX Two Math and its
+ * raised and lowered letters from Noto Serif; a character that no font draws
+ * stops the build.
  */
 import satori from 'satori';
 import { Resvg } from '@resvg/resvg-js';
+// @ts-expect-error: satori's own font parser, without type declarations.
+import opentype from '@shuding/opentype.js';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { SITE } from './site';
@@ -13,7 +17,7 @@ import { SITE } from './site';
 // The build runs from the repository root, locally and in CI.
 const ROOT = process.cwd();
 const serif = (file: string) => readFileSync(join(ROOT, 'node_modules/@fontsource/source-serif-4/files', file));
-const katexFont = (file: string) => readFileSync(join(ROOT, 'node_modules/katex/dist/fonts', file));
+const font = (pkg: string, file: string) => readFileSync(join(ROOT, 'node_modules/@fontsource', pkg, 'files', file));
 
 const FONTS = [
   { name: 'Serif', data: serif('source-serif-4-latin-400-normal.woff'), weight: 400 as const, style: 'normal' as const },
@@ -23,9 +27,25 @@ const FONTS = [
   { name: 'Serif', data: serif('source-serif-4-latin-ext-600-normal.woff'), weight: 600 as const, style: 'normal' as const },
   { name: 'Serif', data: serif('source-serif-4-greek-400-normal.woff'), weight: 400 as const, style: 'normal' as const },
   { name: 'Serif', data: serif('source-serif-4-greek-600-normal.woff'), weight: 600 as const, style: 'normal' as const },
-  { name: 'Math', data: katexFont('KaTeX_Main-Regular.ttf'), weight: 400 as const, style: 'normal' as const },
-  { name: 'Math', data: katexFont('KaTeX_AMS-Regular.ttf'), weight: 400 as const, style: 'normal' as const },
+  { name: 'Math', data: font('stix-two-math', 'stix-two-math-latin-400-normal.woff'), weight: 400 as const, style: 'normal' as const },
+  { name: 'Scripts', data: font('noto-serif', 'noto-serif-latin-ext-400-normal.woff'), weight: 400 as const, style: 'normal' as const },
+  { name: 'Scripts', data: font('noto-serif', 'noto-serif-math-400-normal.woff'), weight: 400 as const, style: 'normal' as const },
 ];
+const FAMILY = 'Serif, Math, Scripts';
+
+// Every character of a card must be drawn by one of the fonts: satori would
+// leave a blank where none has a glyph.
+const PARSED = FONTS.map((f) => opentype.parse(f.data.buffer.slice(f.data.byteOffset, f.data.byteOffset + f.data.byteLength)));
+function assertDrawable(text: string) {
+  for (const ch of new Set(text)) {
+    if (/\s/.test(ch)) continue;
+    if (!PARSED.some((p: { charToGlyphIndex(c: string): number }) => p.charToGlyphIndex(ch) !== 0)) {
+      throw new Error(`cards: no font draws "${ch}" (U+${ch.codePointAt(0)!.toString(16).toUpperCase()}) in "${text}"`);
+    }
+  }
+}
+// resvg draws satori's outlines: no system font is needed or wanted.
+const RESVG = { font: { loadSystemFonts: false } };
 
 // The light theme of global.css.
 const PAGE = '#fbf8f2';
@@ -51,17 +71,20 @@ export interface Card {
   text?: string;
   /** Right end of the footer, for example a date. */
   note?: string;
+  /** Left end of the footer, the author's name unless given. */
+  byline?: string;
   /** Show the portrait at the right (the main page). */
   photo?: boolean;
 }
 
 /** The link-preview card of one page, as a PNG. */
 export async function cardPng(card: Card): Promise<Buffer> {
+  for (const part of [card.kicker, card.title, card.text, card.note, card.byline]) if (part) assertDrawable(part);
   const size = card.title.length > 70 ? 54 : card.title.length > 44 ? 62 : 70;
   const text = card.text && card.text.length > 190 ? `${card.text.slice(0, 187).replace(/\s+\S*$/, '')}…` : card.text;
   const root = h(
     'div',
-    { width: 1200, height: 630, display: 'flex', flexDirection: 'column', background: PAGE, color: INK, fontFamily: 'Serif, Math', padding: '64px 76px 56px' },
+    { width: 1200, height: 630, display: 'flex', flexDirection: 'column', background: PAGE, color: INK, fontFamily: FAMILY, padding: '64px 76px 56px' },
     h(
       'div',
       { display: 'flex', flex: 1, gap: 48 },
@@ -71,7 +94,7 @@ export async function cardPng(card: Card): Promise<Buffer> {
         h('div', { width: 64, height: 5, background: LINK, marginBottom: 26 }),
         card.kicker ? h('div', { fontSize: 32, fontStyle: 'italic', color: MUTED, marginBottom: 18 }, card.kicker) : null,
         h('div', { fontSize: size, fontWeight: 600, lineHeight: 1.12, letterSpacing: -0.5 }, card.title),
-        text ? h('div', { fontSize: 29, lineHeight: 1.4, color: MUTED, marginTop: 26 }, text) : null,
+        text ? h('div', { fontSize: 29, lineHeight: 1.4, color: MUTED, marginTop: 26, textWrap: 'balance' }, text) : null,
       ),
       card.photo
         ? h('div', { display: 'flex', alignItems: 'center' }, { type: 'img', props: { src: portrait(), width: 260, height: 260, style: { borderRadius: 12 } } })
@@ -80,12 +103,12 @@ export async function cardPng(card: Card): Promise<Buffer> {
     h(
       'div',
       { display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: `2px solid ${RULE}`, paddingTop: 22, fontSize: 28 },
-      h('div', { color: INK }, SITE.name),
-      h('div', { color: MUTED }, card.note ? `${card.note} · clainstone.com` : 'clainstone.com'),
+      h('div', { color: INK }, card.byline ?? SITE.name),
+      h('div', { color: MUTED }, card.note ? `${card.note} · clainstone.com` : card.byline ? '' : 'clainstone.com'),
     ),
   );
   const svg = await satori(root as never, { width: 1200, height: 630, fonts: FONTS });
-  return new Resvg(svg, { fitTo: { mode: 'width', value: 1200 } }).render().asPng();
+  return new Resvg(svg, { ...RESVG, fitTo: { mode: 'width', value: 1200 } }).render().asPng();
 }
 
 /* ---- icons ------------------------------------------------------------- */
@@ -109,7 +132,7 @@ export const iconSvg = () => monogramSvg(64, true);
 export async function iconPng(px: number, rounded = true): Promise<Buffer> {
   // Drawn at 8× and scaled down, so that small sizes stay crisp.
   const svg = await monogramSvg(512, rounded);
-  return new Resvg(svg, { fitTo: { mode: 'width', value: px } }).render().asPng();
+  return new Resvg(svg, { ...RESVG, fitTo: { mode: 'width', value: px } }).render().asPng();
 }
 
 /** A .ico file that wraps PNG images, one per size. */

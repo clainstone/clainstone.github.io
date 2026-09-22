@@ -2,7 +2,10 @@
 // sees, with a formula read from its TeX source rather than from KaTeX's
 // markup, and a "#" link to the heading that appears on hover.
 
-const texText = (tex) => tex.replace(/\\[a-zA-Z]+/g, ' ').replace(/[\\{}^_$]/g, ' ');
+// Greek letters, typed or in TeX, become their names in ids: σ-algebras, sigma-algebras.
+const GREEK = { α: 'alpha', β: 'beta', γ: 'gamma', δ: 'delta', ε: 'epsilon', ζ: 'zeta', η: 'eta', θ: 'theta', κ: 'kappa', λ: 'lambda', μ: 'mu', ν: 'nu', ξ: 'xi', π: 'pi', ρ: 'rho', σ: 'sigma', τ: 'tau', φ: 'phi', χ: 'chi', ψ: 'psi', ω: 'omega', Γ: 'gamma', Δ: 'delta', Θ: 'theta', Λ: 'lambda', Σ: 'sigma', Φ: 'phi', Ψ: 'psi', Ω: 'omega' };
+const NAMES = new Set(Object.values(GREEK));
+const texText = (tex) => tex.replace(/\\([a-zA-Z]+)/g, (m, name) => (NAMES.has(name.toLowerCase()) ? ` ${name.toLowerCase()} ` : ' ')).replace(/[\\{}^_$]/g, ' ');
 
 function textOf(node) {
   if (node.type === 'text') return node.value;
@@ -25,7 +28,7 @@ function findAnnotation(node) {
 }
 
 const slugify = (s) =>
-  s.normalize('NFKD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'section';
+  s.replace(/[α-ωΑ-Ω]/g, (c) => GREEK[c] ?? c).normalize('NFKD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'section';
 
 export default function headingAnchors() {
   return (tree) => {
@@ -40,7 +43,8 @@ export default function headingAnchors() {
         node.children.push({
           type: 'element',
           tagName: 'a',
-          properties: { className: ['anchor'], href: `#${id}`, ariaLabel: 'Link to this section' },
+          // Not part of the heading's name for screen readers, and not a tab stop.
+          properties: { className: ['anchor'], href: `#${id}`, ariaHidden: 'true', tabIndex: -1 },
           children: [{ type: 'text', value: '#' }],
         });
         return;

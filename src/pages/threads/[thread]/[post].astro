@@ -2,7 +2,7 @@
 import { render } from 'astro:content';
 import Base from '../../../layouts/Base.astro';
 import M from '../../../components/M.astro';
-import { getPosts, postsOf, threadOf, threadUrl, postUrl, wordCount, formatWords, formatDate, isoDate, publishedOf, type Post } from '../../../lib/site';
+import { getPosts, postsOf, threadOf, threadUrl, postUrl, wordCount, formatWords, formatDate, isoDate, publishedOf, plain, type Post } from '../../../lib/site';
 
 export async function getStaticPaths() {
   const posts = await getPosts();
@@ -34,6 +34,7 @@ const next = siblings[at + 1];
       <p class="meta">
         <span class="words">{formatWords(words)}</span>{', '}
         <time datetime={isoDate(post.data.date)}>{formatDate(post.data.date)}</time>
+        {post.data.published && isoDate(post.data.published) !== isoDate(post.data.date) && <>{', published '}<time datetime={isoDate(post.data.published)}>{formatDate(post.data.published)}</time></>}
         {post.data.updated && <>{', updated '}<time datetime={isoDate(post.data.updated)}>{formatDate(post.data.updated)}</time></>}
       </p>
     </header>
@@ -41,15 +42,15 @@ const next = siblings[at + 1];
       <Content />
     </div>
   </article>
-  <nav class="post-nav" aria-label={`More in ${thread.data.title}`}>
+  <nav class="post-nav" aria-label={`More in ${plain(thread.data.title)}`}>
     <p class="thread-link">More in <a href={threadUrl(thread)}><M text={thread.data.title} /></a>, post {at + 1} of {siblings.length}</p>
-    <ul>
+    {(previous || next) && <ul>
       {previous && (
         <li class="previous"><span class="dir">Previous</span> <a href={postUrl(previous)} rel="prev"><M text={previous.data.title} /></a></li>
       )}
       {next && (
         <li class="next"><span class="dir">Next</span> <a href={postUrl(next)} rel="next"><M text={next.data.title} /></a></li>
       )}
-    </ul>
+    </ul>}
   </nav>
 </Base>

@@ -12,11 +12,11 @@
     <line class="guide" x1="330" y1="180" x2="330" y2="220" />
     <line class="guide" x1="60" y1="70" x2="140" y2="70" />
     <line class="guide" x1="60" y1="180" x2="140" y2="180" />
-    <text x="140" y="240">a₁</text>
-    <text x="330" y="240">b₁</text>
-    <text x="42" y="180">a₂</text>
-    <text x="42" y="70">b₂</text>
-    <text class="name" x="235" y="125">(a₁, b₁) × (a₂, b₂)</text>
+    <text x="140" y="240">a<tspan dy="5" font-size="0.72em">1</tspan></text>
+    <text x="330" y="240">b<tspan dy="5" font-size="0.72em">1</tspan></text>
+    <text x="42" y="180">a<tspan dy="5" font-size="0.72em">2</tspan></text>
+    <text x="42" y="70">b<tspan dy="5" font-size="0.72em">2</tspan></text>
+    <text class="name" x="235" y="125">(a<tspan dy="5" font-size="0.72em">1</tspan><tspan dy="-5">, b</tspan><tspan dy="5" font-size="0.72em">1</tspan><tspan dy="-5">) × (a</tspan><tspan dy="5" font-size="0.72em">2</tspan><tspan dy="-5">, b</tspan><tspan dy="5" font-size="0.72em">2</tspan><tspan dy="-5">)</tspan></text>
   </svg>
 </figure>
 

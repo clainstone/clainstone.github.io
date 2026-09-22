@@ -13,7 +13,7 @@ const threads = await getThreads();
           <a href={threadUrl(thread)}><M text={thread.data.title} /></a>{' '}
           <span class="count">{count} {count === 1 ? 'post' : 'posts'}{thread.data.status === 'closed' ? ', closed' : ''}</span>
         </div>
-        {thread.data.description && <p class="about">{thread.data.description}</p>}
+        {thread.data.description && <p class="about"><M text={thread.data.description} /></p>}
       </li>
     ))}
   </ul>

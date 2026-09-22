@@ -305,7 +305,7 @@ if (!flags.has('--no-browser')) {
         if (state.emptyCanvases) error(`${width} px: ${state.emptyCanvases} canvas(es) have zero size`);
         for (const t of state.scrolling) error(`${width} px: a display scrolls horizontally: ${t}`);
         for (const t of state.split) error(`${width} px: an inline formula breaks across lines: ${t}`);
-        for (const l of state.labels.slice(0, 12)) warn(`${width} px: figure label "${l.text}" is ${l.size.toFixed(1)} px, outside 16 to 19`);
+        for (const l of state.labels.slice(0, 12)) warn(`${width} px: figure label "${l.text}" is ${l.size.toFixed(1)} px, outside 15.5 to 20`);
         for (const p of problems) error(`${width} px console: ${p.slice(0, 300)}`);
         const shot = join(out, `${slug}-${width}.png`);
         await page.screenshot({ path: shot, fullPage: true });

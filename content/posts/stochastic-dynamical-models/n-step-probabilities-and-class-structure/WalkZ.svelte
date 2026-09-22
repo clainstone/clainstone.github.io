@@ -29,7 +29,7 @@
     ctx.strokeStyle = pal.rule; ctx.lineWidth = 1;
     for (const v of [-1, 0, 1]) { ctx.beginPath(); ctx.moveTo(L, Y(v)); ctx.lineTo(R, Y(v)); ctx.stroke(); }
     ctx.fillStyle = pal.muted; ctx.font = pal.smallFont; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
-    for (const v of [-1, 0, 1]) ctx.fillText(String(v), L - 8, Y(v));
+    for (const v of [-1, 0, 1]) ctx.fillText(v < 0 ? `−${-v}` : String(v), L - 8, Y(v));
     ctx.textAlign = 'center'; ctx.textBaseline = 'top';
     for (const n of [0, 100, 200, 300, 400]) ctx.fillText(String(n), X(n), B + 8);
     ctx.strokeStyle = pal.muted; ctx.setLineDash([5, 4]); ctx.lineWidth = 1.3;

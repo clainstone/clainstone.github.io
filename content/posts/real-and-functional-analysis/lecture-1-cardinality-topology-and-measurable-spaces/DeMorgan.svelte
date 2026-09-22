@@ -10,6 +10,8 @@
   ];
   let k = $state(0);
   const mode = $derived(steps[k].mode);
+  // Letters in italics, operators upright, as in the text.
+  const pieces = $derived(steps[k].label.split(/([A-Z])/).filter(Boolean).map((t) => ({ t, it: /^[A-Z]$/.test(t) })));
 </script>
 
 <figure class="anim demorgan">
@@ -30,7 +32,7 @@
     <text x="280" y="112">F</text>
     <text x="30" y="36">X</text>
   </svg>
-  <p class="step">{steps[k].label}</p>
+  <p class="step">{#each pieces as p}{#if p.it}<i>{p.t}</i>{:else}{p.t}{/if}{/each}</p>
   <div class="anim-controls">
     <button type="button" class="anim-toggle" onclick={() => (k = (k + 1) % steps.length)}>Next step ({k + 1} of {steps.length})</button>
   </div>
@@ -43,5 +45,5 @@
   .shade { fill: var(--anim-accent); fill-opacity: 0.18; }
   .shade.strong { fill-opacity: 0.35; }
   text { fill: var(--anim-ink); font-size: 14px; font-style: italic; text-anchor: middle; dominant-baseline: central; }
-  .step { margin: 0.3rem 0 0; text-align: center; font-size: 0.9375rem; font-style: italic; color: var(--anim-ink); }
+  .step { margin: 0.3rem 0 0; text-align: center; font-size: 0.9375rem; color: var(--anim-ink); }
 </style>

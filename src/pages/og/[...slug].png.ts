@@ -6,13 +6,13 @@ import { SITE, getPosts, getThreads, threadOf, formatDate, plain } from '../../l
 
 export async function getStaticPaths() {
   const paths: { params: { slug: string }; props: { card: Card } }[] = [
-    { params: { slug: 'index' }, props: { card: { title: SITE.name, text: SITE.line, photo: true } } },
+    { params: { slug: 'index' }, props: { card: { title: SITE.name, text: SITE.line, photo: true, byline: 'clainstone.com' } } },
     { params: { slug: 'threads' }, props: { card: { kicker: 'Threads', title: 'Notes, one subject per thread', text: SITE.description } } },
   ];
-  for (const { thread, count } of await getThreads()) {
+  for (const { thread } of await getThreads()) {
     paths.push({
       params: { slug: `threads/${thread.id}` },
-      props: { card: { kicker: 'Thread', title: plain(thread.data.title), text: thread.data.description, note: `${count} ${count === 1 ? 'post' : 'posts'}` } },
+      props: { card: { kicker: 'Thread', title: plain(thread.data.title), text: thread.data.description && plain(thread.data.description) } },
     });
   }
   for (const post of await getPosts()) {
