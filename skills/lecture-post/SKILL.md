@@ -1,6 +1,8 @@
 ---
 name: lecture-post
 description: Write one post on Alessandro's website for one lecture of Real and Functional Analysis or Stochastic Dynamical Models, starting from the notes file he names. Expand the professor's shorthand into rigorous, readable English, add animations or figures where they help, and verify the page. Use only when Alessandro asks for a lecture post from a specific notes file.
+model: opus
+effort: max
 ---
 
 # Lecture post
@@ -9,6 +11,10 @@ Turn the notes of one lecture into one post on Alessandro's site. The post
 presents what the professor set out to explain, completely and rigorously, in
 prose that reads well. It carries no opinion, no commentary and nothing outside
 the subject of the lecture.
+
+The post is written by the latest Opus model at max effort (the `model` and
+`effort` fields above) and checked against the sources by Codex, GPT-6 Sol at
+xhigh effort (step 8).
 
 Alessandro decided these rules on 17 September 2026. Paths below are relative
 to the root of the site repository, `/workspace/site` on homelab.
@@ -63,7 +69,7 @@ Italian. The post is always in English.
    Then open the screenshot it writes and look at it yourself: the
    mathematics renders, every animation draws, nothing overflows at 1280 px.
    Start the local server with `make start` when it is not running.
-8. **Verify against the sources.** Codex (GPT-5.6 Sol, high effort) checks
+8. **Verify against the sources.** Codex (GPT-6 Sol, xhigh effort) checks
    whether anything the post writes diverges from the sources: formulas,
    statements, numbers, figure data, additions. It has no other task.
 

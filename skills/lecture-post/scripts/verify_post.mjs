@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Verify one lecture post against its sources with Codex (GPT-5.6 Sol, high).
+// Verify one lecture post against its sources with Codex (GPT-6 Sol, xhigh).
 //
 //   make verify-post POST=<thread>/<slug> SRC=<file>[,<file>...] [PAGES=1-4]
 //   node skills/lecture-post/scripts/verify_post.mjs <thread>/<slug> --source <file> [--source <file>] [--pages 1-4,7]
@@ -23,8 +23,8 @@ import { createHash } from 'node:crypto';
 import { homedir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 
-const MODEL = 'gpt-5.6-sol';
-const EFFORT = 'high';
+const MODEL = 'gpt-6-sol';
+const EFFORT = 'xhigh';
 const HOME = homedir();
 const RENDER = join(HOME, 'tools/pdfrender/render.mjs');
 const SITE = join(dirname(fileURLToPath(import.meta.url)), '../../..');
@@ -132,7 +132,7 @@ const r = spawnSync('codex', [
   'exec', '-m', MODEL, '-c', `model_reasoning_effort="${EFFORT}"`, '--dangerously-bypass-approvals-and-sandbox',
   '--skip-git-repo-check', '--ephemeral', '--color', 'never', '-C', work,
   ...images.flatMap((im) => ['-i', im.file]), '-o', last, '-',
-], { input: prompt, encoding: 'utf8', timeout: 45 * 60 * 1000, maxBuffer: 64 * 1024 * 1024 });
+], { input: prompt, encoding: 'utf8', timeout: 90 * 60 * 1000, maxBuffer: 64 * 1024 * 1024 });
 writeFileSync(join(work, 'codex.log'), `${r.stdout ?? ''}\n${r.stderr ?? ''}`);
 if (snapshot() !== before) fail('the site changed while the verifier ran: inspect `git status` before anything else');
 if (r.status !== 0 || !existsSync(last)) fail(`codex exited with ${r.status ?? r.signal}; log in ${relative(SITE, join(work, 'codex.log'))}`);
