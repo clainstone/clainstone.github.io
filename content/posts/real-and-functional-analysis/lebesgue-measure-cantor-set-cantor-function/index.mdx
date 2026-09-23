@@ -1,0 +1,348 @@
+---
+title: 'Lebesgue measure, the Cantor set and the Cantor function'
+date: 2026-09-23
+summary: 'Carathéodory''s construction, applied to the outer measure that covers sets with open rectangles, gives the Lebesgue measure on $\mathbb{R}^N,$ which is invariant under translations, gives rectangles their volume and is Borel regular; its $\sigma$-algebra is the completion of the Borel one. The Cantor set is uncountable, compact, without interior and of measure zero, the unit interval minus a fat $\mathbb{Q}$ has no interior and positive measure, and the Cantor function is continuous and nondecreasing from 0 to 1 with derivative 0 on a set of measure 1.'
+---
+
+import Intersect from './Intersect.svelte';
+import CoverRect from './CoverRect.svelte';
+import Regularity from './Regularity.svelte';
+import Strips from './Strips.svelte';
+import Translate from './Translate.svelte';
+import ClaimCover from './ClaimCover.svelte';
+import Inner from './Inner.svelte';
+import Cantor from './Cantor.svelte';
+import Path from './Path.svelte';
+import FatLengths from './FatLengths.svelte';
+import CantorFunction from './CantorFunction.svelte';
+
+The lecture constructs the Lebesgue measure on $\mathbb{R}^N$ from the volumes of rectangles, through Carathéodory’s construction of the previous post, and studies three examples on the real line.
+
+## Lebesgue measure
+
+**Definition 1 (Lebesgue outer measure).** Let $N$ be a positive integer. In $\mathbb{R}^N$ consider the family of open rectangles
+
+$$
+\mathcal{F} = \{ \text{open rectangles in } \mathbb{R}^N \} = \Big\{ \prod_{i=1}^{N} (a_i, b_i) : a_i, b_i \in \mathbb{R}, \ a_i < b_i \Big\}
+$$
+
+and the function ${f \colon \mathcal{F} \to [0, +\infty]}$ given by
+
+$$
+f\Big( \prod_{i=1}^{N} (a_i, b_i) \Big) = \prod_{i=1}^{N} (b_i - a_i) =: \Big| \prod_{i=1}^{N} (a_i, b_i) \Big|.
+$$
+
+The *Lebesgue outer measure*, denoted $\lambda^*$ or ${\lambda^*_N,}$ is the function ${\lambda^* \colon \mathcal{P}(\mathbb{R}^N) \to [0, +\infty]}$ given by
+
+$$
+\lambda^*(E) = \inf \Big\{ \sum_{m=0}^{\infty} |R_m| : (R_m) \subset \mathcal{F}, \ E \subset \bigcup_{m=0}^{\infty} R_m \Big\}.
+$$
+
+**Remark 2.** **(i)** The intersection of two rectangles, when it is not empty, is again a rectangle, as in Figure 1.
+
+**(ii)** For every rectangle of $\mathcal{F},$ as in Figure 2,
+
+$$
+\lambda^*\Big( \prod_{i=1}^{N} (a_i, b_i) \Big) = \prod_{i=1}^{N} (b_i - a_i).
+$$
+
+<Intersect />
+
+**Figure 1.** An instance with ${N = 2{:}}$ two rectangles and their intersection, hatched, which is again a rectangle.
+
+<CoverRect />
+
+**Figure 2.** An instance with ${N = 2{:}}$ a rectangle, and four rectangles of $\mathcal{F}$ whose union contains it.
+
+**Definition 3 (Lebesgue measure).** The *Lebesgue measure* on ${\mathbb{R}^N,}$ denoted $\lambda$ or ${\lambda_N,}$ is the measure obtained by applying Carathéodory’s theorem, Theorem 18 of the previous post, to $\lambda^*.$ Indeed, $\lambda^*$ is an outer measure by Theorem 14 of the previous post, applied to ${\mathcal{F} \cup \{\emptyset\}}$ with ${|\emptyset| := 0,}$ and adding $\emptyset$ to $\mathcal{F}$ does not change the infimum of Definition 1. In particular, ${(\mathbb{R}^N, \mathcal{L}(\mathbb{R}^N), \lambda)}$ is a complete measure space, where
+
+$$
+\mathcal{L}(\mathbb{R}^N) = \{ \lambda^*\text{-measurable sets} \}, \qquad \lambda = \lambda^*|_{\mathcal{L}(\mathbb{R}^N)}.
+$$
+
+### Properties of Lebesgue measure
+
+**Theorem 4 (Properties of Lebesgue measure).** Consider the measure space ${(\mathbb{R}^N, \mathcal{L}(\mathbb{R}^N), \lambda).}$\
+**(1)** Let ${R \in \mathcal{F}}$ and ${x_0 \in \mathbb{R}^N.}$ Then $\partial R$ and $\{x_0\}$ belong to ${\mathcal{L}(\mathbb{R}^N),}$ and ${\lambda(\partial R) = \lambda(\{x_0\}) = 0.}$ In particular, every countable subset of $\mathbb{R}^N$ has measure ${0,}$ and ${\lambda(\mathbb{Q}^N) = 0.}$\
+**(2)** For every ${E \in \mathcal{L}(\mathbb{R}^N)}$ and every ${x_0 \in \mathbb{R}^N,}$ the set ${x_0 + E := \{ y + x_0 : y \in E \}}$ belongs to $\mathcal{L}(\mathbb{R}^N)$ and ${\lambda(x_0 + E) = \lambda(E){:}}$ $\lambda$ is invariant with respect to translations.
+
+**(3)** ${\mathcal{B}(\mathbb{R}^N) \subsetneq \mathcal{L}(\mathbb{R}^N) \subsetneq \mathcal{P}(\mathbb{R}^N).}$ Moreover,
+
+$$
+\lambda\Big( \prod_{i=1}^{N} (a_i, b_i) \Big) = \prod_{i=1}^{N} (b_i - a_i),
+$$
+
+and if ${N = 1,}$ then ${\lambda((a_1, b_1)) = b_1 - a_1.}$
+
+**(4)** (*Borel regularity*) If ${E \in \mathcal{L}(\mathbb{R}^N),}$ then, as in Figure 3,\
+**(i)** ${\lambda(E) = \inf \{ \lambda(A) : A \text{ open}, \ E \subset A \};}$\
+**(ii)** ${\lambda(E) = \sup \{ \lambda(K) : K \text{ compact}, \ K \subset E \}.}$\
+In particular, ${\mathcal{L}(\mathbb{R}^N) = \overline{\mathcal{B}(\mathbb{R}^N)},}$ the $\sigma$-algebra of the completion of ${(\mathbb{R}^N, \mathcal{B}(\mathbb{R}^N), \lambda)}$ given by Theorem 10 of the previous post.
+
+<Regularity />
+
+**Figure 3.** Borel regularity: a set ${E,}$ an open set ${A \supset E}$ and a compact set ${K \subset E.}$ The arrows point from $A$ and from $K$ towards $E.$
+
+**Proof (sketch).** The proofs of (1), (2) and (4) (i) are sketches, and of (3) only the inclusion ${\mathcal{B}(\mathbb{R}^N) \subset \mathcal{L}(\mathbb{R}^N)}$ is proved. (1) We show that ${\lambda^*(\partial R) = 0.}$ Write ${R = (a_1, b_1) \times \dots \times (a_N, b_N).}$ For ${\varepsilon > 0}$ let, as in Figure 4,
+
+$$
+\begin{aligned}
+R_1 &= (a_1 - \varepsilon, a_1 + \varepsilon) \times \prod_{i=2}^{N} (a_i, b_i), \\
+|R_1| &= 2\varepsilon \cdot \prod_{i=2}^{N} (b_i - a_i) \le C(R) \, \varepsilon,
+\end{aligned}
+$$
+
+where $C(R)$ is a constant that depends only on $R.$
+
+<Strips client:visible />
+
+**Figure 4.** An instance with ${N = 2{:}}$ the rectangle ${R,}$ its boundary ${\partial R,}$ and the rectangles $R_1$ and $R_2$ around its left and right edges, drawn with second factor ${(a_2 - \varepsilon, b_2 + \varepsilon),}$ between the two rectangles at distance $\varepsilon$ outside and inside $R.$ The slider sets $\varepsilon.$
+
+**Details.** The rectangle $R_1$ contains the points $x$ of $\partial R$ whose coordinates satisfy ${x_1 = a_1}$ and ${a_i < x_i < b_i}$ for ${i \ge 2.}$ With ${(a_i - \varepsilon, b_i + \varepsilon)}$ in place of ${(a_i, b_i)}$ for ${i \ge 2,}$ as drawn in Figure 4, it contains every point of $\partial R$ with ${x_1 = a_1.}$ For ${0 < \varepsilon \le 1}$ its volume is then at most ${C(R) \, \varepsilon}$ with ${C(R) := 2 (b_1 - a_1 + 2) \cdots (b_N - a_N + 2).}$ The boundary $\partial R$ is the union of the $2N$ faces ${\{ x \in \overline{R} : x_i = a_i \}}$ and ${\{ x \in \overline{R} : x_i = b_i \},}$ for ${i = 1, \dots, N,}$ and each of them lies in such a rectangle, so ${\lambda^*(\partial R) \le 2N C(R) \, \varepsilon}$ for every such $\varepsilon$ and ${\lambda^*(\partial R) = 0.}$
+
+A set of outer measure zero is $\lambda^*$-measurable by Step 1 of part (iii) in the proof of Theorem 18 of the previous post, so ${\partial R \in \mathcal{L}(\mathbb{R}^N)}$ and ${\lambda(\partial R) = 0.}$ The set $\{x_0\}$ lies in the boundary of a rectangle with a corner at ${x_0,}$ so ${\lambda^*(\{x_0\}) = 0}$ by monotonicity, and ${\{x_0\} \in \mathcal{L}(\mathbb{R}^N)}$ in the same way. A countable set is a countable union of points, so its measure is $0$ by Proposition 7 of the previous post, and $\mathbb{Q}^N$ is countable by Example 4 and Proposition 9 (ii) of the first post.
+
+(2) This follows from ${f(R) = f(x_0 + R)}$ for every ${R \in \mathcal{F}.}$ Translating by $x_0$ a sequence of rectangles that covers $E$ gives a sequence that covers ${x_0 + E,}$ as in Figure 5, hence ${\lambda^*(E) = \lambda^*(x_0 + E).}$
+
+<Translate />
+
+**Figure 5.** An instance with ${N = 2{:}}$ a set $E$ covered by two rectangles, and the set ${x_0 + E}$ covered by the same rectangles translated by ${x_0.}$
+
+**Details.** The map ${R \mapsto x_0 + R}$ is a bijection of $\mathcal{F}$ onto itself, with inverse ${R \mapsto -x_0 + R,}$ and ${(R_m)}$ covers a set $S$ if and only if ${(x_0 + R_m)}$ covers ${x_0 + S.}$ Hence the two infima of Definition 1 coincide, and ${\lambda^*(x_0 + S) = \lambda^*(S)}$ for every ${S \subset \mathbb{R}^N.}$ If ${E \in \mathcal{L}(\mathbb{R}^N)}$ and ${Z \subset \mathbb{R}^N,}$ this equality for the sets ${(-x_0 + Z) \cap E}$ and ${(-x_0 + Z) \setminus E}$ gives
+
+$$
+\begin{aligned}
+&\lambda^*\big( Z \cap (x_0 + E) \big) + \lambda^*\big( Z \setminus (x_0 + E) \big) \\
+&\quad = \lambda^*\big( (-x_0 + Z) \cap E \big) + \lambda^*\big( (-x_0 + Z) \setminus E \big) \\
+&\quad = \lambda^*(-x_0 + Z) = \lambda^*(Z),
+\end{aligned}
+$$
+
+where the second equality is the $\lambda^*$-measurability of $E.$ Hence ${x_0 + E \in \mathcal{L}(\mathbb{R}^N)}$ and ${\lambda(x_0 + E) = \lambda^*(E) = \lambda(E).}$
+
+(3) We claim that every rectangle ${R \in \mathcal{F}}$ belongs to ${\mathcal{L}(\mathbb{R}^N).}$ The claim implies the inclusion, because ${\mathcal{B}(\mathbb{R}^N) = \sigma_0(\mathcal{F})}$ by Remark 28 of the first post, the claim gives ${\mathcal{F} \subset \mathcal{L}(\mathbb{R}^N),}$ and the result on the generation of $\sigma$-algebras, Theorem 26 (ii) of the first post, gives ${\sigma_0(\mathcal{F}) \subset \mathcal{L}(\mathbb{R}^N).}$
+
+To prove the claim, let ${R \in \mathcal{F}.}$ We need to prove that $R$ is ${\lambda^*}$-measurable, that is, that for every ${Z \subset \mathbb{R}^N}$
+
+$$
+\lambda^*(Z) \ge \lambda^*(R \cap Z) + \lambda^*(Z \setminus R).
+$$
+
+Fix ${\varepsilon > 0}$ and let ${(R_m) \subset \mathcal{F}}$ be such that, as in Figure 6,
+
+$$
+Z \subset \bigcup_{m=0}^{\infty} R_m \qquad \text{and} \qquad \lambda^*(Z) \ge \sum_{m=0}^{\infty} |R_m| - \varepsilon.
+$$
+
+Without loss of generality ${\lambda^*(Z) < +\infty.}$ Indeed, the inequality to prove holds when ${\lambda^*(Z) = +\infty,}$ and when ${\lambda^*(Z) < +\infty}$ such a sequence exists because $\lambda^*(Z)$ is an infimum. The opposite inequality holds for every $Z$ by Remark 17 of the previous post.
+
+<ClaimCover />
+
+**Figure 6.** An instance with ${N = 2{:}}$ a set $Z$ covered by rectangles ${R_1,}$ $R_2$ and $R_3$ of a sequence ${(R_m),}$ and the rectangle $R.$
+
+Define ${Q_m := R_m \cap R,}$ an open rectangle or the empty set by Remark 2 (i), and ${T_m := R_m \setminus \overline{R},}$ an open set. The set $T_m$ is a finite union of rectangles, and ${\lambda^*(T_m) = |T_m|,}$ where $|T_m|$ is the sum of their volumes. In detail, the hyperplanes that contain the faces of $R$ cut $R_m$ into at most $3^N$ pairwise disjoint rectangles, products of intervals that need not be open, whose volumes add up to ${|R_m|.}$ The set $T_m$ is the union of all of them except ${R_m \cap \overline{R},}$ which has the volume of ${Q_m,}$ so ${|Q_m| + |T_m| = |R_m|.}$
+
+The sets $Q_m$ and $T_m$ satisfy
+
+$$
+\begin{aligned}
+\bigcup_m Q_m &= \bigcup_m (R_m \cap R) = \Big( \bigcup_m R_m \Big) \cap R \supset Z \cap R, \\
+\bigcup_m T_m &= \bigcup_m (R_m \setminus \overline{R}) = \Big( \bigcup_m R_m \Big) \setminus \overline{R} \\
+&\supset Z \setminus \overline{R} = (Z \setminus R) \setminus \partial R.
+\end{aligned}
+$$
+
+Since ${\partial R \in \mathcal{L}(\mathbb{R}^N)}$ by ${(1),}$ the set $\partial R$ is ${\lambda^*}$-measurable. Applied to ${Z \setminus R,}$ this gives the first equality below, and the second holds because ${\lambda^*((Z \setminus R) \cap \partial R) \le \lambda^*(\partial R) = 0}$ by (1):
+
+$$
+\begin{aligned}
+\lambda^*(Z \cap R) + \lambda^*(Z \setminus R) &= \lambda^*(Z \cap R) + \lambda^*\big( (Z \setminus R) \setminus \partial R \big) \\
+&\quad + \lambda^*\big( (Z \setminus R) \cap \partial R \big) \\
+&= \lambda^*(Z \cap R) + \lambda^*\big( (Z \setminus R) \setminus \partial R \big) \\
+&\le \sum_m |Q_m| + \sum_m |T_m| \\
+&= \sum_m \big( |Q_m| + |T_m| \big) = \sum_m |R_m| \\
+&\le \lambda^*(Z) + \varepsilon.
+\end{aligned}
+$$
+
+Indeed, the first inequality follows from the two inclusions above and the $\sigma$-subadditivity of ${\lambda^*,}$ since ${\lambda^*(Q_m) \le |Q_m|}$ and ${\lambda^*(T_m) \le |T_m|.}$ The latter holds by $\sigma$-subadditivity, as each piece of ${T_m,}$ a product of intervals with ends ${p_i < q_i,}$ lies in the open rectangle ${(p_1 - \delta, q_1 + \delta) \times \dots \times (p_N - \delta, q_N + \delta)}$ for every ${\delta > 0.}$ Since ${\varepsilon > 0}$ is arbitrary, letting ${\varepsilon \to 0}$ gives the claimed inequality.
+
+(4) (i) Let ${E \in \mathcal{L}(\mathbb{R}^N).}$ Then
+
+$$
+\lambda(E) = \lambda^*(E) = \inf \Big\{ \sum_{m=0}^{\infty} |R_m| : (R_m) \subset \mathcal{F}, \ E \subset \bigcup_{m=0}^{\infty} R_m \Big\}.
+$$
+
+Every $R_m$ is open, so $\bigcup_m R_m$ is open, and ${\lambda^*(\bigcup_m R_m) \le \sum_m |R_m|.}$ Now ${\lambda^*(E) \le \lambda^*(\bigcup_m R_m) \le \sum_m |R_m|,}$ and taking the infimum gives the equality.
+
+**Details.** Open sets belong to $\mathcal{L}(\mathbb{R}^N)$ by the inclusion proved in (3), and ${\lambda(E) \le \lambda(A)}$ for every open ${A \supset E}$ by monotonicity, so $\lambda(E)$ is at most the infimum in (i). Conversely, for every sequence $(R_m)$ as above, the open set ${A := \bigcup_m R_m}$ contains $E$ and satisfies ${\lambda(A) \le \sum_m |R_m|,}$ by $\sigma$-subadditivity and ${\lambda^*(R_m) \le |R_m|.}$ Taking the infimum over these sequences, the infimum in (i) is at most ${\lambda^*(E) = \lambda(E).}$
+
+(ii) Without loss of generality, $E$ is bounded: if $E$ is unbounded, consider ${E_k := E \cap B_k(0),}$ apply (ii) to $E_k$ and let ${k \to \infty.}$ In detail, the sets ${E_k \in \mathcal{L}(\mathbb{R}^N)}$ increase to ${E,}$ so ${\lambda(E_k) \to \lambda(E)}$ by Proposition 6 (i) of the previous post, and the compact subsets of $E_k$ are compact subsets of ${E,}$ whose measures are at most ${\lambda(E).}$
+
+Since $E$ is bounded, $\overline{E}$ is closed and bounded, hence compact by the Heine–Borel theorem, Theorem 15 of the first post. Also ${\overline{E} \setminus E \in \mathcal{L}(\mathbb{R}^N),}$ because ${\overline{E} \in \mathcal{B}(\mathbb{R}^N) \subset \mathcal{L}(\mathbb{R}^N)}$ and ${E \in \mathcal{L}(\mathbb{R}^N).}$ By (i), for every ${\varepsilon > 0}$ there exists an open set $U$ such that ${\overline{E} \setminus E \subset U}$ and ${\lambda(U) \le \lambda(\overline{E} \setminus E) + \varepsilon,}$ as in Figure 7.
+
+<Inner />
+
+**Figure 7.** An instance: $E$ is an open ellipse, so ${\overline{E} \setminus E}$ is its boundary. The open set ${U,}$ hatched, contains ${\overline{E} \setminus E,}$ and ${K = \overline{E} \setminus U}$ is shaded.
+
+Choose ${K := \overline{E} \setminus U,}$ which is compact. Then ${K = \overline{E} \setminus U \subset \overline{E} \setminus (\overline{E} \setminus E) = E}$ and
+
+$$
+\begin{aligned}
+\lambda(K) &\ge \lambda(\overline{E}) - \lambda(U) \\
+&\ge \lambda(\overline{E}) - \lambda(\overline{E} \setminus E) - \varepsilon \\
+&= \lambda(E) - \varepsilon.
+\end{aligned}
+$$
+
+Indeed, $K$ is closed and contained in the compact set ${\overline{E},}$ hence compact by Lemma 20 (iii) of the first post. The first inequality holds because ${\overline{E} \subset K \cup U,}$ and the equality is Remark 5 (ii) of the previous post, since the bounded set $\overline{E}$ has finite measure. Hence ${\lambda(K) \le \lambda(E) \le \lambda(K) + \varepsilon}$ for every ${\varepsilon > 0,}$ and letting ${\varepsilon \to 0}$ gives the conclusion.
+
+Moreover, it remains to prove ${\mathcal{L}(\mathbb{R}^N) = \overline{\mathcal{B}(\mathbb{R}^N)}.}$ Write $\mathcal{L}$ and $\mathcal{B}$ for $\mathcal{L}(\mathbb{R}^N)$ and ${\mathcal{B}(\mathbb{R}^N),}$ and recall that
+
+$$
+\overline{\mathcal{B}} = \{ E \subset \mathbb{R}^N : \text{there exist } F_1, F_2 \in \mathcal{B} \text{ such that } F_1 \subset E \subset F_2 \text{ and } \lambda(F_2 \setminus F_1) = 0 \}.
+$$
+
+First, ${\overline{\mathcal{B}} \subset \mathcal{L}{:}}$ $\overline{\mathcal{B}}$ is complete and ${\mathcal{B} \subset \mathcal{L},}$ and $\mathcal{L}$ is complete too. In detail, let ${E \in \overline{\mathcal{B}}}$ with $F_1$ and $F_2$ as above. Then ${E \setminus F_1 \subset F_2 \setminus F_1,}$ a set of measure zero of ${\mathcal{B} \subset \mathcal{L},}$ so ${E \setminus F_1 \in \mathcal{L}}$ because $\mathcal{L}$ is complete, and $E$ is the union of $F_1$ and ${E \setminus F_1.}$
+
+Now take ${E \in \mathcal{L},}$ first with ${\lambda(E) < +\infty.}$ By (i), for every ${m \ge 1}$ there exists an open set ${A_m \supset E}$ with ${\lambda(A_m) \le \lambda(E) + 1/m.}$ By (ii), for every ${m \ge 1}$ there exists a compact set ${K_m \subset E}$ with ${\lambda(K_m) \ge \lambda(E) - 1/m.}$ Consider
+
+$$
+F_1 := \bigcup_m K_m \in \mathcal{B}, \qquad F_2 := \bigcap_m A_m \in \mathcal{B}.
+$$
+
+Then ${\lambda(F_1) = \lambda(F_2)}$ and ${F_1 \subset E \subset F_2.}$ Hence ${\lambda(F_2 \setminus F_1) = 0}$ and ${E \in \overline{\mathcal{B}}.}$ Indeed, $\lambda(F_1)$ and $\lambda(F_2)$ lie between ${\lambda(E) - 1/m}$ and ${\lambda(E) + 1/m}$ for every ${m,}$ so both equal ${\lambda(E),}$ and ${\lambda(F_2 \setminus F_1) = \lambda(F_2) - \lambda(F_1)}$ by Remark 5 (ii) of the previous post. If ${\lambda(E) = +\infty,}$ the bounded sets ${E \cap B_k(0)}$ have finite measure and belong to ${\overline{\mathcal{B}},}$ hence so does their union ${E,}$ because $\overline{\mathcal{B}}$ is a $\sigma$-algebra by Theorem 10 of the previous post. $\blacksquare$
+
+## Examples
+
+The examples live on the real line, with ${N = 1}$ and the Lebesgue measure ${\lambda = \lambda_1}$ of Definition 3.
+
+### Cantor set
+
+**Definition 5 (Cantor set).** Consider
+
+$$
+\begin{aligned}
+T_0 &= [0, 1], \\
+T_1 &= \Big[ 0, \frac{1}{3} \Big] \cup \Big[ \frac{2}{3}, 1 \Big], \\
+T_2 &= \Big[ 0, \frac{1}{9} \Big] \cup \Big[ \frac{2}{9}, \frac{1}{3} \Big] \cup \Big[ \frac{2}{3}, \frac{7}{9} \Big] \cup \Big[ \frac{8}{9}, 1 \Big],
+\end{aligned}
+$$
+
+as in Figure 8. In general, for ${k \ge 1}$ one defines
+
+$$
+T_k = \bigcup_{m=1}^{2^k} I_m^k,
+$$
+
+where each $I_m^k$ is a closed interval obtained from ${T_{k-1},}$ the union of the $2^{k-1}$ intervals ${I_m^{k-1},}$ by removing the open middle third of each ${I_m^{k-1}.}$ Then ${|I_m^k| = 1/3^k}$ for every $m$ and ${k,}$ and ${T_{k+1} \subset T_k}$ for every $k.$ The *Cantor set* is
+
+$$
+T = \bigcap_{k=0}^{\infty} T_k.
+$$
+
+<Cantor client:visible />
+
+**Figure 8.** The sets ${T_0, T_1, \dots, T_6.}$ The slider sets $k$ and highlights ${T_k,}$ the union of $2^k$ closed intervals of length ${1/3^k;}$ the sets after it are faint.
+
+**Theorem 6 (Properties of the Cantor set).** **(1)** ${\#T = \#\mathbb{R}.}$\
+**(2)** $T$ is compact.\
+**(3)** ${\lambda(T) = 0.}$\
+**(4)** ${\operatorname{int}(T) = \emptyset.}$\
+In particular, $T$ is uncountable and ${\lambda(T) = 0.}$
+
+**Proof (sketch).** Only the proof of (1) is a sketch. (1) Since ${T \subset \mathbb{R},}$ ${\#T \le \#\mathbb{R}.}$ It remains to show that ${\#T \ge \#\mathbb{R} = \#\mathcal{P}(\mathbb{N}) = \#2^{\mathbb{N}},}$ where $2^{\mathbb{N}}$ is the set of the functions ${f \colon \mathbb{N} \to \{0, 1\},}$ that is, of the sequences with values $0$ or $1.$ The idea is an injective map ${\phi \colon 2^{\mathbb{N}} \to T{:}}$ a sequence such as ${(0, 1, 1, 0, 1, 1, 1, 0, 0, \dots)}$ is sent to a point of $T$ by reading $0$ as left and $1$ as right, as in Figure 9.
+
+<Path client:visible />
+
+**Figure 9.** The first five terms of a sequence of ${2^{\mathbb{N}},}$ set by the buttons, choose an interval of each of ${T_1, \dots, T_5{:}}$ $0$ the left one and $1$ the right one. At the start they are the terms of ${(0, 1, 1, 0, 1, \dots).}$
+
+**Details.** Start from ${T_0 = [0, 1].}$ For each term of ${f \in 2^{\mathbb{N}}}$ in turn, the removal of the middle third splits the current interval into two, and the term keeps the left one if it is $0$ and the right one if it is ${1.}$ The first $k$ terms choose in this way one interval of ${T_k,}$ and these closed intervals are nested, with lengths ${1/3^k}$ that tend to ${0.}$ Hence they have exactly one common point ${\phi(f),}$ which lies in every $T_k$ and so in ${T.}$ Two sequences that first differ at the term of index $j$ choose disjoint intervals of ${T_{j+1},}$ so $\phi$ is injective. Then ${\#2^{\mathbb{N}} \le \#T,}$ and ${\#T = \#\mathbb{R}}$ by the Cantor–Bernstein theorem, Remark 2 (ii) of the first post, together with Proposition 9 (i) and Proposition 8 (i) of the first post.
+
+(2) Since ${T \subset [0, 1],}$ $T$ is bounded. Moreover,
+
+$$
+\mathbb{R} \setminus T = \mathbb{R} \setminus \bigcap_k T_k = \bigcup_k (\mathbb{R} \setminus T_k),
+$$
+
+where each ${\mathbb{R} \setminus T_k}$ is open because $T_k$ is closed. Hence ${\mathbb{R} \setminus T}$ is open, so $T$ is closed. Indeed, $T$ is then compact by the Heine–Borel theorem, Theorem 15 of the first post.
+
+(3) Since ${T = \bigcap_k T_k}$ and $T_k$ is the union of $2^k$ intervals, each of length ${1/3^k,}$
+
+$$
+\lambda(T) = \lim_{k \to \infty} \lambda(T_k) = \lim_{k \to \infty} 2^k \, \frac{1}{3^k} = 0.
+$$
+
+In detail, the first equality is Proposition 6 (ii) of the previous post, which applies because ${T_{k+1} \subset T_k}$ and ${\lambda(T_0) = 1.}$ The second holds because the intervals of $T_k$ are pairwise disjoint, each of measure $1/3^k$ by (1) and (3) of Theorem 4.
+
+(4) Suppose, by contradiction, that ${\operatorname{int}(T) \neq \emptyset.}$ Then there exists a nonempty interval ${(a, b) \subset T,}$ and ${\lambda(T) \ge b - a > 0,}$ against (3). $\blacksquare$
+
+### The unit interval minus a fat $\mathbb{Q}$
+
+**Example 7.** Take ${\alpha \in (0, 1)}$ and write ${\mathbb{Q} \cap [0, 1] = \{ q_m : m \in \mathbb{N} \}.}$ Consider
+
+$$
+A := \bigcup_{m=0}^{\infty} \Big( q_m - \frac{\alpha}{2^{m+2}}, \ q_m + \frac{\alpha}{2^{m+2}} \Big).
+$$
+
+The set $A$ is open, and, as in Figure 10,
+
+$$
+\begin{aligned}
+\lambda(A) &\le \sum_{m=0}^{\infty} \lambda\Big( \Big( q_m - \frac{\alpha}{2^{m+2}}, \ q_m + \frac{\alpha}{2^{m+2}} \Big) \Big) \\
+&= \sum_{m=0}^{\infty} 2 \, \frac{\alpha}{2^{m+2}} = \frac{\alpha}{2} \sum_{m=0}^{\infty} \frac{1}{2^m} = \alpha.
+\end{aligned}
+$$
+
+<FatLengths client:visible />
+
+**Figure 10.** The lengths ${2\alpha/2^{m+2}}$ of the intervals that form ${A,}$ placed end to end along a segment of length ${1,}$ with the lengths for ${m \ge 14}$ drawn as one piece. Together they measure ${\alpha,}$ marked below, and the rest of the segment measures ${1 - \alpha.}$ The slider sets $\alpha.$
+
+Let ${K := [0, 1] \setminus A,}$ which is compact. The interior of $K$ is empty: otherwise there exists a nonempty interval ${(a, b) \subset K,}$ hence a rational ${q_{m_0} \in (a, b) \subset K,}$ but ${K \cap \mathbb{Q} = \emptyset.}$ Moreover,
+
+$$
+\begin{aligned}
+\lambda(K) &= \lambda([0, 1] \setminus A) = \lambda([0, 1]) - \lambda([0, 1] \cap A) \\
+&\ge 1 - \alpha > 0.
+\end{aligned}
+$$
+
+Indeed, Remark 5 (ii) of the previous post applies to ${[0, 1] \cap A \subset [0, 1],}$ with ${\lambda([0, 1]) = 1,}$ and ${\lambda([0, 1] \cap A) \le \lambda(A) \le \alpha.}$ Hence there exist sets without interior and with positive measure.
+
+### Cantor function
+
+**Example 8 (Cantor function).** The *Cantor function*, also called the Cantor–Vitali function, comes from an inductive construction. Let ${v_0 \colon [0, 1] \to \mathbb{R}}$ be ${v_0(x) = x.}$ The functions ${v_1, v_2 \colon [0, 1] \to \mathbb{R}}$ of Figure 11 are nondecreasing and continuous, with ${v_1(0) = v_2(0) = 0}$ and ${v_1(1) = v_2(1) = 1.}$ In general, for ${m \ge 1,}$
+
+$$
+v_m(x) = \begin{cases} \dfrac{1}{2} \, v_{m-1}(3x) & \text{if } x \in \big[ 0, \frac{1}{3} \big], \\[6pt] \dfrac{1}{2} & \text{if } x \in \big[ \frac{1}{3}, \frac{2}{3} \big], \\[6pt] \dfrac{1}{2} + \dfrac{1}{2} \, v_{m-1}(3x - 2) & \text{if } x \in \big[ \frac{2}{3}, 1 \big]. \end{cases}
+$$
+
+<CantorFunction client:visible />
+
+**Figure 11.** The graph of $v_m$ for the $m$ set by the slider, and, for ${m \ge 1}$ and thinner, the graph of ${v_{m-1}.}$ For ${m \ge 2}$ the dashed lines mark ${x = 7/9}$ and ${x = 8/9.}$
+
+We claim that there exists a continuous function ${v \colon [0, 1] \to \mathbb{R}}$ such that ${v_m \to v}$ uniformly on ${[0, 1].}$ For ${m \ge 1}$ let
+
+$$
+M_m := \sup_{x \in [0, 1]} |v_m(x) - v_{m-1}(x)|.
+$$
+
+Let ${m \ge 2.}$ (i) If ${x \in [0, \frac{1}{3}],}$ then
+
+$$
+\begin{aligned}
+&|v_m(x) - v_{m-1}(x)| \\
+&\quad = \Big| \frac{1}{2} v_{m-1}(3x) - \frac{1}{2} v_{m-2}(3x) \Big| \\
+&\quad = \frac{1}{2} |v_{m-1}(3x) - v_{m-2}(3x)| \le \frac{1}{2} M_{m-1}.
+\end{aligned}
+$$
+
+(ii) If ${x \in [\frac{1}{3}, \frac{2}{3}],}$ then ${|v_m(x) - v_{m-1}(x)| = 0.}$ (iii) If ${x \in [\frac{2}{3}, 1],}$ the analogous estimate gives ${|v_m(x) - v_{m-1}(x)| \le \frac{1}{2} M_{m-1}.}$ Hence
+
+$$
+M_m \le \frac{1}{2} M_{m-1} \le \frac{1}{2^2} M_{m-2} \le \dots \le \frac{1}{2^{m-1}} M_1 \quad \Longrightarrow \quad \sum_{m=1}^{\infty} M_m < +\infty,
+$$
+
+and $v_m$ converges uniformly to a limit, which we call $v.$ Indeed, for ${k > m}$ and ${x \in [0, 1]}$ we have ${|v_k(x) - v_m(x)| \le M_{m+1} + \dots + M_k,}$ and the tails of a convergent series tend to ${0,}$ so $(v_m)$ is uniformly Cauchy. By induction on $m$ every $v_m$ is nondecreasing and continuous, with ${v_m(0) = 0}$ and ${v_m(1) = 1,}$ so the uniform limit $v$ is continuous and nondecreasing.
+
+On each interval ${(a, b) \subset [0, 1] \setminus T,}$ where $T$ is the Cantor set of Definition 5, the function $v$ is constant, so $v'$ exists and ${v' = 0}$ on ${[0, 1] \setminus T.}$ Moreover, ${v(0) = \lim_m v_m(0) = 0}$ and ${v(1) = \lim_m v_m(1) = 1.}$ In the end, $v$ is a continuous nondecreasing function that passes from $0$ to $1$ on ${[0, 1],}$ such that $v'$ exists and ${v' = 0}$ on the set ${A := [0, 1] \setminus T,}$ and ${\lambda(A) = 1 - \lambda(T) = 1 - 0 = 1.}$
