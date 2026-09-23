@@ -8,6 +8,7 @@
 #   make dev       dev server in the foreground (Ctrl-C to stop)
 #   make build     static site in dist/
 #   make check-post POST=<thread>/<slug>   build and check one lecture post
+#   make check-site [FIGURES=1] [ONLY=/,/threads]   build and check every page, light and dark
 #   make verify-post POST=<thread>/<slug> SRC=<file>[,<file>] [PAGES=1-4]
 #                  Codex checks the post against its sources
 #
@@ -17,10 +18,10 @@ export PATH := $(HOME)/.local/node/bin:$(PATH)
 ASTRO := ./node_modules/.bin/astro
 
 .DEFAULT_GOAL := help
-.PHONY: help start preview stop status logs dev build check-post verify-post
+.PHONY: help start preview stop status logs dev build check-site check-post verify-post
 
 help:
-	@sed -n '3,14p' Makefile | sed 's/^# \{0,1\}//'
+	@sed -n '3,15p' Makefile | sed 's/^# \{0,1\}//'
 
 node_modules/.package-lock.json: package.json package-lock.json
 	npm install --no-audit --no-fund
@@ -50,6 +51,9 @@ dev: node_modules/.package-lock.json
 
 build: node_modules/.package-lock.json
 	$(ASTRO) build
+
+check-site: node_modules/.package-lock.json
+	node skills/website/scripts/check_site.mjs $(if $(FIGURES),--figures) $(if $(ONLY),--only $(ONLY))
 
 check-post: node_modules/.package-lock.json
 	@test -n "$(POST)" || { echo "usage: make check-post POST=<thread>/<slug>"; exit 2; }

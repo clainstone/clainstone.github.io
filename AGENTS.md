@@ -7,6 +7,9 @@ https://clainstone.com. `README.md` explains how to run it and
 
 ## Skills
 
+- `skills/website/SKILL.md`: everything else on the site: architecture,
+  code, design, animations and figures, writing style, checks
+  (`make check-site`) and the subagents to use.
 - `skills/lecture-post/SKILL.md`: write the post of one lecture of Real and
   Functional Analysis or Stochastic Dynamical Models from the notes file
   Alessandro names. Read it completely before starting, together with
