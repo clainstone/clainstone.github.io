@@ -5,7 +5,6 @@ summary: 'A state is recurrent when the chain started there returns to it with p
 ---
 
 import FirstVisit from './FirstVisit.svelte';
-import Renewal from './Renewal.svelte';
 import PartialSums from './PartialSums.svelte';
 import RowMass from './RowMass.svelte';
 
@@ -112,13 +111,17 @@ $$
 
 This proves (6). Indeed, the event ${\{ X_{\nu-1} \neq j, \dots, X_1 \neq j \}}$ is determined by ${X_0, \dots, X_\nu,}$ so the Markov property removes it from the condition, and $f^{(n)}_{ij}$ is the term ${\nu = n}$ of (6) because ${p^{(0)}_{jj} = 1.}$ $\blacksquare$
 
-<Renewal client:visible />
-
-**Figure 2.** Theorem 3.3 on the chain of Example 2.1, an instance: a bar of length $p^{(n)}_{ij}$ split into the terms ${f^{(\nu)}_{ij} p^{(n-\nu)}_{jj},}$ ${\nu = 1, \dots, n,}$ of (6). The sliders set ${i,}$ $j$ and $n.$
-
 ### A criterion for recurrence
 
 The proof of Theorem 3.5 uses Lemma 3.4, also known as [Abel's lemma](https://en.wikipedia.org/wiki/Abel%27s_theorem). It could be proved directly, but it is an immediate consequence of the [monotone convergence theorem](https://en.wikipedia.org/wiki/Monotone_convergence_theorem), and its proof is skipped.
+
+**Definition (Radius of convergence).** Let $(a_n)_{n \ge 0}$ be a sequence of real numbers. The *radius of convergence* of the power series ${\sum_{n \ge 0} a_n s^n}$ is
+
+$$
+r = \sup \Big\{ \rho \ge 0 : \sum_{n=0}^{\infty} |a_n| \rho^n < +\infty \Big\} \in [0, +\infty].
+$$
+
+For every real $s$ with ${|s| < r}$ the series converges absolutely. By the definition of the supremum there is ${\rho > |s|}$ with ${\sum_n |a_n| \rho^n < +\infty,}$ and ${|a_n s^n| \le |a_n| \rho^n}$ for every $n.$ For ${|s| > r}$ the series diverges. If it converged, its terms would be bounded by some $M.$ For ${r < \rho < |s|}$ the bound ${|a_n| \rho^n \le M (\rho/|s|)^n}$ would then give ${\sum_n |a_n| \rho^n < +\infty,}$ against the definition of $r.$ If $(a_n)_{n \ge 0}$ is bounded by $M,$ then ${r \ge 1,}$ because ${|a_n| \rho^n \le M \rho^n}$ and the geometric series $\sum_n \rho^n$ converges for ${0 \le \rho < 1.}$
 
 **Lemma 3.4.** Let $(a_n)_{n \ge 0}$ be a sequence of nonnegative real numbers such that the power series
 
@@ -182,7 +185,7 @@ In detail, if ${f^*_{ii} = 1,}$ then $1/(1 - F_{ii}(s))$ tends to $+\infty$ as $
 
 <PartialSums client:visible />
 
-**Figure 3.** Theorem 3.5 on the chain of Example 2.5, an instance: the partial sums ${\sum_{n=0}^{N} p^{(n)}_{ii}}$ for ${N = 0, \dots, 40.}$ The buttons choose $i.$
+**Figure 2.** Theorem 3.5 on the chain of Example 2.5, an instance: the partial sums ${\sum_{n=0}^{N} p^{(n)}_{ii}}$ for ${N = 0, \dots, 40.}$ The buttons choose $i.$
 
 ### Classes and visits
 
@@ -251,4 +254,4 @@ Taking the limit as $n$ goes to infinity and exchanging limit and sum on ${j,}$ 
 
 <RowMass client:visible />
 
-**Figure 4.** Corollaries 3.7 and 3.8 on the chain of Example 2.5, an instance: the entries $p^{(n)}_{ij}$ of the row $i$ of ${P^n,}$ one bar for each state $j.$ The slider sets $n$ and the buttons choose $i.$
+**Figure 3.** Corollaries 3.7 and 3.8 on the chain of Example 2.5, an instance: the entries $p^{(n)}_{ij}$ of the row $i$ of ${P^n,}$ one bar for each state $j.$ The slider sets $n$ and the buttons choose $i.$

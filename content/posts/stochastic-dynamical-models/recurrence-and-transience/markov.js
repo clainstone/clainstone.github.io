@@ -1,6 +1,5 @@
 // The chains of Examples 2.1 and 2.5, and the quantities
-// of this post computed from them: the powers of P, the first-entrance
-// probabilities f⁽ⁿ⁾ᵢⱼ from the renewal equation (6), and sample paths.
+// of this post computed from them: the powers of P and sample paths.
 
 // States 1, 2, 3 at indices 0, 1, 2.
 export const EX21 = [
@@ -27,20 +26,6 @@ export function powers(P, nmax) {
   const out = [identity(P.length)];
   for (let n = 1; n <= nmax; n++) out.push(multiply(out[n - 1], P));
   return out;
-}
-
-/**
- * f⁽ⁿ⁾ᵢⱼ for n = 0, …, nmax, from (6):
- * f⁽ⁿ⁾ᵢⱼ = p⁽ⁿ⁾ᵢⱼ − Σ_{ν=1}^{n−1} f⁽ᵛ⁾ᵢⱼ p⁽ⁿ⁻ᵛ⁾ⱼⱼ, with f⁽⁰⁾ᵢⱼ = 0.
- */
-export function firstEntrance(Pn, i, j) {
-  const f = [0];
-  for (let n = 1; n < Pn.length; n++) {
-    let s = Pn[n][i][j];
-    for (let v = 1; v < n; v++) s -= f[v] * Pn[n - v][j][j];
-    f.push(Math.max(s, 0));
-  }
-  return f;
 }
 
 /** A seeded generator (mulberry32), so every reader sees the same first path. */
