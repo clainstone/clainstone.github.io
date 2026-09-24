@@ -1,0 +1,254 @@
+---
+title: 'Recurrent and transient states'
+date: 2026-09-24
+summary: 'A state is recurrent when the chain started there returns to it with probability 1, and transient otherwise. The renewal equation relates the $n$-step transition probabilities to the first-entrance probabilities, a state $i$ is recurrent if and only if $\sum_n p^{(n)}_{ii}$ diverges, recurrence and transience are class properties, a transient state is visited finitely many times almost surely, and a chain with finitely many states has a recurrent state.'
+---
+
+import FirstVisit from './FirstVisit.svelte';
+import Renewal from './Renewal.svelte';
+import PartialSums from './PartialSums.svelte';
+import RowMass from './RowMass.svelte';
+
+Does a Markov chain started at a state $i$ come back to $i$? The answer can be read from the $n$-step transition probabilities $p^{(n)}_{ii}$ of the previous posts.
+
+## Recurrent and transient states
+
+Throughout, $(X_n)_{n \ge 0}$ is a Markov chain on the state space $I$ with transition matrix ${P = (p_{ij}),}$ defined on a probability space with probability ${\mathbb{P}.}$
+
+**Definition 3.1.** A state $i$ is called *recurrent* if
+
+$$
+\mathbb{P}\Big( \bigcup_{n=1}^{\infty} \{ X_n = i \} \,\Big|\, \{ X_0 = i \} \Big) = 1,
+$$
+
+otherwise it is called *transient*.
+
+According to Definition 3.1, $i$ is recurrent if, starting from the state $i$ at time 0, the Markov chain returns to the state $i$ almost surely in a finite time. In particular, if ${p_{ii} = 1,}$ then $i$ is recurrent; such a state is called *absorbing*, or a *trap*.
+
+### First entrance times
+
+**Definition 3.2 (First entrance time).** Let $j$ be a state. The *first entrance time* in $j,$ or first visit time in $j,$ is the random variable with values in ${\mathbb{N} \cup \{+\infty\}}$
+
+$$
+T_j(\omega) = \begin{cases} \min\{ n \ge 1 : X_n(\omega) = j \} & \text{if } \{ n \ge 1 : X_n(\omega) = j \} \neq \emptyset, \\ +\infty & \text{otherwise.} \end{cases}
+$$
+
+Note that, for every state $j,$
+
+$$
+\begin{aligned}
+\{ T_j < +\infty \} &= \bigcup_{1 \le n < +\infty} \{ X_n = j \}, \\
+\{ T_j = 1 \} &= \{ X_1 = j \}, \\
+\{ T_j = n \} &= \{ X_n = j \} \cap \bigcap_{1 \le m \le n-1} \{ X_m \neq j \}, \qquad n > 1.
+\end{aligned}
+$$
+
+<FirstVisit client:visible />
+
+**Figure 1.** An instance: a path ${X_0, \dots, X_{14}}$ of the chain of Example 2.1, started at ${X_0 = 1.}$ The buttons choose ${j;}$ the first ${n \ge 1}$ with ${X_n = j,}$ that is ${T_j,}$ is marked, and the last button draws another path.
+
+**Notation.** For simplicity we denote by $\mathbb{P}_i$ the conditional probability
+
+$$
+\mathbb{P}_i(\cdot) = \mathbb{P}(\cdot \mid \{ X_0 = i \}),
+$$
+
+and by $\mathbb{E}_i$ the expectation with respect to ${\mathbb{P}_i.}$
+
+For all ${n > 0}$ and all ${i, j \in I}$ let
+
+$$
+f^{(n)}_{ij} = \mathbb{P}_i\{ T_j = n \}, \qquad f^{(0)}_{ij} = 0,
+$$
+
+and also
+
+$$
+f^*_{ij} = \sum_{1 \le n < +\infty} f^{(n)}_{ij} = \mathbb{P}_i\{ T_j < +\infty \}.
+$$
+
+The Markov chain $(X_n)_{n \ge 0}$ is time-homogeneous, therefore, for every ${m \ge 0}$ with ${\mathbb{P}\{ X_m = i \} > 0,}$
+
+$$
+f^{(n)}_{ij} = \mathbb{P}\Big( \{ X_{m+n} = j \} \cap \bigcap_{1 \le \nu \le n-1} \{ X_{m+\nu} \neq j \} \,\Big|\, \{ X_m = i \} \Big).
+$$
+
+Indeed, conditional on ${X_m = i,}$ the chain $(X_{m+n})_{n \ge 0}$ is $\mathrm{Markov}(\delta_i, P)$ by the Markov property, so the event on the right has the probability that ${\{ T_j = n \}}$ has under ${\mathbb{P}_i.}$ Note that a state $i$ is recurrent if ${f^*_{ii} = 1}$ and transient if ${f^*_{ii} < 1.}$
+
+### The renewal equation
+
+**Theorem 3.3 (Renewal equation).** Let ${i, j \in I.}$ For all ${n \ge 1}$ we have
+
+$$
+p^{(n)}_{ij} = \sum_{\nu=1}^{n} f^{(\nu)}_{ij} p^{(n-\nu)}_{jj}. \tag{6}
+$$
+
+**Proof (complete).** Recall that ${\mathbb{P}_i = \mathbb{P}(\cdot \mid \{ X_0 = i \})}$ by definition. Since
+
+$$
+\{ X_n = j \} = \bigcup_{\nu=1}^{n} \big( \{ X_n = j \} \cap \{ T_j = \nu \} \big),
+$$
+
+by the Markov property
+
+$$
+\begin{aligned}
+p^{(n)}_{ij} &= \mathbb{P}_i\{ X_n = j \} = \sum_{1 \le \nu \le n} \mathbb{P}_i\{ X_n = j, T_j = \nu \} \\
+&= \mathbb{P}_i\{ X_n = j, X_{n-1} \neq j, \dots, X_2 \neq j, X_1 \neq j \} \\
+&\quad + \sum_{1 \le \nu \le n-1} \mathbb{P}_i\{ X_n = j, X_\nu = j, X_{\nu-1} \neq j, \dots, X_1 \neq j \}
+\end{aligned}
+$$
+
+and
+
+$$
+\begin{aligned}
+p^{(n)}_{ij} &= f^{(n)}_{ij} + \sum_{1 \le \nu \le n-1} \mathbb{P}_i\{ X_n = j \mid X_\nu = j, X_{\nu-1} \neq j, \dots, X_1 \neq j \} \\
+&\qquad \cdot \mathbb{P}_i\{ X_\nu = j, X_{\nu-1} \neq j, \dots, X_1 \neq j \} \\
+&= f^{(n)}_{ij} + \sum_{1 \le \nu \le n-1} \mathbb{P}_i\{ X_n = j \mid X_\nu = j \} \, \mathbb{P}_i\{ T_j = \nu \} \\
+&= f^{(n)}_{ij} + \sum_{1 \le \nu \le n-1} f^{(\nu)}_{ij} p^{(n-\nu)}_{jj}.
+\end{aligned}
+$$
+
+This proves (6). Indeed, the event ${\{ X_{\nu-1} \neq j, \dots, X_1 \neq j \}}$ is determined by ${X_0, \dots, X_\nu,}$ so the Markov property removes it from the condition, and $f^{(n)}_{ij}$ is the term ${\nu = n}$ of (6) because ${p^{(0)}_{jj} = 1.}$ $\blacksquare$
+
+<Renewal client:visible />
+
+**Figure 2.** Theorem 3.3 on the chain of Example 2.1, an instance: a bar of length $p^{(n)}_{ij}$ split into the terms ${f^{(\nu)}_{ij} p^{(n-\nu)}_{jj},}$ ${\nu = 1, \dots, n,}$ of (6). The sliders set ${i,}$ $j$ and $n.$
+
+### A criterion for recurrence
+
+The proof of Theorem 3.5 uses Lemma 3.4, also known as [Abel's lemma](https://en.wikipedia.org/wiki/Abel%27s_theorem). It could be proved directly, but it is an immediate consequence of the [monotone convergence theorem](https://en.wikipedia.org/wiki/Monotone_convergence_theorem), and its proof is skipped.
+
+**Lemma 3.4.** Let $(a_n)_{n \ge 0}$ be a sequence of nonnegative real numbers such that the power series
+
+$$
+A(s) = \sum_{n=0}^{\infty} a_n s^n
+$$
+
+has radius of convergence ${r \ge 1.}$ Then, with both sides possibly equal to ${+\infty,}$
+
+$$
+\lim_{s \to 1^-} A(s) = \sum_{n=0}^{\infty} a_n.
+$$
+
+**Theorem 3.5.** For every state $i$ the following are equivalent.\
+**(a)** The state $i$ is recurrent.\
+**(b)** The series $\sum_{n \ge 0} p^{(n)}_{ii}$ is divergent.
+
+If $i$ is transient, then
+
+$$
+\sum_{n=0}^{\infty} p^{(n)}_{ii} = \frac{1}{1 - f^*_{ii}} = \frac{1}{\mathbb{P}_i\{ T_i = \infty \}}.
+$$
+
+**Proof (complete).** Consider the generating functions of the sequences $(p^{(n)}_{ii})_{n \ge 0}$ and ${(f^{(n)}_{ii})_{n \ge 0},}$
+
+$$
+P_{ii}(s) = \sum_{n=0}^{\infty} p^{(n)}_{ii} s^n, \qquad F_{ii}(s) = \sum_{n=0}^{\infty} f^{(n)}_{ii} s^n.
+$$
+
+In both cases the radius of convergence is ${r \ge 1,}$ because the sequences $(p^{(n)}_{ii})_{n \ge 0}$ and $(f^{(n)}_{ii})_{n \ge 0}$ are bounded. By Theorem 3.3, the renewal equation, for all ${n \ge 1}$ we have
+
+$$
+p^{(n)}_{ii} s^n = s^n \sum_{\nu=1}^{n} f^{(\nu)}_{ii} p^{(n-\nu)}_{ii} = \sum_{\nu=1}^{n} f^{(\nu)}_{ii} s^\nu p^{(n-\nu)}_{ii} s^{n-\nu},
+$$
+
+and so
+
+$$
+\begin{aligned}
+P_{ii}(s) - 1 &= \sum_{n=1}^{\infty} p^{(n)}_{ii} s^n \\
+&= \sum_{n=1}^{\infty} \sum_{\nu=1}^{n} f^{(\nu)}_{ii} s^\nu p^{(n-\nu)}_{ii} s^{n-\nu} \\
+&= \sum_{\nu=1}^{\infty} f^{(\nu)}_{ii} s^\nu \sum_{n=\nu}^{\infty} p^{(n-\nu)}_{ii} s^{n-\nu} \\
+&= \sum_{\nu=1}^{\infty} f^{(\nu)}_{ii} s^\nu \sum_{n=0}^{\infty} p^{(n)}_{ii} s^n \\
+&= F_{ii}(s) P_{ii}(s).
+\end{aligned}
+$$
+
+Indeed, the first equality uses ${p^{(0)}_{ii} = 1,}$ and the order of summation can be exchanged because the double series converges absolutely for ${|s| < 1.}$ For such $s$ also ${|F_{ii}(s)| \le |s| < 1,}$ because ${f^{(0)}_{ii} = 0}$ and ${f^*_{ii} \le 1.}$ Therefore, for all ${s \in (-1, 1),}$
+
+$$
+P_{ii}(s) = \frac{1}{1 - F_{ii}(s)}.
+$$
+
+The conclusion follows from an application of Abel's lemma, noting that
+
+$$
+\lim_{s \to 1^-} F_{ii}(s) = f^*_{ii}, \qquad \lim_{s \to 1^-} P_{ii}(s) = \sum_{n=0}^{\infty} p^{(n)}_{ii}.
+$$
+
+In detail, if ${f^*_{ii} = 1,}$ then $1/(1 - F_{ii}(s))$ tends to $+\infty$ as ${s \to 1^-,}$ and the series diverges; if ${f^*_{ii} < 1,}$ it tends to ${1/(1 - f^*_{ii}),}$ the sum of the series, where ${1 - f^*_{ii} = \mathbb{P}_i\{ T_i = \infty \}.}$ $\blacksquare$
+
+<PartialSums client:visible />
+
+**Figure 3.** Theorem 3.5 on the chain of Example 2.5, an instance: the partial sums ${\sum_{n=0}^{N} p^{(n)}_{ii}}$ for ${N = 0, \dots, 40.}$ The buttons choose $i.$
+
+### Classes and visits
+
+**Corollary 3.6.** Let $J$ be a class of states and ${j \in J.}$ If $j$ is recurrent (respectively, transient), then all elements of $J$ are recurrent (respectively, transient).
+
+**Proof (complete).** Let ${k \in J \setminus \{j\}.}$ Since $k$ and $j$ communicate, there exist ${l, m \ge 1}$ such that
+
+$$
+p^{(l)}_{jk} > 0, \qquad p^{(m)}_{kj} > 0.
+$$
+
+For every integer ${n \ge 1}$ we have
+
+$$
+\begin{aligned}
+p^{(l+n+m)}_{kk} &\ge p^{(m)}_{kj} p^{(n)}_{jj} p^{(l)}_{jk}, \\
+p^{(l+n+m)}_{jj} &\ge p^{(l)}_{jk} p^{(n)}_{kk} p^{(m)}_{kj},
+\end{aligned}
+$$
+
+so that the series $\sum_{n \ge 0} p^{(n)}_{kk}$ and $\sum_{n \ge 0} p^{(n)}_{jj}$ are both convergent or both divergent. The conclusion follows from Theorem 3.5. $\blacksquare$
+
+For every state ${j,}$ the sum of the series $\sum_{n \ge 0} p^{(n)}_{ij}$ is the average sojourn time in $j,$ the average number of visits to ${j,}$ starting from $i.$ The random variable $\sum_{n \ge 0} \mathbf{1}_{\{ X_n = j \}}$ represents the random time spent in ${j,}$ because it counts how many times the event ${\{ X_n = j \}}$ occurs, and its expectation is
+
+$$
+\mathbb{E}_i\Big[ \sum_{n \ge 0} \mathbf{1}_{\{ X_n = j \}} \Big] = \sum_{n \ge 0} \mathbb{E}_i\big[ \mathbf{1}_{\{ X_n = j \}} \big] = \sum_{n \ge 0} \mathbb{P}_i\{ X_n = j \} = \sum_{n \ge 0} p^{(n)}_{ij}. \tag{7}
+$$
+
+**Corollary 3.7.** If $j$ is a transient state, then for every state $i$ the series
+
+$$
+\sum_{n=0}^{\infty} p^{(n)}_{ij} \tag{8}
+$$
+
+is convergent. In particular, starting from any state ${i,}$ the Markov chain visits $j$ only a finite number of times almost surely.
+
+**Proof (complete).** If ${i = j,}$ convergence follows from Theorem 3.5. If ${i \neq j,}$ then, by the renewal equation ${(6),}$ we have
+
+$$
+\begin{aligned}
+\sum_{n=1}^{\infty} p^{(n)}_{ij} &= \sum_{n=1}^{\infty} \sum_{\nu=1}^{n} f^{(\nu)}_{ij} p^{(n-\nu)}_{jj} \\
+&= \sum_{\nu=1}^{\infty} f^{(\nu)}_{ij} \sum_{n=\nu}^{\infty} p^{(n-\nu)}_{jj} \\
+&= f^*_{ij} \sum_{n=0}^{\infty} p^{(n)}_{jj} < \infty.
+\end{aligned}
+$$
+
+In particular, by ${(7),}$ the random variable $\sum_{n \ge 0} \mathbf{1}_{\{ X_n = j \}}$ has finite expectation under ${\mathbb{P}_i.}$ It follows that it is almost surely finite, and so only a finite number of the events ${\{ X_n = j \}}$ occur. Indeed, the sums can be exchanged because their terms are nonnegative, the last series converges by Theorem 3.5 because $j$ is transient, and ${p^{(0)}_{ij} = 0}$ for ${i \neq j.}$ $\blacksquare$
+
+In the case where the number of states is finite, the Markov chain cannot visit only transient states, each one a finite number of times. Corollary 3.8 is a consequence.
+
+**Corollary 3.8.** A Markov chain with a finite set of states $I$ has at least one recurrent state.
+
+**Proof (complete).** Suppose, by contradiction, that all states are transient. For all ${i, j}$ the series (8) is convergent; in particular
+
+$$
+\lim_{n \to \infty} p^{(n)}_{ij} = 0.
+$$
+
+The matrix $P^{(n)}$ is stochastic, and so, for all ${n \ge 1,}$ we also have
+
+$$
+\sum_{j \in I} p^{(n)}_{ij} = 1.
+$$
+
+Taking the limit as $n$ goes to infinity and exchanging limit and sum on ${j,}$ we find the contradiction ${0 = 1.}$ $\blacksquare$
+
+<RowMass client:visible />
+
+**Figure 4.** Corollaries 3.7 and 3.8 on the chain of Example 2.5, an instance: the entries $p^{(n)}_{ij}$ of the row $i$ of ${P^n,}$ one bar for each state $j.$ The slider sets $n$ and the buttons choose $i.$
