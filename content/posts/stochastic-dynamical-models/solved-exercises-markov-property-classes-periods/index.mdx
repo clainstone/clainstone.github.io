@@ -1,0 +1,226 @@
+---
+title: 'Exercises on the Markov property, classification of states and period'
+date: 2026-09-21
+published: 2026-09-24
+summary: 'Solved exercises: distributions and a conditional probability for a chain on three states, a mouse in a maze, the communicating classes and periods of a chain on five states, and two Markov chains defined inductively from independent random variables.'
+---
+
+import Ex1Chain from './Ex1Chain.svelte';
+import JointTable from './JointTable.svelte';
+import Maze from './Maze.svelte';
+import Ex3Chain from './Ex3Chain.svelte';
+import SignPath from './SignPath.svelte';
+
+The exercises of this session concern the Markov property, the classification of states and the period.
+
+## A Markov chain on three states
+
+**Exercise 1.** Let $(X_n)_{n \ge 0}$ be a Markov chain with state space ${I = \{1, 2, 3\}}$ and transition matrix
+
+$$
+P = \begin{pmatrix} 0 & 2/3 & 1/3 \\ 1/3 & 0 & 2/3 \\ 2/3 & 1/3 & 0 \end{pmatrix},
+$$
+
+as in Figure 1. Suppose that the initial distribution $\lambda$ of $X_0$ is uniform on ${I,}$ that is, ${\lambda = (1/3, 1/3, 1/3).}$\
+**(1)** Compute ${\mathbb{P}\{X_3 = 2\}.}$\
+**(2)** Compute ${\mathbb{P}\{X_0 = 1, X_2 = 3\}}$ and ${\mathbb{P}\{X_0 + X_2 = 4\}.}$\
+**(3)** Compute ${\mathbb{P}\{X_0 = 1, X_2 = 3 \mid X_0 + X_2 = 4\}.}$\
+**(4)** Determine the joint distribution of $(X_3, X_4)$ and compute ${\mathbb{E}[X_3 X_4].}$
+
+<Ex1Chain />
+
+**Figure 1.** The chain of Exercise 1. Each arrow carries the probability of the jump.
+
+**Solution 1.** Doing matrix multiplication one gets
+
+$$
+P^2 = \begin{pmatrix} 4/9 & 1/9 & 4/9 \\ 4/9 & 4/9 & 1/9 \\ 1/9 & 4/9 & 4/9 \end{pmatrix}, \qquad P^3 = \begin{pmatrix} 1/3 & 4/9 & 2/9 \\ 2/9 & 1/3 & 4/9 \\ 4/9 & 2/9 & 1/3 \end{pmatrix},
+$$
+
+and
+
+$$
+\lambda P^3 = (1/3, 1/3, 1/3) \, P^3 = (1/3, 1/3, 1/3).
+$$
+
+Therefore
+
+$$
+\begin{aligned}
+\mathbb{P}\{X_3 = i\} &= (\lambda P^3)_i = \frac13, \qquad i \in I, \\
+\mathbb{P}\{X_0 = 1, X_2 = 3\} &= \mathbb{P}\{X_2 = 3 \mid X_0 = 1\} \, \mathbb{P}\{X_0 = 1\} = \frac49 \cdot \frac13 = \frac{4}{27},
+\end{aligned}
+$$
+
+and
+
+$$
+\begin{aligned}
+\mathbb{P}\{X_0 + X_2 = 4\} &= \sum_{k=1}^{3} \mathbb{P}\{X_0 + X_2 = 4 \mid X_0 = k\} \, \mathbb{P}\{X_0 = k\} \\
+&= \frac13 \sum_{k=1}^{3} \mathbb{P}\{X_2 = 4 - k \mid X_0 = k\} \\
+&= \frac13 \Big( \frac49 + \frac49 + \frac19 \Big) = \frac13,
+\end{aligned}
+$$
+
+so that
+
+$$
+\begin{aligned}
+\mathbb{P}\{X_0 = 1, X_2 = 3 \mid X_0 + X_2 = 4\} &= \frac{\mathbb{P}\{X_0 = 1, X_2 = 3, X_0 + X_2 = 4\}}{\mathbb{P}\{X_0 + X_2 = 4\}} \\
+&= \frac{\mathbb{P}\{X_0 = 1, X_2 = 3\}}{\mathbb{P}\{X_0 + X_2 = 4\}} = \frac{4}{27} \cdot 3 = \frac49.
+\end{aligned}
+$$
+
+Finally, to determine the joint distribution of ${(X_3, X_4),}$ one has to compute, as in Figure 2,
+
+$$
+\mathbb{P}\{X_3 = i, X_4 = j\} = \mathbb{P}\{X_4 = j \mid X_3 = i\} \, \mathbb{P}\{X_3 = i\} = \frac{p_{ij}}{3}, \qquad i, j \in \{1, 2, 3\}.
+$$
+
+Then
+
+$$
+\begin{aligned}
+\mathbb{E}[X_3 X_4] &= \sum_{i,j=1}^{3} i \cdot j \cdot \frac{p_{ij}}{3} \\
+&= \frac13 \Big( 2 \cdot \frac23 + 3 \cdot \frac13 + 2 \cdot \frac13 + 6 \cdot \frac23 + 3 \cdot \frac23 + 6 \cdot \frac13 \Big) = \frac{11}{3}.
+\end{aligned}
+$$
+
+<JointTable />
+
+**Figure 2.** The joint distribution of ${(X_3, X_4){:}}$ the cell in row $i$ and column $j$ holds ${\mathbb{P}\{X_3 = i, X_4 = j\} = p_{ij}/3.}$
+
+## A mouse in a maze
+
+**Exercise 2.** A mouse runs through the maze of Figure 3. At each step it leaves the room it is in by choosing randomly, and with equal probability, one of the doors out of the room. Suppose there is always a door between two neighbouring rooms, and let $X_n$ represent the position of the mouse at time $n.$\
+**(1)** Give the transition matrix $P$ for the Markov chain ${(X_n)_{n \ge 0}.}$\
+**(2)** Suppose that the mouse starts in room ${1,}$ that is, ${X_0 = 1.}$ Compute the probability that it arrives in room 6 after 3 steps.
+
+<Maze />
+
+**Figure 3.** The maze of Exercise ${2,}$ with a door between any two neighbouring rooms. Dashed, the two routes of 3 steps from room 1 to room 6 of Solution 2.
+
+**Solution 2.** The transition matrix $P$ is
+
+$$
+P = \begin{pmatrix}
+0 & 0 & 1 & 0 & 0 & 0 \\
+0 & 0 & 1 & 0 & 0 & 0 \\
+1/4 & 1/4 & 0 & 1/4 & 1/4 & 0 \\
+0 & 0 & 1/2 & 0 & 0 & 1/2 \\
+0 & 0 & 1/2 & 0 & 0 & 1/2 \\
+0 & 0 & 0 & 1/2 & 1/2 & 0
+\end{pmatrix}.
+$$
+
+Moreover, for the probability ${\mathbb{P}\{X_3 = 6 \mid X_0 = 1\},}$ one could compute $p^{(3)}_{16}$ directly. However, starting from the state ${1,}$ the mouse can reach the state 6 in 3 steps only along two routes, ${1 \to 3 \to 4 \to 6}$ and ${1 \to 3 \to 5 \to 6,}$ drawn in Figure ${3,}$ thus
+
+$$
+\mathbb{P}\{X_3 = 6 \mid X_0 = 1\} = 1 \cdot \frac14 \cdot \frac12 + 1 \cdot \frac14 \cdot \frac12 = \frac14.
+$$
+
+## Communicating classes and periods
+
+**Exercise 3.** Let $(X_n)_{n \ge 0}$ be a Markov chain with state space ${I = \{1, 2, 3, 4, 5\}}$ and transition matrix
+
+$$
+P = \begin{pmatrix}
+0 & 1/6 & 1/3 & 0 & 1/2 \\
+1/2 & 0 & 0 & 1/2 & 0 \\
+1/2 & 0 & 0 & 1/2 & 0 \\
+0 & 1/10 & 4/5 & 0 & 1/10 \\
+0 & 0 & 0 & 0 & 1
+\end{pmatrix}.
+$$
+
+**(1)** Identify the communicating classes.\
+**(2)** Find the period of each state.
+
+**Solution 3.** There are two communicating classes, ${\mathcal{C}_1 = \{1, 2, 3, 4\}}$ and ${\mathcal{C}_2 = \{5\},}$ as in Figure 4. Moreover, $\mathcal{C}_1$ has period 2 and $\mathcal{C}_2$ has period 1. Indeed, the path ${1 \to 2 \to 4 \to 3 \to 1}$ has positive probability, while from 5 the chain can only stay in 5. Every jump between states of $\mathcal{C}_1$ goes from $\{1, 4\}$ to $\{2, 3\}$ or back, so the returns to a state of $\mathcal{C}_1$ take an even number of steps, and each of these states has a return in 2 steps, such as ${1 \to 2 \to 1}$ or ${4 \to 3 \to 4;}$ finally ${p_{55} = 1.}$
+
+<Ex3Chain />
+
+**Figure 4.** The chain of Exercise 3 and its communicating classes $\mathcal{C}_1$ and ${\mathcal{C}_2.}$ Each arrow carries the probability of the jump.
+
+## A Markov chain defined inductively
+
+**Exercise 4.** Let ${X_0 \colon (\Omega, \mathcal{F}, \mathbb{P}) \to (I, 2^I)}$ be a random variable, where $I$ is a countable subset of $\mathbb{R}$ and $2^I$ is the power set of ${I.}$ Let $(Z_n)_{n \ge 0}$ be a sequence of independent and identically distributed random variables from ${(\Omega, \mathcal{F}, \mathbb{P})}$ to ${(E, \mathcal{E}).}$ Assume that $X_0$ and the sequence $(Z_n)_{n \ge 0}$ are also independent. Given a ${2^I \otimes \mathcal{E}}$-measurable function ${f \colon I \times E \to I,}$ define inductively
+
+$$
+X_{n+1} := f(X_n, Z_n), \qquad n \ge 0.
+$$
+
+Show that $(X_n)_{n \ge 0}$ is a Markov chain.
+
+**Solution 4.** We first show that $Z_n$ is independent of ${(X_0, \dots, X_n),}$ written ${Z_n \perp (X_0, \dots, X_n).}$ Note that by construction
+
+$$
+\begin{aligned}
+X_1 &= f(X_0, Z_0) =: g_1(X_0, Z_0), \\
+X_2 &= f(X_1, Z_1) = f(f(X_0, Z_0), Z_1) =: g_2(X_0, Z_0, Z_1), \\
+X_3 &= f(X_2, Z_2) = f(f(f(X_0, Z_0), Z_1), Z_2) =: g_3(X_0, Z_0, Z_1, Z_2),
+\end{aligned}
+$$
+
+and so on, where ${g_i \colon I \times E^i \to I}$ is a ${2^I \otimes \mathcal{E}^{\otimes i}}$-measurable function. Since ${Z_n \perp (X_0, Z_0, \dots, Z_{n-1}),}$ we have
+
+$$
+\begin{aligned}
+\sigma\{Z_n\} \perp \sigma\{(X_0, Z_0, \dots, Z_{n-1})\} &= \sigma\{X_0, Z_0, \dots, Z_{n-1}\} \\
+&\supseteq \sigma\{X_0, \dots, X_n\} = \sigma\{(X_0, \dots, X_n)\},
+\end{aligned}
+$$
+
+that is, ${Z_n \perp (X_0, \dots, X_n).}$ Denote by ${i_0, i_1, \dots, i_n, j}$ the states in $I.$ Then
+
+$$
+\begin{aligned}
+\mathbb{P}\{X_{n+1} = j \mid X_n = i_n, \dots, X_0 = i_0\} &= \mathbb{P}\{f(X_n, Z_n) = j \mid X_n = i_n, \dots, X_0 = i_0\} \\
+&= \mathbb{P}\{f(i_n, Z_n) = j \mid X_n = i_n, \dots, X_0 = i_0\} \\
+&= \mathbb{P}\{f(i_n, Z_n) = j \mid X_n = i_n\} \\
+&= \mathbb{P}\{f(X_n, Z_n) = j \mid X_n = i_n\} \\
+&= \mathbb{P}\{X_{n+1} = j \mid X_n = i_n\}.
+\end{aligned}
+$$
+
+Here the third equality holds since
+
+$$
+\begin{aligned}
+&\mathbb{P}\{f(i_n, Z_n) = j, X_{n-1} = i_{n-1}, \dots, X_0 = i_0 \mid X_n = i_n\} \\
+&\quad = \mathbb{P}\{f(i_n, Z_n) = j, X_n = i_n, \dots, X_0 = i_0\} / \mathbb{P}\{X_n = i_n\} \\
+&\quad = \mathbb{P}\{f(i_n, Z_n) = j\} \, \mathbb{P}\{X_n = i_n, \dots, X_0 = i_0\} / \mathbb{P}\{X_n = i_n\} \\
+&\quad = \mathbb{P}\{f(i_n, Z_n) = j \mid X_n = i_n\} \, \mathbb{P}\{X_{n-1} = i_{n-1}, \dots, X_0 = i_0 \mid X_n = i_n\},
+\end{aligned}
+$$
+
+where ${\mathbb{P}\{f(i_n, Z_n) = j\} = \mathbb{P}\{f(i_n, Z_n) = j \mid X_n = i_n\}}$ as ${Z_n \perp X_n.}$ Indeed, the transition probabilities do not depend on ${n,}$ because ${\mathbb{P}\{f(i, Z_n) = j\} = \mathbb{P}\{f(i, Z_0) = j\}}$ for every $n$ when the $Z_n$ are identically distributed.
+
+## A Markov chain from Bernoulli variables
+
+**Exercise 5.** Let $(Z_n)_{n \ge 1}$ be a sequence of independent and identically distributed random variables with Bernoulli distribution ${\mathcal{B}(1, q),}$ where ${0 < q < 1,}$ and let $(Y_n)_{n \ge 0}$ be the sequence of random variables defined by
+
+$$
+Y_0 := 1, \qquad Y_{n+1} := Y_n (2 Z_{n+1} - 1).
+$$
+
+Prove that $(Y_n)_{n \ge 0}$ is a Markov chain and find its transition matrix.
+
+**Solution 5.** The Markov property can be verified directly in terms of Exercise 4. Namely,
+
+$$
+\begin{aligned}
+\mathbb{P}\{Y_{n+1} = j \mid Y_n = i_n, \dots, Y_0 = i_0\} &= \mathbb{P}\{Y_n (2 Z_{n+1} - 1) = j \mid Y_n = i_n, \dots, Y_0 = i_0\} \\
+&= \mathbb{P}\{Y_{n+1} = j \mid Y_n = i_n\}.
+\end{aligned}
+$$
+
+Indeed, ${Y_{n+1} = f(Y_n, Z_{n+1})}$ with ${f(y, z) := y (2z - 1),}$ and Exercise 4 applies to the independent and identically distributed variables ${Z_1, Z_2, \dots,}$ which are independent of the constant ${Y_0 = 1.}$ On the other hand, since ${Z_n \sim \mathcal{B}(1, q),}$ the variable ${2 Z_{n+1} - 1}$ takes values in ${\{-1, +1\},}$ so $Y_n$ also takes values in $\{-1, +1\}$ for all ${n \ge 0.}$ Thus the transition matrix $P$ of the Markov chain $(Y_n)_{n \ge 0}$ is a ${2 \times 2}$ matrix, and
+
+$$
+P = \begin{pmatrix} p_{-1,-1} & p_{-1,+1} \\ p_{+1,-1} & p_{+1,+1} \end{pmatrix} = \begin{pmatrix} q & 1 - q \\ 1 - q & q \end{pmatrix}.
+$$
+
+<SignPath client:visible />
+
+**Figure 5.** An instance: a path ${Y_0, \dots, Y_{40}}$ for the $q$ set by the slider, with the changes of sign marked. The button draws another path.
