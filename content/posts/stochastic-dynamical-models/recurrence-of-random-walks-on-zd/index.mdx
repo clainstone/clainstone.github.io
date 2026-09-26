@@ -1,0 +1,192 @@
+---
+title: 'Random walks on $\mathbb{Z}^d$'
+date: 2026-09-24
+summary: 'Theorem 3.5 decides the recurrence of random walks on $\mathbb{Z}^d$ through the return probabilities $p^{(2n)}_{00}$: the walk on $\mathbb{Z}$ is recurrent when it is symmetric and transient otherwise, the symmetric walk on $\mathbb{Z}^2$ is recurrent, and the symmetric walk on $\mathbb{Z}^d$ with $d \ge 3$ is transient. The symmetric walk on $\mathbb{Z}$ returns almost surely, but the expectation of its return time is infinite.'
+---
+
+import WalkLine from './WalkLine.svelte';
+import Returns from './Returns.svelte';
+import Multinomial from './Multinomial.svelte';
+import LogReturns from './LogReturns.svelte';
+
+Theorem 3.5 of the previous post tells recurrent and transient states apart through the series of the probabilities $p^{(n)}_{ii}.$ It is applied here to the study of random walks on $\mathbb{Z}^d.$
+
+## Random walk on $\mathbb{Z}$
+
+Let $(X_n)_{n \ge 0}$ be a Markov chain with set of states $\mathbb{Z}$ and transition matrix
+
+$$
+P = \begin{pmatrix}
+\cdots & \cdots & \cdots & \cdots & \cdots & \cdots & \cdots \\
+\cdots & q & 0 & p & 0 & 0 & \cdots \\
+\cdots & 0 & q & 0 & p & 0 & \cdots \\
+\cdots & \cdots & \cdots & \cdots & \cdots & \cdots & \cdots
+\end{pmatrix},
+$$
+
+where ${p, q \in (0, 1)}$ and ${p + q = 1,}$ as in Figure 1. The chain $(X_n)_{n \ge 0}$ is irreducible and all its states have period 2.
+
+<WalkLine />
+
+**Figure 1.** The random walk on ${\mathbb{Z}{:}}$ from each state the walk jumps to the right with probability $p$ and to the left with probability $q.$
+
+We want to establish whether the states are recurrent or transient. For all ${n \ge 0}$ we compute
+
+$$
+p^{(2n)}_{00} = \binom{2n}{n} (pq)^n.
+$$
+
+Indeed, a path from 0 back to 0 in $2n$ steps makes $n$ steps to the right and $n$ to the left, in one of $\binom{2n}{n}$ orders, and each such path has probability ${(pq)^n.}$ By [Stirling's formula](https://en.wikipedia.org/wiki/Stirling%27s_approximation)
+
+$$
+\lim_{n \to \infty} \frac{n^n \exp(-n) \sqrt{2\pi n}}{n!} = 1
+$$
+
+we find the asymptotic behaviour, as in Figure 2,
+
+$$
+p^{(2n)}_{00} \approx \frac{(4pq)^n}{\sqrt{\pi n}},
+$$
+
+where ${a_n \approx b_n}$ means that ${a_n / b_n \to 1.}$ Since ${0 \le 4pq = 4p(1 - p) \le 1,}$ with ${4pq = 1}$ if and only if ${p = q = 1/2,}$ and ${4pq < 1}$ otherwise, by Theorem 3.5 we deduce Proposition 4.1. Indeed, ${p^{(n)}_{00} = 0}$ for odd ${n,}$ so the series of Theorem 3.5 for the state 0 is the series of the ${p^{(2n)}_{00},}$ which diverges when ${4pq = 1}$ and converges when ${4pq < 1;}$ the chain is irreducible, so Corollary 3.6 extends the conclusion to all states.
+
+**Proposition 4.1.** The following hold.\
+**(i)** Symmetric random walk, ${p = q = 1/2{:}}$ all states are recurrent.\
+**(ii)** Asymmetric random walk, ${p \neq q{:}}$ all states are transient.
+
+<Returns client:visible />
+
+**Figure 2.** The return probabilities $p^{(2n)}_{00}$ of the walk on $\mathbb{Z}$ for ${n = 1, \dots, 40,}$ dots, and their asymptotic value ${(4pq)^n/\sqrt{\pi n},}$ line. The slider sets ${p,}$ and ${q = 1 - p.}$
+
+In the case ${p = q = 1/2}$ the first return times $T_i$ to a state $i$ are almost surely finite. However, by means of the generating functions $F_{00}$ and $P_{00}$ introduced in the proof of Theorem 3.5, we can show that their expectation $\mathbb{E}_i[T_i]$ is infinite. In other words, the return to $i$ is almost sure, but on average it occurs after a very long time.
+
+Let us begin by recalling the Taylor series expansion
+
+$$
+(1 - 4x)^{-\frac12} = \sum_{n \ge 0} \binom{2n}{n} x^n, \qquad |x| < \frac14,
+$$
+
+which gives an explicit formula for the generating function ${P_{00}{:}}$
+
+$$
+P_{00}(s) = \frac{1}{\sqrt{1 - 4pqs^2}}, \qquad |s| < 1.
+$$
+
+The generating function $F_{00}$ is
+
+$$
+F_{00}(s) = 1 - \big( P_{00}(s) \big)^{-1} = 1 - \sqrt{1 - 4pqs^2}, \qquad |s| < 1.
+$$
+
+By Abel's lemma, since ${4pq = 1,}$ we finally find
+
+$$
+\begin{aligned}
+\mathbb{E}_0[T_0] &= \sum_{n \ge 1} n f^{(n)}_{00} = \lim_{s \to 1^-} \sum_{n \ge 1} n f^{(n)}_{00} s^{n-1} \\
+&= \lim_{s \to 1^-} \frac{dF_{00}(s)}{ds} = \lim_{s \to 1^-} \frac{4pqs}{\sqrt{1 - 4pqs^2}} = +\infty.
+\end{aligned}
+$$
+
+Indeed, the first equality holds because $T_0$ is almost surely finite and ${\mathbb{P}_0\{ T_0 = n \} = f^{(n)}_{00}.}$ Lemma 3.4 applies to the power series with coefficients ${n f^{(n)}_{00} \le n,}$ whose radius of convergence is at least 1 and which is the derivative of $F_{00}$ for ${|s| < 1.}$
+
+## Random walk on $\mathbb{Z}^2$
+
+The return probabilities $p^{(2n)}_{00}$ of the walk on the plane are computed as those of the walk on $\mathbb{Z}.$
+
+Consider a Markov chain $(X_n)_{n \ge 0}$ with set of states $\mathbb{Z}^2$ and transition probabilities
+
+$$
+\mathbb{P}\{ X_{n+1} = (i, j) \mid X_n = (h, k) \} = \begin{cases} 1/4 & \text{if } |i - h| + |j - k| = 1, \\ 0 & \text{otherwise.} \end{cases}
+$$
+
+The chain $(X_n)_{n \ge 0}$ is irreducible and has period 2. Let $P$ be the transition matrix; then
+
+$$
+p^{(2n)}_{00} = \sum_{h + k = n} \frac{(2n)!}{(h!)^2 (k!)^2} \Big( \frac14 \Big)^{2n},
+$$
+
+where 0 denotes ${(0, 0) \in \mathbb{Z}^2.}$ Simple computations yield
+
+$$
+\begin{aligned}
+p^{(2n)}_{00} &= \sum_{k=0}^{n} \frac{(2n)!}{(k!)^2 ((n-k)!)^2} \Big( \frac14 \Big)^{2n} \\
+&= \binom{2n}{n} \Big( \frac14 \Big)^{2n} \sum_{k=0}^{n} \binom{n}{k} \binom{n}{n-k}.
+\end{aligned}
+$$
+
+Comparing the terms $a^n b^n$ in the binomial expansion of $(a + b)^{2n}$ and in the square of the binomial expansion of ${(a + b)^n,}$ we find the formula
+
+$$
+\binom{2n}{n} = \sum_{k=0}^{n} \binom{n}{k} \binom{n}{n-k}.
+$$
+
+Summing up,
+
+$$
+p^{(2n)}_{00} = \Big( \binom{2n}{n} \Big( \frac14 \Big)^n \Big)^2,
+$$
+
+and, by Stirling's formula, as in Figure 3,
+
+$$
+p^{(2n)}_{00} \approx \frac{1}{\pi n},
+$$
+
+which proves, by Theorem 3.5 and Corollary 3.6, that all states are recurrent.
+
+<Returns dim={2} />
+
+**Figure 3.** The return probabilities $p^{(2n)}_{00}$ of the walk on $\mathbb{Z}^2$ for ${n = 1, \dots, 40,}$ dots, and their asymptotic value ${1/(\pi n),}$ line.
+
+## Random walk on $\mathbb{Z}^d$ in dimension three or more
+
+The computation of $p^{(2n)}_{00}$ on $\mathbb{Z}^2$ extends to $\mathbb{Z}^d$ with ${d \ge 3.}$ The transition probabilities of the Markov chain $(X_n)_{n \ge 0}$ are now
+
+$$
+\mathbb{P}\{ X_{n+1} = (j_1, \dots, j_d) \mid X_n = (i_1, \dots, i_d) \} = \begin{cases} (2d)^{-1} & \text{if } \sum_{k=1}^{d} |i_k - j_k| = 1, \\ 0 & \text{otherwise.} \end{cases}
+$$
+
+In analogy with the random walks on $\mathbb{Z}$ and $\mathbb{Z}^2$ we have
+
+$$
+\begin{aligned}
+p^{(2n)}_{00} &= \sum_{k_1 + \dots + k_d = n} \frac{(2n)!}{(k_1!)^2 \cdots (k_d!)^2} \Big( \frac{1}{2d} \Big)^{2n} \\
+&= \binom{2n}{n} \Big( \frac{1}{2d} \Big)^{2n} \sum_{k_1 + \dots + k_d = n} \frac{(n!)^2}{(k_1!)^2 \cdots (k_d!)^2}.
+\end{aligned}
+$$
+
+The last sum is dominated by
+
+$$
+\max_{k_1 + \dots + k_d = n} \Big\{ \frac{n!}{k_1! \cdots k_d!} \Big\} \sum_{k_1 + \dots + k_d = n} \frac{n!}{k_1! \cdots k_d!} = d^n \max_{k_1 + \dots + k_d = n} \Big\{ \frac{n!}{k_1! \cdots k_d!} \Big\},
+$$
+
+where we used an extension of the binomial formula, with ${x_1 = \dots = x_d = 1,}$
+
+$$
+\sum_{k_1 + \dots + k_d = n} \frac{n!}{k_1! \cdots k_d!} \, x_1^{k_1} \cdots x_d^{k_d} = (x_1 + \dots + x_d)^n.
+$$
+
+Elementary computations show that, when $d$ divides ${n,}$ the maximum value is attained for
+
+$$
+k_1 = k_2 = \dots = k_d = \frac{n}{d}.
+$$
+
+In detail, if ${k_a \ge k_b + 2}$ for some $a$ and ${b,}$ moving one unit from $k_a$ to $k_b$ multiplies ${n!/(k_1! \cdots k_d!)}$ by ${k_a/(k_b + 1) > 1,}$ so at the maximum the $k_i$ differ by at most 1, as in Figure 4. For the other $n$ the bound below holds with $(n/d)!$ read as ${\Gamma(n/d + 1),}$ since $\log \Gamma$ is convex and so ${k_1! \cdots k_d! \ge \Gamma(n/d + 1)^d}$ by Jensen's inequality.
+
+<Multinomial client:visible />
+
+**Figure 4.** An instance with ${d = 3{:}}$ the numbers ${n!/(k_1! \, k_2! \, k_3!)}$ over the triples with ${k_1 + k_2 + k_3 = n,}$ one hexagon each, darker for larger values, and the largest ones outlined. The slider sets $n.$
+
+By Stirling's formula we find that $(p^{(2n)}_{00})_{n \ge 0}$ is asymptotically smaller than a constant times
+
+$$
+\binom{2n}{n} \Big( \frac{1}{2d} \Big)^{2n} \frac{n! \, d^n}{((n/d)!)^d} \approx \frac{d^{d/2}}{\pi^{d/2} 2^{(d-1)/2}} \frac{1}{n^{d/2}}.
+$$
+
+Since ${d \ge 3,}$ the states are transient, because ${\sum_{n \ge 0} p^{(2n)}_{00} < +\infty.}$ Figure 5 draws $p^{(2n)}_{00}$ for ${d = 1, 2, 3.}$
+
+<LogReturns />
+
+**Figure 5.** The return probabilities $p^{(2n)}_{00}$ of the symmetric walks on ${\mathbb{Z},}$ $\mathbb{Z}^2$ and $\mathbb{Z}^3$ for ${n = 1, \dots, 200,}$ solid, on logarithmic scales. Dashed: ${1/\sqrt{\pi n},}$ ${1/(\pi n),}$ and for ${d = 3}$ the right-hand side of the last estimate.
