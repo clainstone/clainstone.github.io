@@ -116,6 +116,10 @@ Working examples:
 
 The stochastic example shows the mechanics only. Its prose is not a model for a
 lecture post: it contains first-person remarks that a lecture post never has.
+10. **Twice at once.** The figure also mounts, live and scaled to 0.75, in
+    the preview of every "Figure n" mention: ids from `$props.id()`, no
+    state at module level, sizes from the layout, never from
+    `getBoundingClientRect`.
 
 ## Size of the text in a visual
 

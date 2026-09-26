@@ -34,6 +34,12 @@ post never touches a component or a layout.
   sentences and paragraphs. A run-in bold label at the start of a paragraph
   replaces a list item.
 - A complex concept may link to Wikipedia once, at its first appearance.
+- Name a numbered statement, figure or equation exactly as its label reads
+  ("Theorem 3.5", "Figure 2", "(6)", "Theorem 10 of the previous post"): the
+  build links it to its place, in the same post or another post of the
+  thread. Never link it by hand. Resting the pointer on such a link shows
+  its target in a preview: a statement runs from its label to the next
+  heading, figure, bold label or paragraph that names it.
 - A number arrives with its conditions or it does not arrive.
 
 ## Animations

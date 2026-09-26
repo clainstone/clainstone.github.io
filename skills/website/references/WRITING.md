@@ -30,8 +30,22 @@ not arrive.
 4. One main claim per sentence, at most 40 words. Paragraphs of 2 to 6
    sentences.
 5. A complex concept may link to Wikipedia once, at its first appearance.
-   Nothing else is linked except the sources and code a project post cites.
-6. Abbreviations are written out at first use.
+   Nothing else is linked by hand except the sources and code a project post
+   cites.
+6. Cross-references are automatic. Name a numbered statement, figure or
+   equation exactly as its label or tag reads ("Theorem 3.5", "Examples 2.1
+   and 2.5", "Figure 2", "(6)"); name one of another post of the same thread
+   with "of the previous post" or "of the first post" when its number is not
+   unique in the thread. The build turns each mention into a link to its
+   place, and the checks fail on a mention with no target. Resting the
+   pointer on the link shows its target: a statement from its label to the
+   first heading, figure, paragraph with a bold label (the proof, the next
+   statement) or paragraph that names it; a figure with its caption; a
+   display with the end of the sentence that leads into it. A paragraph of
+   commentary right after a statement therefore opens by naming it ("By
+   Definition 3.1, ..."), and the continuation of a statement follows its
+   label with no figure in between.
+7. Abbreviations are written out at first use.
 
 ## 3. Metadata
 

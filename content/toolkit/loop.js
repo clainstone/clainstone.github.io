@@ -84,11 +84,19 @@ export function loop(canvas, draw, options = {}) {
   };
   const resize = () => {
     const dpr = window.devicePixelRatio || 1;
-    const rect = canvas.getBoundingClientRect();
-    if (rect.width === 0) return;
-    size = { w: rect.width, h: rect.height, dt: 0, p: palette(canvas), narrow: window.matchMedia(NARROW).matches };
-    canvas.width = Math.round(rect.width * dpr);
-    canvas.height = Math.round(rect.height * dpr);
+    // The layout size, not the rectangle on screen: in the preview of a
+    // cross-reference the canvas is scaled down and must draw the same picture
+    // as on the page. At layout size times dpr its backing store stays sharp
+    // when scaled down.
+    // Not rendered (display: none here or above): nothing to size yet.
+    if (!canvas.getClientRects().length) return;
+    const cs = getComputedStyle(canvas);
+    const w = parseFloat(cs.width);
+    const h = parseFloat(cs.height);
+    if (!w) return;
+    size = { w, h, dt: 0, p: palette(canvas), narrow: window.matchMedia(NARROW).matches };
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     render(0);
   };

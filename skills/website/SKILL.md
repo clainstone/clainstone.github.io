@@ -57,8 +57,9 @@ it for its own task.
    comments, cookie banner, icon set, emoji, badge, stock image, decorative
    gradient, large shadow or animated background.
 4. **No JavaScript in the shell** beyond the inline theme scripts and the
-   404 page's trailing-slash redirect. Otherwise JavaScript reaches a page
-   only through the islands a post mounts.
+   404 page's trailing-slash redirect. A post page adds one script, the
+   previews of cross-references (`src/scripts/xref-preview/`); otherwise
+   JavaScript reaches a page only through the islands a post mounts.
 5. **Content and code stay apart.** Posts, threads and the site's own data
    live in `content/`; only interface words live in the code. While writing
    a post, do not touch layouts, styles, the toolkit or other posts; build

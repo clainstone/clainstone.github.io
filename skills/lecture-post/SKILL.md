@@ -68,6 +68,9 @@ Italian. The post is always in English.
 
    Then open the screenshot it writes and look at it yourself: the
    mathematics renders, every animation draws, nothing overflows at 1280 px.
+   Read its `preview` lines: each statement's preview must end where the
+   statement ends; the check also rests on one mention of each kind and
+   fails when a preview is wrong.
    Start the local server with `make start` when it is not running.
 8. **Verify against the sources.** Codex (GPT-6 Sol, xhigh effort) checks
    whether anything the post writes diverges from the sources: formulas,
@@ -161,3 +164,10 @@ the same title already exists in the thread, stop and ask Alessandro.
 9. **Touch only the new post folder.** Do not edit other posts, thread files,
    the toolkit, layouts or styles. When the toolkit lacks something, build it
    inside the post folder.
+10. **Cross-references are links.** Name every earlier statement, figure and
+   equation the post uses by its label ("Theorem 3.5", "Figure 2", "(6)",
+   "Theorem 10 of the previous post"): the build links each mention to its
+   place, in this post or another post of the thread, and `make check-post`
+   fails on a mention with no target. `references/STYLE.md` 4.11 has the
+   forms. Resting the pointer on a mention shows its target in a preview
+   (`references/STYLE.md` 4.11 e).

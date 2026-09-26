@@ -1,19 +1,29 @@
 #!/usr/bin/env node
 // Check the whole built site the way GitHub Pages serves it.
 //
-//   make check-site [ONLY=/,/threads] [FIGURES=1]
-//   node skills/website/scripts/check_site.mjs [--no-build] [--no-browser] [--only /,/threads] [--figures] [--site DIR]
+//   make check-site [ONLY=/,/threads] [FIGURES=1] [PREVIEWS=0]
+//   node skills/website/scripts/check_site.mjs [--no-build] [--no-browser] [--only /,/threads] [--figures] [--no-previews] [--site DIR]
 //
 // 1. Build with `make build`, unless --no-build.
 // 2. Every page in dist/: visible text (code and mathematics excluded) with no
 //    bullet character, arrow, em dash or double hyphen; no KaTeX error; a
 //    title and a description without TeX; every root-relative link, image and
-//    script resolves; every published post is built and no sample post is.
-// 3. A headless browser at 1280 px, in light and in dark: console errors,
-//    horizontal overflow, islands that did not mount, canvases of zero size,
-//    displays that scroll, inline formulas split across two lines, the theme
-//    the page chose, SVG labels outside 15.5 to 20 px (a warning), a
-//    full-page screenshot, and with --figures one capture per figure.
+//    script resolves; every cross-reference resolves to an id that exists;
+//    every data-xref-part and data-xref-lead names an id of the page; a post
+//    with cross-references loads the preview script (the module script that
+//    contains "xref-card"), at most 7168 bytes gzipped with the chunks it
+//    imports; every published post is built and no sample post is.
+// 3. A headless browser at 1280 px, in light and in dark: console errors and
+//    [xref-preview] warnings, horizontal overflow, islands that did not mount,
+//    canvases of zero size, displays that scroll, inline formulas split across
+//    two lines, the theme the page chose, SVG labels outside 15.5 to 20 px (a
+//    warning), a full-page screenshot, and with --figures one capture per
+//    figure. Then, unless --no-previews, the previews of cross-references of
+//    each post (xref_checks.mjs): the first link of each kind opens a card of
+//    the right scale, measure, place, paper and content, with the page's line
+//    breaks, no duplicate id and live figures, captured; in light also
+//    leaving, nesting, keyboard and the jump on click; once per run, with
+//    reduced motion, a card without animation whose click still lands.
 //
 // Screenshots go to <site>/.astro/site-check/, which the site's git ignores.
 // Exit status: 0 clean, 1 errors found, 2 the check could not run.
@@ -25,6 +35,7 @@ import { createServer } from 'node:http';
 import { createRequire } from 'node:module';
 import { homedir } from 'node:os';
 import { pathToFileURL, fileURLToPath } from 'node:url';
+import { BUDGET, marksProblems, previewScript, checkPreviews, checkReducedMotion } from './xref_checks.mjs';
 
 const HOME = homedir();
 const argv = process.argv.slice(2);
@@ -124,6 +135,11 @@ function resolves(path) {
   return (existsSync(f) && statSync(f).isFile()) || existsSync(`${f}.html`) || existsSync(join(f, 'index.html'));
 }
 
+// A post page: /threads/<thread>/<post>.
+const POST = /^\/threads\/[^/]+\/[^/]+$/;
+const budgets = new Map(); // preview script: gzipped bytes, reported once
+const statementPosts = []; // posts that link to a statement of their own, for the reduced-motion check
+
 for (const { file, path } of pages) {
   const html = readFileSync(join(DIST, file), 'utf8');
   const text = visibleText(html);
@@ -148,6 +164,27 @@ for (const { file, path } of pages) {
     seen.add(target);
     if (!resolves(target)) error(`${path}: link or asset ${target} does not resolve`);
   }
+  // Cross-references (src/plugins/cross-refs.mjs) resolve, and their ids exist.
+  for (const m of new Set([...html.matchAll(/data-xref-missing="([^"]*)"/g)].map((x) => x[1]))) error(`${path}: cross-reference "${m}" has no target`);
+  for (const [, href] of html.matchAll(/<a href="([^"]*)" class="xref"/g)) {
+    const [to, frag] = href.split('#');
+    const target = to ? join(DIST, `${to}.html`) : join(DIST, file);
+    if (!existsSync(target) || !readFileSync(target, 'utf8').includes(`id="${frag}"`)) error(`${path}: cross-reference ${href} leads nowhere`);
+  }
+  // Previews of cross-references (src/scripts/xref-preview): the build's marks
+  // name ids of the page, and a post with cross-references loads the script,
+  // found by what it contains, within its budget.
+  for (const m of marksProblems(html)) error(`${path}: ${m}`);
+  if (POST.test(path) && html.includes('class="xref"')) {
+    const script = previewScript(html, DIST);
+    if (!script) error(`${path}: the page has cross-references but loads no preview script (a module script containing "xref-card")`);
+    else if (!budgets.has(script.name)) {
+      budgets.set(script.name, script.bytes);
+      if (script.bytes > BUDGET) error(`preview script ${script.name}: ${script.bytes} bytes gzipped with its ${script.modules - 1} import(s), above the budget of ${BUDGET}`);
+      extra.push(`preview script: ${script.bytes} bytes gzipped (budget ${BUDGET})`);
+    }
+  }
+  if (POST.test(path) && /<a href="#(?!figure-|eq-)[^"]+" class="xref"/.test(html)) statementPosts.push(path);
 }
 
 // Published posts are built; sample posts are not.
@@ -216,7 +253,7 @@ if (!flags.has('--no-browser')) {
       for (const { path } of pages) {
         const page = await ctx.newPage();
         const problems = [];
-        page.on('console', (m) => { if (m.type() === 'error') problems.push(m.text()); });
+        page.on('console', (m) => { if (m.type() === 'error' || (m.type() === 'warning' && m.text().startsWith('[xref-preview]'))) problems.push(m.text()); });
         page.on('pageerror', (e) => problems.push(String(e)));
         const where = `${path} (${theme})`;
         const response = await page.goto(`${base}${path}`, { waitUntil: 'networkidle' });
@@ -237,12 +274,13 @@ if (!flags.has('--no-browser')) {
           islands: document.querySelectorAll('astro-island').length,
           unmounted: document.querySelectorAll('astro-island[ssr]').length,
           emptyCanvases: [...document.querySelectorAll('canvas')].filter((c) => c.width === 0 || c.height === 0).length,
-          scrolling: [...document.querySelectorAll('.body .katex-display')].filter((d) => d.scrollWidth > d.clientWidth + 1)
+          // `article .body`: the sheet of a preview card has the class body too.
+          scrolling: [...document.querySelectorAll('article .body .katex-display')].filter((d) => d.scrollWidth > d.clientWidth + 1)
             .map((d) => (d.querySelector('annotation')?.textContent ?? '').replace(/\s+/g, ' ').slice(0, 60)),
-          split: [...document.querySelectorAll('.body p .katex')].filter((k) => !k.closest('.katex-display'))
+          split: [...document.querySelectorAll('article .body p .katex')].filter((k) => !k.closest('.katex-display'))
             .filter((k) => new Set([...k.querySelector('.katex-html').getClientRects()].filter((r) => r.width > 0).map((r) => Math.round(r.bottom / 8))).size > 1)
             .map((k) => (k.querySelector('annotation')?.textContent ?? '').slice(0, 60)),
-          labels: [...document.querySelectorAll('.body svg text')].map((t) => {
+          labels: [...document.querySelectorAll('article .body svg text')].map((t) => {
             const ctm = t.getScreenCTM();
             return { size: ctm ? parseFloat(getComputedStyle(t).fontSize) * Math.hypot(ctm.a, ctm.b) : 0, text: t.textContent.trim().slice(0, 30) };
           }).filter((l) => l.size && l.text && (l.size < 15.5 || l.size > 20)),
@@ -254,15 +292,14 @@ if (!flags.has('--no-browser')) {
         for (const t of state.scrolling) error(`${where}: a display scrolls horizontally: ${t}`);
         for (const t of state.split) error(`${where}: an inline formula breaks across lines: ${t}`);
         if (theme === 'light') for (const l of state.labels.slice(0, 12)) warn(`${path}: figure label "${l.text}" is ${l.size.toFixed(1)} px, outside 15.5 to 20`);
-        for (const p of problems) error(`${where} console: ${p.slice(0, 300)}`);
         const name = shotName(path);
         await page.screenshot({ path: join(OUT, `${name}-${theme}.png`), fullPage: true });
         if (flags.has('--figures')) {
           // The outermost figure elements of the post body, in page order.
-          const figures = await page.$$('.body .anim, .body .anim-figure, .body > figure, .body > .wide');
+          const figures = await page.$$('article .body .anim, article .body .anim-figure, article .body > figure, article .body > .wide');
           let k = 0;
           for (const el of figures) {
-            const nested = await el.evaluate((node) => !!node.parentElement?.closest('.body .anim, .body .anim-figure, .body > figure, .body > .wide'));
+            const nested = await el.evaluate((node) => !!node.parentElement?.closest('article .body .anim, article .body .anim-figure, article .body > figure, article .body > .wide'));
             if (nested) continue;
             k += 1;
             await el.scrollIntoViewIfNeeded();
@@ -270,8 +307,35 @@ if (!flags.has('--no-browser')) {
             await el.screenshot({ path: join(OUT, `${name}__fig${String(k).padStart(2, '0')}-${theme}.png`) });
           }
         }
+        // Previews of cross-references, after the captures so that no card is in them.
+        if (!flags.has('--no-previews') && POST.test(path)) {
+          try {
+            await checkPreviews(page, {
+              context: ctx, base, where, error, warn,
+              full: theme === 'light',
+              shot: (kind) => join(OUT, `${name}__${kind}-${theme}.png`),
+            });
+          } catch (e) {
+            error(`${where}: the check of the previews failed: ${String(e).split('\n')[0]}`);
+          }
+        }
+        for (const p of problems) error(`${where} console: ${p.slice(0, 300)}`);
         await page.close();
       }
+      await ctx.close();
+    }
+    // Reduced motion, once: the first post that links to one of its statements.
+    if (!flags.has('--no-previews') && statementPosts.length) {
+      const path = statementPosts[0];
+      const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 }, deviceScaleFactor: 1, colorScheme: 'light', reducedMotion: 'reduce' });
+      const page = await ctx.newPage();
+      const problems = [];
+      page.on('console', (m) => { if (m.type() === 'error' || (m.type() === 'warning' && m.text().startsWith('[xref-preview]'))) problems.push(m.text()); });
+      page.on('pageerror', (e) => problems.push(String(e)));
+      const where = `${path} (reduced motion)`;
+      await page.goto(`${base}${path}`, { waitUntil: 'networkidle' });
+      await checkReducedMotion(page, { where, error, warn });
+      for (const p of problems) error(`${where} console: ${p.slice(0, 300)}`);
       await ctx.close();
     }
     extra.push(`screenshots: ${OUT}`);

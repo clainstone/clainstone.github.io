@@ -11,10 +11,22 @@
 //    sentence about the professor, the exam or the notes. Leftover shorthand,
 //    evaluative words and logic symbols in prose are warnings.
 // 3. Build of the whole site with `make build`.
-// 4. The built page: visible text without KaTeX, KaTeX errors.
-// 5. A headless browser at 1280 px (the site is desktop only): console errors,
-//    horizontal overflow, displays that scroll, inline formulas split across
-//    two lines, a screenshot after every client:visible component has mounted.
+// 4. The built page: visible text without KaTeX, KaTeX errors, every
+//    cross-reference resolved and leading to an id that exists, every
+//    data-xref-part and data-xref-lead naming an id of the page, and the
+//    preview script (the module script that contains "xref-card") loaded
+//    when the page has cross-references.
+// 5. A headless browser at 1280 px (the site is desktop only): console errors
+//    and [xref-preview] warnings, horizontal overflow, displays that scroll,
+//    inline formulas split across two lines, a screenshot after every
+//    client:visible component has mounted. Then the previews of
+//    cross-references (skills/website/scripts/xref_checks.mjs): in light the
+//    first link of each kind opens a card of the right scale, measure, place,
+//    paper and content, with the page's line breaks, no duplicate id and live
+//    figures, captured, and leaving, nesting, keyboard and the jump on click
+//    behave; in dark the statement and figure cards again. The output lists,
+//    after the page's address, the blocks each statement's preview shows and
+//    how it ends; more than 8 blocks is a warning.
 //
 // Exit status 1 when any error is found. Screenshots go to
 // <site>/.astro/lecture-check/, which the site's git ignores.
@@ -26,6 +38,7 @@ import { createServer } from 'node:http';
 import { createRequire } from 'node:module';
 import { homedir } from 'node:os';
 import { pathToFileURL, fileURLToPath } from 'node:url';
+import { marksProblems, previewScript, checkPreviews, extentReport } from '../../website/scripts/xref_checks.mjs';
 
 const THREADS = ['real-and-functional-analysis', 'stochastic-dynamical-models'];
 const HOME = homedir();
@@ -219,6 +232,21 @@ for (const [re, label] of [[/•/, 'a bullet character'], [/[→←⇒⇐⟹⟸�
 const katexErrors = (html.match(/class="katex-error"/g) ?? []).length;
 if (katexErrors) error(`${katexErrors} formula(s) failed to render, look for katex-error in the page`);
 
+// Cross-references (src/plugins/cross-refs.mjs): every mention of a numbered
+// statement, figure or equation must reach an id that exists.
+for (const m of new Set([...html.matchAll(/data-xref-missing="([^"]*)"/g)].map((x) => x[1]))) {
+  error(`cross-reference "${m}" has no target: no such label in this post, in the post its qualifier names, or in exactly one other post of the thread`);
+}
+for (const [, href] of html.matchAll(/<a href="([^"]*)" class="xref"/g)) {
+  const [path, frag] = href.split('#');
+  const target = path ? join(dist, `${path}.html`) : pageFile;
+  if (!existsSync(target) || !readFileSync(target, 'utf8').includes(`id="${frag}"`)) error(`cross-reference ${href} leads nowhere`);
+}
+// Previews of cross-references: the build's marks name ids of the page, and
+// the page loads the preview script, found by what it contains.
+for (const m of marksProblems(html)) error(`preview marks: ${m}`);
+if (html.includes('class="xref"') && !previewScript(html, dist)) error('the page has cross-references but loads no preview script (a module script containing "xref-card")');
+
 // ---- 5. browser --------------------------------------------------------------------
 
 const extra = [`page: http://localhost:4300/threads/${id}`];
@@ -258,30 +286,37 @@ if (!flags.has('--no-browser')) {
       if (existsSync(`${libs}/etc/fonts/fonts.conf`)) browserEnv.FONTCONFIG_FILE = `${libs}/etc/fonts/fonts.conf`;
     }
     const server = await serve(dist);
-    const url = `http://127.0.0.1:${server.address().port}/threads/${id}`;
+    const base = `http://127.0.0.1:${server.address().port}`;
+    const url = `${base}/threads/${id}`;
     const out = join(SITE, '.astro', 'lecture-check');
     mkdirSync(out, { recursive: true });
+    // The post in a new page of `ctx`, its console collected (errors, page
+    // errors, [xref-preview] warnings), scrolled through so that every
+    // client:visible island mounts.
+    async function load(ctx, where) {
+      const page = await ctx.newPage();
+      const problems = [];
+      page.on('console', (m) => { if (m.type() === 'error' || (m.type() === 'warning' && m.text().startsWith('[xref-preview]'))) problems.push(m.text()); });
+      page.on('pageerror', (e) => problems.push(String(e)));
+      const response = await page.goto(url, { waitUntil: 'networkidle' });
+      if (!response || response.status() !== 200) error(`${where}: the page answered ${response?.status()}`);
+      await page.evaluate(async () => {
+        const step = window.innerHeight * 0.8;
+        for (let y = 0; y < document.body.scrollHeight; y += step) {
+          window.scrollTo(0, y);
+          await new Promise((r) => setTimeout(r, 250));
+        }
+        window.scrollTo(0, 0);
+      });
+      await page.waitForTimeout(800);
+      return { page, problems };
+    }
     let browser;
     try {
       browser = await pw.chromium.launch({ env: browserEnv, args: ['--no-sandbox', '--use-gl=swiftshader', '--enable-webgl', '--ignore-gpu-blocklist'] });
       for (const width of [1280]) {
         const ctx = await browser.newContext({ viewport: { width, height: 800 }, deviceScaleFactor: 1, colorScheme: 'light' });
-        const page = await ctx.newPage();
-        const problems = [];
-        page.on('console', (m) => { if (m.type() === 'error') problems.push(m.text()); });
-        page.on('pageerror', (e) => problems.push(String(e)));
-        const response = await page.goto(url, { waitUntil: 'networkidle' });
-        if (!response || response.status() !== 200) error(`${width} px: the page answered ${response?.status()}`);
-        // Scroll through the page so that every client:visible island mounts.
-        await page.evaluate(async () => {
-          const step = window.innerHeight * 0.8;
-          for (let y = 0; y < document.body.scrollHeight; y += step) {
-            window.scrollTo(0, y);
-            await new Promise((r) => setTimeout(r, 250));
-          }
-          window.scrollTo(0, 0);
-        });
-        await page.waitForTimeout(800);
+        const { page, problems } = await load(ctx, `${width} px`);
         const state = await page.evaluate(() => ({
           overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
           islands: document.querySelectorAll('astro-island').length,
@@ -306,11 +341,29 @@ if (!flags.has('--no-browser')) {
         for (const t of state.scrolling) error(`${width} px: a display scrolls horizontally: ${t}`);
         for (const t of state.split) error(`${width} px: an inline formula breaks across lines: ${t}`);
         for (const l of state.labels.slice(0, 12)) warn(`${width} px: figure label "${l.text}" is ${l.size.toFixed(1)} px, outside 15.5 to 20`);
-        for (const p of problems) error(`${width} px console: ${p.slice(0, 300)}`);
         const shot = join(out, `${slug}-${width}.png`);
         await page.screenshot({ path: shot, fullPage: true });
         extra.push(`screenshot: ${shot}`);
+        // What each statement's preview shows, listed after the page's address.
+        const extents = await extentReport(page);
+        extra.splice(1, 0, ...extents.map((x) => x.line));
+        for (const x of extents) if (x.blocks > 8) warn(`the preview of ${x.id} shows ${x.blocks} blocks, more than 8: does the statement really go on that long?`);
+        // Previews of cross-references, after the screenshot so that no card is in it.
+        await checkPreviews(page, {
+          context: ctx, base, where: `${width} px light`, full: true, error, warn,
+          shot: (kind) => join(out, `${slug}__${kind}-light.png`),
+        });
+        for (const p of problems) error(`${width} px console: ${p.slice(0, 300)}`);
         await ctx.close();
+        // In dark, the statement and figure cards again.
+        const darkCtx = await browser.newContext({ viewport: { width, height: 800 }, deviceScaleFactor: 1, colorScheme: 'dark' });
+        const dark = await load(darkCtx, `${width} px dark`);
+        await checkPreviews(dark.page, {
+          context: darkCtx, base, where: `${width} px dark`, full: false, error, warn,
+          shot: (kind) => join(out, `${slug}__${kind}-dark.png`),
+        });
+        for (const p of dark.problems) error(`${width} px dark console: ${p.slice(0, 300)}`);
+        await darkCtx.close();
       }
     } catch (e) {
       error(`browser check failed: ${String(e).split('\n')[0]}`);

@@ -10,7 +10,7 @@ section, a redesign, a change of host.
 | Main (`/`) | portrait, name, one line under it, a short bio, the ten latest posts (title, thread, date), contacts |
 | Threads (`/threads`) | threads with post count and optional one-sentence description; closed threads last |
 | A thread (`/threads/<thread>`) | its posts, oldest first, with word count and date |
-| A post (`/threads/<thread>/<post>`) | thread, title, word count and dates, body, previous and next post |
+| A post (`/threads/<thread>/<post>`) | thread, title, word count and dates, body, previous and next post; resting on a cross-reference shows its target in a preview |
 | Not found (`/404`) | one line and links back; `noindex` |
 
 The bar holds the name (to the main page), Threads and the theme switch,

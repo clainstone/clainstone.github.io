@@ -18,6 +18,7 @@ token, not the rule that uses it. The page and ink colours are repeated in
 | `--link-hover` | `#1f3766` | `#c6d5f2` |
 | `--control-bg` | `#ebe5d9` | `#312d28` |
 | `--code-bg` | `#f3efe6` | `#262320` |
+| `--xref-shadow` | `rgba(34, 31, 28, 0.16)` | `rgba(0, 0, 0, 0.5)` |
 
 The dark values are written twice, under `:root[data-theme='dark']` and under
 `@media (prefers-color-scheme: dark)` for pages read without JavaScript.
@@ -60,6 +61,18 @@ Change both. The animation palette (`--anim-ink`, `--anim-muted`,
 5. A bold run-in label after other content gets more space above it than
    inside the statement it opens.
 6. Tables in small type with hairlines; blockquotes with a thin rule.
+7. **Previews of cross-references.** Resting on a cross-reference, or
+   focusing it from the keyboard, shows its target in a card on the page's
+   paper: a hairline edge, a 4 px radius, a small shadow; inside, the
+   target's own blocks at three quarters of their size, laid out at the
+   column's width so that every line breaks as on the page. The card sits
+   6 px below the link's line, above it when there is no room, never over
+   it; it shows at most `min(26rem, 60vh)` of the passage, with a fade in
+   the page's colour and a scroll for the rest. A target in another post has
+   that post's title above it in muted italic. The open link keeps a faint
+   wash. No pointer, no buttons. The card unrolls from the link in 0.18 s and
+   fades out in 0.12 s; a click on the link sends the card's blocks to their
+   places in 0.34 s. Nothing moves under `prefers-reduced-motion`.
 
 ## 5. Mathematics
 
@@ -90,7 +103,8 @@ stay light.
 
 Bullets or markers of any kind, arrows, em dashes and double hyphens, icon
 sets, emoji, badges, stock images, decorative gradients, glass or blur,
-large shadows, animated backgrounds, pop-ups, "read more" chevrons.
+large shadows, animated backgrounds, pop-ups (the previews of
+cross-references, 4.7, are the one exception), "read more" chevrons.
 
 ## 9. Judging a visual change
 

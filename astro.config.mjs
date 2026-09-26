@@ -6,6 +6,7 @@ import { unified } from '@astrojs/markdown-remark';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import headingAnchors from './src/plugins/heading-anchors.mjs';
+import crossRefs from './src/plugins/cross-refs.mjs';
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
@@ -45,7 +46,7 @@ const checkCards = {
 
 const math = {
   remarkPlugins: [remarkMath],
-  rehypePlugins: [[rehypeKatex, { strict: false }], headingAnchors],
+  rehypePlugins: [[rehypeKatex, { strict: false }], headingAnchors, crossRefs],
 };
 
 export default defineConfig({

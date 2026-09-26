@@ -119,7 +119,36 @@ This section outranks every other rule in this file and in the skill.
    formula.
 10. Links: only to Wikipedia, only for a named result the source states
     without proof or a named concept the source uses without defining, once,
-    at first appearance, never inside a label. Nothing else is linked.
+    at first appearance, never inside a label. Nothing else is linked by
+    hand: cross-references (4.11) are made by the build.
+11. Cross-references. Every mention of a numbered statement, figure or
+    equation becomes, at build time, a link to the place that states it, in
+    the same post or in another post of the thread. The writer only names it
+    in the canonical form:
+    a. a statement by its kind and number as in its label: "Theorem 3.5",
+       "Remark 5 (ii)", "Examples 2.1 and 2.5", "Corollaries 3.7 and 3.8";
+    b. a figure as "Figure n", only in its own post;
+    c. an equation by its tag in parentheses, "(6)" or `${(6),}$`, and only a
+       display with `\tag{6}` can be cited so;
+    d. an item of another post, when its number also exists in this post or
+       in more than one post of the thread, with "of the previous post",
+       "of the first post", "of the second post" right after the mention (or
+       after a list of mentions, which it then qualifies as a whole).
+    The mention resolves in this post first, then in the post the qualifier
+    names, then in the only other post of the thread that has it. NEVER write
+    a cross-reference as a Markdown link. A mention with no target (a removed
+    theorem, a wrong number) fails `make check-post`: correct the number or
+    the qualifier, or reword so that no number is cited.
+    e. Resting the pointer on a mention shows a preview of its target: the
+       statement from its label to the first heading, figure, paragraph with
+       a bold label (the proof, a caption, the next statement) or paragraph
+       that names the statement; a figure with its caption; a display with
+       the last two lines of the paragraph that leads into it. The proof is
+       never shown. So the items and continuation paragraphs of a statement
+       follow its label directly, with no figure between them, and a
+       paragraph of commentary right after a statement opens by naming it
+       ("By Definition 3.1, ..."). `make check-post` prints where each
+       preview ends.
 
 ## 5. Mathematics
 
@@ -249,7 +278,8 @@ Run every line; fix or justify in the report.
 6. Every `**Example` / `**Remark` follows 4.2; labels have the source's kind.
 7. Count markers (7.4) and links (4.10).
 8. `make check-post POST=<thread>/<slug>` passes. It fails on a display that
-   scrolls and on an inline formula split across two lines, at 1280 px.
+   scrolls, on an inline formula split across two lines, at 1280 px, and on
+   a cross-reference with no target (4.11).
 9. Look at the whole 1280 px screenshot: no line begins with a punctuation
    mark, no label alone, no paragraph over 8 lines, no display broken where the
    source keeps one line, every visual drawn and captioned, at most 3 screens
@@ -260,6 +290,8 @@ Run every line; fix or justify in the report.
 12. `make verify-post POST=<thread>/<slug> SRC=<source> PAGES=<pages>` ends
     with `VERDICT: OK`, or every open finding is in the report with the reason
     the post is right (`SKILL.md`, step 8).
+13. The `preview` lines of `make check-post`: each statement's preview ends
+    where the source's statement ends (4.11 e).
 
 ## 9. Precedence over the older rules
 

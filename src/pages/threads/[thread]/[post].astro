@@ -2,6 +2,7 @@
 import { render } from 'astro:content';
 import Base from '../../../layouts/Base.astro';
 import M from '../../../components/M.astro';
+import XrefPreview from '../../../components/XrefPreview.astro';
 import { getPosts, postsOf, threadOf, threadUrl, postUrl, wordCount, formatWords, formatDate, isoDate, publishedOf, plain, type Post } from '../../../lib/site';
 
 export async function getStaticPaths() {
@@ -55,4 +56,5 @@ const next = siblings[at + 1];
       )}
     </ul>}
   </nav>
+  <XrefPreview />
 </Base>

@@ -61,7 +61,9 @@ on a 19 px page), `smallFont` (about 16 px), `px`, `size`, `fontFamily`.
 
 **`loop(canvas, draw, options)`** (used by `Canvas`): handles device pixel
 ratio, resizing, pausing off screen, reduced motion (one frame, then waits
-for Play), theme changes and late fonts (it repaints).
+for Play), theme changes and late fonts (it repaints). It sizes the canvas
+from its layout box, not from its rectangle on screen, so that a copy scaled
+down in a preview draws the same picture.
 
 **`Slider.svelte`**: `label`, `min`, `max`, `step`, `bind:value`,
 `format(v)`, `oninput` (every move), `onchange` (end of drag).
@@ -106,6 +108,12 @@ not use them.
 12. **Bitmaps** carry no text: labels go in the caption. Generate them at
     twice their displayed width.
 13. **No decoration.** Every mark on a figure means something in the post.
+14. **Twice at once.** A figure is mounted a second time, live, in the
+    preview of every mention of it, scaled to 0.75, while the page's copy may
+    be running. Give SVG ids a per-instance prefix from `$props.id()`, keep
+    no mutable state at module level, and take sizes from the layout
+    (`clientWidth`, `getComputedStyle`), never from `getBoundingClientRect`
+    or `window`.
 
 ## 6. Checking
 
@@ -116,3 +124,5 @@ not use them.
    label, every control at its extremes, and both themes.
 3. The caption says what is drawn and what the controls change, and nothing
    the figure does not show.
+4. `make check-site` opens the preview of a figure on every post and fails
+   when its islands do not mount or a canvas stays blank.

@@ -8,7 +8,7 @@
 #   make dev       dev server in the foreground (Ctrl-C to stop)
 #   make build     static site in dist/
 #   make check-post POST=<thread>/<slug>   build and check one lecture post
-#   make check-site [FIGURES=1] [ONLY=/,/threads]   build and check every page, light and dark
+#   make check-site [FIGURES=1] [ONLY=/,/threads] [PREVIEWS=0]   build and check every page, light and dark, and the previews
 #   make verify-post POST=<thread>/<slug> SRC=<file>[,<file>] [PAGES=1-4]
 #                  Codex checks the post against its sources
 #
@@ -53,7 +53,7 @@ build: node_modules/.package-lock.json
 	$(ASTRO) build
 
 check-site: node_modules/.package-lock.json
-	node skills/website/scripts/check_site.mjs $(if $(FIGURES),--figures) $(if $(ONLY),--only $(ONLY))
+	node skills/website/scripts/check_site.mjs $(if $(FIGURES),--figures) $(if $(filter 0,$(PREVIEWS)),--no-previews) $(if $(ONLY),--only $(ONLY))
 
 check-post: node_modules/.package-lock.json
 	@test -n "$(POST)" || { echo "usage: make check-post POST=<thread>/<slug>"; exit 2; }

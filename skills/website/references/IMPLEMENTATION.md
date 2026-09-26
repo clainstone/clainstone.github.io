@@ -15,6 +15,9 @@ check it.
 | `src/layouts/Base.astro` | head and meta tags, theme scripts, bar, footer |
 | `src/pages/` | the pages and generated files of ARCHITECTURE.md |
 | `src/plugins/heading-anchors.mjs` | ids and hover `#` links for `h2` and `h3` of posts |
+| `src/components/XrefPreview.astro` | the tag of the preview script, rendered by the post page |
+| `src/scripts/xref-preview/` | previews of cross-references: `index.js` (intent, nested cards, events), `source.js` (a target's blocks, fetches of other posts, their styles), `card.js` (the card, its scale and place), `jump.js` (the wash and the flight on click) |
+| `src/plugins/cross-refs.mjs` | ids for numbered statements, figures and tagged displays; links from every mention of them, across the posts of a thread |
 | `src/styles/global.css` | every style and token |
 | `content/toolkit/` | `Canvas.svelte`, `Slider.svelte`, `Figure.astro`, `Video.astro`, `loop.js`, `toolkit.css` |
 | `Makefile` | `help`, `start`, `stop`, `status`, `logs`, `dev`, `preview`, `build`, `check-site` |
@@ -32,12 +35,43 @@ command to its symbol table. Its self-tests run on every build.
 
 **Shell.** One inline script in the head sets `data-theme` before the first
 paint from the saved choice or the system; one after the bar runs the
-switch and keeps `theme-color` in step. No other script is in the shell.
+switch and keeps `theme-color` in step. No other script is in the shell;
+a post page adds the preview script of Cross-references.
 
 **Cards.** Satori draws each page's card in the site's fonts, one family
 name per subset (the weights and styles of a subset share it). A character
 no font draws stops the build with its code point: change the title rather
 than the fonts.
+
+**Cross-references.** `cross-refs.mjs` runs after KaTeX. It reads the MDX
+of every non-sample post of the thread to know which ids each defines
+(`**Kind n.**` labels, `\tag{n}`), in thread order (date, then id). It gives
+each statement's paragraph the id `kind-n` (dots become hyphens), each
+figure an empty `.xref-anchor` just before its visual (so the caption stays
+the visual's next sibling), each tagged display `eq-n`. A mention in prose
+resolves in its own post, then in the post a qualifier names ("of the
+previous post"), then in the only other post that has it; figures only in
+their own post, equations without a dot in their number too. An unresolved
+mention stays text in `<span data-xref-missing>`. Links carry `class="xref"`:
+text colour with an underline, and a brief wash on the target. After
+editing the plugin, restart the dev server: it caches plugins.
+
+The plugin also marks what a preview shows. The blocks after a statement's
+paragraph that belong to it carry `data-xref-part="<id>"`: displays,
+tables, lists, code, quotations and plain paragraphs, items such as
+`**(ii)**` included, up to the first heading, rule, figure or component,
+paragraph that opens with a bold label (a proof, a caption, the next
+statement) or paragraph that cites the statement itself. A figure's caption
+carries `data-xref-part`, the paragraph that leads into a tagged display
+`data-xref-lead`. The preview script shows these blocks when the pointer
+rests on a link for 0.4 s or the link takes keyboard focus: a card on the
+page's paper holds them, cloned, laid out at the column's 760 px and scaled
+to 0.75, so every line breaks as on the page. A target in another post comes
+from that post's HTML, fetched once, with its styles. An island in a card
+is a second, live instance, hydrated from the server's markup. A link in a
+card opens a card above it. A click on a link whose card is open sends the
+card's blocks to their places with a view transition, and the whole passage
+is washed on arrival.
 
 **Build hooks.** After the build, every og:image must exist in `dist/`. A new
 page type therefore needs its card path in `src/pages/og/[...slug].png.ts`,
@@ -61,6 +95,10 @@ and its address in the sitemap.
    imports it (`grep -rl '@toolkit/' content/posts`).
 7. **A dependency**: only when nothing installed does the job; update the
    lock file with `npm install` and build in a clean clone.
+8. **A figure component** may be mounted twice at once, on the page and in a
+   preview: ids from `$props.id()`, no mutable state at module level, sizes
+   from the layout box (`clientWidth`, `getComputedStyle`), never from
+   `getBoundingClientRect` or the window.
 
 ## 4. Conventions
 
@@ -87,7 +125,8 @@ sample posts appear only in the dev server.
 | Check | When | Catches |
 |---|---|---|
 | `make build` | every change | type, MDX, KaTeX, `plain()`, card and og:image errors |
-| `make check-site` | every change | banned characters in visible text, KaTeX errors, TeX in titles and descriptions, broken internal links and assets, published samples, then at 1280 px in light and dark: the theme the page chose, console errors, horizontal overflow, unmounted islands, empty canvases, displays that scroll, inline formulas split across lines; full-page screenshots. A warning, not an error: SVG labels outside 15.5 to 20 px (light theme, first 12) |
+| `make check-site` | every change | banned characters in visible text, KaTeX errors, TeX in titles and descriptions, broken internal links and assets, cross-references with no target or leading to a missing id, published samples, then at 1280 px in light and dark: the theme the page chose, console errors, horizontal overflow, unmounted islands, empty canvases, displays that scroll, inline formulas split across lines; full-page screenshots. A warning, not an error: SVG labels outside 15.5 to 20 px (light theme, first 12); then, on every post, the previews: a statement, an equation, a figure and a target in another post, rested on in both themes (the card holds exactly the target's blocks with the page's line breaks, fits the window, mounts its figures, nests, closes on leave and on Escape, and a click lands on the target), and the preview script under 7 KB gzipped |
+| `make check-site PREVIEWS=0` | a quick run | all but the previews |
 | `make check-site FIGURES=1` | a figure changed | also one capture per figure |
 | `make check-site ONLY=/,/threads` | a quick look | only those pages |
 | `node skills/website/scripts/compile_check.mjs <files>` | a subagent's own component | Svelte compile errors and warnings, JS syntax, missing relative imports |
@@ -120,3 +159,8 @@ the requested ones on the published branch by cherry-picking in a worktree.
 4. KaTeX writes each formula twice (HTML and MathML): character counts from
    `textContent` are wrong; judge from screenshots.
 5. Two builds at once in the same repository overwrite each other's `dist/`.
+6. Astro puts an inline style and the island scripts just before the first
+   island of a page: code that looks for the element after a figure's anchor
+   skips `script` and `style`.
+7. A preview's sheet has the class `body`: checks that query the page use
+   `article .body`.
