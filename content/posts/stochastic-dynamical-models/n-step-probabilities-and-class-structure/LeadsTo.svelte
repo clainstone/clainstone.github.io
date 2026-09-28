@@ -1,7 +1,7 @@
 <script>
   // "i leads to j" on the chain of Example 1.1: choosing a pad i marks every
   // pad j with i → j, that is, every j at the end of a sequence of jumps of
-  // positive probability from i (Theorem 2.4), and among them those with
+  // positive probability from i, and among them those with
   // i ↔ j.
   import { W, H, R, LR, NODES, EDGES, LOOPS, P, edgeGeometry, loopGeometry } from '../lecture-1-markov-chains-and-the-transition-matrix/frog.js';
 
