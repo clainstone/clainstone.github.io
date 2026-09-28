@@ -151,13 +151,19 @@ $$
 P_{ii}(s) = \sum_{n=0}^{\infty} p^{(n)}_{ii} s^n, \qquad F_{ii}(s) = \sum_{n=0}^{\infty} f^{(n)}_{ii} s^n.
 $$
 
-In both cases the radius of convergence is ${r \ge 1,}$ because the sequences $(p^{(n)}_{ii})_{n \ge 0}$ and $(f^{(n)}_{ii})_{n \ge 0}$ are bounded. By Theorem 3.3, the renewal equation, for all ${n \ge 1}$ we have
+In both cases the radius of convergence is ${r \ge 1,}$ because the sequences $(p^{(n)}_{ii})_{n \ge 0}$ and $(f^{(n)}_{ii})_{n \ge 0}$ are bounded. In detail, every term is a probability, so ${0 \le p^{(n)}_{ii} \le 1}$ and ${0 \le f^{(n)}_{ii} \le 1}$ for all $n.$ Hence, for every ${\rho \in [0, 1),}$ the geometric series bounds both series of absolute values:
 
 $$
-p^{(n)}_{ii} s^n = s^n \sum_{\nu=1}^{n} f^{(\nu)}_{ii} p^{(n-\nu)}_{ii} = \sum_{\nu=1}^{n} f^{(\nu)}_{ii} s^\nu p^{(n-\nu)}_{ii} s^{n-\nu},
+\sum_{n=0}^{\infty} p^{(n)}_{ii} \rho^n \le \sum_{n=0}^{\infty} \rho^n = \frac{1}{1 - \rho} < +\infty, \qquad \sum_{n=0}^{\infty} f^{(n)}_{ii} \rho^n \le \frac{1}{1 - \rho} < +\infty.
 $$
 
-and so
+Every ${\rho \in [0, 1)}$ therefore belongs to the set whose supremum is the radius of convergence, and that supremum is at least 1. In particular both series converge absolutely for every ${s \in (-1, 1),}$ the range of $s$ used in the rest of the proof. By the renewal equation (6) of Theorem 3.3 with ${j = i,}$ for all ${n \ge 1}$ we have
+
+$$
+p^{(n)}_{ii} s^n = s^n \sum_{\nu=1}^{n} f^{(\nu)}_{ii} p^{(n-\nu)}_{ii} = \sum_{\nu=1}^{n} f^{(\nu)}_{ii} s^\nu p^{(n-\nu)}_{ii} s^{n-\nu}.
+$$
+
+The second equality brings $s^n$ inside the sum and writes it as ${s^n = s^\nu s^{n-\nu}.}$ Summing over ${n \ge 1,}$ we obtain
 
 $$
 \begin{aligned}
@@ -169,7 +175,17 @@ P_{ii}(s) - 1 &= \sum_{n=1}^{\infty} p^{(n)}_{ii} s^n \\
 \end{aligned}
 $$
 
-Indeed, the first equality uses ${p^{(0)}_{ii} = 1,}$ and the order of summation can be exchanged because the double series converges absolutely for ${|s| < 1.}$ For such $s$ also ${|F_{ii}(s)| \le |s| < 1,}$ because ${f^{(0)}_{ii} = 0}$ and ${f^*_{ii} \le 1.}$ Therefore, for all ${s \in (-1, 1),}$
+The first equality holds because ${p^{(0)}_{ii} = \mathbb{P}_i\{ X_0 = i \} = 1,}$ so the term ${n = 0}$ of $P_{ii}(s)$ is 1. The second replaces each $p^{(n)}_{ii} s^n$ with the previous display. The third exchanges the order of summation: the pairs ${(n, \nu)}$ with ${1 \le \nu \le n}$ are exactly the pairs with ${\nu \ge 1}$ and ${n \ge \nu.}$ The fourth renames ${n - \nu}$ as $n$ in the inner sum, which then runs from 0 and no longer depends on $\nu.$ The fifth takes out the common factor $P_{ii}(s)$ and uses ${f^{(0)}_{ii} = 0,}$ so that the sum over ${\nu \ge 1}$ is ${F_{ii}(s).}$
+
+The exchange in the third equality is allowed because the double series converges absolutely for ${|s| < 1.}$ Indeed, the numbers $f^{(\nu)}_{ii}$ and $p^{(m)}_{ii}$ are nonnegative, so replacing $s$ with $|s|$ replaces each term with its absolute value. By the first two equalities, applied at $|s|,$ the double series of absolute values sums to ${P_{ii}(|s|) - 1,}$ which is finite because ${|s| < 1 \le r.}$ A double series whose absolute values have a finite sum can be summed in either order, with the same result.
+
+The chain of equalities reads ${P_{ii}(s) - 1 = F_{ii}(s) P_{ii}(s),}$ that is ${P_{ii}(s) (1 - F_{ii}(s)) = 1.}$ To divide by ${1 - F_{ii}(s)}$ it must be nonzero. Since ${f^{(0)}_{ii} = 0}$ and ${|s|^n \le |s|}$ for ${n \ge 1,}$
+
+$$
+|F_{ii}(s)| \le \sum_{n=1}^{\infty} f^{(n)}_{ii} |s|^n \le |s| \sum_{n=1}^{\infty} f^{(n)}_{ii} = |s| f^*_{ii} \le |s| < 1,
+$$
+
+where ${f^*_{ii} \le 1}$ because it is a probability. Hence ${1 - F_{ii}(s) > 0,}$ and therefore, for all ${s \in (-1, 1),}$
 
 $$
 P_{ii}(s) = \frac{1}{1 - F_{ii}(s)}.
@@ -181,7 +197,9 @@ $$
 \lim_{s \to 1^-} F_{ii}(s) = f^*_{ii}, \qquad \lim_{s \to 1^-} P_{ii}(s) = \sum_{n=0}^{\infty} p^{(n)}_{ii}.
 $$
 
-In detail, if ${f^*_{ii} = 1,}$ then $1/(1 - F_{ii}(s))$ tends to $+\infty$ as ${s \to 1^-,}$ and the series diverges; if ${f^*_{ii} < 1,}$ it tends to ${1/(1 - f^*_{ii}),}$ the sum of the series, where ${1 - f^*_{ii} = \mathbb{P}_i\{ T_i = \infty \}.}$ $\blacksquare$
+Both limits follow from Lemma 3.4, applied to ${a_n = f^{(n)}_{ii}}$ and to ${a_n = p^{(n)}_{ii}{:}}$ the terms are nonnegative, and the radius of convergence is at least 1 by the first step of the proof. In the first limit the sum of the series is ${\sum_{n \ge 1} f^{(n)}_{ii} = f^*_{ii},}$ because ${f^{(0)}_{ii} = 0;}$ the second limit may be ${+\infty.}$
+
+Now let ${s \to 1^-}$ in ${P_{ii}(s) = 1/(1 - F_{ii}(s)).}$ Recall that $i$ is recurrent if ${f^*_{ii} = 1}$ and transient if ${f^*_{ii} < 1.}$ If $i$ is recurrent, then ${1 - F_{ii}(s)}$ is positive and tends to 0, so $P_{ii}(s)$ tends to ${+\infty;}$ by the second limit the series $\sum_{n \ge 0} p^{(n)}_{ii}$ diverges. If $i$ is transient, then ${1 - F_{ii}(s)}$ tends to ${1 - f^*_{ii} > 0,}$ so ${\sum_{n \ge 0} p^{(n)}_{ii} = 1/(1 - f^*_{ii}) < +\infty.}$ The first case shows that (a) implies (b); the second shows that if (a) fails then (b) fails, that is, (b) implies (a). Finally, since ${\{ T_i = \infty \}}$ is the complement of ${\{ T_i < +\infty \},}$ we have ${\mathbb{P}_i\{ T_i = \infty \} = 1 - f^*_{ii},}$ which gives the formula for transient $i.$ $\blacksquare$
 
 <PartialSums client:visible />
 
