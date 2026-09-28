@@ -1,0 +1,228 @@
+---
+title: 'Invariant densities of Markov chains'
+date: 2026-09-28
+summary: 'A probability measure on the set of states is invariant for a Markov chain when the chain started with it as distribution keeps it at every time, and this happens exactly when its density solves ${\mu = \mu P.}$ An invariant density exists when the set of states is finite, and its values can be read as asymptotic average frequencies of visits; the gambler''s ruin chain has many, the random walk on $\mathbb{Z}$ has none, and for a chain on $\mathbb{N}$ the invariant density is computed explicitly.'
+---
+
+import Cesaro from './Cesaro.svelte';
+import Frequency from './Frequency.svelte';
+import Simplex from './Simplex.svelte';
+import WalkSolution from './WalkSolution.svelte';
+import ChainN from './ChainN.svelte';
+import DensityN from './DensityN.svelte';
+
+Which distributions of the initial state of a Markov chain are passed on unchanged to the state at every later time? Whether a chain has such a distribution, and how many, depends on its transition matrix.
+
+## Invariant densities
+
+Let $(X_n)_{n \ge 0}$ be a Markov chain on the probability space $(\Omega, \mathcal{F}, \mathbb{P})$ with set of states $I$ and transition matrix ${P = (p_{ij})_{i, j \in I}.}$ As in the previous posts, $\mathbb{P}_i$ is the conditional probability given ${X_0 = i,}$ and ${p^{(n)}_{ij} = \mathbb{P}_i\{X_n = j\}}$ is the entry $(i, j)$ of the power ${P^n.}$
+
+**Definition 5.1 (Invariant probability measure).** A probability measure $\mu$ on $I$ is called *invariant* for the Markov chain $(X_n)_{n \ge 0}$ if, when $X_0$ has distribution ${\mu,}$ the random variable $X_n$ has distribution $\mu$ for all ${n \ge 0.}$
+
+In Definition 5.1 and below, we identify a probability measure on $I$ with its density with respect to the [counting measure](https://en.wikipedia.org/wiki/Counting_measure) on the $\sigma$-algebra of all subsets of ${I.}$ This density is the collection of numbers $(\mu_i)_{i \in I}$ in the interval $[0, 1]$ such that ${\sum_{i \in I} \mu_i = 1.}$ The number $\mu_i$ is the measure of the set ${\{i\},}$ and the measure of a set of states is the sum of the numbers $\mu_i$ of its elements.
+
+**Proposition 5.2.** A probability measure $\mu$ on $I$ is invariant for the Markov chain $(X_n)_{n \ge 0}$ if and only if, for every state ${i,}$ we have
+
+$$
+\mu_i = \sum_{j \in I} \mu_j p_{ji}, \tag{9}
+$$
+
+that is, the density of $\mu$ is a left eigenvector of the transition matrix with eigenvalue 1.
+
+**Proof (complete).** Let $\mu$ be the probability distribution of ${X_0.}$ The probability distribution $\nu$ of $X_1$ has density
+
+$$
+\nu_i = \mathbb{P}\{X_1 = i\} = \sum_{j \in I} \mathbb{P}\{X_0 = j\} p_{ji} = \sum_{j \in I} \mu_j p_{ji}.
+$$
+
+Indeed, the events ${\{X_0 = j\}}$ with ${j \in I}$ are disjoint and their union is ${\Omega,}$ and ${\mathbb{P}\{X_0 = j, X_1 = i\} = \mathbb{P}\{X_0 = j\} p_{ji}}$ by (1.1) of the first post. Therefore, if $\mu$ is an invariant probability measure for the Markov chain ${(X_n)_{n \ge 0},}$ then ${\nu = \mu}$ and (9) holds.
+
+Conversely, if $\mu$ is a probability measure on $I$ satisfying ${(9),}$ then $X_n$ has probability distribution $\mu$ for all ${n.}$ To see this, argue by induction on ${n,}$ the case ${n = 0}$ being the choice of ${X_0.}$ If $X_n$ has distribution ${\mu,}$ then ${\mathbb{P}\{X_n = j, X_{n+1} = i\} = \mathbb{P}\{X_n = j\} p_{ji}}$ by (1.1) of the first post summed over the states at the times ${0, \dots, n - 1,}$ so the computation above, repeated at the times $n$ and ${n + 1,}$ gives ${\mathbb{P}\{X_{n+1} = i\} = \sum_{j} \mu_j p_{ji} = \mu_i}$ by (9). $\blacksquare$
+
+Summing up, a probability measure $\mu$ on ${I,}$ with its density identified with the row vector ${(\mu_i)_{i \in I},}$ is invariant if and only if
+
+$$
+\mu = \mu P.
+$$
+
+<Simplex client:visible />
+
+**Figure 1.** The set of probability densities on ${\{0, 1, 2\},}$ a triangle in ${\mathbb{R}^3,}$ for the gambler's ruin chain with ${N = 2,}$ an instance. The sliders set ${\mu_0,}$ $\mu_1$ and ${p;}$ the density $\mu$ and the density $\mu P$ are marked, and the side from $(1, 0, 0)$ to ${(0, 0, 1),}$ in colour, holds the densities ${(\lambda, 0, 1 - \lambda)}$ with ${\lambda \in [0, 1].}$
+
+**Theorem 5.3.** If the set of states $I$ is finite, then there exists at least one invariant probability measure.
+
+**Proof (complete).** The set of probability densities on $I$
+
+$$
+\mathcal{K} = \Big\{ (\mu_i)_{i \in I} : 0 \le \mu_i \le 1 \text{ for every } i, \ \sum_{i \in I} \mu_i = 1 \Big\}
+$$
+
+is compact, as a closed bounded subset of ${\mathbb{R}^{\mathrm{card}(I)}.}$ Let ${\mu^{(0)} \in \mathcal{K}.}$ For all ${n \ge 1,}$ the family of real numbers $(\mu^{(n)}_j)_{j \in I}$ defined by
+
+$$
+\mu^{(n)}_j = \frac1n \sum_{k=1}^{n} \Big( \sum_{i \in I} \mu^{(0)}_i p^{(k)}_{ij} \Big)
+$$
+
+is a probability density on ${I.}$ Since the set $\mathcal{K}$ is compact, by considering a subsequence, if necessary, we can assume that the sequence $(\mu^{(n)}_j)_{n \ge 1}$ is convergent for all ${j \in I.}$ Defining ${\pi_j = \lim_{n \to \infty} \mu^{(n)}_j,}$ the collection of real numbers $(\pi_j)_{j \in I}$ is a probability density on $I$ and, moreover,
+
+$$
+\begin{aligned}
+\sum_{i \in I} \pi_i p_{ij} &= \lim_{n \to \infty} \frac1n \sum_{k=1}^{n} \Big( \sum_{i \in I} \mu^{(0)}_i p^{(k+1)}_{ij} \Big) \\
+&= \lim_{n \to \infty} \frac{1}{n+1} \sum_{k=1}^{n+1} \Big( \sum_{i \in I} \mu^{(0)}_i p^{(k)}_{ij} \Big) - \lim_{n \to \infty} \frac{1}{n+1} \sum_{i \in I} \mu^{(0)}_i p_{ij} \\
+&= \pi_j
+\end{aligned}
+$$
+
+for all ${j \in I.}$ This proves that the probability measure with density $(\pi_i)_{i \in I}$ is invariant for the Markov chain. $\blacksquare$
+
+**Details.** The set $\mathcal{K}$ is bounded, since it lies in the cube ${[0, 1]^{\mathrm{card}(I)},}$ and closed, since it is defined by non-strict inequalities and an equation between continuous functions. Each $\mu^{(n)}$ lies in ${\mathcal{K}{:}}$ its entries are nonnegative, and they sum to 1 because every row of $P^k$ sums to 1 and the numbers $\mu^{(0)}_i$ sum to 1. By compactness, a subsequence of $(\mu^{(n)})_{n \ge 1}$ converges in ${\mathbb{R}^{\mathrm{card}(I)},}$ that is, in every coordinate ${j \in I,}$ and its limit $(\pi_j)_{j \in I}$ lies in $\mathcal{K}$ because $\mathcal{K}$ is closed. In the display, $n$ runs through this subsequence. Fix $j$ and write ${a_k = \sum_{i \in I} \mu^{(0)}_i p^{(k)}_{ij},}$ so that ${0 \le a_k \le 1}$ and ${\mu^{(n)}_j = (a_1 + \dots + a_n)/n.}$
+
+The first equality of the display passes the limit through the finite sum over ${i,}$ and ${\sum_{i} \mu^{(n)}_i p_{ij} = (a_2 + \dots + a_{n+1})/n}$ by the Chapman–Kolmogorov equations ${\sum_{l} p^{(k)}_{il} p_{lj} = p^{(k+1)}_{ij}.}$ For the second and the third, ${(a_2 + \dots + a_{n+1})/n = \big((n+1)/n\big) \big(\mu^{(n+1)}_j - a_1/(n+1)\big),}$ where ${(n+1)/n \to 1}$ and ${a_1/(n+1) \to 0.}$ Finally, ${\mu^{(n+1)}_j - \mu^{(n)}_j = (a_{n+1} - \mu^{(n)}_j)/(n+1)}$ has absolute value at most ${1/(n+1),}$ so ${\mu^{(n+1)}_j \to \pi_j}$ along the subsequence as well. The display therefore says ${\pi = \pi P,}$ and Proposition 5.2 applies. $\blacksquare$
+
+In the proof above, the invariant probability density is obtained as a limit of subsequences of ${(\mu^{(n)})_{n \ge 1},}$ where $\mu^{(0)}$ is a density on $I$ and
+
+$$
+\mu^{(n)}_j = \frac1n \sum_{k=1}^{n} (\mu^{(0)} P^k)_j
+$$
+
+for all ${n \ge 1}$ and all ${j \in I,}$ where ${(\mu^{(0)} P^k)_j = \sum_{i \in I} \mu^{(0)}_i p^{(k)}_{ij}.}$ In particular, if ${\mu^{(0)} = \delta_i,}$ the Dirac density in ${i,}$ we have
+
+$$
+\mu^{(n)}_j = \frac1n \sum_{k=1}^{n} p^{(k)}_{ij}.
+$$
+
+<Cesaro client:visible />
+
+**Figure 2.** The averages ${\mu^{(n)}_j = (1/n) \sum_{k=1}^{n} p^{(k)}_{ij}}$ for the gambler's ruin chain on ${\{0, 1, \dots, N\},}$ an instance, for $n$ from 1 to 200, one line for each state ${j.}$ The sliders set ${N,}$ $p$ and the initial state ${i.}$
+
+The analysis of this formula allows us to interpret the meaning of an invariant distribution. Recall that the random variable $\sum_{k=1}^{n} \mathbf{1}_{\{X_k = j\}}$ represents the number of visits to $j$ up to time ${n.}$ Hence the random variable
+
+$$
+\frac1n \sum_{k=1}^{n} \mathbf{1}_{\{X_k = j\}}
+$$
+
+represents the random *frequency* of visits to the state $j$ at time ${n.}$ Thus its expectation with respect to the probability ${\mathbb{P}_i,}$
+
+$$
+\mathbb{E}_i\Big[ \frac1n \sum_{k=1}^{n} \mathbf{1}_{\{X_k = j\}} \Big] = \frac1n \sum_{k=1}^{n} \mathbb{P}_i\{X_k = j\} = \frac1n \sum_{k=1}^{n} p^{(k)}_{ij},
+$$
+
+represents the *average frequency* of visits to the state $j$ at time ${n.}$ Therefore we can interpret the values $\pi_j$ as *asymptotic average frequencies* of visits to the state ${j.}$
+
+<Frequency client:visible />
+
+**Figure 3.** Above, a path of the gambler's ruin chain with ${N = 6}$ and ${p = 1/2}$ started at ${X_0 = 3,}$ an instance. Below, for the state $j$ chosen by the slider, the frequency of visits to $j$ along this path up to time ${n,}$ solid, and the average frequency ${(1/n) \sum_{k=1}^{n} p^{(k)}_{3j},}$ dashed, for $n$ from 1 to 120. The button draws another path.
+
+A Markov chain, even when $I$ is finite, may have more than one invariant density, as the chain of the gambler's ruin problem with states ${\{0, 1, \dots, N\}}$ shows. In this case the densities $(1, 0, \dots, 0)$ and ${(0, \dots, 0, 1),}$ and all their convex combinations
+
+$$
+\lambda (1, 0, \dots, 0) + (1 - \lambda)(0, \dots, 0, 1) = (\lambda, 0, \dots, 0, 1 - \lambda), \qquad \lambda \in [0, 1],
+$$
+
+are invariant. Indeed, in this chain the states 0 and $N$ are absorbing, that is, ${p_{00} = p_{NN} = 1.}$ Hence, for ${\mu = (\lambda, 0, \dots, 0, 1 - \lambda),}$ the entry $j$ of $\mu P$ is ${\lambda p_{0j} + (1 - \lambda) p_{Nj},}$ which equals $\mu_j$ for every state ${j.}$ Figure 1 draws the case ${N = 2.}$
+
+### The random walk on $\mathbb{Z}$
+
+In the case where the set $I$ is infinite, however, a Markov chain may not admit any invariant density, as Example 5.1 shows. The random walk on $\mathbb{Z}$ of the previous post, with ${p, q \in (0, 1)}$ and ${p + q = 1,}$ jumps from each state $i$ to ${i + 1}$ with probability $p$ and to ${i - 1}$ with probability ${q.}$
+
+**Example 5.1.** The random walk on $\mathbb{Z}$ has no invariant density.
+
+In Example 5.1, an invariant density $(\pi_i)_{i \in \mathbb{Z}}$ would satisfy ${\pi_i = q \pi_{i+1} + p \pi_{i-1}}$ for all ${i \in \mathbb{Z},}$ namely
+
+$$
+q (\pi_{i+1} - \pi_i) = p (\pi_i - \pi_{i-1}). \tag{10}
+$$
+
+Indeed, by (9) the equation for $\pi_i$ collects the 2 states from which the walk jumps to ${i{:}}$ ${p_{i-1, i} = p}$ and ${p_{i+1, i} = q.}$ Writing ${\pi_i = (p + q) \pi_i}$ and rearranging gives (10).
+
+We begin by observing that ${\pi_{i+1} \neq \pi_i}$ for all ${i \in \mathbb{Z}.}$ Otherwise the identity (10) implies ${\pi_{i+1} = \pi_i}$ for all ${i,}$ and $(\pi_i)_{i \in \mathbb{Z}}$ cannot be a probability density. In detail, since ${p, q > 0,}$ by (10) the difference ${\pi_{i+1} - \pi_i}$ vanishes exactly when ${\pi_i - \pi_{i-1}}$ vanishes, so one vanishing difference makes all of them vanish. A constant sequence on $\mathbb{Z}$ has sum 0 or ${+\infty,}$ never 1.
+
+We distinguish three cases: ${p > q,}$ ${p = q = 1/2}$ and ${p < q.}$ In the first case, from (10) we find
+
+$$
+\pi_{i+1} - \pi_i = (p/q)^i (\pi_1 - \pi_0),
+$$
+
+from which ${\lim_{i \to +\infty} |\pi_{i+1} - \pi_i| = +\infty,}$ contradicting the boundedness of ${(\pi_i)_{i \in \mathbb{Z}}.}$ Indeed, (10) reads ${\pi_{i+1} - \pi_i = (p/q)(\pi_i - \pi_{i-1}),}$ which, iterated forwards and backwards from the index ${0,}$ gives the formula, and the limit is infinite because ${p/q > 1}$ and ${\pi_1 \neq \pi_0.}$ The boundedness is ${0 \le \pi_i \le 1,}$ which gives ${|\pi_{i+1} - \pi_i| \le 1}$ for every ${i.}$ In the second case, from (10) we get the formula
+
+$$
+\pi_{i+1} - \pi_i = \pi_1 - \pi_0,
+$$
+
+from which ${\pi_i = i (\pi_1 - \pi_0) + c,}$ with $c$ constant, which again contradicts the boundedness of $(\pi_i)_{i \in \mathbb{Z}}$ because ${\pi_1 \neq \pi_0.}$ The third case is similar to the first one. In detail, for ${p < q}$ the formula of the first case holds with ${p/q < 1,}$ so ${|\pi_{i+1} - \pi_i|}$ tends to $+\infty$ as ${i \to -\infty.}$ Summing up, the random walk on $\mathbb{Z}$ has no invariant density.
+
+<WalkSolution client:visible />
+
+**Figure 4.** The solution $(\pi_i)$ of (10) for $i$ from $-12$ to ${12,}$ with the values of ${p,}$ $\pi_0$ and $\pi_1$ set by the sliders, and the band where ${0 \le \pi_i \le 1.}$ Values outside the drawing are marked on its edge.
+
+### A chain on $\mathbb{N}$ with an explicit invariant density
+
+The explicit computation of an invariant density, or just the proof of its existence, might not be simple. The Markov chain of Example 5.2 arises in several models. Among them are the gambler's ruin problem when the gambler's opponent, for example a bank, has an infinite fortune, a random walk on ${\mathbb{N},}$ and the number of customers in a queue at a counter. It is a case in which one can compute explicitly the unique invariant density.
+
+**Example 5.2.** Consider the Markov chain with set of states ${\mathbb{N} = \{0, 1, 2, \dots\}}$ and transition matrix
+
+$$
+P = \begin{pmatrix}
+r_0 & p_0 & 0 & 0 & 0 & \cdots \\
+q_1 & r_1 & p_1 & 0 & 0 & \cdots \\
+0 & q_2 & r_2 & p_2 & 0 & \cdots \\
+0 & 0 & q_3 & r_3 & p_3 & \cdots \\
+0 & 0 & 0 & q_4 & r_4 & \cdots \\
+\cdots & \cdots & \cdots & \cdots & \cdots & \cdots
+\end{pmatrix},
+$$
+
+where ${(p_m)_{m \ge 0},}$ $(r_m)_{m \ge 0}$ and $(q_m)_{m > 0}$ are 3 sequences of real numbers. They satisfy ${p_m, q_m \in (0, 1)}$ and ${r_m \in [0, 1],}$ and
+
+$$
+r_0 + p_0 = 1, \qquad q_m + r_m + p_m = 1 \quad \text{for all } m \ge 1.
+$$
+
+<ChainN />
+
+**Figure 5.** The chain of Example 5.2 on the states 0 to 5. Each arrow carries its transition probability; the 3 arrows into the state ${2,}$ in colour, carry the terms of the equation for ${\pi_2,}$ written under the chain.
+
+In Example 5.2, by the equations (9) of Proposition 5.2, every invariant density $(\pi_n)_{n \ge 0}$ satisfies
+
+$$
+\begin{aligned}
+\pi_0 &= r_0 \pi_0 + q_1 \pi_1, \\
+\pi_n &= p_{n-1} \pi_{n-1} + r_n \pi_n + q_{n+1} \pi_{n+1}
+\end{aligned}
+$$
+
+for all ${n \ge 1,}$ besides positivity ${\pi_n \ge 0}$ and normalization ${\sum_{n \ge 0} \pi_n = 1.}$ From the first equation we find
+
+$$
+\pi_1 = \frac{1 - r_0}{q_1} \pi_0 = \frac{p_0}{q_1} \pi_0
+$$
+
+and, inductively,
+
+$$
+\pi_n = \frac{p_0 \cdots p_{n-1}}{q_1 \cdots q_n} \pi_0
+$$
+
+for all ${n \ge 1.}$ To see this, note that ${1 - r_n = p_n + q_n}$ for ${n \ge 1,}$ so that the equation for $\pi_n$ becomes
+
+$$
+q_{n+1} \pi_{n+1} - p_n \pi_n = q_n \pi_n - p_{n-1} \pi_{n-1}.
+$$
+
+The first equation says ${q_1 \pi_1 - p_0 \pi_0 = 0,}$ so by induction ${q_{n+1} \pi_{n+1} = p_n \pi_n}$ for every ${n \ge 0,}$ and these relations give the formula. The normalization condition is fulfilled if we set
+
+$$
+\pi_0 = \Big( 1 + \sum_{n \ge 1} \frac{p_0 \cdots p_{n-1}}{q_1 \cdots q_n} \Big)^{-1}
+$$
+
+if and only if the series
+
+$$
+\sum_{n \ge 1} \frac{p_0 \cdots p_{n-1}}{q_1 \cdots q_n}
+$$
+
+is convergent. In detail, if $S$ is the sum of this series, the formula for $\pi_n$ gives ${\sum_{n} \pi_n = \pi_0 (1 + S),}$ which equals 1 only if ${S < +\infty}$ and ${\pi_0 = (1 + S)^{-1}.}$ Conversely, if ${S < +\infty,}$ these formulas define positive numbers with sum 1 such that ${q_{n+1} \pi_{n+1} = p_n \pi_n}$ for every ${n \ge 0,}$ and these relations give back the equations above. Therefore this condition is necessary and sufficient for the existence of an invariant density, which is necessarily unique.
+
+<DensityN client:visible />
+
+**Figure 6.** Example 5.2 with ${p_m = p}$ and ${q_m = q}$ for every ${m,}$ an instance, so that the terms of the series are ${(p/q)^n.}$ Above, the partial sums of the series for $n$ up to ${30;}$ below, when the series converges, the invariant density $\pi_n$ for $n$ from 0 to 20. The sliders set $p$ and ${q.}$
