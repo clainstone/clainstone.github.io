@@ -1,0 +1,145 @@
+---
+title: 'Limit theorems and fast recurrence'
+date: 2026-09-28
+summary: 'For a recurrent aperiodic state ${i,}$ the probability $p^{(n)}_{ii}$ tends to the inverse of the mean return time ${\mathbb{E}_i[T_i],}$ and $i$ is fast or slow recurrent according as this mean is finite or infinite. An irreducible aperiodic chain has all its states fast recurrent if and only if every $p^{(n)}_{ij}$ tends to $\pi_j$ for an invariant density ${\pi,}$ which is then the unique invariant density.'
+---
+
+import ReturnLimit from './ReturnLimit.svelte';
+import ReturnTime from './ReturnTime.svelte';
+import PathBound from './PathBound.svelte';
+import Renewal from './Renewal.svelte';
+import FiniteSums from './FiniteSums.svelte';
+import RowLimit from './RowLimit.svelte';
+
+How do the $n$-step transition probabilities $p^{(n)}_{ij}$ of a recurrent Markov chain behave as ${n \to \infty,}$ and what do their limits have to do with the invariant densities of the previous post? The answer involves the mean time that the chain started at a state takes to return to it.
+
+## Limit theorems
+
+Let $(X_n)_{n \ge 0}$ be a Markov chain on the probability space $(\Omega, \mathcal{F}, \mathbb{P})$ with set of states $I$ and transition matrix ${P = (p_{ij})_{i, j \in I}.}$ As in the previous posts, $\mathbb{P}_i$ and $\mathbb{E}_i$ are the probability and the expectation given ${X_0 = i,}$ ${p^{(n)}_{ij} = \mathbb{P}_i\{X_n = j\},}$ and $T_j$ is the first entrance time in $j$ of Definition 3.2, with ${f^{(n)}_{ij} = \mathbb{P}_i\{T_j = n\}.}$ An invariant density is a probability density $(\pi_j)_{j \in I}$ such that ${\pi = \pi P,}$ as in Definition 5.1 and Proposition 5.2 of the previous post. Theorem 5.4 is stated without proof; its most common proofs are based either on analytical methods or on the law of large numbers.
+
+**Theorem 5.4.** Let $i$ be a recurrent aperiodic state. Then, with the convention ${(+\infty)^{-1} = 0,}$
+
+$$
+\lim_{n \to \infty} p^{(n)}_{ii} = (\mathbb{E}_i[T_i])^{-1}.
+$$
+
+<ReturnLimit client:visible />
+
+**Figure 1.** An instance: the chain of Example 5.2 of the previous post with ${p_m = p}$ and ${q_m = q}$ for every ${m.}$ The dots are $p^{(n)}_{ii}$ for $n$ from 0 to ${80,}$ and the dashed level is ${(\mathbb{E}_i[T_i])^{-1}.}$ The sliders set $p$ and $q$ with ${p < q,}$ and the state ${i.}$
+
+**Definition 5.5 (Fast and slow recurrent states).** A recurrent state $i$ is called *fast recurrent*, or *positive recurrent*, if ${\mathbb{E}_i[T_i] < +\infty,}$ and *slow recurrent*, or *null recurrent*, if ${\mathbb{E}_i[T_i] = +\infty.}$
+
+<ReturnTime client:visible />
+
+**Figure 2.** The same instance as in Figure 1: the probabilities ${f^{(n)}_{ii} = \mathbb{P}_i\{T_i = n\}}$ for $n$ from 1 to ${40,}$ and their mean ${\mathbb{E}_i[T_i],}$ the vertical line. The sliders set $p$ and $q$ with ${p < q,}$ and the state ${i.}$
+
+If $i$ and $j$ are communicating recurrent and aperiodic states, then they are both fast recurrent or both slow recurrent. It suffices to note that we have inequalities like
+
+$$
+p^{(a+n+b)}_{jj} \ge p^{(a)}_{ji} p^{(n)}_{ii} p^{(b)}_{ij},
+$$
+
+where ${a, b \ge 1}$ are chosen in such a way that ${p^{(a)}_{ji} > 0}$ and ${p^{(b)}_{ij} > 0,}$ and to apply Theorem 5.4. Indeed, by the Chapman–Kolmogorov equations the right-hand side is one of the nonnegative terms whose sum is ${p^{(a+n+b)}_{jj},}$ and, if $i$ is fast recurrent, the limit in $n$ and Theorem 5.4 for $i$ and $j$ give ${\lim_{n} p^{(n)}_{jj} \ge p^{(a)}_{ji} p^{(b)}_{ij} (\mathbb{E}_i[T_i])^{-1} > 0.}$ Hence $j$ is fast recurrent by Theorem 5.4, and exchanging $i$ and $j$ gives the converse.
+
+<PathBound />
+
+**Figure 3.** One of the paths that make up the right-hand side of the inequality, drawn schematically: from $j$ to $i$ in $a$ steps, from $i$ to $i$ in $n$ steps, and from $i$ to $j$ in $b$ steps.
+
+One can also check that a finite-state Markov chain has no slow recurrent states. Let $\mathcal{C}$ be a class with a slow recurrent state ${i.}$ By the argument above, all states in $\mathcal{C}$ are slow recurrent, so that the sequence $(p^{(n)}_{jj})_{n \ge 1}$ converges to 0 as $n$ goes to $+\infty$ for all ${j \in \mathcal{C}.}$ In detail, the states of $\mathcal{C}$ are recurrent by Corollary 3.6, and the argument above rests on Theorem 5.4, so the reasoning here covers a class of aperiodic states, for which ${\lim_{n} p^{(n)}_{jj} = (\mathbb{E}_j[T_j])^{-1} = 0.}$
+
+Moreover, since it is not possible to exit from $\mathcal{C}$ without leaving it forever, and in this case $i$ would not be recurrent, we have
+
+$$
+\sum_{j \in \mathcal{C}} p^{(n)}_{kj} = 1
+$$
+
+for every state ${k \in \mathcal{C}}$ and all ${n.}$ Indeed, if $i$ leads to a state ${l \notin \mathcal{C},}$ then $l$ does not lead to ${i,}$ or $l$ would belong to ${\mathcal{C};}$ so, with positive probability, the chain started at $i$ reaches $l$ before returning to $i$ and never returns afterwards. Hence $i$ leads only to states of ${\mathcal{C},}$ and so does every state of $\mathcal{C}$ because $i$ leads to it; the row $k$ of $P^n$ therefore has its whole mass in ${\mathcal{C}.}$ Taking the limit as $n$ goes to $+\infty$ we get a contradiction.
+
+To see this, fix ${k \in \mathcal{C}}$ and ${j \in \mathcal{C}{:}}$ by the renewal equation of Theorem 3.3, $p^{(n)}_{kj}$ is the sum over ${1 \le \nu \le n}$ of the terms ${f^{(\nu)}_{kj} p^{(n-\nu)}_{jj},}$ each of which tends to 0 and is at most ${f^{(\nu)}_{kj}.}$ Since ${\sum_{\nu} f^{(\nu)}_{kj} \le 1,}$ the [dominated convergence theorem](https://en.wikipedia.org/wiki/Dominated_convergence_theorem) gives ${p^{(n)}_{kj} \to 0,}$ so the finite sum over $j$ tends to 0 and not to 1.
+
+**Theorem 5.6.** Let $(X_n)_{n \ge 0}$ be an irreducible aperiodic Markov chain. The following are equivalent.\
+**(1)** All states are fast recurrent.
+
+**(2)** There exists an invariant density $(\pi_i)_{i \in I}$ such that, for all states $i$ and ${j,}$ we have
+
+$$
+\lim_{n \to \infty} p^{(n)}_{ij} = \lim_{n \to \infty} p^{(n)}_{jj} = \pi_j.
+$$
+
+In the case where the conditions (1) and (2) hold, $(\pi_i)_{i \in I}$ is the unique invariant density for the Markov chain ${(X_n)_{n \ge 0}.}$
+
+**Proof (complete).** First, (1) implies (2). By Theorem 3.3, the renewal equation, we have
+
+$$
+p^{(n)}_{ij} = \sum_{k=1}^{n} f^{(k)}_{ij} p^{(n-k)}_{jj},
+$$
+
+therefore, by Theorem 5.4 and dominated convergence, calling $\pi_j$ the limit of the sequence ${(p^{(n)}_{jj})_{n \ge 0},}$ one finds
+
+$$
+\lim_{n \to \infty} p^{(n)}_{ij} = \sum_{k=1}^{\infty} f^{(k)}_{ij} \pi_j = \pi_j.
+$$
+
+Indeed, the states are recurrent and aperiodic, so the limit ${\pi_j = (\mathbb{E}_j[T_j])^{-1}}$ exists by Theorem 5.4, and each term ${f^{(k)}_{ij} p^{(n-k)}_{jj}}$ tends to ${f^{(k)}_{ij} \pi_j}$ and is at most ${f^{(k)}_{ij},}$ whose sum over $k$ is at most 1. The second equality holds because ${\sum_{k \ge 1} f^{(k)}_{ij} = \mathbb{P}_i\{T_j < +\infty\} = 1}$ in an irreducible chain whose states are recurrent.
+
+<Renewal client:visible />
+
+**Figure 4.** The renewal equation on the instance of Figure 1 with ${p = 0.3,}$ ${q = 0.5}$ and ${j = 0.}$ For the $n$ and $i$ set by the sliders, the bars are the terms ${f^{(k)}_{i0} p^{(n-k)}_{00}}$ for ${1 \le k \le n,}$ whose sum is ${p^{(n)}_{i0},}$ the outlines are the ${f^{(k)}_{i0},}$ and the dashed line separates ${k \le n}$ from ${k > n.}$
+
+Moreover, for all finite subsets $F$ of ${I,}$ we have the inequality
+
+$$
+\sum_{j \in F} \pi_j = \lim_{n \to \infty} \sum_{j \in F} p^{(n)}_{ij} \le \lim_{n \to \infty} \sum_{j \in I} p^{(n)}_{ij} = 1,
+$$
+
+so that ${\sum_{j \in I} \pi_j \le 1.}$ We now prove that $(\pi_j)_{j \in I}$ is an invariant density for the Markov chain ${(X_n)_{n \ge 0}.}$ Let $F$ be a finite subset of ${I.}$ Taking the limit as ${n \to +\infty}$ in
+
+$$
+\sum_{k \in F} p^{(n)}_{ik} p_{kj} \le p^{(n+1)}_{ij}
+$$
+
+for all ${i, j \in I,}$ we find the inequalities ${\sum_{k \in F} \pi_k p_{kj} \le \pi_j}$ and so, by the arbitrariness of ${F,}$
+
+$$
+\sum_{k \in I} \pi_k p_{kj} \le \pi_j. \tag{11}
+$$
+
+<FiniteSums client:visible />
+
+**Figure 5.** Sums over ${F = \{0, 1, \dots, m\}}$ against ${m,}$ on the instance of Figure 1 with ${p = 0.3}$ and ${q = 0.5.}$ The line sums the invariant density $\pi_j$ of Example 5.2 of the previous post over ${j \in F,}$ and the dots sum the $p^{(n)}_{ij}$ over ${j \in F,}$ for the $n$ and $i$ set by the sliders; the dashed level is 1.
+
+Summing on $j$ we also find
+
+$$
+\sum_{k \in I} \pi_k = \sum_{j \in I} \sum_{k \in I} \pi_k p_{kj} = \sum_{j \in I} \pi_j
+$$
+
+and the inequalities (11) must be equalities. In detail, the first equality exchanges two sums of nonnegative terms and uses ${\sum_{j} p_{kj} = 1,}$ and all these sums are at most 1. Hence the sum over $j$ of the differences between the two sides of ${(11),}$ which are nonnegative, is ${0,}$ and every difference is 0.
+
+Iterating the equalities (11) we find the identity ${\pi_j = \sum_{k \in I} \pi_k p^{(n)}_{kj}}$ for all ${n \ge 1.}$ Taking the limit as $n$ goes to infinity, we have
+
+$$
+\pi_j = \pi_j \sum_{k \in I} \pi_k
+$$
+
+for every state ${j,}$ so that, since ${\pi_j > 0}$ because $j$ is fast recurrent, ${\sum_{k \in I} \pi_k = 1.}$ Therefore $(\pi_j)_{j \in I}$ is a probability density which is invariant for ${(X_n)_{n \ge 0}.}$
+
+Next, (2) implies (1). This follows from Theorem 5.4. Indeed, if a state were transient, all states would be, by Corollary 3.6, and Theorem 3.5 would give ${p^{(n)}_{jj} \to 0}$ for every ${j,}$ against ${\sum_j \pi_j = 1;}$ so all states are recurrent, and aperiodic by hypothesis. Since the $\pi_j$ sum to ${1,}$ some ${\pi_j = (\mathbb{E}_j[T_j])^{-1}}$ is positive by Theorem 5.4, so $j$ is fast recurrent, and then so is every state, by the argument after Definition 5.5.
+
+We finally show that, if (1) and (2) hold, then the invariant density is unique. Note that, if $\mu$ is another invariant density, then, for every state ${j,}$ we have ${\mu_j = \sum_{k \in I} \mu_k p_{kj}.}$ Iterating $n$ times we find the identity ${\mu_j = \sum_{k \in I} \mu_k p^{(n)}_{kj}.}$ Taking the limit as $n$ goes to infinity,
+
+$$
+\mu_j = \sum_{k \in I} \mu_k \pi_j = \pi_j \quad \text{for all } j \in I. \tag*{$\blacksquare$}
+$$
+
+**Details.** In the first part of the proof, ${\sum_{k \ge 1} f^{(k)}_{ij} = \mathbb{P}_i\{T_j < +\infty\} = 1}$ for all states $i$ and ${j.}$ For ${i = j}$ this is the recurrence of ${j.}$ For ${i \neq j,}$ irreducibility gives ${m \ge 1}$ with ${p^{(m)}_{ji} > 0.}$ By the Markov property at time ${m,}$ the probability under $\mathbb{P}_j$ that ${X_m = i}$ and that the chain never visits $j$ after time $m$ is ${p^{(m)}_{ji} \, \mathbb{P}_i\{T_j = +\infty\}.}$ This event is contained in the event that $j$ is not visited after time ${m,}$ and the probability of the latter under $\mathbb{P}_j$ is 0.
+
+To see the last claim, split the event according to the last time ${l \le m}$ at which the chain started at $j$ is in ${j.}$ By the Markov property at time ${l,}$ the probability that ${X_l = j}$ and that $j$ is never visited after time $l$ is ${p^{(l)}_{jj} \, \mathbb{P}_j\{T_j = +\infty\},}$ which is 0 because $j$ is recurrent. Hence ${p^{(m)}_{ji} \, \mathbb{P}_i\{T_j = +\infty\} = 0,}$ that is, ${\mathbb{P}_i\{T_j < +\infty\} = 1.}$
+
+For a finite set ${F,}$ the limit of the finite sum over $F$ is the sum of the limits, and ${\sum_{j \in F} p^{(n)}_{ij} \le 1}$ because the rows of $P^n$ sum to 1. The sum of a series of nonnegative terms is the supremum of its sums over the finite sets ${F,}$ which gives ${\sum_{j \in I} \pi_j \le 1}$ and passes from the inequalities over $F$ to (11). The inequality before (11) holds because ${p^{(n+1)}_{ij} = \sum_{k \in I} p^{(n)}_{ik} p_{kj}}$ by the Chapman–Kolmogorov equations and the terms with ${k \notin F}$ are nonnegative, and in the limit ${p^{(n)}_{ik} \to \pi_k}$ by the first part.
+
+The identity ${\pi_j = \sum_{k} \pi_k p^{(n)}_{kj}}$ follows by induction on ${n{:}}$ writing ${p^{(n+1)}_{kj} = \sum_{l} p^{(n)}_{kl} p_{lj}}$ and exchanging the sums over $k$ and ${l,}$ whose terms are nonnegative, the identity for $n$ and the equalities (11) give the identity for ${n + 1.}$ In its limit, ${p^{(n)}_{kj} \to \pi_j}$ for every $k$ by the first part, and ${\pi_k p^{(n)}_{kj} \le \pi_k}$ with ${\sum_k \pi_k \le 1,}$ so the dominated convergence theorem applies. The same induction gives the identity for ${\mu.}$ The dominated convergence theorem applies to its limit because ${\mu_k p^{(n)}_{kj} \le \mu_k}$ and ${\sum_k \mu_k = 1,}$ and the last equality of the proof also uses ${\sum_k \mu_k = 1.}$ $\blacksquare$
+
+<RowLimit client:visible />
+
+**Figure 6.** Theorem 5.6 on the instance of Figure 1 with ${p = 0.3}$ and ${q = 0.5.}$ The bars are the entries $p^{(n)}_{ij}$ of the row $i$ of $P^n$ for $j$ from 0 to ${15,}$ the bar of ${j = i}$ darker, and the marks are the invariant density $\pi_j$ of Example 5.2 of the previous post. The sliders set $n$ and ${i.}$
