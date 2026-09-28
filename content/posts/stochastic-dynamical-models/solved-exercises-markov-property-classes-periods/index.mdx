@@ -166,28 +166,11 @@ $$
 **(1)** Identify the communicating classes.\
 **(2)** Find the period of each state.
 
-**Solution 3.** There are two communicating classes, ${\mathcal{C}_1 = \{1, 2, 3, 4\}}$ and ${\mathcal{C}_2 = \{5\},}$ as in Figure 4. Moreover, $\mathcal{C}_1$ has period 2 and $\mathcal{C}_2$ has period 1.
+**Solution 3.** There are two communicating classes ${\mathcal{C}_1 = \{1, 2, 3, 4\}}$ and ${\mathcal{C}_2 = \{5\}.}$ Moreover, $\mathcal{C}_1$ has period 2 and $\mathcal{C}_2$ has period 1.
 
 <Ex3Chain />
 
 **Figure 4.** The chain of Exercise 3 and its communicating classes $\mathcal{C}_1$ and ${\mathcal{C}_2.}$ Each arrow carries the probability of the jump.
-
-The state $i$ leads to $j$ when the chain started at $i$ is at $j$ at some time with positive probability. This happens exactly when ${p^{(n)}_{ij} > 0}$ for some ${n \ge 0.}$ Indeed, the event that the chain is at $j$ at some time is the union of the events ${\{X_n = j\},}$ and a countable union of events has positive probability exactly when one of them has: by monotonicity if one has, and by countable subadditivity if none has. In turn, $p^{(n)}_{ij}$ is the sum of the probabilities ${p_{i i_1} p_{i_1 i_2} \cdots p_{i_{n-1} j}}$ of the paths of $n$ steps from $i$ to ${j,}$ and a sum of nonnegative numbers is positive exactly when one of them is. So $i$ leads to $j$ when a path of arrows of Figure 4 goes from $i$ to ${j.}$
-
-The arrows are the positive entries of ${P{:}}$ from 1 to ${2,}$ 3 and ${5;}$ from 2 and from 3 to 1 and ${4;}$ from 4 to ${2,}$ 3 and ${5;}$ from 5 only to itself. The path ${1 \to 2 \to 4 \to 3 \to 1}$ has probability ${\frac16 \cdot \frac12 \cdot \frac45 \cdot \frac12 = \frac{1}{30} > 0,}$ so, going round it, each of the states ${1,}$ ${2,}$ 3 and 4 leads to each of the others, and the four states communicate. The state 5 leads only to itself: since ${p_{55} = 1,}$ the row 5 of $P^n$ is the row 5 of $P$ for every ${n,}$ so ${p^{(n)}_{55} = 1}$ and ${p^{(n)}_{5j} = 0}$ for ${j \neq 5.}$ Hence 5 does not communicate with ${1,}$ ${2,}$ 3 or ${4,}$ although these lead to it, and $\{5\}$ is a class by itself: every state communicates with itself, taking ${n = 0.}$ This proves (1).
-
-The period of a state $i$ is ${d(i) = \gcd\{n \ge 1 : p^{(n)}_{ii} > 0\},}$ as in the previous posts. For the state 5 the set contains ${1,}$ because ${p_{55} = 1 > 0,}$ and so ${d(5) = 1.}$ For the states of ${\mathcal{C}_1,}$ split them into ${\{1, 4\}}$ and ${\{2, 3\}.}$ Every jump between states of $\mathcal{C}_1$ goes from $\{1, 4\}$ to $\{2, 3\}$ or back, so the returns to a state of $\mathcal{C}_1$ take an even number of steps. Indeed, a path that returns to its starting state never passes through ${5,}$ from which there is no way out, so each of its steps changes side, and after an odd number of steps it is on the other side. Thus ${p^{(n)}_{ii} = 0}$ for every odd $n$ and every ${i \in \mathcal{C}_1,}$ and every element of the set whose greatest common divisor is $d(i)$ is even.
-
-Each of these states has a return in 2 steps, such as ${1 \to 2 \to 1}$ or ${4 \to 3 \to 4.}$ Since ${p^{(2)}_{ii} = \sum_k p_{ik} p_{ki}}$ is at least any one of its terms,
-
-$$
-\begin{aligned}
-p^{(2)}_{11} &\ge p_{12} p_{21} = \frac{1}{12}, & p^{(2)}_{22} &\ge p_{21} p_{12} = \frac{1}{12}, \\
-p^{(2)}_{33} &\ge p_{31} p_{13} = \frac16, & p^{(2)}_{44} &\ge p_{43} p_{34} = \frac25.
-\end{aligned}
-$$
-
-So 2 belongs to the set of each state of ${\mathcal{C}_1,}$ all of whose elements are even, and its greatest common divisor is ${2.}$ The states ${1,}$ ${2,}$ 3 and 4 have period ${2,}$ and the state ${5,}$ with ${p_{55} = 1,}$ has period ${1.}$ This proves (2).
 
 ## A Markov chain defined inductively
 
