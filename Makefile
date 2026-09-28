@@ -10,7 +10,7 @@
 #   make check-post POST=<thread>/<slug>   build and check one lecture post
 #   make check-site [FIGURES=1] [ONLY=/,/threads] [PREVIEWS=0]   build and check every page, light and dark, and the previews
 #   make verify-post POST=<thread>/<slug> SRC=<file>[,<file>] [PAGES=1-4]
-#                  Codex checks the post against its sources
+#                  an independent Opus reviewer checks the post against its sources
 #
 # Both servers listen on port 4300. From the laptop see README.md.
 

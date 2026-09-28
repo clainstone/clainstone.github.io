@@ -13,8 +13,8 @@ prose that reads well. It carries no opinion, no commentary and nothing outside
 the subject of the lecture.
 
 The post is written by the latest Opus model at max effort (the `model` and
-`effort` fields above) and checked against the sources by Codex, GPT-6 Sol at
-xhigh effort (step 8).
+`effort` fields above) and checked against the sources by a second, independent
+instance of the latest Opus at max effort (step 8).
 
 Alessandro decided these rules on 17 September 2026. Paths below are relative
 to the root of the site repository, `/workspace/site` on homelab.
@@ -72,9 +72,10 @@ Italian. The post is always in English.
    statement ends; the check also rests on one mention of each kind and
    fails when a preview is wrong.
    Start the local server with `make start` when it is not running.
-8. **Verify against the sources.** Codex (GPT-6 Sol, xhigh effort) checks
-   whether anything the post writes diverges from the sources: formulas,
-   statements, numbers, figure data, additions. It has no other task.
+8. **Verify against the sources.** An independent reviewer, the latest Opus at
+   max effort run by the script with the Read tool only, checks whether anything
+   the post writes diverges from the sources: formulas, statements, numbers,
+   figure data, additions. It has no other task.
 
    ```
    make verify-post POST=<thread>/<slug> SRC=<source file>[,<file>] PAGES=<pages of the lecture>

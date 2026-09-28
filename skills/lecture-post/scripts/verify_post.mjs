@@ -1,15 +1,15 @@
 #!/usr/bin/env node
-// Verify one lecture post against its sources with Codex (GPT-6 Sol, xhigh).
+// Verify one lecture post against its sources with an independent reviewer: the latest Opus at max effort.
 //
 //   make verify-post POST=<thread>/<slug> SRC=<file>[,<file>...] [PAGES=1-4]
 //   node skills/lecture-post/scripts/verify_post.mjs <thread>/<slug> --source <file> [--source <file>] [--pages 1-4,7]
 //
 // The verifier has one task: say where what the post writes diverges from the
 // sources Alessandro sent. It sees the rendered source pages as images and the
-// post (MDX and the files of its figures) with line numbers. Codex runs with
-// --dangerously-bypass-approvals-and-sandbox ("yolo", Alessandro's choice),
-// so the script checksums the site before and after and fails if anything
-// changed. Style, English and layout are not the verifier's business.
+// post (MDX and the files of its figures) with line numbers. It runs as
+// `claude -p` with the Read tool only; the script still checksums the site
+// before and after and fails if anything changed. Style, English and layout
+// are not the verifier's business.
 //
 // A source is a PDF (rendered page by page with ~/tools/pdfrender, `--pages`
 // selects the lecture's pages) or an image. The report goes to
@@ -23,8 +23,8 @@ import { createHash } from 'node:crypto';
 import { homedir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 
-const MODEL = 'gpt-6-sol';
-const EFFORT = 'xhigh';
+const MODEL = 'opus'; // the alias of the latest Opus
+const EFFORT = 'max';
 const HOME = homedir();
 const RENDER = join(HOME, 'tools/pdfrender/render.mjs');
 const SITE = join(dirname(fileURLToPath(import.meta.url)), '../../..');
@@ -80,8 +80,8 @@ const postText = postFiles.map((f) => `===== FILE ${f} =====\n${numbered(join(po
 
 const prompt = `You are a mathematical verifier. Your only task is to decide whether a lecture post diverges from its sources.
 
-SOURCES: the ${images.length} attached images, in this order:
-${images.map((im, i) => `  image ${i + 1}: ${im.label}`).join('\n')}
+SOURCES: ${images.length} images, in this order; open every one with the Read tool before judging:
+${images.map((im, i) => `  image ${i + 1}: ${im.label}: ${im.file}`).join('\n')}
 They are the only sources. Handwritten notes may use shorthand; red or blue annotations are part of the source.
 
 POST: an MDX file (Markdown with LaTeX between $ and $$) and the files of its figures, given below with line numbers.
@@ -110,7 +110,7 @@ ${postText}
 `;
 writeFileSync(join(work, 'prompt.md'), prompt);
 
-// ---- run Codex, and make sure it touched nothing --------------------------
+// ---- run the verifier, and make sure it touched nothing ----------------------
 function snapshot() {
   const h = createHash('sha256');
   const walk = (d) => {
@@ -128,14 +128,14 @@ function snapshot() {
 const before = snapshot();
 const last = join(work, 'answer.md');
 console.log(`verifying ${id} against ${images.length} source page(s) with ${MODEL} (${EFFORT})...`);
-const r = spawnSync('codex', [
-  'exec', '-m', MODEL, '-c', `model_reasoning_effort="${EFFORT}"`, '--dangerously-bypass-approvals-and-sandbox',
-  '--skip-git-repo-check', '--ephemeral', '--color', 'never', '-C', work,
-  ...images.flatMap((im) => ['-i', im.file]), '-o', last, '-',
-], { input: prompt, encoding: 'utf8', timeout: 90 * 60 * 1000, maxBuffer: 64 * 1024 * 1024 });
-writeFileSync(join(work, 'codex.log'), `${r.stdout ?? ''}\n${r.stderr ?? ''}`);
+const r = spawnSync('claude', [
+  '-p', '--model', MODEL, '--effort', EFFORT, '--add-dir', work,
+  '--allowedTools', 'Read', '--disallowedTools', 'Edit,Write,NotebookEdit,Bash,WebFetch,WebSearch',
+], { cwd: work, input: prompt, encoding: 'utf8', timeout: 90 * 60 * 1000, maxBuffer: 64 * 1024 * 1024 });
+writeFileSync(join(work, 'verifier.log'), `${r.stdout ?? ''}\n${r.stderr ?? ''}`);
 if (snapshot() !== before) fail('the site changed while the verifier ran: inspect `git status` before anything else');
-if (r.status !== 0 || !existsSync(last)) fail(`codex exited with ${r.status ?? r.signal}; log in ${relative(SITE, join(work, 'codex.log'))}`);
+if (r.status !== 0 || !(r.stdout ?? '').trim()) fail(`the verifier exited with ${r.status ?? r.signal}; log in ${relative(SITE, join(work, 'verifier.log'))}`);
+writeFileSync(last, r.stdout);
 
 const answer = readFileSync(last, 'utf8').trim();
 const report = join(SITE, '.astro/verify', `${slug}.md`);
