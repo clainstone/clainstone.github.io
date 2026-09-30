@@ -1,0 +1,215 @@
+---
+title: '$\sigma$-algebras, measurable functions and independence'
+date: 2026-09-30
+summary: 'A $\sigma$-algebra on $\Omega$ is a family of subsets that contains $\Omega$ and is closed under complements and countable unions; read as information, it holds the events for which one can tell whether they occurred. A function of a random variable carries less information than the variable, and random variables are independent when the $\sigma$-algebras they generate are.'
+---
+
+import Returns from './Returns.svelte';
+import DeMorgan from './DeMorgan.svelte';
+import Partitions from './Partitions.svelte';
+import UnionFails from './UnionFails.svelte';
+import Preimage from './Preimage.svelte';
+import Blocks from './Blocks.svelte';
+import Merge from './Merge.svelte';
+import Product from './Product.svelte';
+import Coins from './Coins.svelte';
+
+A probability is assigned to events, and the family of the events on which it is defined has to be chosen. The rules that this family must obey make it a $\sigma$-algebra, and the same object also describes an amount of information: both readings enter the solution of Exercise 4.
+
+## Why $\sigma$-algebras are needed
+
+There are two reasons, one technical and one conceptual. The technical reason is that a probability cannot always be assigned to every subset of ${\Omega.}$ When $\Omega$ is finite or countable there is no difficulty. Already for the uniform probability on ${[0, 1],}$ that is, length, one proves that no function defined on all subsets of $[0, 1]$ is $\sigma$-additive, invariant under translations and satisfies ${P([a, b]) = b - a{:}}$ this is [Vitali's theorem](https://en.wikipedia.org/wiki/Vitali_set).
+
+One must therefore choose a family of good subsets, the events, on which $P$ is defined. If an event $A$ can be spoken of, so can the event not ${A,}$ and if events ${A_1, A_2, \dots}$ can be spoken of, so can the event that at least one of them occurs. This must be possible for countably many events, not only for finitely many, because probability works with limits all the time. For instance, the event that the chain returns infinitely often to the state $i$ is
+
+$$
+\bigcap_{m} \bigcup_{n \ge m} \{X_n = i\}.
+$$
+
+Figure 1 draws, on one path, the unions over ${n \ge m}$ that this intersection runs over.
+
+<Returns client:visible />
+
+**Figure 1.** An instance: a path of a chain on the states 1, 2 and 3 up to time ${40,}$ with its visits to the state ${i = 1}$ marked. The slider sets ${m;}$ the union of the events $\{X_n = i\}$ over ${n \ge m}$ occurs on the path when the shaded window holds a visit. The button draws another path.
+
+The conceptual reason, the one used in Exercise 4, is that a $\sigma$-algebra represents information. A $\sigma$-algebra $\mathcal{G}$ is the family of the events whose occurrence can be decided by whoever has that information. The larger the $\sigma$-algebra, the more information it contains.
+
+## Definition and first consequences
+
+A *$\sigma$-algebra* on a set $\Omega$ is a family $\mathcal{F}$ of subsets of $\Omega$ with the following three properties:
+
+$$
+\Omega \in \mathcal{F}; \qquad A \in \mathcal{F} \implies A^c \in \mathcal{F}; \qquad A_1, A_2, \ldots \in \mathcal{F} \implies \bigcup_n A_n \in \mathcal{F}.
+$$
+
+Everything else follows from these three axioms. The empty set belongs to $\mathcal{F}$ because ${\emptyset = \Omega^c.}$ Countable intersections belong to $\mathcal{F}$ by [De Morgan's laws](https://en.wikipedia.org/wiki/De_Morgan%27s_laws), drawn in Figure 2 for two events:
+
+$$
+\bigcap_n A_n = \Big( \bigcup_n A_n^c \Big)^c.
+$$
+
+<DeMorgan />
+
+**Figure 2.** An instance with two events. From left to right: $A_1$ and ${A_2,}$ the union ${A_1^c \cup A_2^c}$ of their complements, and its complement, which is ${A_1 \cap A_2.}$
+
+Finite unions belong to $\mathcal{F}$ because the sequence can be completed with infinitely many copies of ${\emptyset.}$ Differences belong to it because ${A \setminus B = A \cap B^c.}$ The sets $\limsup A_n$ and $\liminf A_n$ belong to it too, since they are countable combinations of unions and intersections. In short, no set operation that involves at most countably many events leads out of the $\sigma$-algebra.
+
+The pair $(\Omega, \mathcal{F})$ is called a *measurable space*, and adding a probability $P$ defined on $\mathcal{F}$ gives the *probability space* ${(\Omega, \mathcal{F}, P).}$ If the third axiom asked only for finite unions, the result would be an *algebra*, which is not enough to handle limits.
+
+## Fundamental examples
+
+The *trivial $\sigma$-algebra* $\{\emptyset, \Omega\}$ is the smallest possible, and it corresponds to no information: one knows only that something has happened. The power set $2^\Omega$ is the largest possible $\sigma$-algebra, and it corresponds to complete information: $\omega$ is known exactly. In Exercise 4 the state space ${I,}$ which is countable, carries precisely ${2^I.}$ The $\sigma$-algebra generated by an event $A$ is ${\{\emptyset, A, A^c, \Omega\}{:}}$ it corresponds to knowing only whether $A$ has occurred.
+
+The $\sigma$-algebra generated by a countable partition $\{B_1, B_2, \dots\}$ of $\Omega$ consists of all unions of blocks, that is, of the sets
+
+$$
+\bigcup_{k \in K} B_k, \qquad K \subseteq \mathbb{N}.
+$$
+
+One checks easily that it is a $\sigma$-algebra: the complement of a union of blocks is the union of the remaining blocks, and a union of unions of blocks is again a union of blocks. If there are $N$ blocks, the $\sigma$-algebra has $2^N$ elements. On a finite $\Omega$ every $\sigma$-algebra is of this kind: the blocks, called *atoms*, are the minimal nonempty elements of the $\sigma$-algebra. Figure 3 draws these $\sigma$-algebras on a set of 4 points.
+
+<Partitions />
+
+**Figure 3.** An instance on a set $\Omega$ of 4 points. Top: the trivial $\sigma$-algebra, the one generated by an event ${A,}$ the one generated by a partition into 3 blocks and the power set, each drawn by its blocks, with ${2^N}$ elements for $N$ blocks. Bottom: the 8 unions of blocks of the partition into 3 blocks.
+
+The *Borel $\sigma$-algebra* $\mathcal{B}(\mathbb{R})$ is the smallest $\sigma$-algebra on $\mathbb{R}$ that contains all open intervals. It is much smaller than ${2^{\mathbb{R}},}$ but it contains practically every set that one meets. Its elements cannot be listed explicitly: it is known only through the property of being the smallest $\sigma$-algebra that contains the intervals.
+
+## The generated $\sigma$-algebra and two principles of proof
+
+Given any family $\mathcal{C}$ of subsets of ${\Omega,}$ the aim is the smallest $\sigma$-algebra that contains ${\mathcal{C}.}$ It is built from the observation that an intersection of $\sigma$-algebras is a $\sigma$-algebra: if $A$ belongs to all of them, so does ${A^c,}$ and the same holds for countable unions. A union of $\sigma$-algebras, instead, is in general not a $\sigma$-algebra. For instance, on ${\Omega = \{1, 2, 3\},}$ the union of $\{\emptyset, \{1\}, \{2, 3\}, \Omega\}$ and $\{\emptyset, \{2\}, \{1, 3\}, \Omega\}$ contains $\{1\}$ and $\{2\}$ but not ${\{1, 2\},}$ as in Figure 4.
+
+<UnionFails />
+
+**Figure 4.** The two $\sigma$-algebras on ${\Omega = \{1, 2, 3\},}$ each drawn by its blocks, and their union, which contains $\{1\}$ and $\{2\}$ but not ${\{1, 2\}.}$
+
+One then defines
+
+$$
+\sigma(\mathcal{C}) := \bigcap \{\mathcal{G} : \mathcal{G} \text{ is a } \sigma\text{-algebra and } \mathcal{C} \subseteq \mathcal{G}\}.
+$$
+
+The family over which the intersection runs is not empty, since it contains at least ${2^\Omega.}$ By construction $\sigma(\mathcal{C})$ is a $\sigma$-algebra, it contains ${\mathcal{C},}$ and it is contained in every other $\sigma$-algebra that contains ${\mathcal{C}.}$ Two principles of proof come from this definition, and the solution of Exercise 4 uses both.
+
+The *principle of minimality* states that if $\mathcal{G}$ is a $\sigma$-algebra and ${\mathcal{C} \subseteq \mathcal{G},}$ then ${\sigma(\mathcal{C}) \subseteq \mathcal{G}.}$ To show that a generated $\sigma$-algebra is contained in another, it is enough to check the generators. This is the argument of the solution of Exercise 4 for the inclusion ${\sigma\{X_0, \dots, X_n\} \subseteq \sigma\{X_0, Z_0, \dots, Z_{n-1}\}{:}}$ each generating event $\{X_k = i\}$ is checked to lie in the larger $\sigma$-algebra.
+
+The *principle of good sets* serves to show that all the elements of $\sigma(\mathcal{C})$ have some property. Let $\mathcal{D}$ be the family of the good sets, those that have the property. If $\mathcal{D}$ is a $\sigma$-algebra and ${\mathcal{C} \subseteq \mathcal{D},}$ then ${\sigma(\mathcal{C}) \subseteq \mathcal{D}}$ by minimality, that is, all the elements of $\sigma(\mathcal{C})$ are good. It is the standard way to reason about $\sigma$-algebras whose elements cannot be listed.
+
+## Measurable functions
+
+A function ${f \colon (E, \mathcal{E}) \to (F, \mathcal{F})}$ between measurable spaces is *measurable* if
+
+$$
+f^{-1}(B) \in \mathcal{E} \quad \text{for every } B \in \mathcal{F}.
+$$
+
+Preimages are used, and not images, because preimages respect all the set operations:
+
+$$
+f^{-1}(B^c) = \big( f^{-1}(B) \big)^c, \qquad f^{-1}\Big( \bigcup_n B_n \Big) = \bigcup_n f^{-1}(B_n), \qquad f^{-1}\Big( \bigcap_n B_n \Big) = \bigcap_n f^{-1}(B_n).
+$$
+
+Images do not: in general ${f(A \cap B) \neq f(A) \cap f(B).}$ Figure 5 draws the first identity for a map between two finite sets.
+
+<Preimage />
+
+**Figure 5.** An instance: a map $f$ from a set $E$ of 6 points to a set $F$ of 4 points, one arrow for each point of ${E.}$ Left, a set $B$ and its preimage; right, the complement of $B$ and its preimage, which is the complement of ${f^{-1}(B).}$
+
+This compatibility has a consequence: measurability can be checked on generators. If ${\mathcal{F} = \sigma(\mathcal{C})}$ and ${f^{-1}(C) \in \mathcal{E}}$ for every ${C \in \mathcal{C},}$ then $f$ is measurable. The proof is the principle of good sets: the family ${\{B : f^{-1}(B) \in \mathcal{E}\}}$ is a $\sigma$-algebra, by the identities above, and it contains ${\mathcal{C}.}$
+
+Two special cases follow. If the target space is a countable set $I$ with ${2^I,}$ it is enough to check that ${\{f = i\} \in \mathcal{E}}$ for every ${i \in I,}$ because every subset of $I$ is a countable union of singletons. If the target space is $\mathbb{R}$ with the Borel sets, it is enough to check that ${\{f \le t\} \in \mathcal{E}}$ for every ${t.}$ Moreover, a composition of measurable functions is measurable, because ${(g \circ f)^{-1}(B) = f^{-1}(g^{-1}(B)).}$
+
+A *random variable* is simply a measurable function ${X \colon (\Omega, \mathcal{F}) \to (E, \mathcal{E}).}$ Measurability is exactly what makes ${P\{X \in B\} = P(X^{-1}(B))}$ meaningful for every ${B \in \mathcal{E}.}$ The function ${B \mapsto P\{X \in B\}}$ is the *law* of ${X.}$
+
+## The $\sigma$-algebra generated by a random variable
+
+Given ${X \colon \Omega \to (E, \mathcal{E}),}$ one defines
+
+$$
+\sigma(X) := \{X^{-1}(B) : B \in \mathcal{E}\} = \big\{ \{X \in B\} : B \in \mathcal{E} \big\}.
+$$
+
+It is a $\sigma$-algebra directly, again because preimages respect the set operations. It is the smallest $\sigma$-algebra on $\Omega$ that makes $X$ measurable, and it is contained in $\mathcal{F}$ precisely because $X$ is a random variable. For several variables one sets
+
+$$
+\sigma(X_1, \dots, X_m) := \sigma\big( \sigma(X_1) \cup \dots \cup \sigma(X_m) \big),
+$$
+
+that is, the smallest $\sigma$-algebra that contains all the events ${\{X_k \in B\},}$ the definition used in the solution of Exercise 4. The outer $\sigma(\cdot)$ is needed because a union of $\sigma$-algebras is not a $\sigma$-algebra, as Figure 4 shows.
+
+The reading as information is concrete in the discrete case. If $X$ takes values in a countable set ${I,}$ the events ${\{X = i\},}$ as $i$ varies, form a partition of ${\Omega,}$ and $\sigma(X)$ is the $\sigma$-algebra generated by this partition: its elements are exactly the unions of blocks ${\{X = i\}.}$ Hence an event $A$ belongs to $\sigma(X)$ if and only if it cuts no block: two outcomes $\omega$ and $\omega'$ with ${X(\omega) = X(\omega')}$ are both in $A$ or both outside it. In other words, ${A \in \sigma(X)}$ if and only if knowing the value of $X$ is enough to tell whether $A$ has occurred. Figure 6 applies this criterion to an event that can be edited.
+
+<Blocks client:visible />
+
+**Figure 6.** An instance: a set $\Omega$ of 12 outcomes, split by the values 1 to 6 of $X$ into blocks of 2. Clicking an outcome adds it to $A$ or removes it, and the figure says whether $A$ cuts a block, that is, whether ${A \in \sigma(X).}$ The button empties ${A.}$
+
+## Functions of random variables: less information
+
+A function of a random variable carries less information than the variable itself. This fact carries the step of the solution of Exercise 4 in which the states up to time $n$ are compared with the vector ${(X_0, Z_0, \dots, Z_{n-1}).}$
+
+**Proposition 1.** Let $X$ be a random variable with values in ${(E, \mathcal{E}),}$ and let ${Y = h(X)}$ with ${h \colon (E, \mathcal{E}) \to (E', \mathcal{E}')}$ measurable. Then ${\sigma(Y) \subseteq \sigma(X).}$
+
+**Proof (complete).** For every ${B \in \mathcal{E}'}$ we have
+
+$$
+\{Y \in B\} = \{h(X) \in B\} = \{X \in h^{-1}(B)\},
+$$
+
+and ${h^{-1}(B) \in \mathcal{E}}$ because $h$ is measurable, so the event belongs to ${\sigma(X).}$ $\blacksquare$
+
+The converse also holds, and it is the [Doob–Dynkin lemma](https://en.wikipedia.org/wiki/Doob%E2%80%93Dynkin_lemma): if ${\sigma(Y) \subseteq \sigma(X)}$ and $Y$ takes real values, or values in a countable set, then ${Y = h(X)}$ for some measurable ${h.}$ In the discrete case the idea is as follows. Every event $\{Y = y\}$ belongs to ${\sigma(X),}$ so it is a union of blocks ${\{X = i\};}$ hence every block $\{X = i\}$ lies entirely in a single block of ${Y,}$ and it is enough to define $h(i)$ as the value of $Y$ on that block. The result translates exactly between the formal language and the intuition:
+
+$$
+\sigma(Y) \subseteq \sigma(X) \quad \Longleftrightarrow \quad Y \text{ can be computed from } X.
+$$
+
+In the discrete case, passing to a function of $X$ merges blocks of the partition, as in Figure 7. Each block of $Y$ is a union of blocks of ${X,}$ so every event of $\sigma(Y)$ is also an event of ${\sigma(X).}$ The converse is false: the event $\{X = 2\}$ belongs to $\sigma(X)$ but not to ${\sigma(Y),}$ because knowing that ${X \le 3}$ does not tell whether the outcome is exactly 2.
+
+<Merge />
+
+**Figure 7.** An instance: $X$ takes the values 1 to 6 and ${Y = h(X)}$ tells whether ${X \le 3.}$ The 6 blocks of $X$ merge into the 2 blocks of ${Y,}$ and the block ${\{X = 2\},}$ an event of ${\sigma(X),}$ cuts the block $\{X \le 3\}$ of ${Y.}$
+
+In Exercise 4 the situation is the same: every $X_k$ with ${k \le n}$ is a measurable function of ${V = (X_0, Z_0, \dots, Z_{n-1}).}$ Hence, by Proposition 1, the information of the states up to time $n$ is contained in the information of ${V.}$
+
+## Random vectors and the product $\sigma$-algebra
+
+Given two measurable spaces $(E, \mathcal{E})$ and ${(F, \mathcal{F}),}$ the *product $\sigma$-algebra* $\mathcal{E} \otimes \mathcal{F}$ on $E \times F$ is the one generated by the rectangles $A \times B$ with ${A \in \mathcal{E}}$ and ${B \in \mathcal{F}.}$ It is not the family of the rectangles, since a union of two rectangles is usually not a rectangle, but the $\sigma$-algebra they generate. The discrete case is simple: if $I$ and $J$ are countable, then ${2^I \otimes 2^J = 2^{I \times J},}$ because every subset of $I \times J$ is a countable union of singletons ${\{(i, j)\} = \{i\} \times \{j\},}$ which are rectangles, as in Figure 8.
+
+<Product />
+
+**Figure 8.** An instance with $I$ of 4 points and $J$ of 5 points. Left, a rectangle ${A \times B;}$ right, a subset of $I \times J$ as the union of its singletons ${\{i\} \times \{j\}.}$
+
+Let ${V = (X, Y) \colon \Omega \to E \times F.}$ Then $V$ is measurable with respect to $\mathcal{E} \otimes \mathcal{F}$ if and only if $X$ and $Y$ are measurable, and moreover ${\sigma(V) = \sigma(X, Y).}$ One direction follows because $X$ and $Y$ are $V$ composed with the projections, which are measurable. The other follows from the check on generators, since ${V^{-1}(A \times B) = X^{-1}(A) \cap Y^{-1}(B).}$
+
+In detail, the events ${\{X \in A\} = V^{-1}(A \times F)}$ and ${\{Y \in B\} = V^{-1}(E \times B)}$ belong to ${\sigma(V),}$ which therefore contains ${\sigma(X, Y).}$ Conversely, the family of the sets $C$ of $\mathcal{E} \otimes \mathcal{F}$ with ${V^{-1}(C) \in \sigma(X, Y)}$ is a $\sigma$-algebra that contains the rectangles, by the last identity, so it is all of $\mathcal{E} \otimes \mathcal{F}$ and ${\sigma(V) \subseteq \sigma(X, Y).}$ This equality is what the solution of Exercise 4 uses when it writes ${\sigma\{(X_0, Z_0, \dots, Z_{n-1})\} = \sigma\{X_0, Z_0, \dots, Z_{n-1}\}{:}}$ the vector and its components carry the same information. Everything extends to any finite number of components.
+
+The same result justifies two technical details of Exercise 4. The first is the measurability of the functions ${g_k{:}}$ the map
+
+$$
+(x, z_0, \dots, z_k) \mapsto \big( g_k(x, z_0, \dots, z_{k-1}), z_k \big)
+$$
+
+has measurable components, so it is measurable with values in the product, and composing it with $f$ gives a measurable function. The second is the measurability of the sections: for a fixed ${i,}$ the map ${z \mapsto f(i, z)}$ is the composition of $f$ with ${\iota_i(z) = (i, z),}$ and $\iota_i$ is measurable because its components, the constant $i$ and the identity, are. Hence the set ${S = \{z : f(i, z) = j\}}$ belongs to ${\mathcal{E},}$ and the event ${\{f(i, Z_n) = j\} = \{Z_n \in S\}}$ belongs to ${\sigma(Z_n).}$
+
+## Independence
+
+Two events $A$ and $B$ are *independent* if ${P(A \cap B) = P(A) P(B).}$ Two $\sigma$-algebras $\mathcal{G}$ and $\mathcal{H}$ contained in $\mathcal{F}$ are independent if the same identity holds for every $A$ in $\mathcal{G}$ and every $B$ in ${\mathcal{H}.}$ Two random variables are independent if the $\sigma$-algebras they generate are, that is, if
+
+$$
+P\{X \in A, \ Y \in B\} = P\{X \in A\} \, P\{Y \in B\} \quad \text{for all measurable } A, B.
+$$
+
+A family of $\sigma$-algebras ${\mathcal{G}_1, \mathcal{G}_2, \dots}$ is independent if, for every finite subfamily ${\mathcal{G}_{k_1}, \dots, \mathcal{G}_{k_m}}$ and every choice of ${A_r \in \mathcal{G}_{k_r},}$ we have
+
+$$
+P(A_1 \cap \dots \cap A_m) = P(A_1) \cdots P(A_m).
+$$
+
+A family of random variables is independent if their $\sigma$-algebras are. Independence in pairs is not enough, as a classical example shows. Two fair coins are tossed; $A$ is the event that the first shows heads, $B$ the event that the second shows heads, and $C$ the event that the two coins show the same face. Each event has probability ${1/2,}$ and each intersection of two of them has probability ${1/4,}$ since it is always the event of two heads, so they are independent in pairs. But ${P(A \cap B \cap C) = 1/4 \neq 1/8{:}}$ knowing two of the events gives the third, as Figure 9 shows.
+
+<Coins />
+
+**Figure 9.** The 4 equally likely outcomes of two fair coins, the first coin by rows and the second by columns, with the events ${A,}$ $B$ and ${C.}$ Every intersection of two of them, and the intersection of all three, is the single outcome of two heads.
+
+Independence is defined on $\sigma$-algebras because the statement that $X$ is independent of $Y$ must mean that anything that can be said through $X$ is independent of anything that can be said through ${Y,}$ and the $\sigma$-algebra is exactly the set of all these statements. Two facts follow at once. First, independence, written ${\perp,}$ passes to sub-$\sigma$-algebras: if ${\mathcal{G} \perp \mathcal{H}}$ and ${\mathcal{H}' \subseteq \mathcal{H},}$ then ${\mathcal{G} \perp \mathcal{H}',}$ because there are fewer events to check. This is the last step of the argument in the solution of Exercise 4.
+
+Second, functions of independent variables are independent: if ${X \perp Y}$ and $h$ and $k$ are measurable, then ${h(X) \perp k(Y).}$ The reason is that ${\sigma(h(X)) \subseteq \sigma(X)}$ and ${\sigma(k(Y)) \subseteq \sigma(Y).}$ This sums up in one line the steps of the solution of Exercise 4 that lead to ${Z_n \perp (X_0, \dots, X_n){:}}$ ${Z_n \perp V}$ and $(X_0, \dots, X_n)$ is a measurable function of ${V,}$ hence ${Z_n \perp (X_0, \dots, X_n).}$
