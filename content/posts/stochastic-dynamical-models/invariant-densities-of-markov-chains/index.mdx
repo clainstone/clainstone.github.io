@@ -6,7 +6,6 @@ summary: 'A probability measure on the set of states is invariant for a Markov c
 
 import Cesaro from './Cesaro.svelte';
 import Frequency from './Frequency.svelte';
-import Simplex from './Simplex.svelte';
 import WalkSolution from './WalkSolution.svelte';
 import ChainN from './ChainN.svelte';
 import DensityN from './DensityN.svelte';
@@ -44,10 +43,6 @@ Summing up, a probability measure $\mu$ on ${I,}$ with its density identified wi
 $$
 \mu = \mu P.
 $$
-
-<Simplex client:visible />
-
-**Figure 1.** The set of probability densities on ${\{0, 1, 2\},}$ a triangle in ${\mathbb{R}^3,}$ for the gambler's ruin chain with ${N = 2,}$ an instance. The sliders set ${\mu_0,}$ $\mu_1$ and ${p;}$ the density $\mu$ and the density $\mu P$ are marked, and the side from $(1, 0, 0)$ to ${(0, 0, 1),}$ in colour, holds the densities ${(\lambda, 0, 1 - \lambda)}$ with ${\lambda \in [0, 1].}$
 
 **Theorem 5.3.** If the set of states $I$ is finite, then there exists at least one invariant probability measure.
 
@@ -93,7 +88,7 @@ $$
 
 <Cesaro client:visible />
 
-**Figure 2.** The averages ${\mu^{(n)}_j = (1/n) \sum_{k=1}^{n} p^{(k)}_{ij}}$ for the gambler's ruin chain on ${\{0, 1, \dots, N\},}$ an instance, for $n$ from 1 to 200, one line for each state ${j.}$ The sliders set ${N,}$ $p$ and the initial state ${i.}$
+**Figure 1.** The averages ${\mu^{(n)}_j = (1/n) \sum_{k=1}^{n} p^{(k)}_{ij}}$ for the gambler's ruin chain on ${\{0, 1, \dots, N\},}$ an instance, for $n$ from 1 to 200, one line for each state ${j.}$ The sliders set ${N,}$ $p$ and the initial state ${i.}$
 
 The analysis of this formula allows us to interpret the meaning of an invariant distribution. Recall that the random variable $\sum_{k=1}^{n} \mathbf{1}_{\{X_k = j\}}$ represents the number of visits to $j$ up to time ${n.}$ Hence the random variable
 
@@ -111,7 +106,7 @@ represents the *average frequency* of visits to the state $j$ at time ${n.}$ The
 
 <Frequency client:visible />
 
-**Figure 3.** Above, a path of the gambler's ruin chain with ${N = 6}$ and ${p = 1/2}$ started at ${X_0 = 3,}$ an instance. Below, for the state $j$ chosen by the slider, the frequency of visits to $j$ along this path up to time ${n,}$ solid, and the average frequency ${(1/n) \sum_{k=1}^{n} p^{(k)}_{3j},}$ dashed, for $n$ from 1 to 120. The button draws another path.
+**Figure 2.** Above, a path of the gambler's ruin chain with ${N = 6}$ and ${p = 1/2}$ started at ${X_0 = 3,}$ an instance. Below, for the state $j$ chosen by the slider, the frequency of visits to $j$ along this path up to time ${n,}$ solid, and the average frequency ${(1/n) \sum_{k=1}^{n} p^{(k)}_{3j},}$ dashed, for $n$ from 1 to 120. The button draws another path.
 
 A Markov chain, even when $I$ is finite, may have more than one invariant density, as the chain of the gambler's ruin problem with states ${\{0, 1, \dots, N\}}$ shows. In this case the densities $(1, 0, \dots, 0)$ and ${(0, \dots, 0, 1),}$ and all their convex combinations
 
@@ -119,7 +114,7 @@ $$
 \lambda (1, 0, \dots, 0) + (1 - \lambda)(0, \dots, 0, 1) = (\lambda, 0, \dots, 0, 1 - \lambda), \qquad \lambda \in [0, 1],
 $$
 
-are invariant. Indeed, in this chain the states 0 and $N$ are absorbing, that is, ${p_{00} = p_{NN} = 1.}$ Hence, for ${\mu = (\lambda, 0, \dots, 0, 1 - \lambda),}$ the entry $j$ of $\mu P$ is ${\lambda p_{0j} + (1 - \lambda) p_{Nj},}$ which equals $\mu_j$ for every state ${j.}$ Figure 1 draws the case ${N = 2.}$
+are invariant. Indeed, in this chain the states 0 and $N$ are absorbing, that is, ${p_{00} = p_{NN} = 1.}$ Hence, for ${\mu = (\lambda, 0, \dots, 0, 1 - \lambda),}$ the entry $j$ of $\mu P$ is ${\lambda p_{0j} + (1 - \lambda) p_{Nj},}$ which equals $\mu_j$ for every state ${j.}$
 
 ### The random walk on $\mathbb{Z}$
 
@@ -153,7 +148,7 @@ from which ${\pi_i = i (\pi_1 - \pi_0) + c,}$ with $c$ constant, which again con
 
 <WalkSolution client:visible />
 
-**Figure 4.** The solution $(\pi_i)$ of (10) for $i$ from $-12$ to ${12,}$ with the values of ${p,}$ $\pi_0$ and $\pi_1$ set by the sliders, and the band where ${0 \le \pi_i \le 1.}$ Values outside the drawing are marked on its edge.
+**Figure 3.** The solution $(\pi_i)$ of (10) for $i$ from $-12$ to ${12,}$ with the values of ${p,}$ $\pi_0$ and $\pi_1$ set by the sliders, and the band where ${0 \le \pi_i \le 1.}$ Values outside the drawing are marked on its edge.
 
 ### A chain on $\mathbb{N}$ with an explicit invariant density
 
@@ -180,7 +175,7 @@ $$
 
 <ChainN />
 
-**Figure 5.** The chain of Example 5.2 on the states 0 to 5. Each arrow carries its transition probability; the 3 arrows into the state ${2,}$ in colour, carry the terms of the equation for ${\pi_2,}$ written under the chain.
+**Figure 4.** The chain of Example 5.2 on the states 0 to 5. Each arrow carries its transition probability; the 3 arrows into the state ${2,}$ in colour, carry the terms of the equation for ${\pi_2,}$ written under the chain.
 
 In Example 5.2, by the equations (9) of Proposition 5.2, every invariant density $(\pi_n)_{n \ge 0}$ satisfies
 
@@ -225,4 +220,4 @@ is convergent. In detail, if $S$ is the sum of this series, the formula for $\pi
 
 <DensityN client:visible />
 
-**Figure 6.** Example 5.2 with ${p_m = p}$ and ${q_m = q}$ for every ${m,}$ an instance, so that the terms of the series are ${(p/q)^n.}$ Above, the partial sums of the series for $n$ up to ${30;}$ below, when the series converges, the invariant density $\pi_n$ for $n$ from 0 to 20. The sliders set $p$ and ${q.}$
+**Figure 5.** Example 5.2 with ${p_m = p}$ and ${q_m = q}$ for every ${m,}$ an instance, so that the terms of the series are ${(p/q)^n.}$ Above, the partial sums of the series for $n$ up to ${30;}$ below, when the series converges, the invariant density $\pi_n$ for $n$ from 0 to 20. The sliders set $p$ and ${q.}$
