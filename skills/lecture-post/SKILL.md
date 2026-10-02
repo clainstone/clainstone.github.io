@@ -154,10 +154,11 @@ the same title already exists in the thread, stop and ask Alessandro.
 6. **Say whether each proof is complete or a sketch.** Label every proof
    `**Proof (complete).**` when the lecture gives the whole argument, or
    `**Proof (sketch).**` when the lecture marks it as a sketch or gives only
-   its key step. A sketch holds only the lecture's steps. The verifications
-   that complete it follow in a separate paragraph that starts with
-   `**Details.**`. A bare `**Proof.**` is not allowed, and the check rejects
-   it. `references/WRITING.md` gives the details.
+   its key step. A sketch holds only the lecture's steps. No `**Details.**`
+   paragraph completes a proof unless the user asks for one for that proof;
+   the verifications a proof leaves out go in the report. A bare
+   `**Proof.**` is not allowed, and the check rejects it.
+   `references/WRITING.md` gives the details.
 7. **Notation.** Keep the professor's notation and numbering. Change them only
    to remove an inconsistency, and then use the change throughout.
 8. **The notes stay private.** Never publish the notes file, a scan or a photo

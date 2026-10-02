@@ -40,10 +40,10 @@ for all numbered statements in the post: Definition 1, Lemma 2, Theorem 3.
 1. `**Proof (complete).**` when the lecture gives the whole argument. Implicit
    steps made explicit stay inside it.
 2. `**Proof (sketch).**` when the lecture marks the proof as a sketch or gives
-   only its key step. It contains the lecture's steps and nothing else. The
-   verifications that complete the argument follow in a paragraph that starts
-   with `**Details.**` and ends with $\blacksquare$, so the reader sees which
-   part is the lecture's sketch and which part completes it.
+   only its key step. It contains the lecture's steps and nothing else, and
+   ends with $\blacksquare$. No `**Details.**` paragraph follows a proof
+   unless the user asks for one for that proof: the verifications the post
+   leaves out go in the report.
 3. A statement the lecture gives without any argument gets no proof label.
    A one-sentence check may follow it, starting with "Indeed".
 4. A justification the post adds, including a reason for a claim inside a

@@ -29,10 +29,9 @@ This section outranks every other rule in this file and in the skill.
    d. a check the source announces ("one checks that…").
 5. Every sentence of added reasoning is marked (section 7.4) and rationed:
    at most **2 marked sentences per step of the source**. A verification that
-   needs more goes in a `**Details.**` paragraph only if the source's proof is
-   false or incomplete without it; otherwise it goes in the report, not in the
-   post. A claim the source states without proof gets no proof: at most the 2
-   marked sentences.
+   needs more goes in the report, not in the post: NEVER a `**Details.**`
+   paragraph unless the user asks for one for that proof. A claim the source
+   states without proof gets no proof: at most the 2 marked sentences.
 6. Keep the source's order, its section headings, its kinds of label (a Remark
    stays a Remark, a Note a Note; an unlabelled paragraph gets no label), its
    numbering and its notation. A bibliographic pointer in the source ("[Folland]")
@@ -109,8 +108,8 @@ This section outranks every other rule in this file and in the skill.
 6. A definition is NEVER placed inside the statement of a theorem or lemma.
 7. An example or remark longer than one paragraph owns its section, and the
    heading names it. Otherwise it is one paragraph.
-8. Proofs: `**Proof (complete).**` or `**Proof (sketch).**` plus
-   `**Details.**`, as in `WRITING.md`. The end mark is a separate
+8. Proofs: `**Proof (complete).**` or `**Proof (sketch).**`, as in
+   `WRITING.md`, with no `**Details.**` paragraph (1.5). The end mark is a separate
    `$\blacksquare$` after a normal space at the end of the last sentence,
    NEVER inside another formula. After a final display: `\tag*{$\blacksquare$}`.
 9. Headings: `##` for the parts the source itself marks, in the source's words,

@@ -70,10 +70,6 @@ $$
 
 for all ${j \in I.}$ This proves that the probability measure with density $(\pi_i)_{i \in I}$ is invariant for the Markov chain. $\blacksquare$
 
-**Details.** The set $\mathcal{K}$ is bounded, since it lies in the cube ${[0, 1]^{\mathrm{card}(I)},}$ and closed, since it is defined by non-strict inequalities and an equation between continuous functions. Each $\mu^{(n)}$ lies in ${\mathcal{K}{:}}$ its entries are nonnegative, and they sum to 1 because every row of $P^k$ sums to 1 and the numbers $\mu^{(0)}_i$ sum to 1. By compactness, a subsequence of $(\mu^{(n)})_{n \ge 1}$ converges in ${\mathbb{R}^{\mathrm{card}(I)},}$ that is, in every coordinate ${j \in I,}$ and its limit $(\pi_j)_{j \in I}$ lies in $\mathcal{K}$ because $\mathcal{K}$ is closed. In the display, $n$ runs through this subsequence. Fix $j$ and write ${a_k = \sum_{i \in I} \mu^{(0)}_i p^{(k)}_{ij},}$ so that ${0 \le a_k \le 1}$ and ${\mu^{(n)}_j = (a_1 + \dots + a_n)/n.}$
-
-The first equality of the display passes the limit through the finite sum over ${i,}$ and ${\sum_{i} \mu^{(n)}_i p_{ij} = (a_2 + \dots + a_{n+1})/n}$ by the Chapman–Kolmogorov equations ${\sum_{l} p^{(k)}_{il} p_{lj} = p^{(k+1)}_{ij}.}$ For the second and the third, ${(a_2 + \dots + a_{n+1})/n = \big((n+1)/n\big) \big(\mu^{(n+1)}_j - a_1/(n+1)\big),}$ where ${(n+1)/n \to 1}$ and ${a_1/(n+1) \to 0.}$ Finally, ${\mu^{(n+1)}_j - \mu^{(n)}_j = (a_{n+1} - \mu^{(n)}_j)/(n+1)}$ has absolute value at most ${1/(n+1),}$ so ${\mu^{(n+1)}_j \to \pi_j}$ along the subsequence as well. The display therefore says ${\pi = \pi P,}$ and Proposition 5.2 applies. $\blacksquare$
-
 In the proof above, the invariant probability density is obtained as a limit of subsequences of ${(\mu^{(n)})_{n \ge 1},}$ where $\mu^{(0)}$ is a density on $I$ and
 
 $$
