@@ -6,7 +6,6 @@ summary: 'A probability measure on the set of states is invariant for a Markov c
 
 import Cesaro from './Cesaro.svelte';
 import Frequency from './Frequency.svelte';
-import WalkSolution from './WalkSolution.svelte';
 import ChainN from './ChainN.svelte';
 import DensityN from './DensityN.svelte';
 
@@ -142,10 +141,6 @@ $$
 
 from which ${\pi_i = i (\pi_1 - \pi_0) + c,}$ with $c$ constant, which again contradicts the boundedness of $(\pi_i)_{i \in \mathbb{Z}}$ because ${\pi_1 \neq \pi_0.}$ The third case is similar to the first one. In detail, for ${p < q}$ the formula of the first case holds with ${p/q < 1,}$ so ${|\pi_{i+1} - \pi_i|}$ tends to $+\infty$ as ${i \to -\infty.}$ Summing up, the random walk on $\mathbb{Z}$ has no invariant density.
 
-<WalkSolution client:visible />
-
-**Figure 3.** The solution $(\pi_i)$ of (10) for $i$ from $-12$ to ${12,}$ with the values of ${p,}$ $\pi_0$ and $\pi_1$ set by the sliders, and the band where ${0 \le \pi_i \le 1.}$ Values outside the drawing are marked on its edge.
-
 ### A chain on $\mathbb{N}$ with an explicit invariant density
 
 The explicit computation of an invariant density, or just the proof of its existence, might not be simple. The Markov chain of Example 5.2 arises in several models. Among them are the gambler's ruin problem when the gambler's opponent, for example a bank, has an infinite fortune, a random walk on ${\mathbb{N},}$ and the number of customers in a queue at a counter. It is a case in which one can compute explicitly the unique invariant density.
@@ -171,7 +166,7 @@ $$
 
 <ChainN />
 
-**Figure 4.** The chain of Example 5.2 on the states 0 to 5. Each arrow carries its transition probability; the 3 arrows into the state ${2,}$ in colour, carry the terms of the equation for ${\pi_2,}$ written under the chain.
+**Figure 3.** The chain of Example 5.2 on the states 0 to 5. Each arrow carries its transition probability; the 3 arrows into the state ${2,}$ in colour, carry the terms of the equation for ${\pi_2,}$ written under the chain.
 
 In Example 5.2, by the equations (9) of Proposition 5.2, every invariant density $(\pi_n)_{n \ge 0}$ satisfies
 
@@ -216,4 +211,4 @@ is convergent. In detail, if $S$ is the sum of this series, the formula for $\pi
 
 <DensityN client:visible />
 
-**Figure 5.** Example 5.2 with ${p_m = p}$ and ${q_m = q}$ for every ${m,}$ an instance, so that the terms of the series are ${(p/q)^n.}$ Above, the partial sums of the series for $n$ up to ${30;}$ below, when the series converges, the invariant density $\pi_n$ for $n$ from 0 to 20. The sliders set $p$ and ${q.}$
+**Figure 4.** Example 5.2 with ${p_m = p}$ and ${q_m = q}$ for every ${m,}$ an instance, so that the terms of the series are ${(p/q)^n.}$ Above, the partial sums of the series for $n$ up to ${30;}$ below, when the series converges, the invariant density $\pi_n$ for $n$ from 0 to 20. The sliders set $p$ and ${q.}$
