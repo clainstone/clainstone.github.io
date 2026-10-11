@@ -17,7 +17,6 @@ import Images from './Images.svelte';
 import Simple from './Simple.svelte';
 import Approx from './Approx.svelte';
 import Strip from './Strip.svelte';
-import AlmostEqual from './AlmostEqual.svelte';
 import Peaks from './Peaks.svelte';
 
 The Lebesgue measure of the previous post is defined on the $\sigma$-algebra ${\mathcal{L}(\mathbb{R}^N),}$ which contains $\mathcal{B}(\mathbb{R}^N)$ and is contained in ${\mathcal{P}(\mathbb{R}^N).}$ The lecture shows that both inclusions are strict, and then passes from measurable sets to measurable functions.
@@ -400,11 +399,7 @@ g^{-1}((a, +\infty]) &= \big[ g^{-1}((a, +\infty]) \cap N \big] \cup \big[ g^{-1
 \end{aligned}
 $$
 
-The first set is contained in ${N,}$ so it is negligible and belongs to ${\mathcal{L}(\mathbb{R}).}$ In the second, ${f^{-1}((a, +\infty]) \in \mathcal{L}(\mathbb{R})}$ and ${N \in \mathcal{L}(\mathbb{R}),}$ so it belongs to ${\mathcal{L}(\mathbb{R}).}$ Hence ${g^{-1}((a, +\infty]) \in \mathcal{L}(\mathbb{R}),}$ as in Figure 13.
-
-<AlmostEqual client:visible />
-
-**Figure 13.** An instance on an interval: a function ${f,}$ and a function $g$ equal to $f$ except at the 3 points of ${N,}$ where its values are the filled dots. For the level $a$ set by the slider, the horizontal axis shows ${f^{-1}((a, +\infty]) \setminus N}$ and, filled, the points of $N$ where ${g > a.}$
+The first set is contained in ${N,}$ so it is negligible and belongs to ${\mathcal{L}(\mathbb{R}).}$ In the second, ${f^{-1}((a, +\infty]) \in \mathcal{L}(\mathbb{R})}$ and ${N \in \mathcal{L}(\mathbb{R}),}$ so it belongs to ${\mathcal{L}(\mathbb{R}).}$ Hence ${g^{-1}((a, +\infty]) \in \mathcal{L}(\mathbb{R}).}$
 
 ### The sequence $(-1)^m + m \chi_{[0, 1/m]}$
 
@@ -414,7 +409,7 @@ $$
 f_m(x) = (-1)^m + m \, \chi_{[0, \frac{1}{m}]}(x) = (-1)^m + g_m(x),
 $$
 
-where ${g_m := m \chi_{[0, 1/m]},}$ as in Figure 14. The functions $g_m$ converge pointwise to the function
+where ${g_m := m \chi_{[0, 1/m]},}$ as in Figure 13. The functions $g_m$ converge pointwise to the function
 
 $$
 g(x) = \begin{cases} 0 & \forall x \neq 0, \\ +\infty & x = 0, \end{cases}
@@ -424,7 +419,7 @@ because ${\lim_{m \to \infty} g_m(0) = \lim_{m \to \infty} m = +\infty,}$ and ${
 
 <Peaks client:visible />
 
-**Figure 14.** The functions $g_m$ and ${f_m = (-1)^m + g_m}$ for the $m$ set by the slider. On ${[0, 1/m]}$ they take the values $m$ and ${(-1)^m + m.}$
+**Figure 13.** The functions $g_m$ and ${f_m = (-1)^m + g_m}$ for the $m$ set by the slider. On ${[0, 1/m]}$ they take the values $m$ and ${(-1)^m + m.}$
 
 The lower limit of $(f_m)$ is
 
