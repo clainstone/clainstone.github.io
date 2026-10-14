@@ -218,10 +218,8 @@ Real analysis begins here, following Folland, with the families of sets on which
 **Proof (sketch).** Intersections are written through complements and unions:
 
 $$
-E \cap F = X \setminus \big( X \setminus (E \cap F) \big) = X \setminus \big( (X \setminus E) \cup (X \setminus F) \big).
+E \cap F = X \setminus \big( X \setminus (E \cap F) \big) = X \setminus \big( (X \setminus E) \cup (X \setminus F) \big). \tag*{$\blacksquare$}
 $$
-
-**Details.** The sets ${X \setminus E}$ and ${X \setminus F}$ belong to $\mathcal{M}$ by (iii) of Definition 22, their union by (iv) applied to ${X \setminus E, X \setminus F, \emptyset, \emptyset, \dots,}$ and its complement by (iii) again. Then ${E \setminus F = E \cap (X \setminus F),}$ and in the same way ${\bigcap_n E_n = X \setminus \bigcup_n (X \setminus E_n).}$ $\blacksquare$
 
 <DeMorgan client:visible />
 
@@ -253,8 +251,6 @@ Then ${W \neq \emptyset,}$ as ${\mathcal{P}(X) \in W.}$ Define
 $$
 \mathcal{M} := \bigcap \{ \mathcal{Q} : \mathcal{Q} \in W \}. \tag*{$\blacksquare$}
 $$
-
-**Details.** A set belongs to $\mathcal{M}$ when it belongs to every ${\mathcal{Q} \in W.}$ Each property of Definition 22 holds in every ${\mathcal{Q} \in W,}$ hence in $\mathcal{M};$ every ${\mathcal{Q} \in W}$ contains $\mathcal{F},$ which gives (i), and a $\sigma$-algebra $\mathcal{Q}$ with ${\mathcal{F} \subset \mathcal{Q}}$ is in $W,$ which gives (ii).
 
 <Generated />
 

@@ -65,14 +65,12 @@ Figure 2 shows the two cases on the real line, with a set $E$ around 0 and a set
 **Proof (sketch).** (i) For the sets $E \subset F$ of Figure 3,
 
 $$
-\mu(E) \le \mu(E) + \mu(F \setminus E) = \mu\big( E \cup (F \setminus E) \big) = \mu(F).
+\mu(E) \le \mu(E) + \mu(F \setminus E) = \mu\big( E \cup (F \setminus E) \big) = \mu(F). \tag*{$\blacksquare$}
 $$
 
 <Monotone />
 
 **Figure 3.** A set $E$ inside a set $F,$ and the difference ${F \setminus E.}$
-
-**Details.** The inequality holds because ${\mu(F \setminus E) \ge 0.}$ The set ${F \setminus E}$ belongs to $\mathcal{M}$ and is disjoint from $E,$ so $\sigma$-additivity applied to ${E, F \setminus E, \emptyset, \emptyset, \dots}$ gives the first equality, since ${\mu(\emptyset) = 0;}$ the second holds because ${E \cup (F \setminus E) = F}$ when ${E \subset F.}$ (ii) The same computation gives ${\mu(F) = \mu(E) + \mu(F \setminus E),}$ where ${\mu(E) \le \mu(F) < +\infty}$ by (i), and subtracting $\mu(E)$ gives the claim. $\blacksquare$
 
 **Proposition 6 (Continuity of measures).** Let $(X, \mathcal{M}, \mu)$ be a measure space.\
 **(i)** Let ${(E_n) \subset \mathcal{M}}$ be such that ${E_n \subset E_{n+1}}$ for every $n,$ and let ${E = \bigcup_n E_n.}$ Then ${\mu(E) = \lim_{n \to +\infty} \mu(E_n).}$\
@@ -162,14 +160,12 @@ $$
 For such sets $E,$ $F_1$ and $F_2,$ as in Figure 8, one defines
 
 $$
-\overline{\mu}(E) := \mu(F_1) = \mu(F_2).
+\overline{\mu}(E) := \mu(F_1) = \mu(F_2). \tag*{$\blacksquare$}
 $$
 
 <Sandwich />
 
 **Figure 8.** A set $E$ between two sets ${F_1 \subset E \subset F_2}$ of $\mathcal{M}$ with ${\mu(F_2 \setminus F_1) = 0.}$
-
-**Details.** The two values agree, since ${\mu(F_2) = \mu(F_1) + \mu(F_2 \setminus F_1) = \mu(F_1)}$ as in the proof of Remark 5. They do not depend on the choice of $F_1$ and $F_2{:}$ if also ${G_1 \subset E \subset G_2}$ with ${G_1, G_2 \in \mathcal{M}}$ and ${\mu(G_2 \setminus G_1) = 0,}$ then ${\mu(F_1) \le \mu(G_2) = \mu(G_1) \le \mu(F_2) = \mu(F_1)}$ by Remark 5 (i). $\blacksquare$
 
 **Remark 11.** Negligible sets in $(X, \mathcal{M}, \mu)$ become measurable in ${(X, \overline{\mathcal{M}}, \overline{\mu}).}$
 
