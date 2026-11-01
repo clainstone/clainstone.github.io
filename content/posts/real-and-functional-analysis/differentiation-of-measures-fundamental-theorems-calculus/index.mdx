@@ -1,0 +1,375 @@
+---
+title: 'Differentiation of measures, the fundamental theorems of calculus and Sobolev spaces'
+date: 2026-10-14
+published: 2026-10-18
+summary: 'A $\sigma$-finite measure that is absolutely continuous with respect to a $\sigma$-finite measure $\mu$ is of the form $f\mu$ by the Radon–Nikodym theorem. On a bounded interval, the integral $x \mapsto \int_a^x f \, d\lambda$ of an integrable function is continuous and, by the Lebesgue differentiation theorem, differentiable almost everywhere with derivative ${f;}$ the functions that are the integrals of their derivatives are the absolutely continuous ones, and they form the Sobolev space ${W^{1,1}.}$'
+---
+
+import Density from './Density.svelte';
+import Atom from './Atom.svelte';
+import Counting from './Counting.svelte';
+import Averages from './Averages.svelte';
+import Baby from './Baby.svelte';
+import Truncations from './Truncations.svelte';
+import Quotient from './Quotient.svelte';
+import Cantor from './Cantor.svelte';
+import Heaviside from './Heaviside.svelte';
+import Intervals from './Intervals.svelte';
+import Small from './Small.svelte';
+import Increments from './Increments.svelte';
+import Root from './Root.svelte';
+import Classes from './Classes.svelte';
+import Parts from './Parts.svelte';
+import Representative from './Representative.svelte';
+
+A measure can be obtained from another measure by integrating a function, and a function on an interval of $\mathbb{R}$ can sometimes be obtained by integrating its derivative. In both cases the question is when this happens.
+
+## Differentiation of measures
+
+**Remark 1.** Let ${(X, \mathcal{M}, \mu)}$ be a measure space and let ${f \colon X \to [0, +\infty)}$ be measurable. Then ${\nu = f\mu,}$ defined by
+
+$$
+\nu(E) := \int_E f \, d\mu \qquad \text{for every } E \in \mathcal{M},
+$$
+
+is another measure on ${(X, \mathcal{M}),}$ by Proposition 8 of the sixth post with $f$ in place of ${\varphi.}$ Figure 1 draws $\nu(E)$ for an instance.
+
+<Density />
+
+**Figure 1.** An instance with $X$ an interval and ${\mu = \lambda{:}}$ the graph of ${f,}$ a set $E$ on the axis, and the region under the graph over ${E,}$ whose area is ${\nu(E).}$
+
+The question raised by Remark 1 is the converse. Given two measures $\nu$ and $\mu$ on ${(X, \mathcal{M}),}$ does there exist $f$ such that ${\nu = f\mu?}$
+
+**Definition 2 (Absolutely continuous measure).** Let ${(X, \mathcal{M})}$ be a measurable space and let ${\mu, \nu \colon \mathcal{M} \to [0, +\infty]}$ be two measures. We say that $\nu$ is *absolutely continuous* with respect to ${\mu,}$ and we write ${\nu \ll \mu,}$ if
+
+$$
+\mu(E) = 0 \implies \nu(E) = 0 \qquad \text{for every } E \in \mathcal{M}.
+$$
+
+**Example 3.** **(i)** Let ${\mu, \nu \colon \mathcal{M} \to [0, +\infty]}$ be two measures on a measurable space ${(X, \mathcal{M})}$ such that ${\nu = f\mu}$ for some measurable ${f \colon X \to [0, +\infty).}$ Then ${\nu \ll \mu{:}}$ if ${\mu(E) = 0,}$ then ${\nu(E) = \int_E f \, d\mu = 0}$ by (1) of Remark 4 of the fifth post.\
+**(ii)** On ${(\mathbb{R}, \mathcal{L}(\mathbb{R})),}$ consider the Lebesgue measure $\lambda$ and the Dirac delta $\delta_0$ at zero of Example 4 of the second post. Then ${\lambda \not\ll \delta_0.}$ The set ${E = [1, 2]}$ does not contain ${0,}$ so that ${\delta_0(E) = 0,}$ but ${\lambda(E) = 1 \neq 0,}$ as in Figure 2.
+
+<Atom />
+
+**Figure 2.** Example 3 (ii) on the real line: the point 0 and the set ${E = [1, 2],}$ which does not contain ${0,}$ with ${\delta_0(E) = 0}$ and ${\lambda(E) = 1.}$
+
+**Theorem 4 (Radon–Nikodym).** Let ${(X, \mathcal{M})}$ be a measurable space and let ${\mu, \nu \colon \mathcal{M} \to [0, +\infty]}$ be two measures. Suppose that ${\nu \ll \mu}$ and that $\mu$ and $\nu$ are $\sigma$-finite. Then there exists a measurable function ${f \colon X \to [0, +\infty)}$ such that ${\nu = f\mu.}$
+
+In Theorem 4, the measure $\mu$ is $\sigma$-finite as in Definition 8 (iii) of the second post. That is, there exists ${(E_m) \subset \mathcal{M}}$ with ${\bigcup_m E_m = X}$ and ${\mu(E_m) < +\infty}$ for every ${m.}$
+
+A function $f$ as in Theorem 4 is called a *Radon–Nikodym derivative* of $\nu$ with respect to ${\mu.}$ Theorem 4 says that ${d\nu = f \, d\mu,}$ which suggests the notation ${f = d\nu/d\mu.}$
+
+### The counting measure on $[0, 1]$
+
+**Remark 5.** In Theorem 4 the assumption that $\mu$ is $\sigma$-finite is needed. Otherwise, on ${([0, 1], \mathcal{L}([0, 1])),}$ take the Lebesgue measure $\lambda$ and the counting measure $\mu$ on ${[0, 1]}$ of Example 3 of the second post, that is, ${\mu(E) = \#E}$ when $E$ is finite and ${\mu(E) = +\infty}$ otherwise. Then $\mu$ is not $\sigma$-finite, ${\lambda \ll \mu,}$ and there exists no measurable ${f \colon [0, 1] \to [0, +\infty)}$ such that ${\lambda = f\mu.}$
+
+The measure $\mu$ is not $\sigma$-finite on ${[0, 1],}$ because ${\mu(E) < +\infty}$ if and only if $E$ is finite. If there existed ${(E_m) \subset \mathcal{L}([0, 1])}$ with ${\mu(E_m) < +\infty}$ for every $m$ and ${[0, 1] = \bigcup_m E_m,}$ then ${[0, 1]}$ would be countable, which is impossible.
+
+Moreover ${\lambda \ll \mu.}$ If ${\mu(E) = 0,}$ then ${E = \emptyset,}$ and ${\lambda(\emptyset) = 0.}$ Finally, suppose that a measurable ${f \colon [0, 1] \to [0, +\infty)}$ satisfies ${\lambda = f\mu.}$ Then
+
+$$
+1 = \lambda([0, 1]) = \int_{[0, 1]} f \, d\mu,
+$$
+
+hence there exists ${E \in \mathcal{L}([0, 1])}$ such that ${\mu(E) > 0}$ and ${f > 0}$ on ${E.}$ Indeed, the set ${E = \{ f > 0 \}}$ works, since otherwise ${\{ f > 0 \} = \emptyset}$ and ${\int_{[0, 1]} f \, d\mu = 0.}$ Up to passing to a subset, ${0 < \mu(E) < +\infty,}$ as in Figure 3, hence $E$ is finite and ${\lambda(E) = 0.}$ Therefore
+
+$$
+0 = \lambda(E) = \int_E f \, d\mu > 0,
+$$
+
+which is impossible. In detail, the last inequality is (1) of Corollary 10 of the fifth post, which applies because only $\emptyset$ has measure zero, and ${f > 0}$ on $E$ with ${\mu(E) > 0.}$
+
+<Counting />
+
+**Figure 3.** An instance on ${[0, 1]}$ of the passage to a subset in Remark 5: a set ${E,}$ here an interval, with ${\mu(E) = +\infty}$ and ${\lambda(E) > 0,}$ and a finite subset of ${E,}$ here 4 points, with counting measure 4 and Lebesgue measure 0.
+
+### Lebesgue differentiation theorem
+
+**Theorem 6 (Lebesgue differentiation theorem).** Let ${f \in \mathcal{L}^1(\mathbb{R}^N, \mathcal{L}(\mathbb{R}^N), \lambda).}$ Then, for almost every ${x \in \mathbb{R}^N,}$
+
+$$
+\lim_{r \to 0^+} \frac{1}{\lambda(B_r(x))} \int_{B_r(x)} |f(\cdot) - f(x)| \, d\lambda = 0,
+$$
+
+where $B_r(x)$ is the open ball of centre $x$ and radius ${r.}$ In the integral, ${f(\cdot)}$ varies, while ${f(x)}$ is a constant. In particular, if ${N = 1,}$ then ${B_r(x) = (x - r, x + r)}$ and ${\lambda(B_r(x)) = 2r,}$ so that, as in Figure 4 for an instance,
+
+$$
+\lim_{r \to 0^+} \frac{1}{2r} \int_{x-r}^{x+r} |f - f(x)| \, d\lambda = 0 \qquad \text{for almost every } x \in \mathbb{R}.
+$$
+
+<Averages client:visible />
+
+**Figure 4.** An instance with ${N = 1{:}}$ the graph of ${f,}$ the dashed level ${f(x),}$ and the region between them over ${(x - r, x + r),}$ shaded, whose area is ${\int_{x-r}^{x+r} |f - f(x)| \, d\lambda.}$ The number above is this area divided by ${2r;}$ the sliders set $x$ and ${r.}$
+
+## Fundamental theorems of calculus
+
+For continuous functions the fundamental theorem of calculus is already known.
+
+**Theorem 7 (Baby fundamental theorem of calculus).** Let ${a < b}$ be real numbers, let ${f \colon [a, b] \to \mathbb{R}}$ be continuous, and define
+
+$$
+F(x) = \int_a^x f(t) \, dt, \qquad x \in [a, b].
+$$
+
+Then $F$ is continuous on ${[a, b],}$ and $F$ is differentiable at every ${x \in [a, b],}$ with ${F'(x) = f(x),}$ as in Figure 5. Moreover, ${F(y) - F(x) = \int_x^y f(t) \, dt}$ for all ${x, y \in [a, b]}$ with ${x < y.}$
+
+**Corollary 8.** Let ${a < b}$ be real numbers and let ${g \colon [a, b] \to \mathbb{R}}$ belong to ${C^1([a, b]),}$ the set of the continuously differentiable functions on ${[a, b].}$ Then
+
+$$
+g(x) = g(a) + \int_a^x g'(t) \, dt \qquad \text{for every } x \in [a, b].
+$$
+
+<Baby client:visible />
+
+**Figure 5.** An instance of Theorem 7: above, a continuous function $f$ on ${[a, b]}$ and the region under its graph over ${[a, x],}$ whose area is ${F(x);}$ below, the graph of $F$ and its tangent at ${x,}$ of slope ${f(x).}$ The slider sets ${x.}$
+
+The question is what can be proved, for ${f \in L^1,}$ about the function
+
+$$
+F(x) = \int_a^x f \, d\lambda.
+$$
+
+**Theorem 9 (First fundamental theorem of calculus).** Let ${-\infty < a < b < +\infty,}$ let ${f \in L^1((a, b)),}$ and let
+
+$$
+F(x) := \int_a^x f \, d\lambda \qquad \text{for every } x \in [a, b].
+$$
+
+Then $F$ is continuous on ${[a, b],}$ $F$ is differentiable almost everywhere on ${(a, b),}$ and ${F'(x) = f(x)}$ at almost every ${x \in (a, b).}$ Moreover, ${F(y) - F(x) = \int_x^y f \, d\lambda}$ for all ${x, y \in [a, b]}$ with ${x < y.}$
+
+**Proof (sketch).** In the proof of differentiability only the case ${h > 0}$ is treated. First, let ${(x_n) \subset [a, b]}$ with ${x_n \to x_0 \in [a, b].}$ We need to prove that ${F(x_n) \to F(x_0).}$ We have
+
+$$
+F(x_n) = \int_a^{x_n} f \, d\lambda = \int_a^b f \chi_{(a, x_n)} \, d\lambda,
+$$
+
+where ${f \chi_{(a, x_n)} \to f \chi_{(a, x_0)}}$ almost everywhere as ${n \to \infty,}$ and ${|f \chi_{(a, x_n)}| \le |f| \in L^1((a, b))}$ for every ${n,}$ as in Figure 6. By the dominated convergence theorem, Theorem 10 of the sixth post, ${f \chi_{(a, x_n)} \to f \chi_{(a, x_0)}}$ in ${L^1((a, b)).}$ In detail, ${\chi_{(a, x_n)}(t) \to \chi_{(a, x_0)}(t)}$ at every ${t \neq x_0,}$ and the convergence in $L^1$ gives the convergence of the integrals by (2) of Remark 12 of the fifth post. Hence
+
+$$
+\begin{aligned}
+\lim_n F(x_n) &= \lim_n \int_a^b f \chi_{(a, x_n)} \, d\lambda \\
+&= \int_a^b f \chi_{(a, x_0)} \, d\lambda = \int_a^{x_0} f \, d\lambda \\
+&= F(x_0).
+\end{aligned}
+$$
+
+<Truncations client:visible />
+
+**Figure 6.** An instance of the proof of continuity: the dashed graph of ${|f|,}$ the graph of ${f \chi_{(a, x_n)},}$ equal to $f$ on ${(a, x_n)}$ and to 0 after ${x_n,}$ and, shaded, the region where it differs from ${f \chi_{(a, x_0)},}$ between $x_0$ and ${x_n.}$ The slider sets ${n.}$
+
+Next, choose a representative ${f \in \mathcal{L}^1((a, b))}$ of the class of ${f.}$ By Theorem 6 with ${N = 1,}$ at almost every ${x \in (a, b),}$
+
+$$
+\lim_{r \to 0^+} \frac{1}{2r} \int_{x-r}^{x+r} |f - f(x)| \, d\lambda = 0.
+$$
+
+Indeed, Theorem 6 applies to the function equal to $f$ on ${(a, b)}$ and to 0 elsewhere, which belongs to ${\mathcal{L}^1(\mathbb{R}),}$ and for small $r$ the interval ${(x - r, x + r)}$ lies in ${(a, b).}$ Now fix ${x \in (a, b)}$ such that this limit holds: such points are called *Lebesgue points* of ${f.}$ We want to prove that
+
+$$
+\Big| \frac{F(x + h) - F(x)}{h} - f(x) \Big| \longrightarrow 0 \qquad \text{as } h \to 0.
+$$
+
+For ${h > 0}$ so small that ${(x - h, x + h) \subset (a, b),}$ we compute, as in Figure 7,
+
+$$
+\begin{aligned}
+0 \le \left| \frac{F(x + h) - F(x)}{h} - f(x) \right| &= \left| \frac{1}{h} \Big( \int_a^{x+h} f \, d\lambda - \int_a^x f \, d\lambda \Big) - f(x) \right| \\
+&= \left| \frac{1}{h} \int_x^{x+h} f \, d\lambda - f(x) \right| \\
+&= \left| \frac{1}{h} \int_x^{x+h} f \, d\lambda - \frac{1}{h} \int_x^{x+h} f(x) \, d\lambda \right| \\
+&= \frac{1}{h} \left| \int_x^{x+h} \big( f - f(x) \big) \, d\lambda \right| \\
+&\le \frac{1}{h} \int_x^{x+h} |f - f(x)| \, d\lambda \le \frac{2}{2h} \int_{x-h}^{x+h} |f - f(x)| \, d\lambda.
+\end{aligned}
+$$
+
+The third equality uses that ${\alpha = (1/h) \int_x^{x+h} \alpha \, d\lambda}$ for every ${\alpha \in \mathbb{R},}$ with ${\alpha = f(x).}$ In detail, the second equality holds because ${(a, x + h)}$ is the disjoint union of ${(a, x),}$ $\{x\}$ and ${(x, x + h),}$ with ${\lambda(\{x\}) = 0,}$ and the last inequality because ${(x, x + h) \subset (x - h, x + h).}$ As ${h \to 0,}$ the last term tends to $0$ because $x$ is a Lebesgue point. Hence, at almost every ${x \in (a, b),}$
+
+$$
+\lim_{h \to 0} \Big| \frac{F(x + h) - F(x)}{h} - f(x) \Big| = 0, \qquad \text{that is,} \qquad F'(x) = f(x). \tag*{$\blacksquare$}
+$$
+
+<Quotient client:visible />
+
+**Figure 7.** An instance of the proof of differentiability with ${h > 0{:}}$ the graph of ${f,}$ the dashed level ${f(x),}$ the region under the graph over ${(x, x + h),}$ shaded, and the rectangle over ${(x, x + h)}$ with the same area, of height ${(F(x + h) - F(x))/h.}$ The interval ${(x - h, x + h)}$ of the last bound is marked under the axis; the slider sets ${h.}$
+
+### The Cantor and Heaviside functions
+
+**Remark 10.** Let ${g \colon (a, b) \to \mathbb{R}}$ be such that $g'(x)$ exists for almost every ${x \in (a, b)}$ and ${g' \in L^1((a, b)).}$ Does it follow that “${g(x) = \int_a^x g' \, d\lambda}$”, in the sense of Corollary 8, that is, ${g(y) - g(x) = \int_x^y g' \, d\lambda}$ for ${x < y?}$ No, as (1) and (2) show.
+
+**(1)** Let ${v \colon [0, 1] \to \mathbb{R}}$ be the Cantor function of Example 8 of the third post. Then $v'(x)$ exists and ${v'(x) = 0}$ for almost every ${x,}$ by Example 9 (iii) of the fourth post, and ${v' = 0 \in L^1((0, 1)).}$ But the formula fails for ${x = 0}$ and ${y = 1,}$ as in Figure 8:
+
+$$
+v(1) - v(0) = 1 \neq \int_0^1 v' \, d\lambda = \int_0^1 0 \, d\lambda = 0.
+$$
+
+**(2)** Let ${H \colon \mathbb{R} \to \mathbb{R}}$ be the Heaviside function, equal to 0 on ${(-\infty, 0]}$ and to 1 on ${(0, +\infty),}$ as in Figure 9. Then $H'(x)$ exists and ${H'(x) = 0}$ for every ${x \neq 0,}$ but, for every ${x > 0,}$
+
+$$
+\int_{-3}^x H' \, d\lambda = 0 \neq H(x) - H(-3).
+$$
+
+<Cantor />
+
+**Figure 8.** Remark 10 (1): the graph of the Cantor function ${v,}$ which ends at ${(1, 1),}$ and the graph of ${x \mapsto \int_0^x v' \, d\lambda = 0,}$ which ends at ${(1, 0).}$
+
+<Heaviside />
+
+**Figure 9.** The drawing of Remark 10 (2), with the point $-3$ of the formula marked on the axis: the graph of the Heaviside function ${H.}$ It equals 0 on ${(-\infty, 0],}$ with the filled dot at the origin, and 1 on ${(0, +\infty).}$
+
+### Absolutely continuous functions
+
+**Definition 11 (Absolutely continuous function).** Let ${a < b}$ be real numbers and ${f \colon [a, b] \to \mathbb{R}.}$ We say that $f$ is *absolutely continuous* on ${[a, b]}$ if for every positive $\varepsilon$ there exists a positive $\delta$ such that, for every finite family ${\{ (a_i, b_i) : i = 1, \dots, m \}}$ of pairwise disjoint subintervals of ${[a, b],}$
+
+$$
+\sum_{i=1}^{m} (b_i - a_i) < \delta \qquad \text{implies} \qquad \sum_{i=1}^{m} |f(b_i) - f(a_i)| < \varepsilon.
+$$
+
+Here the intervals are numbered so that ${a \le a_1 < b_1 \le a_2 < b_2 \le \dots < b_m \le b,}$ as in Figure 10, and we write ${f \in \mathrm{AC}([a, b]).}$
+
+<Intervals />
+
+**Figure 10.** The drawing of Definition 11: the interval ${[a, b]}$ with the subintervals ${(a_1, b_1),}$ ${(a_2, b_2)}$ and so on up to ${(a_m, b_m),}$ the values ${f(a_1),}$ ${f(b_1),}$ $f(a_2)$ and $f(b_2)$ above them, and the vertical segments of lengths ${|f(b_1) - f(a_1)|}$ and ${|f(b_2) - f(a_2)|.}$
+
+**Remark 12 (Lipschitz and uniformly continuous functions).** Let ${a < b}$ be real numbers and ${f \colon [a, b] \to \mathbb{R}.}$ The function $f$ is *Lipschitz* on ${[a, b]}$ if there exists ${L > 0}$ such that ${|f(y) - f(x)| \le L |y - x|}$ for all ${x, y \in [a, b].}$ It is *uniformly continuous* on ${[a, b]}$ if for every positive $\varepsilon$ there exists a positive $\delta$ such that, for all ${x < y}$ in ${[a, b],}$ ${|y - x| < \delta}$ implies ${|f(y) - f(x)| < \varepsilon.}$ In this case we write ${f \in \mathrm{UC}([a, b]).}$ Then
+
+$$
+\begin{aligned}
+f \text{ Lipschitz on } [a, b] &\implies f \in \mathrm{AC}([a, b]) \\
+&\implies f \in \mathrm{UC}([a, b]) \implies f \text{ continuous on } [a, b].
+\end{aligned}
+$$
+
+**Lemma 13 (Absolute continuity of the integral).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space and let ${f \in L^1.}$ Then for every positive $\varepsilon$ there exists a positive $\delta$ such that, for every ${E \in \mathcal{M}}$ with ${\mu(E) < \delta,}$
+
+$$
+\int_E |f| \, d\mu < \varepsilon.
+$$
+
+**Proof (complete).** Let ${\varepsilon > 0.}$ Take a function $s$ such that (1) $s$ is simple, (2) ${0 \le s \le |f|}$ almost everywhere, and (3) ${\int_X s \, d\mu \ge \int_X |f| \, d\mu - \varepsilon/2.}$ Indeed, such an $s$ exists by Definition 3 of the fifth post, because ${\int_X |f| \, d\mu < +\infty,}$ and it can be taken with ${s \le |f|}$ at every point.
+
+Let ${M := \max_X s.}$ We can take ${\delta := \varepsilon/(2M).}$ In detail, $M$ is a real number, because $s$ takes finitely many values and is at most $|f|$ at every point, and if ${M = 0}$ every ${\delta > 0}$ works, because (3) then gives ${\int_X |f| \, d\mu \le \varepsilon/2.}$ So take ${E \in \mathcal{M}}$ with ${\mu(E) < \delta.}$ Then, as in Figure 11,
+
+$$
+\begin{aligned}
+\int_E |f| \, d\mu &= \int_E \big( |f| - s \big) \, d\mu + \int_E s \, d\mu \\
+&\le \int_X \big( |f| - s \big) \, d\mu + M \mu(E) \\
+&< \frac{\varepsilon}{2} + M \frac{\varepsilon}{2M} \\
+&= \frac{\varepsilon}{2} + \frac{\varepsilon}{2} = \varepsilon,
+\end{aligned}
+$$
+
+where ${|f| - s \ge 0,}$ the first inequality is monotonicity, in the domain of integration and, as ${s \le M,}$ in the function, and the second uses (3) and ${\mu(E) < \delta = \varepsilon/(2M).}$ $\blacksquare$
+
+<Small client:visible />
+
+**Figure 11.** An instance of the proof with $X$ an interval and ${\mu = \lambda{:}}$ the graph of ${|f|,}$ below it a simple function $s$ as in (1), (2) and (3), and its maximum ${M,}$ dashed. A set $E$ with ${\lambda(E) < \delta}$ is marked, with the region under the graph over $E$ shaded. The numbers above give $\delta$ and ${\int_E |f| \, d\lambda;}$ the sliders set $\varepsilon$ and the position of ${E.}$
+
+### Second fundamental theorem of calculus
+
+**Theorem 14 (Second fundamental theorem of calculus).** Let ${a < b}$ be real numbers and let ${f \colon [a, b] \to \mathbb{R}}$ be measurable. The following are equivalent.
+
+**(1)** The function $f$ is differentiable almost everywhere on ${(a, b),}$ with ${f' \in L^1((a, b)),}$ and
+
+$$
+f(y) - f(x) = \int_x^y f' \, d\lambda \qquad \text{for all } x, y \in [a, b] \text{ with } x < y.
+$$
+
+**(2)** ${f \in \mathrm{AC}([a, b]).}$\
+In particular, let ${g \in L^1((a, b))}$ and ${F(x) = \int_a^x g \, d\lambda}$ for ${x \in [a, b].}$ Then ${F \in \mathrm{AC}([a, b]).}$
+
+The last claim of Theorem 14 follows from the implication from (1) to (2), since $F$ satisfies (1) by Theorem 9. Indeed, $F$ is continuous, hence measurable, and ${F' = g}$ almost everywhere, so that ${F' \in L^1((a, b))}$ and ${\int_x^y F' \, d\lambda = \int_x^y g \, d\lambda = F(y) - F(x).}$
+
+**Proof (sketch).** Only the implication from (1) to (2) is proved. Fix ${\varepsilon > 0}$ and let ${\delta > 0}$ be given by Lemma 13, applied on ${([a, b], \mathcal{L}([a, b]), \lambda)}$ to ${f' \in L^1.}$ This means that, for every ${E \in \mathcal{L}([a, b]),}$
+
+$$
+\lambda(E) < \delta \implies \int_E |f'| \, d\lambda < \varepsilon.
+$$
+
+Now we prove that ${f \in \mathrm{AC}([a, b]).}$ Let ${\{ (a_i, b_i) : i = 1, \dots, m \}}$ be pairwise disjoint subintervals of ${[a, b]}$ with total length less than ${\delta.}$ Since the intervals are pairwise disjoint,
+
+$$
+\sum_{i=1}^{m} (b_i - a_i) = \sum_{i=1}^{m} \lambda((a_i, b_i)) = \lambda\Big( \bigcup_{i=1}^{m} (a_i, b_i) \Big) < \delta.
+$$
+
+We compute, as in Figure 12,
+
+$$
+\begin{aligned}
+\sum_{i=1}^{m} |f(b_i) - f(a_i)| &= \sum_{i=1}^{m} \Big| \int_{a_i}^{b_i} f' \, d\lambda \Big| \\
+&\le \sum_{i=1}^{m} \int_{(a_i, b_i)} |f'| \, d\lambda \\
+&= \int_{\bigcup_{i=1}^{m} (a_i, b_i)} |f'| \, d\lambda < \varepsilon,
+\end{aligned}
+$$
+
+where the first equality is (1), and the last inequality is the choice of ${\delta,}$ as the integral is over a set $E$ with ${\lambda(E) < \delta.}$ $\blacksquare$
+
+<Increments />
+
+**Figure 12.** An instance of the proof: above, the graph of $f$ and the increments ${|f(b_i) - f(a_i)|}$ over 3 disjoint intervals ${(a_i, b_i);}$ below, the graph of ${|f'|}$ and the regions under it over the same intervals. Their total area ${\int_{\bigcup_i (a_i, b_i)} |f'| \, d\lambda}$ bounds the sum of the increments.
+
+**Example 15.** Let ${v \colon [0, 1] \to \mathbb{R}}$ be the Cantor function of Example 8 of the third post. The function $v$ is continuous on ${[0, 1],}$ but ${v \notin \mathrm{AC}([0, 1])}$ by Theorem 14. Indeed, otherwise (1) of Theorem 14 would give ${v(1) - v(0) = \int_0^1 v' \, d\lambda = 0,}$ while ${v(1) - v(0) = 1}$ by Example 8 of the third post. Still, ${v \in \mathrm{UC}([0, 1])}$ by the [Heine–Cantor theorem](https://en.wikipedia.org/wiki/Heine%E2%80%93Cantor_theorem): if ${u \colon [a, b] \to \mathbb{R}}$ is continuous, then ${u \in \mathrm{UC}([a, b]).}$
+
+**Example 16.** There exists ${g \in \mathrm{AC}([0, 1])}$ that is not Lipschitz, for example ${g(x) = \sqrt{x}}$ for ${x \in [0, 1].}$ Indeed, ${(g(x) - g(0))/x = 1/\sqrt{x}}$ is unbounded on ${(0, 1].}$ It satisfies ${g'(x) = 1/(2\sqrt{x})}$ for every ${x \in (0, 1)}$ and
+
+$$
+g(y) - g(x) = \int_x^y \frac{1}{2\sqrt{t}} \, dt \qquad \text{for all } x, y \in [0, 1] \text{ with } x < y,
+$$
+
+so that ${g \in \mathrm{AC}([0, 1])}$ by Theorem 14, as in Figure 13. In detail, ${g' \in L^1((0, 1))}$ by (2) of Theorem 17 of the fifth post, because ${g' \ge 0}$ and its generalized Riemann integral over $(0, 1)$ is ${g(1) - g(0) = 1.}$ Figure 14 places $g$ and the Cantor function $v$ among the classes of Remark 12.
+
+<Root client:visible />
+
+**Figure 13.** Example 16: above, the graph of ${g(x) = \sqrt{x}}$ and the increment ${g(y) - g(x);}$ below, the graph of ${g'(t) = 1/(2\sqrt{t}),}$ unbounded near ${0,}$ and the region under it over ${(x, y),}$ whose area is ${g(y) - g(x).}$ The sliders set $x$ and ${y.}$
+
+<Classes />
+
+**Figure 14.** Remark 12 and Examples 15 and 16 on ${[0, 1]{:}}$ the Lipschitz functions inside ${\mathrm{AC}([0, 1]),}$ inside ${\mathrm{UC}([0, 1]),}$ which is the set of the continuous functions on $[0, 1]$ by the Heine–Cantor theorem. The function $\sqrt{x}$ lies in $\mathrm{AC}([0, 1])$ and is not Lipschitz, and the Cantor function $v$ lies in $\mathrm{UC}([0, 1])$ and not in ${\mathrm{AC}([0, 1]).}$
+
+**Corollary 17 (Integration by parts in AC).** Let ${a < b}$ be real numbers and ${f \in \mathrm{AC}([a, b]).}$ Then, for every ${\varphi \in C_c^\infty(a, b),}$ as in Figure 15 for an instance,
+
+$$
+\int_a^b f \varphi' \, d\lambda = -\int_a^b f' \varphi \, d\lambda,
+$$
+
+where $f'$ is the derivative of ${f,}$ defined almost everywhere.
+
+<Parts />
+
+**Figure 15.** An instance on an interval ${(a, b){:}}$ a function ${f \in \mathrm{AC}([a, b])}$ and its derivative ${f',}$ dashed, and a function ${\varphi \in C_c^\infty(a, b),}$ which vanishes near $a$ and ${b.}$ Below, both integrals of Corollary 17, which are equal.
+
+## Sobolev spaces (introduction)
+
+Sobolev spaces are defined through the identity of Corollary 17, with a function $w$ in place of ${f'.}$
+
+**Definition 18 (Sobolev space ${W^{1,1},}$ weak derivative).** Let ${-\infty \le a < b \le +\infty}$ and ${f \in L^1((a, b)).}$ We say that ${f \in W^{1,1}((a, b)),}$ the *Sobolev space* $W^{1,1}$ on ${(a, b),}$ if there exists ${w \in L^1((a, b))}$ such that
+
+$$
+\int_a^b f \varphi' \, d\lambda = -\int_a^b w \varphi \, d\lambda \qquad \text{for every } \varphi \in C_c^\infty(a, b).
+$$
+
+The function $w$ is called a *weak derivative* of ${f.}$
+
+**Remark 19.** In the same way one can take ${f \in L^p((a, b))}$ with a weak derivative ${w \in L^p((a, b)),}$ in the sense of the identity of Definition 18. In this case one writes ${f \in W^{1,p}((a, b)).}$
+
+**Theorem 20.** Let ${-\infty < a < b < +\infty.}$ Then ${\mathrm{AC}([a, b]) = W^{1,1}((a, b));}$ more precisely, ${f \in \mathrm{AC}([a, b])}$ if and only if ${f \in W^{1,1}((a, b)),}$ where $f$ is identified with its class in ${L^1((a, b)).}$ In particular, every ${f \in W^{1,1}((a, b))}$ has a continuous representative.
+
+**Proof (complete).** First, let ${f \in \mathrm{AC}([a, b]).}$ By Theorem 14 and Corollary 17, $f'$ exists almost everywhere, ${f' \in L^1((a, b)),}$ and ${\int_a^b f \varphi' \, d\lambda = -\int_a^b f' \varphi \, d\lambda}$ for every ${\varphi \in C_c^\infty(a, b).}$ Hence ${f \in W^{1,1}((a, b)).}$ Indeed, also ${f \in L^1((a, b)),}$ because $f$ is continuous on ${[a, b]}$ by Remark 12, hence bounded, and ${b - a < +\infty.}$
+
+Conversely, let ${f \in W^{1,1}((a, b))}$ and let $w$ be a weak derivative of ${f.}$ Let ${F(x) = \int_a^x w \, d\lambda}$ for ${x \in [a, b].}$ Then ${F \in \mathrm{AC}([a, b])}$ by Theorem 14, and $F'$ exists and ${F' = w}$ almost everywhere by Theorem 9. Let ${\varphi \in C_c^\infty(a, b).}$ Then
+
+$$
+\int_a^b F \varphi' \, d\lambda = -\int_a^b F' \varphi \, d\lambda = -\int_a^b w \varphi \, d\lambda = \int_a^b f \varphi' \, d\lambda,
+$$
+
+where the first equality is Corollary 17, the second holds because ${F' = w}$ almost everywhere, and the third because ${f \in W^{1,1}((a, b)).}$ Hence
+
+$$
+\int_a^b (F - f) \varphi' \, d\lambda = 0 \qquad \text{for every } \varphi \in C_c^\infty(a, b).
+$$
+
+By the constancy lemma, (2) of Corollary 16 of the fifth post, there exists ${C \in \mathbb{R}}$ such that ${F - f = C}$ almost everywhere, as in Figure 16. Indeed, ${F - f \in L^1((a, b)),}$ because $F$ is continuous on ${[a, b],}$ hence bounded.
+
+<Representative />
+
+**Figure 16.** An instance of the second part of the proof: the dashed graph of ${F,}$ the graph of ${F - C,}$ at vertical distance $C$ below it, and a representative $f$ of the class. It equals ${F - C}$ except at 3 points, so that ${f = F - C}$ almost everywhere.
+
+Hence ${f = F - C}$ almost everywhere, where ${F \in \mathrm{AC}([a, b])}$ and $C$ is a constant, so $f$ is equal almost everywhere to a function of ${\mathrm{AC}([a, b]).}$ Therefore $f$ has a representative in ${\mathrm{AC}([a, b]).}$ $\blacksquare$
