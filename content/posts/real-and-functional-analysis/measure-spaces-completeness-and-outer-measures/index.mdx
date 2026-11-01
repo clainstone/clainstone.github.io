@@ -2,7 +2,7 @@
 title: 'Measure spaces, completeness and outer measures'
 date: 2026-09-17
 published: 2026-09-22
-summary: 'A measure is a $\sigma$-additive function on a $\sigma$-algebra with values in $[0, +\infty]$; it is monotone and $\sigma$-subadditive, and continuous along increasing sequences and along decreasing sequences of finite measure. Every measure space has a complete extension, and Carathéodory''s construction turns an outer measure into a complete measure on its measurable sets.'
+summary: 'A measure is a function on a $\sigma$-algebra with values in $[0, +\infty]$ that vanishes on $\emptyset$ and is $\sigma$-additive; it is monotone and $\sigma$-subadditive, and continuous along increasing sequences and along decreasing sequences of finite measure. Every measure space has a complete extension, and Carathéodory''s construction turns an outer measure into a complete measure on its measurable sets.'
 ---
 
 import Volumes from './Volumes.svelte';
@@ -19,7 +19,7 @@ import Disjoint from './Disjoint.svelte';
 import Pair from './Pair.svelte';
 import Symmetric from './Symmetric.svelte';
 
-The lecture defines measures on $\sigma$-algebras, extends a measure space so that its negligible sets become measurable, and constructs measures from outer measures.
+The objects of the lecture are measure spaces, complete measure spaces and outer measures.
 
 ## Measure spaces
 
@@ -76,7 +76,7 @@ $$
 **(i)** Let ${(E_n) \subset \mathcal{M}}$ be such that ${E_n \subset E_{n+1}}$ for every $n,$ and let ${E = \bigcup_n E_n.}$ Then ${\mu(E) = \lim_{n \to +\infty} \mu(E_n).}$\
 **(ii)** Let ${(E_n) \subset \mathcal{M}}$ be such that ${E_{n+1} \subset E_n}$ for every $n,$ suppose ${\mu(E_0) < +\infty,}$ and let ${E = \bigcap_n E_n.}$ Then ${\mu(E) = \lim_{n \to +\infty} \mu(E_n).}$
 
-**Proof (complete).** (i) Without loss of generality, ${\mu(E_n) < +\infty}$ for every $n.$ Indeed, if ${\mu(E_m) = +\infty}$ for some $m,$ then ${\mu(E_n) = +\infty}$ for every ${n \ge m}$ and ${\mu(E) = +\infty}$ by Remark 5 (i), so both sides equal $+\infty.$ Let ${F_0 = E_0}$ and ${F_{n+1} = E_{n+1} \setminus E_n}$ for every ${n \ge 0,}$ as in Figure 4. Then ${F_i \in \mathcal{M}}$ for every $i,$ ${F_i \cap F_j = \emptyset}$ for every ${i \neq j,}$ and ${E = \bigcup_n E_n = \bigcup_n F_n.}$ Hence
+**Proof (complete).** (i) Without loss of generality, ${\mu(E_n) < +\infty}$ for every $n.$ Let ${F_0 = E_0}$ and ${F_{n+1} = E_{n+1} \setminus E_n}$ for every ${n \ge 0,}$ as in Figure 4. Then ${F_i \in \mathcal{M}}$ for every $i,$ ${F_i \cap F_j = \emptyset}$ for every ${i \neq j,}$ and ${E = \bigcup_n E_n = \bigcup_n F_n.}$ Hence
 
 $$
 \begin{aligned}
@@ -85,7 +85,7 @@ $$
 \end{aligned}
 $$
 
-where the second equality is $\sigma$-additivity and the last one holds because the sum of the $\mu(F_n)$ with ${n \le N}$ equals ${\mu(E_N),}$ as $E_N$ is the union of the pairwise disjoint sets ${F_0, \dots, F_N}$ and $\sigma$-additivity applies as in the proof of Remark 5.
+where the second equality is $\sigma$-additivity and the last one holds because the sum of the $\mu(F_n)$ with ${n \le N}$ equals ${\mu(E_N).}$
 
 <Increasing client:visible />
 
@@ -110,7 +110,7 @@ $$
 \end{aligned}
 $$
 
-Here the first and the fifth equality are Remark 5 (ii), which applies because $E$ and $E_n$ are contained in $E_0$ and ${\mu(E_0) < +\infty,}$ and the third is (i) applied to $(A_n).$ Comparing ${\mu(E_0) - \mu(E)}$ with the last line and cancelling the finite number $\mu(E_0)$ gives ${\mu(E) = \lim_{n \to \infty} \mu(E_n).}$ $\blacksquare$
+Comparing ${\mu(E_0) - \mu(E)}$ with the last line and cancelling the finite number $\mu(E_0)$ gives ${\mu(E) = \lim_{n \to \infty} \mu(E_n).}$ $\blacksquare$
 
 <Decreasing client:visible />
 
@@ -133,7 +133,7 @@ $$
 
 ## Complete measure spaces
 
-Consider the measure space ${(\mathbb{R}, \{\emptyset, \mathbb{R}\}, \mu)}$ with ${\mu(\emptyset) = 0}$ and ${\mu(\mathbb{R}) = 0.}$ An interval ${(a, b) \subset \mathbb{R}}$ is contained in a set of measure zero, but ${\mu((a, b)) = 0}$ cannot be written, because ${(a, b) \notin \{\emptyset, \mathbb{R}\}.}$
+Consider the measure space ${(\mathbb{R}, \{\emptyset, \mathbb{R}\}, \mu)}$ with ${\mu(\emptyset) = 0}$ and ${\mu(\mathbb{R}) = 0.}$ An interval ${(a, b) \subset \mathbb{R}}$ is contained in a set of measure zero, but ${\mu\bigl((a, b)\bigr) = 0}$ cannot be written, because ${(a, b) \notin \{\emptyset, \mathbb{R}\}.}$
 
 In a measure space $(X, \mathcal{M}, \mu),$ let ${A \in \mathcal{M},}$ let ${C \in \mathcal{M}}$ with ${\mu(C) = 0,}$ and let ${B \subset C,}$ as in Figure 7. One would like to write ${\mu(A) = \mu(A \cup B),}$ but $\mu(A \cup B)$ cannot be written, because ${A \cup B}$ may not belong to $\mathcal{M}.$
 
@@ -188,7 +188,7 @@ $$
 \mu^*(E) \le \sum_{n=0}^{\infty} \mu^*(E_n).
 $$
 
-**Remark 13 (Monotonicity).** If $\mu^*$ is an outer measure and ${E \subset F,}$ then ${\mu^*(E) \le \mu^*(F).}$ Indeed, (ii) of Definition 12 applies with ${E_0 = F}$ and ${E_n = \emptyset}$ for ${n \ge 1,}$ and ${\mu^*(\emptyset) = 0.}$
+**Remark 13 (Monotonicity).** If $\mu^*$ is an outer measure and ${E \subset F,}$ then ${\mu^*(E) \le \mu^*(F).}$
 
 **Theorem 14 (Construction of outer measure).** Let $X$ be a set, let ${\mathcal{F} \subset \mathcal{P}(X)}$ be such that ${\emptyset \in \mathcal{F},}$ and let ${f \colon \mathcal{F} \to [0, +\infty]}$ be such that ${f(\emptyset) = 0.}$ For every ${E \subset X}$ define
 
@@ -200,7 +200,7 @@ Then $\mu^*$ is an outer measure.
 
 <Cover name="A" />
 
-**Figure 10.** A set $E$ and a sequence of sets $A_n$ whose union contains $E,$ one of the sequences in the definition of $\mu^*(E).$
+**Figure 10.** A set $E$ and a sequence of sets $A_n$ whose union contains ${E.}$
 
 **Remark 15.** If there is no ${(A_n) \subset \mathcal{F}}$ such that ${E \subset \bigcup_n A_n,}$ then ${\mu^*(E) = +\infty.}$
 
@@ -219,8 +219,6 @@ $$
 $$
 \mu^*(Z) = \mu^*\big( (Z \cap E) \cup (Z \setminus E) \big) \le \mu^*(Z \cap E) + \mu^*(Z \setminus E).
 $$
-
-Indeed, the inequality is (ii) of Definition 12 with ${E_0 = Z \cap E,}$ ${E_1 = Z \setminus E}$ and ${E_n = \emptyset}$ for ${n \ge 2.}$
 
 **Theorem 18 (Carathéodory’s construction of measures).** Let $X$ be a set and $\mu^*$ an outer measure on $X.$ Let
 
@@ -243,8 +241,6 @@ $$
 \mu^*(E \cup F) = \mu^*(Z) = \mu^*(Z \cap E) + \mu^*(Z \setminus E) = \mu^*(E) + \mu^*(F).
 $$
 
-Indeed, ${Z \cap E = E}$ and ${Z \setminus E = F}$ because ${E \cap F = \emptyset.}$
-
 <Disjoint />
 
 **Figure 12.** Two disjoint sets $E$ and $F$ and their union $Z.$
@@ -253,7 +249,7 @@ Step 2. Let ${(E_n) \subset \mathcal{M}}$ with ${E_i \cap E_j = \emptyset}$ for 
 
 $$
 \begin{aligned}
-\mu^*\Big( \bigcup_n E_n \Big) &\le \sum_{n=0}^{\infty} \mu^*(E_n) = \lim_{N \to \infty} \Big( \sum_{n=0}^{N} \mu^*(E_n) \Big) \\
+\mu^*\Big( \bigcup_{n=0}^{\infty} E_n \Big) &\le \sum_{n=0}^{\infty} \mu^*(E_n) = \lim_{N \to \infty} \Big( \sum_{n=0}^{N} \mu^*(E_n) \Big) \\
 &= \lim_{N \to \infty} \mu^*\Big( \bigcup_{n=0}^{N} E_n \Big) \le \mu^*\Big( \bigcup_{n=0}^{\infty} E_n \Big),
 \end{aligned}
 $$
@@ -293,7 +289,7 @@ $$
 \end{aligned}
 $$
 
-What is $\sigma_0(\mathcal{F})$? The guess is ${\sigma_0(\mathcal{F}) = S,}$ where
+What is ${\sigma_0(\mathcal{F})?}$ The guess is ${\sigma_0(\mathcal{F}) = S,}$ where
 
 $$
 S := \{ A \subset \mathbb{Z} : x \in A \iff -x \in A \}.
@@ -307,23 +303,21 @@ $$
 \{-k, k\} = \{-k, \dots, k\} \setminus \{-k+1, \dots, k-1\}.
 $$
 
-Indeed, for ${k \ge 1}$ both sets on the right belong to $\mathcal{F},$ for ${k = 0}$ the second set is empty and ${\{0\} \in \mathcal{F},}$ and a $\sigma$-algebra is closed under differences by Remark 24 of the previous post.
-
 <Pair client:visible />
 
 **Figure 13.** The sets $\{-k, \dots, k\}$ and $\{-k+1, \dots, k-1\}$ of $\mathbb{Z},$ and their difference $\{-k, k\}.$ The slider sets $k.$
 
-Now take ${E \in S,}$ as in Figure 14. The set $E$ is a countable union of sets of the form $\{-k, k\}$ with ${k \in \mathbb{N},}$ so ${E \in \sigma_0(\mathcal{F}),}$ and therefore ${S \subset \sigma_0(\mathcal{F}).}$ Indeed, since $E$ is symmetric, it is the union of the sets $\{-k, k\}$ over the ${k \in \mathbb{N}}$ that belong to $E.$
+Now take ${E \in S,}$ as in Figure 14. The set $E$ is a countable union of sets of the form $\{-k, k\}$ with ${k \in \mathbb{N},}$ so ${E \in \sigma_0(\mathcal{F}),}$ and therefore ${S \subset \sigma_0(\mathcal{F}).}$
 
 <Symmetric />
 
 **Figure 14.** An instance of a set ${E \in S{:}}$ its points are filled, and each arc joins the two points of a set $\{-k, k\}.$
 
-Step 2. The set $S$ is a $\sigma$-algebra. This concludes, as $\sigma_0(\mathcal{F})$ is the smallest $\sigma$-algebra containing $\mathcal{F}.$ Indeed, every set of $\mathcal{F}$ is symmetric, so ${\mathcal{F} \subset S}$ and ${\sigma_0(\mathcal{F}) \subset S}$ by Theorem 26 (ii) of the previous post. Now ${\emptyset \in S,}$ the complement ${\mathbb{Z} \setminus A}$ of a set ${A \in S}$ is also symmetric, as in Figure 15, and any union of symmetric sets is symmetric as well.
+Step 2. The set $S$ is a $\sigma$-algebra. This concludes, as $\sigma_0(\mathcal{F})$ is the smallest $\sigma$-algebra containing $\mathcal{F}.$ Now ${\emptyset \in S,}$ the complement ${\mathbb{Z} \setminus A}$ of a set ${A \in S}$ is also symmetric, as in Figure 15, and any union of symmetric sets is symmetric as well.
 
 <Symmetric complement />
 
-**Figure 15.** An instance of a set ${A \in S}$ and, below it, its complement ${\mathbb{Z} \setminus A,}$ which is symmetric too.
+**Figure 15.** An instance of a set ${A \in S}$ and, below it, its complement ${\mathbb{Z} \setminus A.}$
 
 ### Countable sets and their complements
 
@@ -333,7 +327,7 @@ $$
 \mathcal{M} := \{ A \subset \mathbb{R} : A \text{ is countable or } \mathbb{R} \setminus A \text{ is countable} \}.
 $$
 
-(i) Is $\mathcal{M}$ a $\sigma$-algebra? The countable union property is checked: let ${(A_n) \subset \mathcal{M};}$ what needs to be proved is ${\bigcup_n A_n \in \mathcal{M}.}$ The other properties of a $\sigma$-algebra hold as well. Indeed, $\emptyset$ is countable, and the definition of $\mathcal{M}$ does not change when $A$ is replaced by ${\mathbb{R} \setminus A.}$
+(i) Is $\mathcal{M}$ a $\sigma$-algebra? The countable union property is checked: let ${(A_n) \subset \mathcal{M};}$ what needs to be proved is ${\bigcup_n A_n \in \mathcal{M}.}$
 
 Case 1. Suppose that $A_n$ is countable for every $n.$ Then $\bigcup_n A_n$ is countable, hence ${\bigcup_n A_n \in \mathcal{M}.}$
 
@@ -351,9 +345,9 @@ $$
 \mu(A) = \begin{cases} 0 & \text{if } A \text{ is countable}, \\ 1 & \text{if } \mathbb{R} \setminus A \text{ is countable}. \end{cases}
 $$
 
-Is $\mu$ a measure? The property to check is $\sigma$-additivity: let ${(A_n) \subset \mathcal{M}}$ be such that ${A_i \cap A_j = \emptyset}$ for every ${i \neq j.}$ Indeed, $\mu$ is well defined, because $A$ and ${\mathbb{R} \setminus A}$ are not both countable, otherwise $\mathbb{R}$ would be countable, against Proposition 9 (i) of the previous post; and ${\mu(\emptyset) = 0.}$
+Is $\mu$ a measure? The property to check is $\sigma$-additivity: let ${(A_n) \subset \mathcal{M}}$ be such that ${A_i \cap A_j = \emptyset}$ for every ${i \neq j.}$
 
-Case 1. Suppose that $A_n$ is countable for every $n.$ Then $\bigcup_n A_n$ is countable, so both ${\mu(\bigcup_n A_n) = 0}$ and ${\mu(A_n) = 0}$ for every $n,$ and
+Case 1. Suppose that $A_n$ is countable for every $n.$ Then $\bigcup_n A_n$ is countable, so both ${\mu\bigl( \bigcup_n A_n \bigr) = 0}$ and ${\mu(A_n) = 0}$ for every $n,$ and
 
 $$
 \mu\Big( \bigcup_n A_n \Big) = 0 = \sum_{n=0}^{\infty} \mu(A_n).

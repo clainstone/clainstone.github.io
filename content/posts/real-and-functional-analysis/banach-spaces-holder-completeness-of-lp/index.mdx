@@ -6,20 +6,9 @@ summary: 'A norm makes a vector space a metric space, and a Banach space is a no
 ---
 
 import Triangle from './Triangle.svelte';
-import Continuity from './Continuity.svelte';
-import Cauchy from './Cauchy.svelte';
 import Balls from './Balls.svelte';
 import BallP from './BallP.svelte';
-import Uniform from './Uniform.svelte';
-import Series from './Series.svelte';
-import Sequences from './Sequences.svelte';
-import Conjugates from './Conjugates.svelte';
 import Young from './Young.svelte';
-import Holder from './Holder.svelte';
-import Inclusions from './Inclusions.svelte';
-import Interpolation from './Interpolation.svelte';
-import Minkowski from './Minkowski.svelte';
-import Partial from './Partial.svelte';
 
 Functional analysis studies infinite-dimensional vector spaces (Brezis).
 
@@ -35,23 +24,15 @@ A norm $\|\cdot\|$ induces on $X$ the distance ${d \colon X \times X \to [0, +\i
 
 **Figure 1.** The drawing of Definition 1 (iii), an instance in the plane: two vectors $x$ and ${y,}$ their sum ${x + y}$ and the vector $y$ drawn again from the end of ${x.}$ Dashed, the segment from the end of $y$ to the end of ${x + y.}$
 
-**Remark 2 (Normed space).** If $\|\cdot\|$ is a norm on a vector space ${X,}$ the couple $(X, \|\cdot\|)$ is called a *normed space*. Balls, open, closed and compact sets in $X$ and continuous functions ${f \colon X \to \mathbb{R}}$ are then well defined: they are those of the metric space $(X, d)$ of Definition 1, as in Definitions 12, 13, 17 and 19 of the first post.
+**Remark 2 (Normed space).** If $\|\cdot\|$ is a norm on a vector space ${X,}$ the couple $(X, \|\cdot\|)$ is called a *normed space*. Balls, open, closed and compact sets in $X$ and continuous functions ${f \colon X \to \mathbb{R}}$ are then well defined: they are those of the metric space $(X, d)$ of Definition 1.
 
 **Remark 3.** Let $(X, \|\cdot\|)$ be a normed space. Then the norm ${\|\cdot\| \colon X \to [0, +\infty)}$ is continuous.
 
-**Proof (complete).** The norm satisfies the *reverse triangle inequality* ${\big| \|x\| - \|y\| \big| \le \|x - y\|}$ for all ${x, y \in X.}$ Let ${(x_n) \subset X}$ and ${x_0 \in X}$ be such that ${x_n \to x_0}$ in ${X.}$ This means ${d(x_n, x_0) \to 0,}$ that is, ${\|x_n - x_0\| \to 0.}$ We want to prove that ${\|x_n\| \to \|x_0\|,}$ and the reverse triangle inequality gives it, as in Figure 2: ${\big| \|x_n\| - \|x_0\| \big| \le \|x_n - x_0\| \to 0.}$ $\blacksquare$
-
-<Continuity client:visible />
-
-**Figure 2.** An instance in $\mathbb{R}^2$ with the Euclidean norm: points $x_n$ that converge to ${x_0,}$ for the $n$ of the slider, and the segment from $x_n$ to ${x_0,}$ of length ${\|x_n - x_0\|.}$ The dashed arcs, centred at ${0,}$ carry $x_n$ and $x_0$ to the numbers $\|x_n\|$ and $\|x_0\|$ of the half-line ${[0, +\infty),}$ whose distance is at most ${\|x_n - x_0\|.}$
+**Proof (complete).** The norm satisfies the *reverse triangle inequality* ${\bigl|\, \|x\| - \|y\| \,\bigr| \le \|x - y\|}$ for all ${x, y \in X.}$ Let ${(x_n) \subset X}$ and ${x_0 \in X}$ be such that ${x_n \to x_0}$ in ${X.}$ This means ${d(x_n, x_0) \to 0,}$ that is, ${\|x_n - x_0\| \to 0.}$ We want to prove that ${\|x_n\| \to \|x_0\|,}$ and the reverse triangle inequality gives it: ${\bigl|\, \|x_n\| - \|x_0\| \,\bigr| \le \|x_n - x_0\| \to 0.}$ $\blacksquare$
 
 **Definition 4 (Cauchy sequence, Banach space).** Let $(X, \|\cdot\|)$ be a normed space.\
-**(i)** A sequence $(x_n)$ of points of $X$ is *Cauchy* if for every ${\varepsilon > 0}$ there exists $N$ such that ${\|x_n - x_m\| < \varepsilon}$ for all ${n, m \ge N,}$ as in Figure 3. Here ${\|x_n - x_m\| = d(x_n, x_m).}$\
+**(i)** A sequence $(x_n)$ of points of $X$ is *Cauchy* if for every ${\varepsilon > 0}$ there exists $N$ such that ${\|x_n - x_m\| < \varepsilon}$ for all ${n, m \ge N.}$ Here ${\|x_n - x_m\| = d(x_n, x_m).}$\
 **(ii)** If every Cauchy sequence converges in ${X,}$ we say that $(X, \|\cdot\|)$ is a *Banach space*.
-
-<Cauchy client:visible />
-
-**Figure 3.** An instance in $\mathbb{R}$ with the norm ${|\cdot|{:}}$ the terms of the sequence ${x_n = 1 + (-1)^n/n}$ against ${n.}$ For the $\varepsilon$ of the slider, $N$ is the first index from which all the terms lie in a strip of height less than ${\varepsilon,}$ shaded, so that ${|x_n - x_m| < \varepsilon}$ for all ${n, m \ge N.}$
 
 ### Norms on Euclidean space and on continuous functions
 
@@ -75,23 +56,19 @@ $$
 \|u\|_\infty = \operatorname*{ess\,sup}_{[a, b]} |u| = \max_{[a, b]} |u| \qquad \text{for } u \in C([a, b]).
 $$
 
-The essential supremum is that of Definition 19 of the sixth post, with respect to the Lebesgue measure, and it is a maximum because $u$ is continuous. The space ${(C([a, b]), \|\cdot\|_\infty)}$ is a Banach space.
+The essential supremum, with respect to the Lebesgue measure, is a maximum because $u$ is continuous. The space ${(C([a, b]), \|\cdot\|_\infty)}$ is a Banach space.
 
-In Example 5 with ${N = 2,}$ the balls $B_1(0)$ of Definition 19 of the first post, of radius 1 and centre ${0,}$ are drawn in Figure 4 for the norms ${|\cdot|,}$ $\|\cdot\|_\infty$ and ${\|\cdot\|_1,}$ and in Figure 5 for ${\|\cdot\|_p.}$ If ${v_1, v_2 > 0,}$ then ${\|(v_1, v_2)\|_1 = v_1 + v_2.}$ Hence the points of this quadrant with ${\|(v_1, v_2)\|_1 \le 1}$ are those with ${v_1 + v_2 \le 1.}$
+In Example 5 with ${N = 2,}$ the balls ${B_1(0),}$ of radius 1 and centre ${0,}$ are drawn in Figure 2 for the norms ${|\cdot|,}$ $\|\cdot\|_\infty$ and ${\|\cdot\|_1,}$ and in Figure 3 for ${\|\cdot\|_p.}$ If ${v_1, v_2 > 0,}$ then ${\|(v_1, v_2)\|_1 = v_1 + v_2.}$ Hence the points of this quadrant with ${\|(v_1, v_2)\|_1 \le 1}$ are those with ${v_1 + v_2 \le 1.}$
 
 <Balls />
 
-**Figure 4.** The drawing of Example 5 with ${N = 2{:}}$ the balls $B_1(0)$ for the norms ${|\cdot|,}$ $\|\cdot\|_\infty$ and ${\|\cdot\|_1,}$ with the corners of the last two.
+**Figure 2.** The drawing of Example 5 with ${N = 2{:}}$ the balls $B_1(0)$ for the norms ${|\cdot|,}$ $\|\cdot\|_\infty$ and ${\|\cdot\|_1,}$ with the corners of the last two.
 
 <BallP client:visible />
 
-**Figure 5.** The drawing of Example 5 for $\|\cdot\|_p$ with ${N = 2{:}}$ the ball $B_1(0)$ for the $p$ of the slider and, dashed, the balls for $\|\cdot\|_1$ and $\|\cdot\|_\infty$ of Figure 4.
+**Figure 3.** The drawing of Example 5 for $\|\cdot\|_p$ with ${N = 2{:}}$ the ball $B_1(0)$ for the $p$ of the slider and, dashed, the balls for $\|\cdot\|_1$ and $\|\cdot\|_\infty$ of Figure 2.
 
-The idea behind Example 5 (iii), which is not a proof, is that convergence in $C([a, b])$ is uniform convergence. Let ${(u_n) \subset C([a, b])}$ and ${u \colon [a, b] \to \mathbb{R}.}$ If ${u_n \to u}$ in ${C([a, b]),}$ this means ${\|u_n - u\|_\infty \to 0,}$ that is, ${\lim_{n \to \infty} \max_{[a, b]} |u_n - u| = 0.}$ That is, ${u_n \to u}$ uniformly, as in Figure 6, and therefore $u$ is continuous.
-
-<Uniform client:visible />
-
-**Figure 6.** An instance on ${[a, b]{:}}$ a continuous function ${u,}$ dashed, and the continuous function $u_n$ for the $n$ of the slider. The vertical segment marks the largest value of ${|u_n - u|,}$ which is ${\|u_n - u\|_\infty.}$
+For the idea behind Example 5 (iii), which is not a proof, let ${(u_n) \subset C([a, b])}$ and ${u \colon [a, b] \to \mathbb{R}.}$ If ${u_n \to u}$ in ${C([a, b]),}$ this means ${\|u_n - u\|_\infty \to 0,}$ that is, ${\lim_{n \to \infty} \max_{[a, b]} |u_n - u| = 0.}$ That is, ${u_n \to u}$ uniformly, and therefore $u$ is continuous.
 
 ### Convergent series
 
@@ -101,13 +78,9 @@ $$
 S_N = \sum_{n=0}^{N} x_n.
 $$
 
-If there exists ${S \in X}$ such that ${S_N \to S}$ in ${X,}$ that is, ${\|S_N - S\| \to 0,}$ we say that the series $\sum_n x_n$ *converges* to $S$ in ${X,}$ as in Figure 7.
+If there exists ${S \in X}$ such that ${S_N \to S}$ in ${X,}$ that is, ${\|S_N - S\| \to 0,}$ we say that the series $\sum_n x_n$ *converges* to $S$ in ${X.}$
 
 **Proposition 7 (Criterion to distinguish Banach spaces).** Let $(X, \|\cdot\|)$ be a normed space. Then $(X, \|\cdot\|)$ is a Banach space if and only if, for every sequence $(x_n)$ of points of $X$ such that ${\sum_n \|x_n\| < +\infty,}$ the series $\sum_n x_n$ converges in ${X.}$
-
-<Series client:visible />
-
-**Figure 7.** An instance in $\mathbb{R}^2$ with the Euclidean norm: the vectors ${x_0, \dots, x_N}$ placed end to end from ${0,}$ for the $N$ of the slider, end at the partial sum ${S_N,}$ and the partial sums converge to ${S,}$ ringed. Below, the lengths $\|x_n\|$ of the pieces are laid end to end, and their sum is finite, as in Proposition 7.
 
 ## The $L^p$ spaces (part 2)
 
@@ -118,31 +91,23 @@ The spaces $L^p(X, \mathcal{M}, \mu)$ of Definitions 14 and 19 of the sixth post
 **Example 8.** Let ${p \in [1, +\infty].}$\
 **(i)** Examples of the spaces $L^p(X, \mathcal{M}, \mu)$ are ${L^p(\mathbb{R}^N),}$ $L^p((a, b))$ and so on, with the Lebesgue measure.
 
-**(ii)** Let ${\ell^p := L^p(\mathbb{N}, \mathcal{P}(\mathbb{N}), \mu_\#),}$ where $\mu_\#$ is the counting measure of Example 3 of the second post, on the subsets of ${\mathbb{N}.}$ The elements ${x \in \ell^p}$ are sequences, written ${x = (x^{(k)}),}$ where ${x^{(k)} \in \mathbb{R}}$ is the $k$-th value of the sequence ${x.}$ Indeed, the only set of counting measure zero is the empty set, so each class of $\ell^p$ contains exactly one function from $\mathbb{N}$ to ${\mathbb{R}.}$ For ${p < +\infty}$ the $\ell^p$ norm of ${x \in \ell^p}$ is
+**(ii)** Let ${\ell^p := L^p(\mathbb{N}, \mathcal{P}(\mathbb{N}), \mu_\#),}$ where $\mu_\#$ is the counting measure on the subsets of ${\mathbb{N}.}$ The elements ${x \in \ell^p}$ are sequences, written ${x = (x^{(k)}),}$ where ${x^{(k)} \in \mathbb{R}}$ is the $k$-th value of the sequence ${x.}$ Indeed, the only set of counting measure zero is the empty set, so each class of $\ell^p$ contains exactly one function from $\mathbb{N}$ to ${\mathbb{R}.}$ For ${p < +\infty}$ the $\ell^p$ norm of ${x \in \ell^p}$ is
 
 $$
 \|x\|_p = \Big( \sum_{k=0}^{\infty} |x^{(k)}|^p \Big)^{\frac{1}{p}}.
 $$
 
-In detail, the sum is the integral of $|x|^p$ with respect to $\mu_\#$ by Remark 6 of the fifth post. A sequence in $\ell^p$ is written ${(x_n) \subset \ell^p,}$ with ${x_n \in \ell^p}$ for every ${n,}$ and the $k$-th value of $x_n$ is ${x_n^{(k)} \in \mathbb{R},}$ as in Figure 8.
-
-<Sequences client:visible />
-
-**Figure 8.** An instance: three elements ${x_0,}$ $x_1$ and $x_2$ of ${\ell^p,}$ each drawn by its first values $x_n^{(k)}$ for ${k = 0, \dots, 11.}$ The sliders $n$ and $k$ mark the value ${x_n^{(k)};}$ below, the terms $|x_n^{(k)}|^p$ of the sum in $\|x_n\|_p^p$ for the $p$ of the third slider.
+A sequence in $\ell^p$ is written ${(x_n) \subset \ell^p,}$ with ${x_n \in \ell^p}$ for every ${n,}$ and the $k$-th value of $x_n$ is ${x_n^{(k)} \in \mathbb{R}.}$
 
 ### Conjugate exponents and the Hölder inequality
 
 **Definition 9 (Conjugate exponent).** Let ${p \in [1, +\infty].}$ The *conjugate* of $p$ is the exponent $p'$ such that:\
-**(i)** if ${p \in (1, +\infty),}$ then ${p' \in (1, +\infty)}$ and ${1/p + 1/p' = 1,}$ as in Figure 9;\
+**(i)** if ${p \in (1, +\infty),}$ then ${p' \in (1, +\infty)}$ and ${1/p + 1/p' = 1;}$\
 **(ii)** if ${p = 1,}$ then ${p' = +\infty;}$\
 **(iii)** if ${p = +\infty,}$ then ${p' = 1.}$
 
 **Remark 10.** **(i)** The exponent $p'$ is the conjugate of $p$ if and only if $p$ is the conjugate of ${p'.}$\
 **(ii)** If ${p = 2,}$ then ${p' = 2.}$
-
-<Conjugates client:visible />
-
-**Figure 9.** The pairs $(p, p')$ of Definition 9 (i) for ${p \in [1.2, 6],}$ with the point $(p, p')$ for the $p$ of the slider and the point ${(p', p),}$ which is on the curve by Remark 10 (i). The dashed diagonal meets the curve at ${(2, 2),}$ as in Remark 10 (ii).
 
 **Lemma 11 (Young inequality).** Let ${1 < p < +\infty,}$ let $p'$ be its conjugate, and let ${a, b \in \mathbb{R}}$ with ${a, b > 0.}$ Then
 
@@ -150,7 +115,7 @@ $$
 ab \le \frac{a^p}{p} + \frac{b^{p'}}{p'}.
 $$
 
-**Proof (complete).** The logarithm is *concave*, as in Figure 10, that is, for all ${\alpha, \beta > 0}$ and ${t \in (0, 1),}$
+**Proof (complete).** The logarithm is *concave*, as in Figure 4, that is, for all ${\alpha, \beta > 0}$ and ${t \in (0, 1),}$
 
 $$
 \log\big( t\alpha + (1 - t)\beta \big) \ge t \log \alpha + (1 - t) \log \beta.
@@ -166,7 +131,7 @@ Applying the exponential function to both sides gives ${e^{\log(a^p/p + b^{p'}/p
 
 <Young client:visible />
 
-**Figure 10.** The drawing of the proof of Lemma 11: the graph of $\log$ and its chord between the points with abscissas ${\alpha = a^p}$ and ${\beta = b^{p'},}$ for the ${a,}$ $b$ and $p$ of the sliders. Above the abscissa ${t\alpha + (1 - t)\beta}$ with ${t = 1/p,}$ the chord is at height $\log(ab)$ and the graph at height ${\log(a^p/p + b^{p'}/p').}$
+**Figure 4.** The drawing of the proof of Lemma 11: the graph of $\log$ and its chord between the points with abscissas ${\alpha = a^p}$ and ${\beta = b^{p'},}$ for the ${a,}$ $b$ and $p$ of the sliders. Above the abscissa ${t\alpha + (1 - t)\beta}$ with ${t = 1/p,}$ the chord is at height $\log(ab)$ and the graph at height ${\log(a^p/p + b^{p'}/p').}$
 
 **Proposition 12 (Hölder inequality).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space, let ${p \in [1, +\infty]}$ with conjugate ${p',}$ and let ${u, v \colon X \to \mathbb{R}}$ be measurable. Then
 
@@ -176,7 +141,7 @@ $$
 
 where $\|u\|_p$ and $\|v\|_{p'}$ are given by the formulas of Definitions 17 and 19 of the sixth post and may equal ${+\infty,}$ and the product follows Definition 5 of the first post.
 
-**Proof (complete).** Without loss of generality ${\|u\|_p > 0}$ and ${\|v\|_{p'} > 0.}$ Otherwise one of the two functions is $0$ almost everywhere, so that ${|uv| = 0}$ almost everywhere, and the inequality reads ${0 \le 0.}$ In detail, ${\|u\|_p = 0}$ gives ${u = 0}$ almost everywhere by (1) of Corollary 10 of the fifth post, or by Remark 20 of the sixth post if ${p = +\infty,}$ and then the right-hand side is $0$ by Definition 5 of the first post.
+**Proof (complete).** Without loss of generality ${\|u\|_p > 0}$ and ${\|v\|_{p'} > 0.}$ Otherwise one of the two functions is $0$ almost everywhere, so that ${|uv| = 0}$ almost everywhere, and the inequality reads ${0 \le 0.}$
 
 Without loss of generality ${\|u\|_p < +\infty}$ and ${\|v\|_{p'} < +\infty.}$ Otherwise the right-hand side is ${+\infty,}$ and the inequality is true.
 
@@ -195,7 +160,7 @@ $$
 \end{aligned}
 $$
 
-Indeed, multiplying by ${\|u\|_p \, \|v\|_{p'}}$ gives the inequality for $u$ and ${v.}$ From now on ${\|u\|_p = \|v\|_{p'} = 1.}$ If ${1 < p < +\infty,}$ then, as in Figure 11,
+From now on ${\|u\|_p = \|v\|_{p'} = 1.}$ If ${1 < p < +\infty,}$ then
 
 $$
 \begin{aligned}
@@ -210,15 +175,11 @@ $$
 \int_X |uv| \, d\mu = \int_X |u| \, |v| \, d\mu \le \|v\|_\infty \int_X |u| \, d\mu = \|v\|_\infty \, \|u\|_1,
 $$
 
-since ${|v| \le \|v\|_\infty}$ almost everywhere by Remark 20 of the sixth post. Indeed, for ${p = +\infty}$ we have ${p' = 1,}$ and the case ${p = 1}$ applies with $u$ and $v$ exchanged. $\blacksquare$
-
-<Holder client:visible />
-
-**Figure 11.** An instance on $[0, 1]$ with ${\mu = \lambda,}$ for the $p$ of the slider: functions $u$ and $v$ with ${\|u\|_p = \|v\|_{p'} = 1,}$ the region under the graph of ${|uv|,}$ shaded, and the graph of ${|u|^p/p + |v|^{p'}/p',}$ whose integral is ${1.}$ For ${p = 1}$ the upper graph is that of ${\|v\|_\infty |u| = |u|.}$
+since ${|v| \le \|v\|_\infty}$ almost everywhere. Indeed, for ${p = +\infty}$ we have ${p' = 1,}$ and the case ${p = 1}$ applies with $u$ and $v$ exchanged. $\blacksquare$
 
 ### Inclusions and interpolation
 
-**Corollary 13.** Let ${(X, \mathcal{M}, \mu)}$ be a measure space such that ${\mu(X) < +\infty,}$ and let ${1 \le p \le q \le +\infty.}$ Then ${L^q \subset L^p,}$ as in Figure 12.
+**Corollary 13.** Let ${(X, \mathcal{M}, \mu)}$ be a measure space such that ${\mu(X) < +\infty,}$ and let ${1 \le p \le q \le +\infty.}$ Then ${L^q \subset L^p.}$
 
 **Proof (complete).** Let ${f \in L^q.}$ We apply the Hölder inequality, Proposition 12, to ${u = |f|^p}$ and ${v = 1,}$ with the exponent ${q/p \ge 1}$ and its conjugate ${r.}$ Here ${1/r = 1 - 1/(q/p) = 1 - p/q.}$ This gives
 
@@ -231,23 +192,15 @@ $$
 
 since ${\|f\|_q < +\infty}$ and ${\mu(X) < +\infty.}$ In detail, for ${p = q}$ there is nothing to prove, and for ${q = +\infty}$ Proposition 12 gives in the same way ${\int_X |f|^p \, d\mu \le \|f\|_\infty^p \, \mu(X).}$ $\blacksquare$
 
-**Remark 14.** For all ${1 \le p \le q \le +\infty,}$ ${\ell^1 \subset \ell^p \subset \ell^q \subset \ell^\infty,}$ as in Figure 12.
+**Remark 14.** For all ${1 \le p \le q \le +\infty,}$ ${\ell^1 \subset \ell^p \subset \ell^q \subset \ell^\infty.}$
 
-<Inclusions />
-
-**Figure 12.** On the left, Corollary 13: on a measure space with ${\mu(X) < +\infty}$ and for ${p \le q,}$ the space $L^q$ inside ${L^p.}$ On the right, Remark 14: the spaces ${\ell^1 \subset \ell^p \subset \ell^q \subset \ell^\infty.}$
-
-**Corollary 15 (Interpolation).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space, let ${1 \le p \le r \le q \le +\infty,}$ and let ${u \colon X \to \mathbb{R}}$ be measurable. Then, as in Figure 13,
+**Corollary 15 (Interpolation).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space, let ${1 \le p \le r \le q \le +\infty,}$ and let ${u \colon X \to \mathbb{R}}$ be measurable. Then
 
 $$
 \|u\|_r \le \|u\|_p^{\alpha} \, \|u\|_q^{1 - \alpha} \qquad \text{with} \qquad \frac{1}{r} = \frac{\alpha}{p} + \frac{1 - \alpha}{q},
 $$
 
 where ${\alpha \in [0, 1],}$ ${1/(+\infty) := 0}$ and the norms are as in Proposition 12. In particular, ${L^p \cap L^q \subset L^r.}$
-
-<Interpolation client:visible />
-
-**Figure 13.** An instance on an interval with the Lebesgue measure, with ${p = 1}$ and ${q = 4{:}}$ for ${r \in [1, 4]}$ the norm $\|u\|_r$ of a function $u$ with two values, drawn in the inset, solid, and the bound ${\|u\|_1^\alpha \|u\|_4^{1 - \alpha}}$ of Corollary 15, dashed. The slider sets $r$ and marks the two values, which agree at ${r = 1}$ and at ${r = 4.}$
 
 ### The Minkowski inequality and the Riesz–Fischer theorem
 
@@ -259,7 +212,13 @@ $$
 
 In particular, ${(L^p(X), \|\cdot\|_p)}$ is a normed space.
 
-**Proof (sketch).** The case ${p = +\infty}$ is not proved. If ${p = 1,}$ then ${\int_X |u + v| \, d\mu \le \int_X (|u| + |v|) \, d\mu = \|u\|_1 + \|v\|_1.}$ Let ${1 < p < +\infty.}$ Then, as in Figure 14,
+**Proof (sketch).** The case ${p = +\infty}$ is not proved. If ${p = 1,}$ then
+
+$$
+\int_X |u + v| \, d\mu \le \int_X (|u| + |v|) \, d\mu = \|u\|_1 + \|v\|_1.
+$$
+
+Let ${1 < p < +\infty.}$ Then
 
 $$
 \begin{aligned}
@@ -287,10 +246,6 @@ $$
 
 which is equivalent to ${\|u + v\|_p \le \|u\|_p + \|v\|_p.}$ Indeed, ${\|u + v\|_p < +\infty}$ because ${u + v \in L^p}$ by Remark 18 (i) of the sixth post, and for ${\|u + v\|_p > 0}$ one divides by ${\|u + v\|_p^{p-1}.}$ $\blacksquare$
 
-<Minkowski client:visible />
-
-**Figure 14.** An instance on $[0, 1]$ with ${\mu = \lambda,}$ for the $p$ of the slider: the two stacked bands of heights ${|u| \, |u + v|^{p-1}}$ and ${|v| \, |u + v|^{p-1},}$ and the graph of ${|u + v|^p,}$ which never rises above their top. For ${p = 1}$ the bands have heights $|u|$ and ${|v|.}$
-
 **Theorem 17 (Riesz–Fischer).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space and let ${1 \le p \le +\infty.}$ Then $L^p(X, \mathcal{M}, \mu)$ is a Banach space.
 
 **Proof (sketch).** Only the case ${1 \le p < +\infty}$ is treated, with the criterion of Proposition 7. Let ${(f_n) \subset L^p}$ be such that ${\sum_n \|f_n\|_p < +\infty,}$ and let
@@ -308,7 +263,7 @@ $$
 so that ${g_N \ge 0}$ and ${g_N \in L^p.}$ Since ${g_{N+1} \ge g_N}$ almost everywhere, we can define ${g(x) = \lim_{N \to \infty} g_N(x)}$ almost everywhere. For every ${N,}$ by the Minkowski inequality, Proposition 16,
 
 $$
-\|g_N\|_p = \Big\| \sum_{n=0}^{N} |f_n| \Big\|_p \le \sum_{n=0}^{N} \big\| |f_n| \big\|_p = \sum_{n=0}^{N} \|f_n\|_p \le \sum_{n=0}^{\infty} \|f_n\|_p < +\infty.
+\|g_N\|_p = \Bigl\| \sum_{n=0}^{N} |f_n| \Bigr\|_p \le \sum_{n=0}^{N} \bigl\|\, |f_n| \,\bigr\|_p = \sum_{n=0}^{N} \|f_n\|_p \le \sum_{n=0}^{\infty} \|f_n\|_p < +\infty.
 $$
 
 By the monotone convergence theorem, Theorem 4 of the sixth post, and by this bound,
@@ -320,7 +275,7 @@ $$
 \end{aligned}
 $$
 
-hence ${g \in L^p.}$ Indeed, the functions $|g_N|^p$ are nonnegative and nondecreasing in $N$ almost everywhere, with limit $|g|^p$ almost everywhere. Now, at almost every ${x \in X,}$ as in Figure 15,
+hence ${g \in L^p.}$ Now, at almost every ${x \in X,}$
 
 $$
 |S_N(x)| = \Big| \sum_{n=0}^{N} f_n(x) \Big| \le \sum_{n=0}^{N} |f_n(x)| = g_N(x) \le g(x),
@@ -332,13 +287,9 @@ $$
 g(x) = \lim_{N \to \infty} g_N(x) = \sum_{n=0}^{\infty} |f_n(x)| < +\infty,
 $$
 
-because ${g \in L^p,}$ so that the series of the $f_n(x)$ is an absolutely converging series. In detail, ${\int_X g^p \, d\mu < +\infty}$ gives ${g^p < +\infty}$ almost everywhere by (2) of Corollary 10 of the fifth post. Hence at almost every $x$ the series of the $f_n(x)$ converges, that is, the limit ${\lim_{N \to \infty} S_N(x)}$ exists. Thus $(S_N)$ converges almost everywhere, and we call ${S(x) := \lim_{N \to \infty} S_N(x)}$ at almost every ${x.}$
+because ${g \in L^p,}$ so that the series of the $f_n(x)$ is an absolutely converging series. Hence at almost every $x$ the series of the $f_n(x)$ converges, that is, the limit ${\lim_{N \to \infty} S_N(x)}$ exists. Thus $(S_N)$ converges almost everywhere, and we call ${S(x) := \lim_{N \to \infty} S_N(x)}$ at almost every ${x.}$
 
-By the dominated convergence theorem in ${L^p,}$ Theorem 8 of the seventh post, ${S_N \to S}$ in ${L^p.}$ Indeed, ${S_N \to S}$ almost everywhere and ${|S_N| \le g \in L^p}$ almost everywhere for every ${N,}$ with ${p < +\infty.}$ $\blacksquare$
-
-<Partial client:visible />
-
-**Figure 15.** An instance on $[0, 1]$ with ${\mu = \lambda{:}}$ functions $f_n$ with ${\sum_n \|f_n\|_p < +\infty}$ and, for the $N$ of the slider, the partial sum $S_N$ and the function ${g_N.}$ Dashed, the limit $g$ of $(g_N)$ and its opposite ${-g,}$ between which $S_N$ lies.
+By the dominated convergence theorem in ${L^p,}$ Theorem 8 of the seventh post, ${S_N \to S}$ in ${L^p.}$ $\blacksquare$
 
 **Remark 18.** Let ${(X, \mathcal{M}, \mu)}$ be a measure space, let ${p \in [1, +\infty],}$ let ${(f_n) \subset L^p}$ and let ${f \colon X \to \mathbb{R}}$ be measurable. If ${f_n \to f}$ in ${L^p,}$ that is, ${\|f_n - f\|_p \to 0,}$ then ${f \in L^p.}$
 
@@ -348,19 +299,19 @@ $$
 \|f_n - f_m\|_p \le \|f_n - f\|_p + \|f - f_m\|_p,
 $$
 
-where the first term on the right tends to $0$ as ${n \to \infty}$ and the second as ${m \to \infty.}$ Indeed, this is Proposition 16 applied to ${f_n - f}$ and ${f - f_m,}$ which belong to $L^p$ as soon as their norms are finite. Also, for every ${\varepsilon > 0}$ there exists $N$ such that ${\|f_n - f\|_p < \varepsilon/2}$ for every ${n \ge N.}$ Hence, if ${n, m \ge N,}$ then ${\|f_n - f\|_p + \|f - f_m\|_p \le \varepsilon.}$
+where the first term on the right tends to $0$ as ${n \to \infty}$ and the second as ${m \to \infty.}$ Also, for every ${\varepsilon > 0}$ there exists $N$ such that ${\|f_n - f\|_p < \varepsilon/2}$ for every ${n \ge N.}$ Hence, if ${n, m \ge N,}$ then ${\|f_n - f\|_p + \|f - f_m\|_p \le \varepsilon.}$
 
 By the Riesz–Fischer theorem, Theorem 17, there exists ${g \in L^p}$ such that ${f_n \to g}$ in ${L^p.}$ By the uniqueness of limits, Remark 12 of the seventh post, ${g = f}$ almost everywhere, hence ${f \in L^p.}$ $\blacksquare$
 
 ### The spaces $W^{1,p}((a, b))$
 
-**Example 19.** Let ${-\infty < a < b < +\infty}$ and consider the space $W^{1,p}((a, b))$ of Remark 19 of the previous post, with ${p \in [1, +\infty].}$ For ${f \in W^{1,p}((a, b))}$ let
+**Example 19.** Let ${-\infty < a < b < +\infty}$ and consider the space $W^{1,p}((a, b))$ with ${p \in [1, +\infty].}$ For ${f \in W^{1,p}((a, b))}$ let
 
 $$
 \|f\|_{W^{1,p}} := \|f\|_p + \|w\|_p,
 $$
 
-where $w$ is the weak derivative of ${f,}$ as in Definition 18 of the previous post. Then ${(W^{1,p}((a, b)), \|\cdot\|_{W^{1,p}})}$ is a Banach space.
+where $w$ is the weak derivative of ${f.}$ Then ${(W^{1,p}((a, b)), \|\cdot\|_{W^{1,p}})}$ is a Banach space.
 
 **Remark 20.** Since ${\lambda((a, b)) < +\infty,}$ Corollary 13 gives ${L^p((a, b)) \subset L^1((a, b))}$ for every ${p \ge 1.}$ Hence
 
@@ -368,7 +319,7 @@ $$
 W^{1,p}((a, b)) \subset W^{1,1}((a, b)) = \mathrm{AC}([a, b]),
 $$
 
-where $\mathrm{AC}([a, b])$ is the set of the absolutely continuous functions on $[a, b]$ of Definition 11 of the previous post, and the equality is Theorem 20 of the previous post: every function of $W^{1,p}((a, b))$ has an absolutely continuous representative.
+where $\mathrm{AC}([a, b])$ is the set of the absolutely continuous functions on ${[a, b].}$ That is, every function of $W^{1,p}((a, b))$ has an absolutely continuous representative.
 
 **Example 21.** Let ${a,}$ $b$ and $p$ be as in Example 19. The set
 

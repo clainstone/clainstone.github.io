@@ -4,18 +4,11 @@ date: 2026-09-16
 summary: 'Cardinalities are compared through injections, and $\#\mathcal{P}(X) > \#X$ for every set $X$. Topological and metric spaces are recalled, and every family of subsets generates a $\sigma$-algebra, the Borel $\sigma$-algebra when the family is a topology.'
 ---
 
-import PowerSet from './PowerSet.svelte';
-import Diagonal from './Diagonal.svelte';
-import ClosureInterior from './ClosureInterior.svelte';
 import Compact from './Compact.svelte';
-import ExtendedLine from './ExtendedLine.svelte';
 import OpenBall from './OpenBall.svelte';
 import SeqClosed from './SeqClosed.svelte';
-import DeMorgan from './DeMorgan.svelte';
-import Generated from './Generated.svelte';
-import Rectangle from './Rectangle.svelte';
 
-The lecture recalls how the sizes of infinite sets are compared and the basic notions of topology, and then begins real analysis with measurable spaces.
+The lecture recalls set theory and topology, and then begins real analysis with measurable spaces.
 
 ## Recap of set theory
 
@@ -25,7 +18,7 @@ The recap follows Hrbacek and Jech. Its aim is to distinguish between sets with 
 
 ### Cardinality
 
-**Definition 1 (Comparison of cardinalities).** Let $X$ and $Y$ be sets. We write ${\#X \le \#Y},$ and say that the cardinality of $X$ is less than or equal to the cardinality of $Y,$ if there exists an injective map ${f \colon X \to Y.}$ We write ${\#X = \#Y}$ if there exists a bijective map ${f \colon X \to Y.}$ Finally, ${\#X < \#Y}$ means that ${\#X \le \#Y}$ and ${\#X \neq \#Y.}$
+**Definition 1 (Comparison of cardinalities).** Let $X$ and $Y$ be sets. We write ${\#X \le \#Y,}$ and say that the cardinality of $X$ is less than or equal to the cardinality of $Y,$ if there exists an injective map ${f \colon X \to Y.}$ We write ${\#X = \#Y}$ if there exists a bijective map ${f \colon X \to Y.}$ Finally, ${\#X < \#Y}$ means that ${\#X \le \#Y}$ and ${\#X \neq \#Y.}$
 
 **Remark 2.** Let $X$ and $Y$ be sets.\
 **(i)** If $X$ is nonempty, then ${\#X \le \#Y}$ if and only if there exists a surjective map ${f \colon Y \to X.}$\
@@ -37,7 +30,7 @@ The recap follows Hrbacek and Jech. Its aim is to distinguish between sets with 
 
 **Example 4.** The natural numbers, the integers and the rationals have the same cardinality, ${\#\mathbb{N} = \#\mathbb{Z} = \#\mathbb{Q},}$ so $\mathbb{Z}$ and $\mathbb{Q}$ are countable. The real line is uncountable: ${\#\mathbb{R} > \#\mathbb{N}.}$
 
-**Definition 5 (Extended real line).** The *extended real line* is the set
+**Definition 5.** Define the set
 
 $$
 \overline{\mathbb{R}} = [-\infty, +\infty] := \mathbb{R} \cup \{+\infty\} \cup \{-\infty\},
@@ -53,8 +46,6 @@ $$
 & & &\phantom{\Longrightarrow \quad} 0 \cdot (+\infty) = 0 \cdot (-\infty) = 0.
 \end{aligned}
 $$
-
-The topology on $\overline{\mathbb{R}}$ is given in Example 16, and its Borel $\sigma$-algebra in Remark 28.
 
 ### The power set
 
@@ -79,10 +70,14 @@ $$
 **Proof (complete).** (i) Define
 
 $$
-\phi \colon \mathcal{P}(X) \to 2^X, \qquad A \mapsto f_A \colon X \to \{0, 1\}, \qquad f_A(x) := \begin{cases} 1 & x \in A, \\ 0 & x \notin A. \end{cases}
+\begin{aligned}
+\phi \colon \mathcal{P}(X) &\to 2^X, \\
+A &\mapsto f_A \colon X \to \{0, 1\}, \\
+f_A(x) &:= \begin{cases} 1 & x \in A, \\ 0 & x \notin A. \end{cases}
+\end{aligned}
 $$
 
-The map $\phi$ is a bijection. Indeed, its inverse sends ${f \in 2^X}$ to the set ${\{ x \in X : f(x) = 1 \}.}$
+The map $\phi$ is a bijection.
 
 (ii) Suppose, by contradiction, that ${\#\mathcal{P}(X) \le \#X.}$ By Remark 2 (i), applied to the nonempty set $\mathcal{P}(X),$ there exists a surjective map ${f \colon X \to \mathcal{P}(X).}$ Define
 
@@ -90,21 +85,11 @@ $$
 U := \{ x \in X : x \notin f(x) \} \subset X.
 $$
 
-Since $f$ is surjective, there exists ${y \in X}$ with ${f(y) = U.}$ Is ${y \in U}$?\
+Since $f$ is surjective, there exists ${y \in X}$ with ${f(y) = U.}$ Is ${y \in U?}$\
 Case 1. If ${y \in U,}$ then ${y \notin f(y)}$ by the definition of $U,$ and ${f(y) = U}$ gives ${y \notin U,}$ which is impossible.\
 Case 2. If ${y \notin U = f(y),}$ then ${y \in U}$ by the definition of $U,$ which is impossible.
 
 Hence ${\#\mathcal{P}(X) \le \#X}$ is false. To see that this gives ${\#\mathcal{P}(X) > \#X,}$ note that ${x \mapsto \{x\}}$ is injective, so ${\#X \le \#\mathcal{P}(X),}$ and ${\#X = \#\mathcal{P}(X)}$ would give ${\#\mathcal{P}(X) \le \#X.}$ $\blacksquare$
-
-Figure 1 is the bijection $\phi$ of part (i) on a set of 3 elements, and Figure 2 runs the construction of $U$ of part (ii).
-
-<PowerSet client:visible />
-
-**Figure 1.** An instance with ${X = \{1, 2, 3\}{:}}$ the ${2^3 = 8}$ subsets $A$ of $X$ and the values of $f_A = \phi(A).$ The buttons choose the elements of $A$ and highlight its row.
-
-<Diagonal client:visible />
-
-**Figure 2.** An instance with ${X = \{1, \dots, 6\}}$ and a map ${f \colon X \to \mathcal{P}(X).}$ Row $f(x)$ is the function $f_{f(x)}$ of part (i), and row $U$ is the opposite of the diagonal, so $U$ and $f(y)$ differ at $y$ for every $y.$ The button draws a new $f.$
 
 ### Countable sets
 
@@ -133,29 +118,19 @@ The sets in $\tau$ are called *open*, and the couple $(X, \tau)$ is called a *to
 **(ii)** the *interior* ${\operatorname{int}(V) = \mathring{V}}$ of $V$ is the biggest open set contained in $V;$\
 **(iii)** the *boundary* of $V$ is ${\partial V = \overline{V} \cap \overline{X \setminus V}.}$
 
-The closure and the interior exist. Indeed, $\overline{V}$ is the intersection of the closed sets containing $V,$ which is closed, and $\mathring{V}$ is the union of the open sets contained in $V.$
-
-<ClosureInterior />
-
-**Figure 3.** An instance in the plane with the Euclidean topology. The set $V$ contains the solid part of its edge and not the dashed part; its interior, its closure and its boundary.
-
 **Definition 13 (Compact set).** Let $(X, \tau)$ be a topological space and ${K \subset X.}$ The set $K$ is *compact* if for every ${\mathcal{F} = \{ U_\alpha \}_{\alpha \in A} \subset \tau}$ such that ${\bigcup_{\alpha \in A} U_\alpha \supset K}$ there exists a finite subfamily ${\tilde{\mathcal{F}} = \{ V_1, \dots, V_m \} \subset \mathcal{F}}$ such that ${\bigcup_{n=1}^{m} V_n \supset K.}$
 
 <Compact client:visible />
 
-**Figure 4.** $K$ is a triangle, the disks are open sets whose union contains $K,$ and a finite subfamily is then highlighted whose union still contains $K.$ The button draws a new family.
+**Figure 1.** $K$ is a triangle, the disks are open sets whose union contains $K,$ and a finite subfamily is then highlighted whose union still contains $K.$ The button draws a new family.
 
 **Definition 14 (Precompact set).** A set ${V \subset X}$ is *precompact* if $\overline{V}$ is compact.
 
-**Theorem 15 ([Heine–Borel](https://en.wikipedia.org/wiki/Heine%E2%80%93Borel_theorem)).** A set ${K \subset \mathbb{R}^n}$ is compact if and only if $K$ is closed and bounded, that is, contained in a ball $B_r(0).$
+**Theorem 15 ([Heine–Borel](https://en.wikipedia.org/wiki/Heine%E2%80%93Borel_theorem)).** A set ${K \subset \mathbb{R}^n}$ is compact if and only if $K$ is closed and bounded.
 
-**Example 16 (Topology on the extended real line).** The following subsets of $\overline{\mathbb{R}}$ are open in $\overline{\mathbb{R}}{:}$ the intervals $(a, b)$ with ${a, b \in \mathbb{R};}$ every set that is open in $\mathbb{R},$ which is also defined to be open in $\overline{\mathbb{R}};$ and the sets $[-\infty, a)$ and $(a, +\infty]$ for every ${a \in \mathbb{R},}$ which are also defined to be open.
+**Example 16 (Topology on $\overline{\mathbb{R}}$).** The following subsets of $\overline{\mathbb{R}}$ are open in $\overline{\mathbb{R}}{:}$ the intervals $(a, b)$ with ${a, b \in \mathbb{R};}$ every set that is open in $\mathbb{R},$ which is also defined to be open in $\overline{\mathbb{R}};$ and the sets $[-\infty, a)$ and $(a, +\infty]$ for every ${a \in \mathbb{R},}$ which are also defined to be open.
 
-<ExtendedLine />
-
-**Figure 5.** The three kinds of open set of Example 16 on the extended real line. A filled end belongs to the set, an empty one does not.
-
-**Definition 17 (Continuous map).** Let $(X, \tau_X)$ and $(Y, \tau_Y)$ be two topological spaces and ${f \colon X \to Y.}$ The map $f$ is *continuous* if ${f^{-1}(A) \in \tau_X}$ for every ${A \in \tau_Y},$ that is, if the preimage of any open set is open.
+**Definition 17 (Continuous map).** Let $(X, \tau_X)$ and $(Y, \tau_Y)$ be two topological spaces and ${f \colon X \to Y.}$ The map $f$ is *continuous* if ${f^{-1}(A) \in \tau_X}$ for every ${A \in \tau_Y,}$ that is, if the preimage of any open set is open.
 
 ### Metric spaces
 
@@ -179,9 +154,9 @@ A set $U$ in $X$ is *open* if for every ${x \in U}$ there exists ${r > 0}$ such 
 
 <OpenBall client:visible />
 
-**Figure 6.** An open set $U$ of the plane with the Euclidean distance, its edge dashed because it does not belong to $U,$ and a ball $B_r(x)$ contained in $U$ around a moving point $x.$
+**Figure 2.** An open set $U$ of the plane with the Euclidean distance, its edge dashed because it does not belong to $U,$ and a ball $B_r(x)$ contained in $U$ around a moving point $x.$
 
-A sequence ${(x_n) \subset X}$ *converges* to ${x_0 \in X},$ written ${x_n \to x_0,}$ if ${\lim_{n \to \infty} d(x_n, x_0) = 0.}$
+A sequence ${(x_n) \subset X}$ *converges* to ${x_0 \in X,}$ written ${x_n \to x_0,}$ if ${\lim_{n \to \infty} d(x_n, x_0) = 0.}$
 
 **Lemma 20.** Let $(X, d)$ be a metric space.\
 **(i)** A set ${V \subset X}$ is closed if and only if $V$ is *sequentially closed*: if ${(x_n) \subset V}$ and ${x_n \to x_0,}$ then ${x_0 \in V.}$\
@@ -190,16 +165,16 @@ A sequence ${(x_n) \subset X}$ *converges* to ${x_0 \in X},$ written ${x_n \to x
 
 <SeqClosed client:visible />
 
-**Figure 7.** Lemma 20 (i): a closed set $V,$ its edge solid because it belongs to $V,$ and a sequence of points of $V$ that converges to $x_0.$ The limit $x_0$ lies in $V.$
+**Figure 3.** Lemma 20 (i): a closed set $V,$ its edge solid because it belongs to $V,$ and a sequence of points of $V$ that converges to $x_0.$ The limit $x_0$ lies in $V.$
 
 **Lemma 21.** Let $(X, d_X)$ and $(Y, d_Y)$ be two metric spaces and ${f \colon X \to Y.}$ The following are equivalent.\
 **(i)** $f$ is continuous.\
-**(ii)** For every ${x_0 \in X}$ and every ${\varepsilon > 0}$ there exists ${\delta > 0}$ such that ${d_X(x, x_0) < \delta}$ implies ${d_Y(f(x), f(x_0)) < \varepsilon.}$\
-**(iii)** For every ${x_0 \in X}$ and every ${(x_n) \subset X}$ with ${x_n \to x_0,}$ that is, ${d_X(x_n, x_0) \to 0,}$ the sequence ${(f(x_n)) \subset Y}$ is such that ${f(x_n) \to f(x_0),}$ that is, ${d_Y(f(x_n), f(x_0)) \to 0.}$
+**(ii)** For every ${x_0 \in X}$ and every ${\varepsilon > 0}$ there exists ${\delta > 0}$ such that ${d_X(x, x_0) < \delta}$ implies ${d_Y\big(f(x), f(x_0)\big) < \varepsilon.}$\
+**(iii)** For every ${x_0 \in X}$ and every ${(x_n) \subset X}$ with ${x_n \to x_0,}$ that is, ${d_X(x_n, x_0) \to 0,}$ the sequence ${\big(f(x_n)\big) \subset Y}$ is such that ${f(x_n) \to f(x_0),}$ that is, ${d_Y\big(f(x_n), f(x_0)\big) \to 0.}$
 
 ## Measurable spaces
 
-Real analysis begins here, following Folland, with the families of sets on which it is built.
+Real analysis begins here, following Folland.
 
 ### σ-algebras
 
@@ -209,7 +184,7 @@ Real analysis begins here, following Folland, with the families of sets on which
 **(iii)** for every ${A \in \mathcal{M},}$ ${X \setminus A \in \mathcal{M};}$\
 **(iv)** for every ${(A_n) \subset \mathcal{M},}$ ${\bigcup_n A_n \in \mathcal{M}.}$
 
-**Example 23.** For every set $X,$ $\mathcal{P}(X)$ and ${\mathcal{M} = \{ \emptyset, X \}}$ are $\sigma$-algebras. Most of the times a topology is not a $\sigma$-algebra, for example the Euclidean topology. Indeed, on $\mathbb{R}$ it contains $(0, 1)$ but not ${\mathbb{R} \setminus (0, 1).}$
+**Example 23.** For every set $X,$ $\mathcal{P}(X)$ and ${\mathcal{M} = \{ \emptyset, X \}}$ are $\sigma$-algebras. Most of the times a topology is not a $\sigma$-algebra, for example the Euclidean topology.
 
 **Remark 24.** Let $(X, \mathcal{M})$ be a measurable space.\
 **(i)** If ${E, F \in \mathcal{M},}$ then ${E \cap F \in \mathcal{M}}$ and ${E \setminus F \in \mathcal{M}.}$\
@@ -221,17 +196,13 @@ $$
 E \cap F = X \setminus \big( X \setminus (E \cap F) \big) = X \setminus \big( (X \setminus E) \cup (X \setminus F) \big). \tag*{$\blacksquare$}
 $$
 
-<DeMorgan client:visible />
-
-**Figure 8.** The identity of the proof, term by term. The button shades ${X \setminus E,}$ then ${X \setminus F,}$ then their union, then its complement ${E \cap F.}$
-
 **Definition 25 (Restricted $\sigma$-algebra).** Let $(X, \mathcal{M})$ be a measurable space and ${\Omega \subset X.}$ The *restricted $\sigma$-algebra* is
 
 $$
 \mathcal{M}_\Omega = \mathcal{M}|_\Omega := \{ E \cap \Omega : E \in \mathcal{M} \}.
 $$
 
-One checks that $(\Omega, \mathcal{M}_\Omega)$ is a measurable space. Indeed, ${\emptyset = \emptyset \cap \Omega,}$ ${\Omega \setminus (E \cap \Omega) = (X \setminus E) \cap \Omega}$ and ${\bigcup_n (E_n \cap \Omega) = (\bigcup_n E_n) \cap \Omega.}$
+One checks that $(\Omega, \mathcal{M}_\Omega)$ is a measurable space. Indeed, ${\emptyset = \emptyset \cap \Omega,}$ ${\Omega \setminus (E \cap \Omega) = (X \setminus E) \cap \Omega}$ and ${\bigcup_n (E_n \cap \Omega) = \big(\bigcup_n E_n\big) \cap \Omega.}$
 
 ### Generated and Borel σ-algebras
 
@@ -251,10 +222,6 @@ Then ${W \neq \emptyset,}$ as ${\mathcal{P}(X) \in W.}$ Define
 $$
 \mathcal{M} := \bigcap \{ \mathcal{Q} : \mathcal{Q} \in W \}. \tag*{$\blacksquare$}
 $$
-
-<Generated />
-
-**Figure 9.** The proof of Theorem 26: inside $\mathcal{P}(X),$ three of the $\sigma$-algebras of $W,$ each containing $\mathcal{F}.$ The intersection $\sigma_0(\mathcal{F})$ of all the members of $W$ contains $\mathcal{F}$ and lies inside each of them.
 
 **Definition 27 (Borel $\sigma$-algebra).** Let $(X, \tau)$ be a topological space. The *Borel $\sigma$-algebra* is $\sigma_0(\tau),$ denoted $\mathcal{B}(X).$
 
@@ -279,7 +246,3 @@ $$
 $$
 
 where an *open rectangle* is a set ${(a_1, b_1) \times (a_2, b_2) \times \dots \times (a_N, b_N).}$
-
-<Rectangle />
-
-**Figure 10.** An open rectangle of the plane, the case ${N = 2.}$ Its edges are dashed because they do not belong to it.

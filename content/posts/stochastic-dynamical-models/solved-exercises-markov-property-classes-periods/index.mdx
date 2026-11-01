@@ -5,11 +5,8 @@ published: 2026-09-24
 summary: 'Solved exercises: distributions and a conditional probability for a chain on three states, a mouse in a maze, the communicating classes and periods of a chain on five states, and two Markov chains defined inductively from independent random variables.'
 ---
 
-import Ex1Chain from './Ex1Chain.svelte';
-import JointTable from './JointTable.svelte';
 import Maze from './Maze.svelte';
 import Ex3Chain from './Ex3Chain.svelte';
-import SignPath from './SignPath.svelte';
 
 The exercises of this session concern the Markov property, the classification of states and the period.
 
@@ -18,20 +15,16 @@ The exercises of this session concern the Markov property, the classification of
 **Exercise 1.** Let $(X_n)_{n \ge 0}$ be a Markov chain with state space ${I = \{1, 2, 3\}}$ and transition matrix
 
 $$
-P = \begin{pmatrix} 0 & 2/3 & 1/3 \\ 1/3 & 0 & 2/3 \\ 2/3 & 1/3 & 0 \end{pmatrix},
+P = \begin{pmatrix} 0 & 2/3 & 1/3 \\ 1/3 & 0 & 2/3 \\ 2/3 & 1/3 & 0 \end{pmatrix}.
 $$
 
-as in Figure 1. Suppose that the initial distribution $\lambda$ of $X_0$ is uniform on ${I,}$ that is, ${\lambda = (1/3, 1/3, 1/3).}$\
+Suppose that the initial distribution $\lambda$ of $X_0$ is uniform on ${I,}$ that is, ${\lambda = (1/3, 1/3, 1/3).}$\
 **(1)** Compute ${\mathbb{P}\{X_3 = 2\}.}$\
 **(2)** Compute ${\mathbb{P}\{X_0 = 1, X_2 = 3\}}$ and ${\mathbb{P}\{X_0 + X_2 = 4\}.}$\
 **(3)** Compute ${\mathbb{P}\{X_0 = 1, X_2 = 3 \mid X_0 + X_2 = 4\}.}$\
 **(4)** Determine the joint distribution of $(X_3, X_4)$ and compute ${\mathbb{E}[X_3 X_4].}$
 
-<Ex1Chain />
-
-**Figure 1.** The chain of Exercise 1. Each arrow carries the probability of the jump.
-
-**Solution 1.** All four questions are about the chain at fixed times, and the tool for them is the $n$-step transition matrix of the first post. The probability of going from $i$ to $j$ in $n$ steps is the entry $(i, j)$ of the power ${P^n,}$ that is ${p^{(n)}_{ij} = \mathbb{P}\{X_n = j \mid X_0 = i\} = (P^n)_{ij},}$ and the distribution of $X_n$ is the row vector ${\lambda P^n{:}}$ ${\mathbb{P}\{X_n = j\} = (\lambda P^n)_j.}$ Both come from the product formula (1.1) of the first post, summed over the states the chain visits between time 0 and time $n.$
+**Solution 1.** The probability of going from $i$ to $j$ in $n$ steps is the entry $(i, j)$ of the power ${P^n,}$ that is ${p^{(n)}_{ij} = \mathbb{P}\{X_n = j \mid X_0 = i\} = (P^n)_{ij},}$ and the distribution of $X_n$ is the row vector ${\lambda P^n{:}}$ ${\mathbb{P}\{X_n = j\} = (\lambda P^n)_j.}$
 
 The powers are computed with the product of matrices: the entry $(i, j)$ of a product $AB$ is ${\sum_k a_{ik} b_{kj},}$ the row $i$ of $A$ multiplied term by term with the column $j$ of $B$ and summed. For $P^2$ each entry is a sum of three products, and the products with a zero factor drop out. The other entries of $P$ are $1/3$ and ${2/3,}$ so each product is ${1/9,}$ $2/9$ or ${4/9,}$ a multiple of ${1/9,}$ and
 
@@ -60,15 +53,15 @@ $$
 \end{aligned}
 $$
 
-The first line answers (1): ${\mathbb{P}\{X_3 = 2\} = 1/3,}$ and the same holds for the other two states. The second line uses the definition of conditional probability: for events $A$ and $B$ with ${\mathbb{P}(B) > 0,}$ one sets ${\mathbb{P}(A \mid B) = \mathbb{P}(A \cap B) / \mathbb{P}(B),}$ so that ${\mathbb{P}(A \cap B) = \mathbb{P}(A \mid B) \, \mathbb{P}(B).}$ Here ${B = \{X_0 = 1\}}$ has probability ${\lambda_1 = 1/3 > 0,}$ and ${\mathbb{P}\{X_2 = 3 \mid X_0 = 1\} = p^{(2)}_{13} = 4/9,}$ the entry $(1, 3)$ of ${P^2.}$ The same number comes from the paths of two steps from 1 to ${3{:}}$ the path ${1 \to 2 \to 3}$ has probability ${p_{12} p_{23} = \frac23 \cdot \frac23 = \frac49,}$ and the paths through 1 or 3 have probability 0, because ${p_{11} = p_{33} = 0.}$
+The first line answers (1): ${\mathbb{P}\{X_3 = 2\} = 1/3,}$ and the same holds for the other two states. The second line uses the definition of conditional probability: for events $A$ and $B$ with ${\mathbb{P}(B) > 0,}$ one sets ${\mathbb{P}(A \mid B) = \mathbb{P}(A \cap B) / \mathbb{P}(B),}$ so that ${\mathbb{P}(A \cap B) = \mathbb{P}(A \mid B) \, \mathbb{P}(B).}$ Here ${B = \{X_0 = 1\}}$ has probability ${\lambda_1 = 1/3 > 0,}$ and ${\mathbb{P}\{X_2 = 3 \mid X_0 = 1\} = p^{(2)}_{13} = 4/9,}$ the entry $(1, 3)$ of ${P^2.}$
 
-For the event ${\{X_0 + X_2 = 4\}}$ we use the law of total probability. The events ${\{X_0 = 1\},}$ ${\{X_0 = 2\}}$ and $\{X_0 = 3\}$ are pairwise disjoint and their union is the whole space, because $X_0$ takes values in ${I.}$ By additivity, for every event $A$ we have ${\mathbb{P}(A) = \sum_k \mathbb{P}(A \cap \{X_0 = k\}),}$ and each term is ${\mathbb{P}(A \mid X_0 = k) \, \mathbb{P}\{X_0 = k\}}$ by the definition of conditional probability, since ${\mathbb{P}\{X_0 = k\} = 1/3 > 0.}$ Hence
+For the event ${\{X_0 + X_2 = 4\}}$ we use the law of total probability. The events ${\{X_0 = 1\},}$ ${\{X_0 = 2\}}$ and ${\{X_0 = 3\}}$ are pairwise disjoint and their union is the whole space, because $X_0$ takes values in ${I.}$ By additivity, for every event $A$ we have ${\mathbb{P}(A) = \sum_k \mathbb{P}(A \cap \{X_0 = k\}),}$ and each term is ${\mathbb{P}(A \mid X_0 = k) \, \mathbb{P}\{X_0 = k\}}$ by the definition of conditional probability, since ${\mathbb{P}\{X_0 = k\} = 1/3 > 0.}$ Hence
 
 $$
 \begin{aligned}
 \mathbb{P}\{X_0 + X_2 = 4\} &= \sum_{k=1}^{3} \mathbb{P}\{X_0 + X_2 = 4 \mid X_0 = k\} \, \mathbb{P}\{X_0 = k\} \\
 &= \frac13 \sum_{k=1}^{3} \mathbb{P}\{X_2 = 4 - k \mid X_0 = k\} \\
-&= \frac13 \Big( \frac49 + \frac49 + \frac19 \Big) = \frac13,
+&= \frac13 \left( \frac49 + \frac49 + \frac19 \right) = \frac13,
 \end{aligned}
 $$
 
@@ -81,11 +74,11 @@ $$
 \end{aligned}
 $$
 
-In the first of these two displays, the second equality holds because on the event ${\{X_0 = k\}}$ the sum $X_0 + X_2$ equals 4 exactly when ${X_2 = 4 - k.}$ So the events ${\{X_0 + X_2 = 4\}}$ and ${\{X_2 = 4 - k\}}$ have the same intersection with ${\{X_0 = k\},}$ and a conditional probability given $\{X_0 = k\}$ depends only on that intersection. The three conditional probabilities are entries of ${P^2{:}}$ ${p^{(2)}_{13} = 4/9}$ for ${k = 1,}$ ${p^{(2)}_{22} = 4/9}$ for ${k = 2}$ and ${p^{(2)}_{31} = 1/9}$ for ${k = 3.}$ Their sum is ${9/9 = 1,}$ which gives ${1/3.}$
+In the first of these two displays, the second equality holds because on the event ${\{X_0 = k\}}$ the sum ${X_0 + X_2}$ equals 4 exactly when ${X_2 = 4 - k.}$ So the events ${\{X_0 + X_2 = 4\}}$ and ${\{X_2 = 4 - k\}}$ have the same intersection with ${\{X_0 = k\},}$ and a conditional probability given ${\{X_0 = k\}}$ depends only on that intersection. The three conditional probabilities are entries of ${P^2{:}}$ ${p^{(2)}_{13} = 4/9}$ for ${k = 1,}$ ${p^{(2)}_{22} = 4/9}$ for ${k = 2}$ and ${p^{(2)}_{31} = 1/9}$ for ${k = 3.}$
 
 The second display answers (3). Its first equality is the definition of conditional probability, which applies because ${\mathbb{P}\{X_0 + X_2 = 4\} = 1/3 > 0.}$ Its second equality holds because ${1 + 3 = 4{:}}$ the event ${\{X_0 = 1, X_2 = 3\}}$ is contained in ${\{X_0 + X_2 = 4\},}$ so their intersection is ${\{X_0 = 1, X_2 = 3\}}$ itself.
 
-Finally, to determine the joint distribution of ${(X_3, X_4),}$ one has to compute, as in Figure 2,
+Finally, to determine the joint distribution of ${(X_3, X_4),}$ one has to compute
 
 $$
 \mathbb{P}\{X_3 = i, X_4 = j\} = \mathbb{P}\{X_4 = j \mid X_3 = i\} \, \mathbb{P}\{X_3 = i\} = \frac{p_{ij}}{3}, \qquad i, j \in \{1, 2, 3\}.
@@ -97,32 +90,25 @@ $$
 \mathbb{P}\{X_3 = i, X_4 = j\} = \sum_{i_0, i_1, i_2} \lambda_{i_0} p_{i_0 i_1} p_{i_1 i_2} p_{i_2 i} \, p_{ij} = \mathbb{P}\{X_3 = i\} \, p_{ij},
 $$
 
-since the same sum without the factor $p_{ij}$ is ${\mathbb{P}\{X_3 = i\}.}$ The nine numbers ${p_{ij}/3}$ are the entries of $P$ divided by ${3,}$ drawn in Figure ${2;}$ they add up to ${1,}$ because each row of $P$ adds up to ${1.}$ Then
+since the same sum without the factor $p_{ij}$ is ${\mathbb{P}\{X_3 = i\}.}$ Then
 
 $$
-\begin{aligned}
-\mathbb{E}[X_3 X_4] &= \sum_{i,j=1}^{3} i \cdot j \cdot \frac{p_{ij}}{3} \\
-&= \frac13 \Big( 2 \cdot \frac23 + 3 \cdot \frac13 + 2 \cdot \frac13 + 6 \cdot \frac23 + 3 \cdot \frac23 + 6 \cdot \frac13 \Big) = \frac{11}{3}.
-\end{aligned}
+\mathbb{E}[X_3 X_4] = \sum_{i,j=1}^{3} i \cdot j \cdot \frac{p_{ij}}{3} = \frac13 \left( 2 \cdot \frac23 + 3 \cdot \frac13 + 2 \cdot \frac13 + 6 \cdot \frac23 + 3 \cdot \frac23 + 6 \cdot \frac13 \right) = \frac{11}{3}.
 $$
 
-The first equality is the expectation of a function of a random vector that takes finitely many values: ${\mathbb{E}[g(X_3, X_4)]}$ is the sum of ${g(i, j) \, \mathbb{P}\{X_3 = i, X_4 = j\}}$ over all pairs ${(i, j),}$ here with ${g(i, j) = i j.}$ In the second, the three pairs with ${i = j}$ are missing because ${p_{11} = p_{22} = p_{33} = 0,}$ and the six remaining terms are, in order, the pairs ${(1, 2),}$ ${(1, 3),}$ ${(2, 1),}$ ${(2, 3),}$ $(3, 1)$ and ${(3, 2).}$ Their sum is ${\frac43 + 1 + \frac23 + 4 + 2 + 2 = 11,}$ and one third of it is ${11/3.}$
-
-<JointTable />
-
-**Figure 2.** The joint distribution of ${(X_3, X_4){:}}$ the cell in row $i$ and column $j$ holds ${\mathbb{P}\{X_3 = i, X_4 = j\} = p_{ij}/3.}$
+The first equality is the expectation of a function of a random vector that takes finitely many values: ${\mathbb{E}[g(X_3, X_4)]}$ is the sum of ${g(i, j) \, \mathbb{P}\{X_3 = i, X_4 = j\}}$ over all pairs ${(i, j),}$ here with ${g(i, j) = i j.}$ In the second, the three pairs with ${i = j}$ are missing because ${p_{11} = p_{22} = p_{33} = 0,}$ and the six remaining terms are, in order, the pairs ${(1, 2),}$ ${(1, 3),}$ ${(2, 1),}$ ${(2, 3),}$ $(3, 1)$ and ${(3, 2).}$
 
 ## A mouse in a maze
 
-**Exercise 2.** A mouse runs through the maze of Figure 3. At each step it leaves the room it is in by choosing randomly, and with equal probability, one of the doors out of the room. Suppose there is always a door between two neighbouring rooms, and let $X_n$ represent the position of the mouse at time $n.$\
+**Exercise 2.** A mouse runs through the maze of Figure 1. At each step it leaves the room it is in by choosing randomly, and with equal probability, one of the doors out of the room. Suppose there is always a door between two neighbouring rooms, and let $X_n$ represent the position of the mouse at time $n.$\
 **(1)** Give the transition matrix $P$ for the Markov chain ${(X_n)_{n \ge 0}.}$\
 **(2)** Suppose that the mouse starts in room ${1,}$ that is, ${X_0 = 1.}$ Compute the probability that it arrives in room 6 after 3 steps.
 
 <Maze />
 
-**Figure 3.** The maze of Exercise ${2,}$ with a door between any two neighbouring rooms. Dashed, the two routes of 3 steps from room 1 to room 6 of Solution 2.
+**Figure 1.** The maze of Exercise ${2.}$ Dashed, the two routes of 3 steps from room 1 to room 6 of Solution 2.
 
-**Solution 2.** The entry $p_{ij}$ is the probability that the mouse, in room ${i,}$ goes to room $j$ at the next step. It always leaves the room, so ${p_{ii} = 0.}$ If room $i$ has $d_i$ doors, each door is chosen with probability ${1/d_i,}$ and each leads to a different neighbouring room: ${p_{ij} = 1/d_i}$ when $j$ is a neighbour of ${i,}$ and ${p_{ij} = 0}$ otherwise. In Figure ${3,}$ rooms 1 and 2 have one door, to room ${3;}$ room 3 has four, to rooms ${1,}$ ${2,}$ 4 and ${5;}$ rooms 4 and 5 have two, to rooms 3 and ${6;}$ room 6 has two, to rooms 4 and ${5.}$ Row by row, the transition matrix $P$ is
+**Solution 2.** The entry $p_{ij}$ is the probability that the mouse, in room ${i,}$ goes to room $j$ at the next step. It always leaves the room, so ${p_{ii} = 0.}$ If room $i$ has $d_i$ doors, each door is chosen with probability ${1/d_i,}$ and each leads to a different neighbouring room: ${p_{ij} = 1/d_i}$ when $j$ is a neighbour of ${i,}$ and ${p_{ij} = 0}$ otherwise. In Figure ${1,}$ rooms 1 and 2 have one door, to room ${3;}$ room 3 has four, to rooms ${1,}$ ${2,}$ 4 and ${5;}$ rooms 4 and 5 have two, to rooms 3 and ${6;}$ room 6 has two, to rooms 4 and ${5.}$ Row by row, the transition matrix $P$ is
 
 $$
 P = \begin{pmatrix}
@@ -135,7 +121,7 @@ P = \begin{pmatrix}
 \end{pmatrix}.
 $$
 
-Each row adds up to ${1,}$ as the row of a transition matrix must. Moreover, for the probability ${\mathbb{P}\{X_3 = 6 \mid X_0 = 1\},}$ one could compute $p^{(3)}_{16}$ directly. However, starting from the state ${1,}$ the mouse can reach the state 6 in 3 steps only along two routes, ${1 \to 3 \to 4 \to 6}$ and ${1 \to 3 \to 5 \to 6,}$ drawn in Figure ${3,}$ thus
+Moreover, for the probability ${\mathbb{P}\{X_3 = 6 \mid X_0 = 1\},}$ one could compute $p^{(3)}_{16}$ directly. However, starting from the state ${1,}$ the mouse can reach the state 6 in 3 steps only along two routes, ${1 \to 3 \to 4 \to 6}$ and ${1 \to 3 \to 5 \to 6,}$ drawn in Figure ${1,}$ thus
 
 $$
 \mathbb{P}\{X_3 = 6 \mid X_0 = 1\} = 1 \cdot \frac14 \cdot \frac12 + 1 \cdot \frac14 \cdot \frac12 = \frac14.
@@ -147,7 +133,7 @@ $$
 p^{(3)}_{16} = \sum_{k, l} p_{1k} \, p_{kl} \, p_{l6}.
 $$
 
-A term is positive only if its three factors are. From room 1 the only possible step is to room ${3,}$ since ${p_{13} = 1;}$ room 6 can be entered only from rooms 4 and ${5;}$ and from room 3 the mouse goes to 4 or to 5 with probability $1/4$ each. So the sum has exactly two positive terms, ${p_{13} \, p_{34} \, p_{46} = 1 \cdot \frac14 \cdot \frac12 = \frac18}$ and ${p_{13} \, p_{35} \, p_{56} = \frac18,}$ one for each route, and they add up to ${1/4.}$
+A term is positive only if its three factors are. From room 1 the only possible step is to room ${3,}$ since ${p_{13} = 1;}$ room 6 can be entered only from rooms 4 and ${5;}$ and from room 3 the mouse goes to 4 or to 5 with probability $1/4$ each. So the sum has exactly two positive terms, ${p_{13} \, p_{34} \, p_{46} = 1 \cdot \frac14 \cdot \frac12 = \frac18}$ and ${p_{13} \, p_{35} \, p_{56} = \frac18,}$ one for each route.
 
 ## Communicating classes and periods
 
@@ -170,7 +156,7 @@ $$
 
 <Ex3Chain />
 
-**Figure 4.** The chain of Exercise 3 and its communicating classes $\mathcal{C}_1$ and ${\mathcal{C}_2.}$ Each arrow carries the probability of the jump.
+**Figure 2.** The chain of Exercise 3 and its communicating classes $\mathcal{C}_1$ and ${\mathcal{C}_2.}$ Each arrow carries the probability of the jump.
 
 ## A Markov chain defined inductively
 
@@ -217,7 +203,7 @@ $$
 \end{aligned}
 $$
 
-The first equality is the definition ${X_{n+1} = f(X_n, Z_n).}$ The second holds because on the event ${\{X_n = i_n\}}$ the variable $f(X_n, Z_n)$ equals ${f(i_n, Z_n),}$ so the two events ${\{f(X_n, Z_n) = j\}}$ and ${\{f(i_n, Z_n) = j\}}$ have the same intersection with the conditioning event, and a conditional probability depends only on that intersection. The fourth equality holds for the same reason, with the event ${\{X_n = i_n\}}$ alone, and the fifth is again the definition of ${X_{n+1}.}$ The third equality is the Markov property itself, and it rests on the independence just shown.
+The first equality is the definition ${X_{n+1} = f(X_n, Z_n).}$ The second holds because on the event ${\{X_n = i_n\}}$ the variable $f(X_n, Z_n)$ equals ${f(i_n, Z_n),}$ so the two events ${\{f(X_n, Z_n) = j\}}$ and ${\{f(i_n, Z_n) = j\}}$ have the same intersection with the conditioning event, and a conditional probability depends only on that intersection. The fourth equality holds for the same reason, with the event ${\{X_n = i_n\}}$ alone, and the fifth is again the definition of ${X_{n+1}.}$ The third equality rests on the independence just shown.
 
 To see it, write ${A = \{f(i_n, Z_n) = j\}}$ and ${C = \{X_{n-1} = i_{n-1}, \dots, X_0 = i_0\}.}$ The event $A$ belongs to ${\sigma\{Z_n\}{:}}$ it is ${\{Z_n \in S\}}$ with ${S = \{z \in E : f(i_n, z) = j\},}$ and $S$ belongs to $\mathcal{E}$ because, for a fixed ${i_n,}$ the map ${z \mapsto f(i_n, z)}$ is measurable, as every section of a product-measurable function is. The events ${\{X_n = i_n\}}$ and ${\{X_n = i_n\} \cap C}$ belong to ${\sigma\{X_0, \dots, X_n\}.}$ Here the third equality holds since
 
@@ -230,7 +216,7 @@ $$
 \end{aligned}
 $$
 
-where ${\mathbb{P}\{f(i_n, Z_n) = j\} = \mathbb{P}\{f(i_n, Z_n) = j \mid X_n = i_n\}}$ as ${Z_n \perp X_n.}$ The first line of this display is ${\mathbb{P}(A \cap C \mid X_n = i_n),}$ and the first equality is the definition of conditional probability, with ${\mathbb{P}\{X_n = i_n\} > 0}$ because this event contains the one of positive probability fixed above. The second equality is the independence of $A$ and ${\{X_n = i_n\} \cap C.}$ The third splits the quotient into two factors: the independence of $A$ and $\{X_n = i_n\}$ gives ${\mathbb{P}(A) = \mathbb{P}(A \cap \{X_n = i_n\}) / \mathbb{P}\{X_n = i_n\} = \mathbb{P}(A \mid X_n = i_n),}$ and the second factor is the definition of ${\mathbb{P}(C \mid X_n = i_n).}$
+where ${\mathbb{P}\{f(i_n, Z_n) = j\} = \mathbb{P}\{f(i_n, Z_n) = j \mid X_n = i_n\}}$ as ${Z_n \perp X_n.}$ The first line of this display is ${\mathbb{P}(A \cap C \mid X_n = i_n),}$ and the first equality is the definition of conditional probability, with ${\mathbb{P}\{X_n = i_n\} > 0}$ because this event contains the one of positive probability fixed above. The second equality is the independence of $A$ and ${\{X_n = i_n\} \cap C.}$ The third splits the quotient into two factors: the independence of $A$ and ${\{X_n = i_n\}}$ gives ${\mathbb{P}(A) = \mathbb{P}(A \cap \{X_n = i_n\}) / \mathbb{P}\{X_n = i_n\} = \mathbb{P}(A \mid X_n = i_n),}$ and the second factor is the definition of ${\mathbb{P}(C \mid X_n = i_n).}$
 
 The display says that, given ${\{X_n = i_n\},}$ the event $A$ is independent of the past ${C.}$ Dividing it by ${\mathbb{P}(C \mid X_n = i_n),}$ which is positive because ${\mathbb{P}\{X_n = i_n, \dots, X_0 = i_0\} > 0,}$ gives the third equality:
 
@@ -238,7 +224,13 @@ $$
 \mathbb{P}(A \mid \{X_n = i_n\} \cap C) = \frac{\mathbb{P}(A \cap C \mid X_n = i_n)}{\mathbb{P}(C \mid X_n = i_n)} = \mathbb{P}(A \mid X_n = i_n).
 $$
 
-The first equality here writes both conditional probabilities as quotients by ${\mathbb{P}\{X_n = i_n\},}$ which cancels. It remains to see that the transition probabilities do not depend on ${n.}$ By the independence of $A$ and ${\{X_n = i\},}$ as above, ${\mathbb{P}\{X_{n+1} = j \mid X_n = i\} = \mathbb{P}\{f(i, Z_n) = j\} = \mathbb{P}\{Z_n \in S\},}$ with ${S = \{z : f(i, z) = j\}.}$ The $Z_n$ are identically distributed, that is, ${\mathbb{P}\{Z_n \in S\} = \mathbb{P}\{Z_0 \in S\}}$ for every $S$ in ${\mathcal{E},}$ so this number is ${p_{ij} := \mathbb{P}\{f(i, Z_0) = j\}}$ for every ${n.}$
+The first equality here writes both conditional probabilities as quotients by ${\mathbb{P}\{X_n = i_n\},}$ which cancels. It remains to see that the transition probabilities do not depend on ${n.}$ By the independence of $A$ and ${\{X_n = i\},}$ as above,
+
+$$
+\mathbb{P}\{X_{n+1} = j \mid X_n = i\} = \mathbb{P}\{f(i, Z_n) = j\} = \mathbb{P}\{Z_n \in S\},
+$$
+
+with ${S = \{z : f(i, z) = j\}.}$ The $Z_n$ are identically distributed, that is, ${\mathbb{P}\{Z_n \in S\} = \mathbb{P}\{Z_0 \in S\}}$ for every $S$ in ${\mathcal{E},}$ so this number is ${p_{ij} := \mathbb{P}\{f(i, Z_0) = j\}}$ for every ${n.}$
 
 The numbers $p_{ij}$ form a transition matrix: they are nonnegative, and ${\sum_j p_{ij} = 1}$ by countable additivity, because $f(i, Z_0)$ takes exactly one value in the countable set ${I.}$ With $\lambda$ the distribution of ${X_0,}$ conditions (i) and (ii) of Definition 1.2 of the first post hold, so $(X_n)_{n \ge 0}$ is ${\mathrm{Markov}(\lambda, P).}$
 
@@ -263,14 +255,10 @@ $$
 
 Indeed, ${Y_{n+1} = f(Y_n, Z_{n+1})}$ with ${f(y, z) := y (2z - 1),}$ and Exercise 4 applies to the independent and identically distributed variables ${Z_1, Z_2, \dots,}$ which are independent of the constant ${Y_0 = 1.}$ In the notation of Exercise ${4,}$ the chain is ${X_n = Y_n}$ and the noise at time $n$ is ${Z_{n+1},}$ with values in ${E = \{0, 1\}}$ and its power set. A constant is independent of every random variable, because the events it generates are the empty set and the whole space. The function $f$ is measurable: the set ${I \times E}$ is countable, so each of its subsets is a countable union of points ${\{(y, z)\} = \{y\} \times \{z\},}$ which belong to the product $\sigma$-algebra.
 
-On the other hand, since ${Z_n \sim \mathcal{B}(1, q),}$ the variable ${2 Z_{n+1} - 1}$ takes values in ${\{-1, +1\},}$ so $Y_n$ also takes values in $\{-1, +1\}$ for all ${n \ge 0.}$ The Bernoulli distribution ${\mathcal{B}(1, q)}$ gives ${\mathbb{P}\{Z = 1\} = q}$ and ${\mathbb{P}\{Z = 0\} = 1 - q,}$ so ${2 Z_{n+1} - 1}$ is $+1$ with probability $q$ and $-1$ with probability ${1 - q.}$ By induction, ${Y_0 = 1,}$ and if $Y_n$ is $\pm 1$ then ${Y_{n+1} = \pm Y_n}$ is ${\pm 1}$ too: at each step the sign of $Y_n$ is kept when ${Z_{n+1} = 1}$ and changes when ${Z_{n+1} = 0.}$ Thus the transition matrix $P$ of the Markov chain $(Y_n)_{n \ge 0}$ is a ${2 \times 2}$ matrix, and
+On the other hand, since ${Z_n \sim \mathcal{B}(1, q),}$ the variable ${2 Z_{n+1} - 1}$ takes values in ${\{-1, +1\},}$ so $Y_n$ also takes values in ${\{-1, +1\}}$ for all ${n \ge 0.}$ The Bernoulli distribution ${\mathcal{B}(1, q)}$ gives ${\mathbb{P}\{Z = 1\} = q}$ and ${\mathbb{P}\{Z = 0\} = 1 - q,}$ so ${2 Z_{n+1} - 1}$ is $+1$ with probability $q$ and $-1$ with probability ${1 - q.}$ By induction, ${Y_0 = 1,}$ and if $Y_n$ is $\pm 1$ then ${Y_{n+1} = \pm Y_n}$ is ${\pm 1}$ too: at each step the sign of $Y_n$ is kept when ${Z_{n+1} = 1}$ and changes when ${Z_{n+1} = 0.}$ Thus the transition matrix $P$ of the Markov chain $(Y_n)_{n \ge 0}$ is a ${2 \times 2}$ matrix, and
 
 $$
 P = \begin{pmatrix} p_{-1,-1} & p_{-1,+1} \\ p_{+1,-1} & p_{+1,+1} \end{pmatrix} = \begin{pmatrix} q & 1 - q \\ 1 - q & q \end{pmatrix}.
 $$
 
-By Exercise ${4,}$ ${p_{ij} = \mathbb{P}\{f(i, Z_1) = j\}.}$ For ${i = -1}$ this is ${\mathbb{P}\{-(2 Z_1 - 1) = j\},}$ so ${p_{-1,-1} = \mathbb{P}\{Z_1 = 1\} = q}$ and ${p_{-1,+1} = \mathbb{P}\{Z_1 = 0\} = 1 - q.}$ For ${i = +1}$ it is ${\mathbb{P}\{2 Z_1 - 1 = j\},}$ so ${p_{+1,+1} = q}$ and ${p_{+1,-1} = 1 - q.}$ The chain starts at ${+1,}$ its initial distribution is the point mass ${\delta_{+1},}$ and it keeps its sign with probability $q$ at every step.
-
-<SignPath client:visible />
-
-**Figure 5.** An instance: a path ${Y_0, \dots, Y_{40}}$ for the $q$ set by the slider, with the changes of sign marked. The button draws another path.
+By Exercise ${4,}$ ${p_{ij} = \mathbb{P}\{f(i, Z_1) = j\}.}$ For ${i = -1}$ this is ${\mathbb{P}\{-(2 Z_1 - 1) = j\},}$ so ${p_{-1,-1} = \mathbb{P}\{Z_1 = 1\} = q}$ and ${p_{-1,+1} = \mathbb{P}\{Z_1 = 0\} = 1 - q.}$ For ${i = +1}$ it is ${\mathbb{P}\{2 Z_1 - 1 = j\},}$ so ${p_{+1,+1} = q}$ and ${p_{+1,-1} = 1 - q.}$

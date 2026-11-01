@@ -5,14 +5,10 @@ summary: 'A Markov chain on a countable state space $I$ is determined by an init
 ---
 
 import FrogGraph from './FrogGraph.svelte';
-import Outcome from './Outcome.svelte';
-import FrogPath from './FrogPath.svelte';
 import FrogSim from './FrogSim.svelte';
-import FrogPowers from './FrogPowers.svelte';
-import ChapmanKolmogorov from './ChapmanKolmogorov.svelte';
 import TwoState from './TwoState.svelte';
 
-Markov chains were introduced in 1906 by Andrei Andreyevich Markov (1856–1922) and were named in his honour. This lecture defines them, describes where they come from and how to simulate them, and computes the probabilities of moving between states in $n$ steps.
+Markov chains were introduced in 1906 by Andrei Andreyevich Markov (1856–1922) and were named in his honour.
 
 ## An example and some interesting questions
 
@@ -36,7 +32,7 @@ P = \begin{pmatrix}
 \end{pmatrix}.
 $$
 
-The element $p_{57} = \frac12$ of $P$ is the probability that, when starting in state 5, the next jump takes the frog to state 7. We would like to know where the frog goes, how long it takes to get there, and what happens in the long run. Write $p^{(n)}_{11}$ for the probability that the frog, starting in state 1, is in state 1 after $n$ jumps. Specifically:\
+The element ${p_{57} = \frac12}$ of $P$ is the probability that, when starting in state 5, the next jump takes the frog to state 7. We would like to know where the frog goes, how long it takes to get there, and what happens in the long run. Write $p^{(n)}_{11}$ for the probability that the frog, starting in state 1, is in state 1 after $n$ jumps. Specifically:\
 **(a)** Starting in state 1, what is the probability that the frog is still in state 1 after 3 jumps, after 5 jumps, after 1000 jumps? The answers are ${p^{(3)}_{11} = \frac14,}$ ${p^{(5)}_{11} = \frac{3}{16},}$ and about $\frac15$ after 1000 jumps, because ${\lim_{n \to \infty} p^{(n)}_{11} = \frac15.}$\
 **(b)** Starting in state 4, what is the probability that the frog ever reaches state 7? The answer is $\frac13.$\
 **(c)** Starting in state 4, how long on average does it take to reach either state 3 or state 7? The answer is $\frac{11}{3}.$\
@@ -48,17 +44,11 @@ Markov chain models and methods are useful in answering questions such as the fo
 
 ### Probability spaces and random variables
 
-The frog of Example 1.1 is read in this language in the example at the end of this section.
-
 **Definition (Probability space).** A *probability space* is a triple $(\Omega, \mathscr{F}, P).$ The *sample space* $\Omega$ is the set of all possible outcomes of a random process. The *event space* $\mathscr{F}$ is a set of *events*, where an event is a subset of $\Omega.$ The *probability* $P$ is a function that assigns a number between 0 and 1 to every event in $\mathscr{F}.$
 
-**Definition (Random variable).** Let $(E, \mathscr{E})$ be a measurable space. A *random variable* with values in $E$ is a measurable function ${X \colon \Omega \to E,}$ that is, a function such that, for every ${B \in \mathscr{E},}$
+**Definition (Random variable).** Let $E$ be a measurable space. A *random variable* with values in $E$ is a measurable function ${X \colon \Omega \to E.}$
 
-$$
-X^{-1}(B) = \{ \omega \in \Omega : X(\omega) \in B \} \in \mathscr{F}.
-$$
-
-**Definition (Distribution).** The *probability distribution* of a random variable $X$ describes how probability is assigned to the values of $X{:}$ it assigns to every ${B \in \mathscr{E}}$ the number ${P(X \in B).}$
+**Definition (Distribution).** The *probability distribution* of a random variable $X$ describes how probability is assigned to the values of $X.$
 
 **Example (The outcome of 10 jumps).** A sequence of positions of the frog is an experiment. The set of all experiments is the sample space $\Omega,$ $\mathscr{F}$ is a set of subsets of $\Omega,$ and $P$ is a probability. Take the experiment of exactly 11 positions, that is, 10 jumps,
 
@@ -66,11 +56,7 @@ $$
 \omega = (1, 2, 3, 2, 3, 4, 3, 4, 2, 1, 2).
 $$
 
-The random variable $X_n$ returns the position after $n$ jumps, ${X_n(\omega) = \omega_n,}$ so ${X_0(\omega) = 1,}$ ${X_1(\omega) = 2}$ and ${X_2(\omega) = 3.}$ A random variable takes as input an element of $\Omega,$ an outcome and not an event, and returns a value. Figure 2 draws this $\omega.$
-
-<Outcome client:visible />
-
-**Figure 2.** The outcome $\omega$ of the example, position against $n.$ The slider chooses $n$ and the figure reads off $X_n(\omega).$
+The random variable $X_n$ returns the position after $n$ jumps, ${X_n(\omega) = \omega_n,}$ so ${X_0(\omega) = 1,}$ ${X_1(\omega) = 2}$ and ${X_2(\omega) = 3.}$ A random variable takes as input an element of $\Omega,$ an outcome and not an event, and returns a value.
 
 ### Markov chains
 
@@ -111,19 +97,13 @@ $$
 \end{aligned}
 $$
 
-and for ${n = 0}$ (1.1) is condition (i). On the other hand, if (1.1) holds, summing it over all ${i_1, \dots, i_n}$ gives ${P(X_0 = i_0) = \lambda_{i_0},}$ that is, (i). Then summing (1.1) over $i_n$ gives ${P(X_0 = i_0, \dots, X_{n-1} = i_{n-1}) = \lambda_{i_0} p_{i_0 i_1} \cdots p_{i_{n-2} i_{n-1}}.}$ Hence
+and for ${n = 0,}$ (1.1) is condition (i). On the other hand, if (1.1) holds, summing it over all ${i_1, \dots, i_n}$ gives ${P(X_0 = i_0) = \lambda_{i_0},}$ that is, (i). Then summing (1.1) over $i_n$ gives ${P(X_0 = i_0, \dots, X_{n-1} = i_{n-1}) = \lambda_{i_0} p_{i_0 i_1} \cdots p_{i_{n-2} i_{n-1}}.}$ Hence
 
 $$
 P(X_n = i_n \mid X_0 = i_0, \dots, X_{n-1} = i_{n-1}) = \frac{P(X_0 = i_0, \dots, X_n = i_n)}{P(X_0 = i_0, \dots, X_{n-1} = i_{n-1})} = p_{i_{n-1} i_n},
 $$
 
 which establishes (ii). $\blacksquare$
-
-By (1.1), the probability of a sequence of jumps is a product of entries of $P$ along it. For question (a) of Example 1.1, the only sequence of 3 jumps from state 1 back to state 1 with positive probability visits the states 1, 2, 3, 1, and its probability is ${1 \cdot \frac12 \cdot \frac12 = \frac14 = p^{(3)}_{11}.}$ Figure 3 computes the product for any sequence of states.
-
-<FrogPath client:visible />
-
-**Figure 3.** Formula (1.1) on the chain of Example 1.1 with ${\lambda = \delta_{i_0}.}$ Clicking a pad appends it to the sequence, and the product of the entries of $P$ along the sequence is updated; it is 0 as soon as one jump has probability 0.
 
 ## Where do Markov chains come from?
 
@@ -142,15 +122,13 @@ Label the states ${1, 2, \dots.}$ Use a computer to simulate ${U_1, U_2, \dots}$
 $$
 \begin{aligned}
 U &\in [0, p_{i1}) & &\Longrightarrow \quad J = 1, \\
-U &\in \Big[ \sum_{k=1}^{j-1} p_{ik}, \ \sum_{k=1}^{j} p_{ik} \Big), \quad j \ge 2 & &\Longrightarrow \quad J = j.
+U &\in \left[ \sum_{k=1}^{j-1} p_{ik}, \ \sum_{k=1}^{j} p_{ik} \right), \quad j \ge 2 & &\Longrightarrow \quad J = j.
 \end{aligned}
 $$
 
-For fixed $i$ these intervals are disjoint, the interval of ${J = j}$ has length $p_{ij},$ and their union is $[0, 1)$ because ${\sum_j p_{ij} = 1.}$ Hence ${P(F(i, U) = j) = p_{ij},}$ and the construction of the previous section produces a chain that is $\mathrm{Markov}(\delta_i, P).$
-
 <div class="wide"><FrogSim client:visible /></div>
 
-**Figure 4.** The rules above on the chain of Example 1.1. The row of the current state $X_n$ splits $[0, 1)$ into one interval for each state $j$ with ${p_{X_n j} > 0,}$ and the interval containing the mark $U_{n+1}$ gives $X_{n+1}.$ The slider sets $X_0$ and the button draws new uniform variables.
+**Figure 2.** The rules above on the chain of Example 1.1. The row of the current state $X_n$ splits $[0, 1)$ into one interval for each state $j$ with ${p_{X_n j} > 0,}$ and the interval containing the mark $U_{n+1}$ gives $X_{n+1}.$ The slider sets $X_0$ and the button draws new uniform variables.
 
 ## The $n$-step transition matrix
 
@@ -190,11 +168,7 @@ $$
 p^{(n+m)}_{ij} = \sum_{k \in I} p^{(n)}_{ik} p^{(m)}_{kj}.
 $$
 
-They are obvious because the right-hand side is the entry $(i, j)$ of ${P^n P^m = P^{n+m}.}$ They are named for their independent formulation by Chapman (a Trinity College graduate, 1880–1970) and Kolmogorov (1903–1987).
-
-<ChapmanKolmogorov client:visible />
-
-**Figure 5.** The Chapman–Kolmogorov equations on the chain of Example 1.1. Every path from $i$ through a state $k$ at time $n$ to $j$ is drawn: a step with probability 0 is dashed, and a path is thicker when ${p^{(n)}_{ik} p^{(m)}_{kj}}$ is larger. The sliders set $i,$ $j,$ $n$ and $m.$ The sum over $k$ equals $p^{(n+m)}_{ij}.$
+They are named for their independent formulation by Chapman (a Trinity College graduate, 1880–1970) and Kolmogorov (1903–1987).
 
 In Example 1.1, as ${n \to \infty,}$
 
@@ -209,10 +183,6 @@ P^{(n)} \to \begin{pmatrix}
 0 & 0 & 0 & 0 & 0 & 0 & 1
 \end{pmatrix}.
 $$
-
-<FrogPowers client:visible />
-
-**Figure 6.** The matrix $P^n$ of Example 1.1, each entry shaded by its value. The slider sets $n$ from 0 to 60, and $p^{(n)}_{11}$ is written above the grid: ${n = 3}$ and ${n = 5}$ give the values $\frac14$ and $\frac{3}{16}$ of question (a).
 
 ## The matrix $P^{(n)}$ of a two-state chain
 
@@ -245,12 +215,12 @@ $$
 
 <TwoState client:visible />
 
-**Figure 7.** The chain of Example 1.4 for the values of $\alpha$ and $\beta$ set by the sliders, and $p^{(n)}_{11}$ for ${n = 0, 1, \dots, 30}$ with the level ${\beta/(\alpha + \beta).}$
+**Figure 3.** The chain of Example 1.4 for the values of $\alpha$ and $\beta$ set by the sliders, and $p^{(n)}_{11}$ for ${n = 0, 1, \dots, 30}$ with the level ${\beta/(\alpha + \beta).}$
 
 **Note.** We might have reached the same answer by arguing that
 
 $$
-p^{(n)}_{11} = p^{(n-1)}_{11} p_{11} + p^{(n-1)}_{12} p_{21} = p^{(n-1)}_{11} (1 - \alpha) + \big( 1 - p^{(n-1)}_{11} \big) \beta.
+p^{(n)}_{11} = p^{(n-1)}_{11} p_{11} + p^{(n-1)}_{12} p_{21} = p^{(n-1)}_{11} (1 - \alpha) + \Bigl( 1 - p^{(n-1)}_{11} \Bigr) \beta.
 $$
 
 This gives the linear recurrence relation, an equation that expresses each element of a sequence as a function of the preceding ones,

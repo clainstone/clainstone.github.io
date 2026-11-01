@@ -4,11 +4,7 @@ date: 2026-09-24
 summary: 'A state is recurrent when the chain started there returns to it with probability 1, and transient otherwise. The renewal equation relates the $n$-step transition probabilities to the first-entrance probabilities, a state $i$ is recurrent if and only if $\sum_n p^{(n)}_{ii}$ diverges, recurrence and transience are class properties, a transient state is visited finitely many times almost surely, and a chain with finitely many states has a recurrent state.'
 ---
 
-import FirstVisit from './FirstVisit.svelte';
-import PartialSums from './PartialSums.svelte';
-import RowMass from './RowMass.svelte';
-
-Does a Markov chain started at a state $i$ come back to $i$? The answer can be read from the $n$-step transition probabilities $p^{(n)}_{ii}$ of the previous posts.
+Does a Markov chain started at a state $i$ come back to ${i?}$
 
 ## Recurrent and transient states
 
@@ -17,7 +13,7 @@ Throughout, $(X_n)_{n \ge 0}$ is a Markov chain on the state space $I$ with tran
 **Definition 3.1.** A state $i$ is called *recurrent* if
 
 $$
-\mathbb{P}\Big( \bigcup_{n=1}^{\infty} \{ X_n = i \} \,\Big|\, \{ X_0 = i \} \Big) = 1,
+\mathbb{P}\Biggl( \bigcup_{n=1}^{\infty} \{ X_n = i \} \,\Bigg|\, \{ X_0 = i \} \Biggr) = 1,
 $$
 
 otherwise it is called *transient*.
@@ -42,10 +38,6 @@ $$
 \end{aligned}
 $$
 
-<FirstVisit client:visible />
-
-**Figure 1.** An instance: a path ${X_0, \dots, X_{14}}$ of the chain of Example 2.1, started at ${X_0 = 1.}$ The buttons choose ${j;}$ the first ${n \ge 1}$ with ${X_n = j,}$ that is ${T_j,}$ is marked, and the last button draws another path.
-
 **Notation.** For simplicity we denote by $\mathbb{P}_i$ the conditional probability
 
 $$
@@ -69,10 +61,10 @@ $$
 The Markov chain $(X_n)_{n \ge 0}$ is time-homogeneous, therefore, for every ${m \ge 0}$ with ${\mathbb{P}\{ X_m = i \} > 0,}$
 
 $$
-f^{(n)}_{ij} = \mathbb{P}\Big( \{ X_{m+n} = j \} \cap \bigcap_{1 \le \nu \le n-1} \{ X_{m+\nu} \neq j \} \,\Big|\, \{ X_m = i \} \Big).
+f^{(n)}_{ij} = \mathbb{P}\Biggl( \{ X_{m+n} = j \} \cap \bigcap_{1 \le \nu \le n-1} \{ X_{m+\nu} \neq j \} \,\Bigg|\, \{ X_m = i \} \Biggr).
 $$
 
-Indeed, conditional on ${X_m = i,}$ the chain $(X_{m+n})_{n \ge 0}$ is $\mathrm{Markov}(\delta_i, P)$ by the Markov property, so the event on the right has the probability that ${\{ T_j = n \}}$ has under ${\mathbb{P}_i.}$ Note that a state $i$ is recurrent if ${f^*_{ii} = 1}$ and transient if ${f^*_{ii} < 1.}$
+Note that a state $i$ is recurrent if ${f^*_{ii} = 1}$ and transient if ${f^*_{ii} < 1.}$
 
 ### The renewal equation
 
@@ -109,19 +101,11 @@ p^{(n)}_{ij} &= f^{(n)}_{ij} + \sum_{1 \le \nu \le n-1} \mathbb{P}_i\{ X_n = j \
 \end{aligned}
 $$
 
-This proves (6). Indeed, the event ${\{ X_{\nu-1} \neq j, \dots, X_1 \neq j \}}$ is determined by ${X_0, \dots, X_\nu,}$ so the Markov property removes it from the condition, and $f^{(n)}_{ij}$ is the term ${\nu = n}$ of (6) because ${p^{(0)}_{jj} = 1.}$ $\blacksquare$
+This proves (6). $\blacksquare$
 
 ### A criterion for recurrence
 
 The proof of Theorem 3.5 uses Lemma 3.4, also known as [Abel's lemma](https://en.wikipedia.org/wiki/Abel%27s_theorem). It could be proved directly, but it is an immediate consequence of the [monotone convergence theorem](https://en.wikipedia.org/wiki/Monotone_convergence_theorem), and its proof is skipped.
-
-**Definition (Radius of convergence).** Let $(a_n)_{n \ge 0}$ be a sequence of real numbers. The *radius of convergence* of the power series ${\sum_{n \ge 0} a_n s^n}$ is
-
-$$
-r = \sup \Big\{ \rho \ge 0 : \sum_{n=0}^{\infty} |a_n| \rho^n < +\infty \Big\} \in [0, +\infty].
-$$
-
-For every real $s$ with ${|s| < r}$ the series converges absolutely. By the definition of the supremum there is ${\rho > |s|}$ with ${\sum_n |a_n| \rho^n < +\infty,}$ and ${|a_n s^n| \le |a_n| \rho^n}$ for every $n.$ For ${|s| > r}$ the series diverges.
 
 **Lemma 3.4.** Let $(a_n)_{n \ge 0}$ be a sequence of nonnegative real numbers such that the power series
 
@@ -151,19 +135,13 @@ $$
 P_{ii}(s) = \sum_{n=0}^{\infty} p^{(n)}_{ii} s^n, \qquad F_{ii}(s) = \sum_{n=0}^{\infty} f^{(n)}_{ii} s^n.
 $$
 
-In both cases the radius of convergence is ${r \ge 1,}$ because the sequences $(p^{(n)}_{ii})_{n \ge 0}$ and $(f^{(n)}_{ii})_{n \ge 0}$ are bounded. In detail, every term is a probability, so ${0 \le p^{(n)}_{ii} \le 1}$ and ${0 \le f^{(n)}_{ii} \le 1}$ for all $n.$ Hence, for every ${\rho \in [0, 1),}$ the geometric series bounds both series of absolute values:
-
-$$
-\sum_{n=0}^{\infty} p^{(n)}_{ii} \rho^n \le \sum_{n=0}^{\infty} \rho^n = \frac{1}{1 - \rho} < +\infty, \qquad \sum_{n=0}^{\infty} f^{(n)}_{ii} \rho^n \le \frac{1}{1 - \rho} < +\infty.
-$$
-
-Every ${\rho \in [0, 1)}$ therefore belongs to the set whose supremum is the radius of convergence, and that supremum is at least 1. In particular both series converge absolutely for every ${s \in (-1, 1),}$ the range of $s$ used in the rest of the proof. By the renewal equation (6) of Theorem 3.3 with ${j = i,}$ for all ${n \ge 1}$ we have
+In both cases the radius of convergence is ${r \ge 1,}$ because the sequences $(p^{(n)}_{ii})_{n \ge 0}$ and $(f^{(n)}_{ii})_{n \ge 0}$ are bounded. By the renewal equation (6) of Theorem 3.3 with ${j = i,}$ for all ${n \ge 1}$ we have
 
 $$
 p^{(n)}_{ii} s^n = s^n \sum_{\nu=1}^{n} f^{(\nu)}_{ii} p^{(n-\nu)}_{ii} = \sum_{\nu=1}^{n} f^{(\nu)}_{ii} s^\nu p^{(n-\nu)}_{ii} s^{n-\nu}.
 $$
 
-The second equality brings $s^n$ inside the sum and writes it as ${s^n = s^\nu s^{n-\nu}.}$ Summing over ${n \ge 1,}$ we obtain
+Summing over ${n \ge 1,}$ we obtain
 
 $$
 \begin{aligned}
@@ -175,17 +153,7 @@ P_{ii}(s) - 1 &= \sum_{n=1}^{\infty} p^{(n)}_{ii} s^n \\
 \end{aligned}
 $$
 
-The first equality holds because ${p^{(0)}_{ii} = \mathbb{P}_i\{ X_0 = i \} = 1,}$ so the term ${n = 0}$ of $P_{ii}(s)$ is 1. The second replaces each $p^{(n)}_{ii} s^n$ with the previous display. The third exchanges the order of summation: the pairs ${(n, \nu)}$ with ${1 \le \nu \le n}$ are exactly the pairs with ${\nu \ge 1}$ and ${n \ge \nu.}$ The fourth renames ${n - \nu}$ as $n$ in the inner sum, which then runs from 0 and no longer depends on $\nu.$ The fifth takes out the common factor $P_{ii}(s)$ and uses ${f^{(0)}_{ii} = 0,}$ so that the sum over ${\nu \ge 1}$ is ${F_{ii}(s).}$
-
-The exchange in the third equality is allowed because the double series converges absolutely for ${|s| < 1.}$ Indeed, the numbers $f^{(\nu)}_{ii}$ and $p^{(m)}_{ii}$ are nonnegative, so replacing $s$ with $|s|$ replaces each term with its absolute value. By the first two equalities, applied at $|s|,$ the double series of absolute values sums to ${P_{ii}(|s|) - 1,}$ which is finite because ${|s| < 1 \le r.}$ A double series whose absolute values have a finite sum can be summed in either order, with the same result.
-
-The chain of equalities reads ${P_{ii}(s) - 1 = F_{ii}(s) P_{ii}(s),}$ that is ${P_{ii}(s) (1 - F_{ii}(s)) = 1.}$ To divide by ${1 - F_{ii}(s)}$ it must be nonzero. Since ${f^{(0)}_{ii} = 0}$ and ${|s|^n \le |s|}$ for ${n \ge 1,}$
-
-$$
-|F_{ii}(s)| \le \sum_{n=1}^{\infty} f^{(n)}_{ii} |s|^n \le |s| \sum_{n=1}^{\infty} f^{(n)}_{ii} = |s| f^*_{ii} \le |s| < 1,
-$$
-
-where ${f^*_{ii} \le 1}$ because it is a probability. Hence ${1 - F_{ii}(s) > 0,}$ and therefore, for all ${s \in (-1, 1),}$
+Therefore, for all ${s \in (-1, 1),}$
 
 $$
 P_{ii}(s) = \frac{1}{1 - F_{ii}(s)}.
@@ -194,16 +162,8 @@ $$
 The conclusion follows from an application of Abel's lemma, noting that
 
 $$
-\lim_{s \to 1^-} F_{ii}(s) = f^*_{ii}, \qquad \lim_{s \to 1^-} P_{ii}(s) = \sum_{n=0}^{\infty} p^{(n)}_{ii}.
+\lim_{s \to 1^-} F_{ii}(s) = f^*_{ii}, \qquad \lim_{s \to 1^-} P_{ii}(s) = \sum_{n=0}^{\infty} p^{(n)}_{ii}. \tag*{$\blacksquare$}
 $$
-
-Both limits follow from Lemma 3.4, applied to ${a_n = f^{(n)}_{ii}}$ and to ${a_n = p^{(n)}_{ii}{:}}$ the terms are nonnegative, and the radius of convergence is at least 1 by the first step of the proof. In the first limit the sum of the series is ${\sum_{n \ge 1} f^{(n)}_{ii} = f^*_{ii},}$ because ${f^{(0)}_{ii} = 0;}$ the second limit may be ${+\infty.}$
-
-Now let ${s \to 1^-}$ in ${P_{ii}(s) = 1/(1 - F_{ii}(s)).}$ Recall that $i$ is recurrent if ${f^*_{ii} = 1}$ and transient if ${f^*_{ii} < 1.}$ If $i$ is recurrent, then ${1 - F_{ii}(s)}$ is positive and tends to 0, so $P_{ii}(s)$ tends to ${+\infty;}$ by the second limit the series $\sum_{n \ge 0} p^{(n)}_{ii}$ diverges. If $i$ is transient, then ${1 - F_{ii}(s)}$ tends to ${1 - f^*_{ii} > 0,}$ so ${\sum_{n \ge 0} p^{(n)}_{ii} = 1/(1 - f^*_{ii}) < +\infty.}$ The first case shows that (a) implies (b); the second shows that if (a) fails then (b) fails, that is, (b) implies (a). Finally, since ${\{ T_i = \infty \}}$ is the complement of ${\{ T_i < +\infty \},}$ we have ${\mathbb{P}_i\{ T_i = \infty \} = 1 - f^*_{ii},}$ which gives the formula for transient $i.$ $\blacksquare$
-
-<PartialSums client:visible />
-
-**Figure 2.** Theorem 3.5 on the chain of Example 2.5, an instance: the partial sums ${\sum_{n=0}^{N} p^{(n)}_{ii}}$ for ${N = 0, \dots, 40.}$ The buttons choose $i.$
 
 ### Classes and visits
 
@@ -229,7 +189,7 @@ so that the series $\sum_{n \ge 0} p^{(n)}_{kk}$ and $\sum_{n \ge 0} p^{(n)}_{jj
 For every state ${j,}$ the sum of the series $\sum_{n \ge 0} p^{(n)}_{ij}$ is the average sojourn time in $j,$ the average number of visits to ${j,}$ starting from $i.$ The random variable $\sum_{n \ge 0} \mathbf{1}_{\{ X_n = j \}}$ represents the random time spent in ${j,}$ because it counts how many times the event ${\{ X_n = j \}}$ occurs, and its expectation is
 
 $$
-\mathbb{E}_i\Big[ \sum_{n \ge 0} \mathbf{1}_{\{ X_n = j \}} \Big] = \sum_{n \ge 0} \mathbb{E}_i\big[ \mathbf{1}_{\{ X_n = j \}} \big] = \sum_{n \ge 0} \mathbb{P}_i\{ X_n = j \} = \sum_{n \ge 0} p^{(n)}_{ij}. \tag{7}
+\mathbb{E}_i\Biggl[ \sum_{n \ge 0} \mathbf{1}_{\{ X_n = j \}} \Biggr] = \sum_{n \ge 0} \mathbb{E}_i\big[ \mathbf{1}_{\{ X_n = j \}} \big] = \sum_{n \ge 0} \mathbb{P}_i\{ X_n = j \} = \sum_{n \ge 0} p^{(n)}_{ij}. \tag{7}
 $$
 
 **Corollary 3.7.** If $j$ is a transient state, then for every state $i$ the series
@@ -250,7 +210,7 @@ $$
 \end{aligned}
 $$
 
-In particular, by ${(7),}$ the random variable $\sum_{n \ge 0} \mathbf{1}_{\{ X_n = j \}}$ has finite expectation under ${\mathbb{P}_i.}$ It follows that it is almost surely finite, and so only a finite number of the events ${\{ X_n = j \}}$ occur. Indeed, the sums can be exchanged because their terms are nonnegative, the last series converges by Theorem 3.5 because $j$ is transient, and ${p^{(0)}_{ij} = 0}$ for ${i \neq j.}$ $\blacksquare$
+In particular, by ${(7),}$ the random variable $\sum_{n \ge 0} \mathbf{1}_{\{ X_n = j \}}$ has finite expectation under ${\mathbb{P}_i.}$ It follows that it is almost surely finite, and so only a finite number of the events ${\{ X_n = j \}}$ occur. $\blacksquare$
 
 In the case where the number of states is finite, the Markov chain cannot visit only transient states, each one a finite number of times. Corollary 3.8 is a consequence.
 
@@ -269,7 +229,3 @@ $$
 $$
 
 Taking the limit as $n$ goes to infinity and exchanging limit and sum on ${j,}$ we find the contradiction ${0 = 1.}$ $\blacksquare$
-
-<RowMass client:visible />
-
-**Figure 3.** Corollaries 3.7 and 3.8 on the chain of Example 2.5, an instance: the entries $p^{(n)}_{ij}$ of the row $i$ of ${P^n,}$ one bar for each state $j.$ The slider sets $n$ and the buttons choose $i.$

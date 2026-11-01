@@ -5,21 +5,15 @@ published: 2026-10-15
 summary: 'Sequences of measurable functions can converge pointwise, uniformly, almost everywhere, in $L^p$ and in measure. Convergence in $L^p$ implies convergence in measure, which gives a subsequence that converges almost everywhere, and on a finite measure space convergence almost everywhere implies convergence in measure; dominated convergence holds in $L^p$ for $p < +\infty,$ and limits in two of these senses agree almost everywhere.'
 ---
 
-import Band from './Band.svelte';
 import Implications from './Implications.svelte';
 import Typewriter from './Typewriter.svelte';
-import Witnesses from './Witnesses.svelte';
 import Shift from './Shift.svelte';
-import Level from './Level.svelte';
 import Spike from './Spike.svelte';
 import Edge from './Edge.svelte';
-import Difference from './Difference.svelte';
-import Indices from './Indices.svelte';
 import Cosine from './Cosine.svelte';
 import Plateau from './Plateau.svelte';
-import Rational from './Rational.svelte';
 
-A sequence of measurable functions can converge to a measurable function in several senses, one of them given by the norms of the spaces $L^p$ of the previous post. The question is which of these notions of convergence implies which.
+A sequence of measurable functions can converge to a measurable function in several senses.
 
 ## Notions of convergence
 
@@ -43,41 +37,29 @@ $$
 \lim_{n \to \infty} \mu(\{ x \in X : |f_n(x) - f(x)| > \varepsilon \}) = 0.
 $$
 
-The set in Definition 1 (v) is also written ${\{ |f_n - f| > \varepsilon \}.}$ Figure 1 draws it for an instance, together with the supremum in (ii).
+The set in Definition 1 (v) is also written ${\{ |f_n - f| > \varepsilon \}.}$
 
-<Band client:visible />
+**Remark 2.** The notions (iii), (iv) and (v) of Definition 1 make sense for ${(f_n) \subset L^p}$ and ${f \in L^p.}$
 
-**Figure 1.** An instance on an interval with ${\mu = \lambda{:}}$ a function ${f,}$ dashed, a function ${f_n,}$ the band of the points at vertical distance at most $\varepsilon$ from the graph of ${f,}$ shaded, and the set ${\{ |f_n - f| > \varepsilon \}}$ hatched on the axis. The vertical segment marks the largest value of ${|f_n - f|,}$ the supremum in Definition 1 (ii); the slider sets ${\varepsilon.}$
+**Remark 3 (Obvious implications).** Let $(f_n)$ and $f$ be as in Definition 1. The notions of convergence of Definition 1 are related as in Figure 1. Uniform convergence implies pointwise convergence, which implies convergence almost everywhere, and neither implication can be reversed. Uniform convergence implies convergence in ${L^\infty,}$ which does not imply uniform convergence, and convergence in $L^\infty$ implies convergence almost everywhere and convergence in measure.
 
-**Remark 2.** The notions (iii), (iv) and (v) of Definition 1 make sense for ${(f_n) \subset L^p}$ and ${f \in L^p.}$ Indeed, changing each $f_n$ and $f$ on a set of measure zero changes neither the convergence almost everywhere, nor ${\|f_n - f\|_p,}$ nor ${\mu(\{ |f_n - f| > \varepsilon \}).}$
-
-**Remark 3 (Implications).** Let $(f_n)$ and $f$ be as in Definition 1. The notions of convergence of Definition 1 are related as in Figure 2. Uniform convergence implies pointwise convergence, which implies convergence almost everywhere, and neither implication can be reversed. Uniform convergence implies convergence in ${L^\infty,}$ which does not imply uniform convergence, and convergence in $L^\infty$ implies convergence almost everywhere and convergence in measure.
-
-Convergence in $L^\infty$ implies convergence almost everywhere: by Remark 20 of the previous post, ${|f_n(x) - f(x)| \le \|f_n - f\|_\infty}$ for almost every ${x \in X,}$ and ${\lim_{n \to \infty} \|f_n - f\|_\infty = 0.}$ Indeed, the sets where the inequality fails, one for each ${n,}$ have measure zero, and so does their union.
-
-Convergence in $L^\infty$ implies convergence in measure. Let ${\varepsilon > 0}$ and consider the set ${\{ |f_n - f| > \varepsilon \}.}$ There exists $N$ such that ${\|f_n - f\|_\infty \le \varepsilon/2}$ for every ${n \ge N.}$ Hence ${\mu(\{ |f_n - f| > \varepsilon \}) = 0}$ for every ${n \ge N.}$ Indeed, for such $n$ the set ${\{ |f_n - f| > \varepsilon \}}$ is contained in the set where ${|f_n - f| > \|f_n - f\|_\infty,}$ which has measure zero by Remark 20 of the previous post.
+Convergence in $L^\infty$ implies convergence almost everywhere: ${|f_n(x) - f(x)| \le \|f_n - f\|_\infty}$ for almost every ${x \in X,}$ and ${\lim_{n \to \infty} \|f_n - f\|_\infty = 0.}$ Convergence in $L^\infty$ implies convergence in measure. Let ${\varepsilon > 0}$ and consider the set ${\{ |f_n - f| > \varepsilon \}.}$ There exists $N$ such that ${\|f_n - f\|_\infty \le \varepsilon/2}$ for every ${n \ge N.}$ Hence ${\mu(\{ |f_n - f| > \varepsilon \}) = 0}$ for every ${n \ge N.}$
 
 <Implications />
 
-**Figure 2.** The drawing of Remark 3: each box is a notion of convergence of $f_n$ to ${f,}$ a double arrow is an implication, and a crossed double arrow is an implication that does not hold.
+**Figure 1.** The drawing of Remark 3: the five notions of convergence of $f_n$ to ${f,}$ a double arrow for each implication and a crossed double arrow for each implication that does not hold.
 
 ### Typewriter sequence
 
-**Example 4 (Typewriter sequence).** On ${[0, 1]}$ with the Lebesgue measure ${\lambda,}$ consider the sequence ${(f_n)_{n \ge 1}}$ of characteristic functions drawn in Figure 3. Its first terms are ${f_1 = \chi_{[0, 1/2]}}$ and ${f_2 = \chi_{[1/2, 1]},}$ then the characteristic functions ${f_3, \dots, f_6}$ of ${[0, 1/4],}$ ${[1/4, 1/2],}$ $[1/2, 3/4]$ and ${[3/4, 1],}$ then ${f_7 = \chi_{[0, 1/8]},}$ and so on. In detail, the terms come in groups: for every ${k \ge 1}$ the $k$-th group is made of the characteristic functions of the intervals ${[j/2^k, (j + 1)/2^k]}$ with ${j = 0, 1, \dots, 2^k - 1,}$ in this order.
+**Example 4 (Typewriter sequence).** On ${[0, 1]}$ with the Lebesgue measure ${\lambda,}$ consider the sequence ${(f_n)_{n \ge 1}}$ of characteristic functions drawn in Figure 2. Its first terms are ${f_1 = \chi_{[0, 1/2]}}$ and ${f_2 = \chi_{[1/2, 1]},}$ then the characteristic functions ${f_3, \dots, f_6}$ of ${[0, 1/4],}$ ${[1/4, 1/2],}$ $[1/2, 3/4]$ and ${[3/4, 1],}$ then ${f_7 = \chi_{[0, 1/8]},}$ and so on. In detail, the terms come in groups: for every ${k \ge 1}$ the $k$-th group is made of the characteristic functions of the intervals ${[j/2^k, (j + 1)/2^k]}$ with ${j = 0, 1, \dots, 2^k - 1,}$ in this order.
 
 <Typewriter />
 
-**Figure 3.** The drawing of Example 4: the graphs of the functions $f_1$ to ${f_{14},}$ in rows of 2, 4 and 8, each on its own copy of ${[0, 1].}$ The functions ${f_1,}$ $f_3$ and ${f_7,}$ circled, are the first terms of the subsequence that converges to $0$ almost everywhere.
+**Figure 2.** The drawing of Example 4: the graphs of the functions $f_1$ to ${f_{14},}$ in rows of 2, 4 and 8, each on its own copy of ${[0, 1].}$ The functions ${f_1,}$ $f_3$ and ${f_7,}$ circled, are the first terms of the subsequence that converges to $0$ almost everywhere.
 
-For every ${x \in [0, 1],}$ ${\varliminf_{n \to \infty} f_n(x) = 0}$ and ${\varlimsup_{n \to \infty} f_n(x) = 1.}$ In fact, for every $x$ and every $N$ there exist ${n_1, n_2 \ge N}$ such that ${f_{n_1}(x) = 0}$ and ${f_{n_2}(x) = 1,}$ as in Figure 4. Indeed, for every ${k \ge 2}$ the point $x$ lies in at least one and in at most two of the intervals of the $k$-th group. Hence the limit ${\lim_{n \to \infty} f_n(x)}$ exists at no ${x,}$ and $(f_n)$ does not converge almost everywhere.
+For every ${x \in [0, 1],}$ ${\varliminf_{n \to \infty} f_n(x) = 0}$ and ${\varlimsup_{n \to \infty} f_n(x) = 1.}$ In fact, for every $x$ and every $N$ there exist ${n_1, n_2 \ge N}$ such that ${f_{n_1}(x) = 0}$ and ${f_{n_2}(x) = 1.}$ Indeed, for every ${k \ge 2}$ the point $x$ lies in at least one and in at most two of the intervals of the $k$-th group. Hence the limit ${\lim_{n \to \infty} f_n(x)}$ exists at no ${x,}$ and $(f_n)$ does not converge almost everywhere.
 
-<Witnesses client:visible />
-
-**Figure 4.** The values ${f_n(x),}$ equal to $0$ or ${1,}$ for ${n = 1, \dots, 62}$ and the $x$ of the slider. The dashed line marks ${N,}$ and the first ${n_1 \ge N}$ with ${f_{n_1}(x) = 0}$ and the first ${n_2 \ge N}$ with ${f_{n_2}(x) = 1}$ are marked; the sliders set $x$ and ${N.}$
-
-The circled functions of Figure 3 form a subsequence ${(f_{n_k}),}$ made of the characteristic functions of ${[0, 1/2],}$ ${[0, 1/4],}$ ${[0, 1/8],}$ and so on, such that ${f_{n_k} \to 0}$ almost everywhere on ${[0, 1].}$ Indeed, ${f_{n_k}(x) = 0}$ as soon as ${1/2^k < x,}$ so the convergence holds at every ${x \neq 0.}$
-
-Finally, ${f_n \to 0}$ in ${L^1([0, 1]).}$ Indeed, ${\|f_n - 0\|_1}$ is the length of the interval where ${f_n = 1,}$ and these lengths tend to ${0.}$
+The circled functions of Figure 2 form a subsequence ${(f_{n_k}),}$ made of the characteristic functions of ${[0, 1/2],}$ ${[0, 1/4],}$ ${[0, 1/8],}$ and so on, such that ${f_{n_k} \to 0}$ almost everywhere on ${[0, 1].}$ Finally, ${f_n \to 0}$ in ${L^1([0, 1]).}$
 
 ### Convergence in measure
 
@@ -85,13 +67,11 @@ Finally, ${f_n \to 0}$ in ${L^1([0, 1]).}$ Indeed, ${\|f_n - 0\|_1}$ is the leng
 **(1)** If ${\mu(X) < +\infty}$ and ${f_n \to f}$ almost everywhere, then ${f_n \to f}$ in measure.\
 **(2)** If ${f_n \to f}$ in measure, then there exists a subsequence $(f_{n_k})$ such that ${f_{n_k} \to f}$ almost everywhere.
 
-Theorem 5 (2) gives the convergence almost everywhere of a subsequence: the typewriter sequence of Example 4 converges to $0$ in measure, but $(f_n)$ itself does not converge almost everywhere. Indeed, for every ${\varepsilon > 0}$ the set ${\{ |f_n| > \varepsilon \}}$ is contained in the interval where ${f_n = 1,}$ whose length tends to ${0.}$
-
-In Theorem 5 (1) the assumption ${\mu(X) < +\infty}$ is needed. Otherwise, take ${(\mathbb{R}, \mathcal{L}(\mathbb{R}), \lambda)}$ and ${f_n = \chi_{[n, n+1]},}$ as in Figure 5: then ${f_n \to 0}$ almost everywhere, but $(f_n)$ does not converge to $0$ in measure. In fact, ${\lambda(\{ |f_n| > 1/2 \}) = \lambda([n, n + 1]) = 1}$ for every ${n.}$
+Theorem 5 (2) gives the convergence almost everywhere of a subsequence: the typewriter sequence of Example 4 converges to $0$ in measure, but $(f_n)$ itself does not converge almost everywhere. In Theorem 5 (1) the assumption ${\mu(X) < +\infty}$ is needed. Otherwise, take ${(\mathbb{R}, \mathcal{L}(\mathbb{R}), \lambda)}$ and ${f_n = \chi_{[n, n+1]},}$ as in Figure 3: then ${f_n \to 0}$ almost everywhere, but $(f_n)$ does not converge to $0$ in measure. In fact, ${\lambda(\{ |f_n| > 1/2 \}) = \lambda([n, n + 1]) = 1}$ for every ${n.}$
 
 <Shift client:visible />
 
-**Figure 5.** The function ${f_n = \chi_{[n, n+1]}}$ on ${\mathbb{R},}$ the dashed level ${1/2,}$ and the set ${\{ |f_n| > 1/2 \} = [n, n + 1]}$ hatched on the axis. The slider sets ${n.}$
+**Figure 3.** The function ${f_n = \chi_{[n, n+1]}}$ on ${\mathbb{R},}$ the dashed level ${1/2,}$ and the set ${\{ |f_n| > 1/2 \} = [n, n + 1]}$ hatched on the axis. The slider sets ${n.}$
 
 **Theorem 6 ($L^p$ implies measure).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space, let ${f_n \colon X \to \mathbb{R},}$ for every ${n,}$ and ${f \colon X \to \mathbb{R}}$ be measurable, and let ${p \in [1, +\infty].}$ If ${f_n \to f}$ in ${L^p,}$ then ${f_n \to f}$ in measure. In particular, by Theorem 5 (2), there exists a subsequence $(f_{n_k})$ such that ${f_{n_k} \to f}$ almost everywhere.
 
@@ -99,14 +79,14 @@ In Theorem 5 (1) the assumption ${\mu(X) < +\infty}$ is needed. Otherwise, take 
 
 $$
 \begin{aligned}
-\Big( \int_X |f_n - f|^p \, d\mu \Big)^{\frac{1}{p}} &\ge \Big( \int_{\{ |f_n - f| > \varepsilon \}} |f_n - f|^p \, d\mu \Big)^{\frac{1}{p}} \\
-&\ge \Big( \int_{\{ |f_n - f| > \varepsilon \}} \varepsilon^p \, d\mu \Big)^{\frac{1}{p}} \\
+\biggl( \int_X |f_n - f|^p \, d\mu \biggr)^{\frac{1}{p}} &\ge \biggl( \int_{\{ |f_n - f| > \varepsilon \}} |f_n - f|^p \, d\mu \biggr)^{\frac{1}{p}} \\
+&\ge \biggl( \int_{\{ |f_n - f| > \varepsilon \}} \varepsilon^p \, d\mu \biggr)^{\frac{1}{p}} \\
 &= \big( \varepsilon^p \, \mu(\{ |f_n - f| > \varepsilon \}) \big)^{\frac{1}{p}} \\
 &= \varepsilon \, \mu(\{ |f_n - f| > \varepsilon \})^{\frac{1}{p}},
 \end{aligned}
 $$
 
-where both inequalities are monotonicity, (3) and (2) of Remark 4 of the fifth post, as in Figure 6. Hence
+where both inequalities are monotonicity, (3) and (2) of Remark 4 of the fifth post. Hence
 
 $$
 \mu(\{ |f_n - f| > \varepsilon \}) \le \Big( \frac{1}{\varepsilon} \Big)^p \|f_n - f\|_p^p,
@@ -118,23 +98,19 @@ $$
 \lim_{n \to \infty} \mu(\{ |f_n - f| > \varepsilon \}) = 0. \tag*{$\blacksquare$}
 $$
 
-<Level client:visible />
-
-**Figure 6.** An instance on an interval with ${\mu = \lambda{:}}$ the graph of ${|f_n - f|^p,}$ the dashed level ${\varepsilon^p,}$ the set ${\{ |f_n - f| > \varepsilon \}}$ on the axis, the region under the graph over that set, shaded, and inside it the rectangles of height $\varepsilon^p$ over that set, hatched. The sliders set $\varepsilon$ and ${p.}$
-
-**Remark 7.** On ${(\mathbb{R}, \mathcal{L}(\mathbb{R}), \lambda)}$ let ${f_n = n \chi_{[0, 1/n]}}$ for every ${n \ge 1,}$ as in Figure 7. Then ${f_n \to 0}$ almost everywhere, ${f_n \nrightarrow 0}$ in ${L^1,}$ and ${f_n \to 0}$ in measure.
+**Remark 7.** On ${(\mathbb{R}, \mathcal{L}(\mathbb{R}), \lambda)}$ let ${f_n = n \chi_{[0, 1/n]}}$ for every ${n \ge 1,}$ as in Figure 4. Then ${f_n \to 0}$ almost everywhere, ${f_n \nrightarrow 0}$ in ${L^1,}$ and ${f_n \to 0}$ in measure.
 
 In fact, ${\int_{\mathbb{R}} |f_n| \, d\lambda = 1}$ for every ${n.}$ Moreover, for every ${\varepsilon > 0}$ we have ${\{ |f_n| > \varepsilon \} = [0, 1/n]}$ for every $n$ sufficiently big, hence ${\lambda(\{ |f_n| > \varepsilon \}) = 1/n \to 0.}$
 
 <Spike client:visible />
 
-**Figure 7.** The drawing of Remark 7: the function ${f_n = n \chi_{[0, 1/n]},}$ the region of area $1$ under its graph, the dashed level ${\varepsilon,}$ and the set ${\{ |f_n| > \varepsilon \}}$ hatched on the axis, equal to $[0, 1/n]$ when ${n > \varepsilon}$ and empty otherwise. The sliders set $n$ and ${\varepsilon.}$
+**Figure 4.** The drawing of Remark 7: the function ${f_n = n \chi_{[0, 1/n]},}$ the region of area $1$ under its graph, the dashed level ${\varepsilon,}$ and the set ${\{ |f_n| > \varepsilon \}}$ hatched on the axis. The sliders set $n$ and ${\varepsilon.}$
 
 ### Convergence in $L^p$
 
 **Theorem 8 (Dominated convergence in $L^p$).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space, let ${f_n \colon X \to \mathbb{R},}$ for every ${n,}$ and ${f \colon X \to \mathbb{R}}$ be measurable, and let ${p \in [1, +\infty).}$ Suppose that ${f_n \to f}$ almost everywhere and that there exists ${g \in L^p}$ such that ${|f_n| \le g}$ almost everywhere for every ${n.}$ Then ${f \in L^p}$ and ${f_n \to f}$ in ${L^p.}$
 
-**Remark 9.** Theorem 8 does not hold with ${p = +\infty.}$ On ${(\mathbb{R}, \mathcal{L}(\mathbb{R}), \lambda)}$ let ${f_n = \chi_{[0, 1 - 1/n]}}$ for every ${n \ge 1,}$ as in Figure 8. Then ${f_n \to \chi_{[0, 1]}}$ almost everywhere and ${|f_n| \le 1 \in L^\infty,}$ but ${f_n \nrightarrow \chi_{[0, 1]}}$ in ${L^\infty.}$
+**Remark 9.** Theorem 8 does not hold with ${p = +\infty.}$ On ${(\mathbb{R}, \mathcal{L}(\mathbb{R}), \lambda)}$ let ${f_n = \chi_{[0, 1 - 1/n]}}$ for every ${n \ge 1,}$ as in Figure 5. Then ${f_n \to \chi_{[0, 1]}}$ almost everywhere and ${|f_n| \le 1 \in L^\infty,}$ but ${f_n \nrightarrow \chi_{[0, 1]}}$ in ${L^\infty.}$
 
 In fact, ${|\chi_{[0, 1]}(x) - f_n(x)| = \chi_{(1 - 1/n, 1]}(x)}$ for every ${x \in \mathbb{R},}$ hence
 
@@ -146,7 +122,7 @@ so ${\|f_n - \chi_{[0, 1]}\|_\infty}$ does not tend to $0$ as ${n \to \infty.}$
 
 <Edge client:visible />
 
-**Figure 8.** The drawing of Remark 9: above, the function ${f_n = \chi_{[0, 1 - 1/n]}}$ and, dashed, its limit ${\chi_{[0, 1]};}$ below, their difference ${|\chi_{[0, 1]} - f_n| = \chi_{(1 - 1/n, 1]}.}$ The slider sets ${n.}$
+**Figure 5.** The drawing of Remark 9: above, the function ${f_n = \chi_{[0, 1 - 1/n]}}$ and, dashed, its limit ${\chi_{[0, 1]};}$ below, their difference ${|\chi_{[0, 1]} - f_n| = \chi_{(1 - 1/n, 1]}.}$ The slider sets ${n.}$
 
 **Remark 10 (Reverse dominated convergence in $L^p$).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space and let ${f_n, f \colon X \to \mathbb{R}}$ be measurable, for every ${n.}$ Let ${p \in [1, +\infty]}$ and ${(f_n) \subset L^p.}$ If ${f_n \to f}$ in ${L^p,}$ then ${f \in L^p}$ and there exist a subsequence $(f_{n_k})$ and ${g \in L^p}$ such that:\
 **(i)** ${f_{n_k} \to f}$ almost everywhere;\
@@ -157,24 +133,20 @@ so ${\|f_n - \chi_{[0, 1]}\|_\infty}$ does not tend to $0$ as ${n \to \infty.}$
 **Proof (complete).** For every ${x \in X,}$
 
 $$
-|f_n(x) - f(x)|^p \le 2^{p-1} \big( |f_n(x)|^p + |f(x)|^p \big),
+|f_n(x) - f(x)|^p \le 2^{p-1} \big( |f_n(x)|^p + |f(x)|^p \big).
 $$
 
-as in the proof of Remark 18 of the previous post. Hence the functions
+Hence the functions
 
 $$
 g_n := 2^{p-1} \big( |f_n|^p + |f|^p \big) - |f_n - f|^p
 $$
 
-satisfy ${g_n \ge 0,}$ as in Figure 9, and at almost every ${x \in X}$
+satisfy ${g_n \ge 0,}$ and at almost every ${x \in X}$
 
 $$
 \lim_{n \to +\infty} g_n(x) = 2^{p-1} \big( |f(x)|^p + |f(x)|^p \big) - 0 = 2^p |f(x)|^p.
 $$
-
-<Difference client:visible />
-
-**Figure 9.** An instance on an interval with ${\mu = \lambda,}$ for one ${n{:}}$ the graphs of ${2^{p-1} (|f_n|^p + |f|^p)}$ and of ${|f_n - f|^p,}$ and the region between them, whose height at each point is ${g_n \ge 0.}$ The slider sets ${p.}$
 
 By Fatou's lemma, Theorem 1 of the previous post,
 
@@ -186,11 +158,11 @@ $$
 \end{aligned}
 $$
 
-Indeed, ${\varliminf_n g_n = 2^p |f|^p}$ almost everywhere, and the three functions in the second line are integrable. The last expression equals
+The last expression equals
 
 $$
 \begin{aligned}
-&\varliminf_n 2^{p-1} \|f_n\|_p^p + 2^{p-1} \|f\|_p^p - \varlimsup_n \|f_n - f\|_p^p \\
+&\bigl( \varliminf_n 2^{p-1} \|f_n\|_p^p \bigr) + 2^{p-1} \|f\|_p^p - \varlimsup_n \|f_n - f\|_p^p \\
 &\quad = 2^{p-1} \|f\|_p^p + 2^{p-1} \|f\|_p^p - \varlimsup_n \|f_n - f\|_p^p \\
 &\quad = 2^p \|f\|_p^p - \varlimsup_n \|f_n - f\|_p^p,
 \end{aligned}
@@ -206,7 +178,7 @@ Comparing the first line of the first display with the last line of the second, 
 
 **Proof (complete).** Every notion of Definition 1 implies the convergence almost everywhere of a subsequence, so there exists a subsequence $(f_{n_k})$ such that ${f_{n_k} \to f}$ almost everywhere. Indeed, uniform and pointwise convergence imply convergence almost everywhere by Remark 3, and convergence in $L^p$ or in measure gives a subsequence that converges almost everywhere by Theorem 6 and by Theorem 5 (2).
 
-Also ${f_n \to g}$ with respect to ${N_2,}$ hence ${f_{n_k} \to g}$ with respect to ${N_2,}$ and therefore there exists a subsequence $(f_{n_{k_l}})$ of $(f_{n_k})$ such that ${f_{n_{k_l}} \to g}$ almost everywhere, as in Figure 10. Moreover, ${f_{n_k} \to f}$ almost everywhere, hence ${f_{n_{k_l}} \to f}$ almost everywhere. Therefore, at almost every ${x \in X,}$
+Also ${f_n \to g}$ with respect to ${N_2,}$ hence ${f_{n_k} \to g}$ with respect to ${N_2,}$ and therefore there exists a subsequence $(f_{n_{k_l}})$ of $(f_{n_k})$ such that ${f_{n_{k_l}} \to g}$ almost everywhere. Moreover, ${f_{n_k} \to f}$ almost everywhere, hence ${f_{n_{k_l}} \to f}$ almost everywhere. Therefore, at almost every ${x \in X,}$
 
 $$
 |f(x) - g(x)| = \lim_{l \to \infty} |f_{n_{k_l}}(x) - f_{n_{k_l}}(x)| = 0.
@@ -214,21 +186,15 @@ $$
 
 Indeed, at such $x$ the numbers $f_{n_{k_l}}(x)$ tend both to $f(x)$ and to ${g(x).}$ Hence ${f = g}$ almost everywhere. $\blacksquare$
 
-<Indices />
-
-**Figure 10.** An instance of the indices of the proof of Remark 12: the indices ${n,}$ the indices $n_k$ of the subsequence ${(f_{n_k}),}$ and the indices $n_{k_l}$ of its subsequence ${(f_{n_{k_l}}).}$
-
 ## Exercises
-
-The exercises study the convergence of three sequences of functions with Theorems 6 and 8 and Remark 12.
 
 ### The sequence $\cos(x^n)$
 
-**Example 13.** Let ${f_n(x) = \cos(x^n)}$ for ${x \in [0, 1],}$ with the Lebesgue measure $\lambda$ on ${[0, 1],}$ as in Figure 11. Does $(f_n)$ converge almost everywhere, in ${L^1,}$ in measure?
+**Example 13.** Let ${f_n(x) = \cos(x^n)}$ for ${x \in [0, 1],}$ with the Lebesgue measure $\lambda$ on ${[0, 1],}$ as in Figure 6. Does $(f_n)$ converge almost everywhere, in ${L^1,}$ in measure?
 
 <Cosine client:visible />
 
-**Figure 11.** The drawing of Example 13 for the $n$ of the slider: the graph of ${x^n,}$ which ends at the point ${(1, 1),}$ the graph of ${f_n(x) = \cos(x^n),}$ which ends at ${(1, \cos(1)),}$ and, dashed, the constant ${1.}$
+**Figure 6.** The drawing of Example 13 for the $n$ of the slider: the graph of ${x^n,}$ which ends at the point ${(1, 1),}$ the graph of ${f_n(x) = \cos(x^n),}$ which ends at ${(1, \cos(1)),}$ and, dashed, the constant ${1.}$
 
 As ${n \to \infty,}$ ${x^n \to 0}$ for ${x \in [0, 1)}$ and ${x^n \to 1}$ for ${x = 1,}$ pointwise. Hence, pointwise for every ${x \in [0, 1],}$
 
@@ -236,17 +202,15 @@ $$
 f_n(x) = \cos(x^n) \xrightarrow[n \to \infty]{} \begin{cases} 1 & \text{if } x \in [0, 1), \\ \cos(1) & \text{if } x = 1. \end{cases}
 $$
 
-Therefore ${f_n \to f}$ almost everywhere, where ${f(x) = 1}$ for every ${x \in [0, 1].}$ Indeed, the pointwise limit differs from $f$ only at ${x = 1,}$ and ${\lambda(\{1\}) = 0.}$
-
-Moreover, ${|f_n| = |\cos(x^n)| \le 1}$ for every ${x \in [0, 1].}$ Hence ${|f_n| \le f}$ for every $x$ and ${f \in L^1((0, 1)).}$ By the dominated convergence theorem, Theorem 8 with ${p = 1,}$ ${f_n \to f}$ in ${L^1((0, 1)).}$ Finally, ${f_n \to f}$ in measure by Theorem 6.
+Therefore ${f_n \to f}$ almost everywhere, where ${f(x) = 1}$ for every ${x \in [0, 1].}$ Moreover, ${|f_n| = |\cos(x^n)| \le 1}$ for every ${x \in [0, 1].}$ Hence ${|f_n| \le f}$ for every $x$ and ${f \in L^1((0, 1)).}$ By the dominated convergence theorem, Theorem 8 with ${p = 1,}$ ${f_n \to f}$ in ${L^1((0, 1)).}$ Finally, ${f_n \to f}$ in measure by Theorem 6.
 
 ### The sequence $n^{-\alpha} \chi_{[0, n]}$
 
-**Example 14.** Let ${\alpha > 0}$ and, on ${(\mathbb{R}, \mathcal{L}(\mathbb{R}), \lambda),}$ let ${f_n = (1/n^\alpha) \chi_{[0, n]}}$ for every ${n \ge 1,}$ as in Figure 12. Find all ${\alpha > 0}$ such that $(f_n)$ converges in ${L^1(\mathbb{R}),}$ and all ${\alpha > 0}$ such that $(f_n)$ converges in measure.
+**Example 14.** Let ${\alpha > 0}$ and, on ${(\mathbb{R}, \mathcal{L}(\mathbb{R}), \lambda),}$ let ${f_n = (1/n^\alpha) \chi_{[0, n]}}$ for every ${n \ge 1,}$ as in Figure 7. Find all ${\alpha > 0}$ such that $(f_n)$ converges in ${L^1(\mathbb{R}),}$ and all ${\alpha > 0}$ such that $(f_n)$ converges in measure.
 
 <Plateau client:visible />
 
-**Figure 12.** The drawing of Example 14: the function ${f_n = (1/n^\alpha) \chi_{[0, n]},}$ the region under its graph, of area ${n^{1 - \alpha},}$ and the dashed level ${\varepsilon,}$ with the set ${\{ f_n > \varepsilon \}}$ hatched on the axis when it is not empty. The sliders set ${n,}$ $\alpha$ and ${\varepsilon.}$
+**Figure 7.** The drawing of Example 14: the function ${f_n = (1/n^\alpha) \chi_{[0, n]},}$ the region under its graph, of area ${n^{1 - \alpha},}$ and the dashed level ${\varepsilon,}$ with the set ${\{ f_n > \varepsilon \}}$ hatched on the axis when it is not empty. The sliders set ${n,}$ $\alpha$ and ${\varepsilon.}$
 
 For every ${x \in \mathbb{R}}$ we have ${|f_n(x)| \le 1/n^\alpha,}$ which tends to $0$ as $n$ grows, so ${f_n \to 0}$ pointwise on ${\mathbb{R}.}$ By the uniqueness of limits, Remark 12, if $(f_n)$ converges in ${L^1,}$ it converges to $0$ in ${L^1.}$ We compute
 
@@ -284,7 +248,7 @@ $$
 
 since ${1/n^2 \to 0}$ and ${x/n^2 \to 0.}$
 
-(2) Does $(f_n)$ converge in ${L^1((2, +\infty))}$? We have
+(2) Does $(f_n)$ converge in ${L^1((2, +\infty))?}$ We have
 
 $$
 \begin{aligned}
@@ -294,15 +258,11 @@ $$
 \end{aligned}
 $$
 
-since ${1/n^2 \le 1}$ and ${x/n^2 \ge 0.}$ Moreover, ${g \in L^1((2, +\infty)),}$ since ${g(x) \sim 2/x^2}$ as ${x \to +\infty.}$ Hence, by the dominated convergence theorem, Theorem 8 with ${p = 1,}$ ${f_n \to f}$ in ${L^1((2, +\infty)),}$ as in Figure 13.
-
-<Rational client:visible />
-
-**Figure 13.** The functions of Example 15 on ${(2, 12]{:}}$ $f_n$ for the $n$ of the slider, its limit ${f,}$ and, dashed, the bound ${g.}$ The region under the graph of $f$ over $(2, R]$ is shaded, and its area is ${\tfrac{1}{3} \log 4 + \tfrac{1}{3} \log((R - 1)/(R + 2));}$ the sliders set $n$ and ${R.}$
+since ${1/n^2 \le 1}$ and ${x/n^2 \ge 0.}$ Moreover, ${g \in L^1((2, +\infty)),}$ since ${g(x) \sim 2/x^2}$ as ${x \to +\infty.}$ Hence, by the dominated convergence theorem, Theorem 8 with ${p = 1,}$ ${f_n \to f}$ in ${L^1((2, +\infty)).}$
 
 (3) Compute ${\lim_n \int_2^\infty f_n \, d\lambda.}$
 
-**Remark 16.** Let ${(X, \mathcal{M}, \mu)}$ be a measure space and let ${f_n, f \colon X \to \mathbb{R}}$ be measurable, for every ${n.}$ If ${f_n \to f}$ in ${L^1,}$ then ${\lim_n \int_X |f_n| \, d\mu = \int_X |f| \, d\mu.}$ Indeed, when ${f \in L^1,}$ the inequality ${\big| |f_n| - |f| \big| \le |f_n - f|}$ gives ${\big| \int_X |f_n| \, d\mu - \int_X |f| \, d\mu \big| \le \|f_n - f\|_1.}$
+**Remark 16.** Let ${(X, \mathcal{M}, \mu)}$ be a measure space and let ${f_n, f \colon X \to \mathbb{R}}$ be measurable, for every ${n.}$ If ${f_n \to f}$ in ${L^1,}$ then ${\lim_n \int_X |f_n| \, d\mu = \int_X |f| \, d\mu.}$
 
 By Remark 16, applied to the functions ${f_n \ge 0}$ and ${f \ge 0}$ of (2),
 
@@ -322,7 +282,7 @@ $$
 \begin{aligned}
 \int_2^R \frac{1}{(x - 1)(x + 2)} \, dx &= \int_2^R \Big( \frac{1/3}{x - 1} + \frac{-1/3}{x + 2} \Big) \, dx \\
 &= \frac{1}{3} \Big( \log|x - 1| \, \Big|_2^R - \log|x + 2| \, \Big|_2^R \Big) \\
-&= \frac{1}{3} \Big( \log\Big( \frac{R - 1}{R + 2} \Big) - \log 1 + \log 4 \Big) \\
+&= \frac{1}{3} \biggl( \log\Big( \frac{R - 1}{R + 2} \Big) - \log 1 + \log 4 \biggr) \\
 &= \frac{1}{3} \log 4 + \frac{1}{3} \log\Big( \frac{R - 1}{R + 2} \Big),
 \end{aligned}
 $$
@@ -332,7 +292,7 @@ where ${\log 1 = 0.}$ Therefore the limit in (3) is
 $$
 \begin{aligned}
 &\int_2^\infty \frac{1}{(x - 1)(x + 2)} \, dx \\
-&\quad = \lim_{R \to \infty} \Big( \frac{1}{3} \log 4 + \frac{1}{3} \log\Big( \frac{R - 1}{R + 2} \Big) \Big) \\
+&\quad = \lim_{R \to \infty} \biggl( \frac{1}{3} \log 4 + \frac{1}{3} \log\Big( \frac{R - 1}{R + 2} \Big) \biggr) \\
 &\quad = \frac{1}{3} \log 4.
 \end{aligned}
 $$

@@ -1,19 +1,16 @@
 ---
 title: 'Calculation of $n$-step transition probabilities and class structure'
 date: 2026-09-21
-summary: 'For a chain with finitely many states, $p^{(n)}_{ij}$ is a combination of powers of the eigenvalues of $P$, with polynomial factors when an eigenvalue is repeated, and symmetry can shorten the computation. The states of a chain split into communicating classes, open or closed, and each state has a period.'
+summary: 'For a chain with finitely many states, $p^{(n)}_{ij}$ is a combination of powers of the eigenvalues of ${P,}$ with polynomial factors when an eigenvalue is repeated, and symmetry can shorten the computation. The states of a chain split into communicating classes, open or closed, and each state has a period.'
 ---
 
 import ThreeState from './ThreeState.svelte';
-import ThreeStatePlot from './ThreeStatePlot.svelte';
-import Symmetry from './Symmetry.svelte';
 import Square from './Square.svelte';
 import WalkZ from './WalkZ.svelte';
 import LeadsTo from './LeadsTo.svelte';
 import Classes from './Classes.svelte';
-import Gambler from './Gambler.svelte';
 
-The $n$-step transition probabilities $p^{(n)}_{ij}$ of a chain with finitely many states can be computed from the eigenvalues of its transition matrix. The states of a chain split into communicating classes, which break the chain into smaller pieces.
+The objects of the lecture are the $n$-step transition probabilities $p^{(n)}_{ij}$ of a Markov chain and its class structure.
 
 ## Example: a three-state Markov chain
 
@@ -82,7 +79,7 @@ $$
 p^{(n)}_{11} = \frac15 + \Big( \frac12 \Big)^n \Big[ \frac45 \cos \frac{n\pi}{2} - \frac25 \sin \frac{n\pi}{2} \Big].
 $$
 
-For an integer $n$ the pair ${(\cos(n\pi/2), \sin(n\pi/2))}$ depends only on the remainder of $n$ modulo 4: it is $(1, 0),$ $(0, 1),$ $(-1, 0)$ and $(0, -1)$ for the remainders 0, 1, 2 and 3. The bracket therefore takes four values,
+For an integer $n$ the pair ${\bigl( \cos(n\pi/2), \sin(n\pi/2) \bigr)}$ depends only on the remainder of $n$ modulo 4: it is $(1, 0),$ $(0, 1),$ $(-1, 0)$ and $(0, -1)$ for the remainders 0, 1, 2 and 3. The bracket therefore takes four values,
 
 $$
 \frac45 \cos \frac{n\pi}{2} - \frac25 \sin \frac{n\pi}{2} =
@@ -100,18 +97,21 @@ $$
 p^{(5)}_{11} = \frac15 - \frac25 \cdot \frac{1}{32} = \frac15 - \frac{1}{80} = \frac{3}{16}, \qquad p^{(10)}_{11} = \frac15 - \frac45 \cdot \frac{1}{1024} = \frac15 - \frac{1}{1280} = \frac{51}{256},
 $$
 
-and ${|p^{(n)}_{11} - 1/5| \le (4/5) 2^{-n} < 2^{-n}}$ for every ${n \ge 0.}$ Figure 2 draws these values.
-
-<ThreeStatePlot />
-
-**Figure 2.** $p^{(n)}_{11}$ for Example 2.1 and ${n = 0, 1, \dots, 16,}$ with the level $1/5$ and the band ${1/5 \pm 2^{-n}.}$ The values at ${n = 5}$ and ${n = 10}$ are marked.
+and ${\bigl| p^{(n)}_{11} - 1/5 \bigr| \le (4/5) 2^{-n} < 2^{-n}}$ for every ${n \ge 0.}$
 
 More generally, consider a chain with $m$ states, and states $i$ and $j.$\
-(i) Compute the eigenvalues ${\mu_1, \dots, \mu_m}$ of the ${m \times m}$ matrix $P.$\
-(ii) If the eigenvalues are distinct, then $p^{(n)}_{ij}$ has the form ${p^{(n)}_{ij} = a_1 + a_2 \mu_2^n + \dots + a_m \mu_m^n}$ for some constants ${a_1, \dots, a_m,}$ remembering that ${\mu_1 = 1.}$ If an eigenvalue $\mu$ is repeated $k$ times, then there is a term ${(b_0 + b_1 n + \dots + b_{k-1} n^{k-1}) \mu^n.}$\
+(i) Compute the eigenvalues ${\mu_1, \dots, \mu_m}$ of the ${m \times m}$ matrix $P.$
+
+(ii) If the eigenvalues are distinct, then $p^{(n)}_{ij}$ has the form
+
+$$
+p^{(n)}_{ij} = a_1 + a_2 \mu_2^n + \dots + a_m \mu_m^n
+$$
+
+for some constants ${a_1, \dots, a_m,}$ remembering that ${\mu_1 = 1.}$ If an eigenvalue $\mu$ is repeated $k$ times, then there is a term ${(b_0 + b_1 n + \dots + b_{k-1} n^{k-1}) \mu^n.}$\
 (iii) Complex eigenvalues come in conjugate pairs, and their terms can be written using sines and cosines, as in Example 2.1.
 
-Sometimes there is a quicker way, as the next example shows.
+Sometimes there is a quicker way.
 
 ## Example: use of symmetry
 
@@ -121,7 +121,7 @@ $$
 P = \frac13 \begin{pmatrix} 0 & 1 & 1 & 1 \\ 1 & 0 & 1 & 1 \\ 1 & 1 & 0 & 1 \\ 1 & 1 & 1 & 0 \end{pmatrix}.
 $$
 
-The eigenvalues are ${1, -1/3, -1/3, -1/3,}$ so the general solution is ${p^{(n)}_{11} = A + (-1/3)^n (a + bn + cn^2).}$ However, symmetry can be used: for ${i \neq j,}$ ${p^{(n)}_{ij} = (1/3)(1 - p^{(n)}_{ii}).}$ Indeed, by symmetry the three entries $p^{(n)}_{ij}$ with ${j \neq i}$ are equal, and the row $i$ of $P^n$ sums to 1. So
+The eigenvalues are ${1, -1/3, -1/3, -1/3,}$ so the general solution is ${p^{(n)}_{11} = A + (-1/3)^n (a + bn + cn^2).}$ However, symmetry can be used: for ${i \neq j,}$ ${p^{(n)}_{ij} = (1/3)(1 - p^{(n)}_{ii}).}$ So
 
 $$
 p^{(n)}_{11} = \sum_{j \neq 1} p^{(n-1)}_{1j} p_{j1} = \frac13 \big( 1 - p^{(n-1)}_{11} \big).
@@ -135,13 +135,9 @@ $$
 
 and ${p^{(n)}_{11} \to 1/4}$ as ${n \to \infty.}$ Do we expect the same for the random walk on the corners of a cube? No: there $p^{(n)}_{11}$ does not tend to a limit, since ${p^{(n)}_{11} = 0}$ when $n$ is odd.
 
-<Symmetry />
-
-**Figure 3.** The random walk of Example 2.2, each line a jump in either direction with probability $1/3,$ and ${p^{(n)}_{11} = 1/4 + (3/4)(-1/3)^n}$ for ${n = 0, 1, \dots, 10}$ with the level $1/4.$
-
 ## Random walks and a queue
 
-**Example (Random walk on a square).** The states are the corners of a square, ${I = \{1, 2, 3, 4\},}$ and from each corner the walk moves to each of the two neighbouring corners with probability $1/2,$ as in Figure 4. The transition matrix is the stochastic matrix
+**Example (Random walk on a square).** The states are the corners of a square, ${I = \{1, 2, 3, 4\},}$ and from each corner the walk moves to each of the two neighbouring corners with probability $1/2,$ as in Figure 2. The transition matrix is the stochastic matrix
 
 $$
 P = \begin{pmatrix} 0 & \frac12 & 0 & \frac12 \\[2pt] \frac12 & 0 & \frac12 & 0 \\[2pt] 0 & \frac12 & 0 & \frac12 \\[2pt] \frac12 & 0 & \frac12 & 0 \end{pmatrix}.
@@ -149,9 +145,9 @@ $$
 
 <Square />
 
-**Figure 4.** The random walk on a square.
+**Figure 2.** The random walk on a square.
 
-**Example (Random walk on $\mathbb{Z}$).** Let ${p \in [0, 1].}$ On ${I = \mathbb{Z},}$ the walk moves from each state $i$ to ${i + 1}$ with probability $p$ and to ${i - 1}$ with probability ${1 - p,}$ as in Figure 5. Equivalently,
+**Example (Random walk on $\mathbb{Z}$).** Let ${p \in [0, 1].}$ On ${I = \mathbb{Z},}$ the walk moves from each state $i$ to ${i + 1}$ with probability $p$ and to ${i - 1}$ with probability ${1 - p,}$ as in Figure 3. Equivalently,
 
 $$
 X_{n+1} = X_n + Y_{n+1},
@@ -167,7 +163,7 @@ and therefore ${X_n \to +\infty}$ almost surely.
 
 <WalkZ client:visible />
 
-**Figure 5.** Above, the jumps of the random walk on $\mathbb{Z}.$ Below, $X_n/n$ for one path started at ${X_0 = 0}$ and ${n = 1, \dots, 400,}$ with the level ${2p - 1.}$ The slider sets $p$ and the button draws a new path.
+**Figure 3.** Above, the jumps of the random walk on $\mathbb{Z}.$ Below, $X_n/n$ for one path started at ${X_0 = 0}$ and ${n = 1, \dots, 400,}$ with the level ${2p - 1.}$ The slider sets $p$ and the button draws a new path.
 
 **Example (Random queue at a counter).** A counter serves one customer per unit of time, and customers arrive at random. Let $A_n$ be the number of customers arriving at time $n,$ with ${P(A_n = k) = a_k}$ for ${k = 0, 1, 2, \dots,}$ where $(A_n)_{n \ge 1}$ are independent and identically distributed. If at time $n$ there are ${X_n > 0}$ customers in the queue, then ${X_{n+1} = (X_n - 1) + A_{n+1};}$ if ${X_n = 0,}$ then ${X_{n+1} = A_{n+1}.}$ In a compact formula,
 
@@ -175,11 +171,11 @@ $$
 X_{n+1} = (X_n - 1)^+ + A_{n+1},
 $$
 
-Indeed, ${(X_n - 1)^+ = \max(X_n - 1, 0)}$ is ${X_n - 1}$ when ${X_n > 0}$ and 0 when ${X_n = 0,}$ and, with ${X_0 = i}$ fixed, the recursion is the construction ${X_{n+1} = F(X_n, A_{n+1})}$ of the previous post with ${F(j, a) = (j - 1)^+ + a,}$ so $(X_n)_{n \ge 0}$ is $\mathrm{Markov}(\delta_i, P)$ for a transition matrix $P.$
+where ${(X_n - 1)^+ = \max(X_n - 1, 0).}$
 
 ## Class structure
 
-It is sometimes possible to break a Markov chain into smaller pieces, each of which is relatively easy to understand, and which together give an understanding of the whole. This is done by identifying the communicating classes of the chain. Recall the chain of Example 1.1, drawn in Figure 6.
+It is sometimes possible to break a Markov chain into smaller pieces, each of which is relatively easy to understand, and which together give an understanding of the whole. This is done by identifying the communicating classes of the chain. Recall the chain of Example 1.1 of the first post, drawn in Figure 4.
 
 We say that $i$ *leads to* $j,$ and write ${i \to j,}$ if
 
@@ -191,7 +187,7 @@ We say that $i$ *communicates with* $j,$ and write ${i \leftrightarrow j,}$ if b
 
 <LeadsTo client:visible />
 
-**Figure 6.** The chain of Example 1.1, an instance. Choosing a pad $i$ marks every pad $j$ with ${i \to j,}$ and shades those with ${i \leftrightarrow j.}$
+**Figure 4.** The chain of Example 1.1 of the first post, an instance. Choosing a pad $i$ marks every pad $j$ with ${i \to j,}$ and shades those with ${i \leftrightarrow j.}$
 
 ## Closed classes
 
@@ -216,11 +212,11 @@ P = \begin{pmatrix}
 \end{pmatrix}
 $$
 
-and say whether they are open or closed. The classes can be read off the diagram of Figure 7: they are ${\{1, 2, 3\},}$ $\{4\}$ and ${\{5, 6\},}$ with only $\{5, 6\}$ being closed.
+and say whether they are open or closed. The classes can be read off the diagram of Figure 5: they are ${\{1, 2, 3\},}$ $\{4\}$ and ${\{5, 6\},}$ with only $\{5, 6\}$ being closed.
 
 <Classes />
 
-**Figure 7.** The chain of Example 2.5 and its classes.
+**Figure 5.** The chain of Example 2.5 and its classes.
 
 **Example (Gambler's ruin problem).** A gambler wins or loses a coin at each time ${n = 1, 2, \dots{:}}$ the gambler wins with probability $p$ and loses with probability ${1 - p,}$ where ${0 < p < 1,}$ and the single bets are independent. For a fixed number ${N \ge 2,}$ the game ends when the gambler has $N$ coins (win) or 0 coins (ruin). The number of coins is a chain on ${I = \{0, 1, \dots, N\}}$ with transition matrix
 
@@ -235,25 +231,13 @@ P = \begin{pmatrix}
 \end{pmatrix},
 $$
 
-whose rows and columns are indexed by ${0, 1, \dots, N.}$ The classes of states are ${\{0\},}$ $\{N\}$ and ${\{1, \dots, N - 1\}.}$ Indeed, for ${1 \le i \le j \le N - 1,}$
-
-$$
-p^{(j-i)}_{ij} = p^{\, j-i} > 0, \qquad p^{(j-i)}_{ji} = (1 - p)^{j-i} > 0,
-$$
-
-because the only sequence of ${j - i}$ steps from $i$ to $j$ moves up at every step, and the only one from $j$ to $i$ moves down at every step. So all the states ${1, \dots, N - 1}$ communicate.
-
-<Gambler client:visible />
-
-**Figure 8.** The gambler's ruin chain with its classes. The sliders set $N,$ $p$ and two states ${1 \le i \le j \le N - 1;}$ the paths of ${j - i}$ steps between them are marked with their probabilities.
+whose rows and columns are indexed by ${0, 1, \dots, N.}$ The classes of states are ${\{0\},}$ $\{N\}$ and ${\{1, \dots, N - 1\}.}$
 
 ## Irreducibility
 
 A chain or transition matrix $P$ in which $I$ is a single class is called *irreducible*. It is easy to detect: we just have to check that ${i \to j}$ for every $i$ and $j.$
 
 ## Period of a state
-
-The last definition uses the entries $p^{(n)}_{ii}$ of the $n$-step transition matrix.
 
 **Definition (Period).** The *period* of a state $i$ is
 
