@@ -1,0 +1,348 @@
+---
+title: 'Exercises on absolute continuity, weak derivatives and convergence in $L^p$'
+date: 2026-10-22
+published: 2026-11-04
+summary: 'Solved exercises: the functions $\sin(x^\alpha)$ with $\alpha > 0$ and $\sin(\sqrt{x}) \cos(\sqrt{x})$ are absolutely continuous on $[0, 1],$ by the second fundamental theorem of calculus or through $W^{1,1}((0, 1)),$ with weak derivatives equal to their derivatives almost everywhere, and an absolutely continuous $f$ on $[a, b]$ with a zero satisfies $\|f\|_\infty \le \|f''\|_1$ and $\|f\|_1 \le (b - a) \|f''\|_1.$ A sequence of functions converges to $0$ in $L^p(\mathbb{R})$ for $1 \le p < \infty$ and in measure but not in $L^\infty(\mathbb{R}),$ a sequence of $\ell^1$ converges in $\ell^2$ to its pointwise limit, which is not in $\ell^1,$ and $(C([-1, 1]), \|\cdot\|_1)$ is not a Banach space.'
+---
+
+import Support from './Support.svelte';
+import LevelSet from './LevelSet.svelte';
+import Ramps from './Ramps.svelte';
+
+The exercises concern absolutely continuous functions, weak derivatives and the convergence of sequences of functions, with $\lambda$ the Lebesgue measure on ${\mathbb{R}.}$
+
+## Exercises
+
+### Spaces of continuous and differentiable functions
+
+**Remark 1.** Let ${a < b}$ be real numbers. The set of the continuous functions on $[a, b]$ is
+
+$$
+C([a, b]) = \{ f \colon [a, b] \to \mathbb{R} : f \text{ continuous} \},
+$$
+
+and the sets $C((a, b))$ and $C((a, b])$ are defined in the same way. A function ${f \colon (a, b) \to \mathbb{R}}$ belongs to $C^1((a, b))$ if $f'(x)$ exists for every ${x \in (a, b)}$ and $f'$ is continuous. A function ${f \colon [a, b] \to \mathbb{R}}$ belongs to $C^1([a, b])$ if $f'(x)$ exists for every ${x \in (a, b),}$ if the one-sided derivatives
+
+$$
+f'_+(a) = \lim_{h \to 0^+} \frac{f(a + h) - f(a)}{h}, \qquad f'_-(b) = \lim_{h \to 0^-} \frac{f(b + h) - f(b)}{h}
+$$
+
+exist, and if the function ${f' \colon [a, b] \to \mathbb{R},}$ equal to $f'_+(a)$ at $a$ and to $f'_-(b)$ at ${b,}$ is continuous. The sets $C^1((a, b])$ and $C^1([a, b))$ are defined in the same way, with the one-sided derivative at the closed end, and so are the sets ${C^\infty((a, b)),}$ ${C^\infty([a, b]),}$ $C^\infty((a, b])$ and so on. The set $C_c((a, b))$ is made of the functions of $C((a, b))$ that vanish near $a$ and near ${b,}$ as in Figure 1:
+
+$$
+\begin{aligned}
+C_c((a, b)) = \{ f \in C((a, b)) : {} & \text{there exists } \varepsilon > 0 \text{ such that } f(x) = 0 \\
+& \text{for every } x \in (a, a + \varepsilon) \cup (b - \varepsilon, b) \}.
+\end{aligned}
+$$
+
+The sets $C_c^1((a, b))$ and $C_c^\infty((a, b))$ are the intersections:
+
+$$
+\begin{aligned}
+C_c^1((a, b)) &= C^1((a, b)) \cap C_c((a, b)), \\
+C_c^\infty((a, b)) &= C^\infty((a, b)) \cap C_c((a, b)).
+\end{aligned}
+$$
+
+<Support />
+
+**Figure 1.** The drawing of Remark 1: a function $f$ of ${C_c((a, b)),}$ equal to 0 on $(a, a + \varepsilon)$ and on ${(b - \varepsilon, b),}$ thick on the axis. An instance.
+
+### The functions $\sin(x^\alpha)$
+
+**Example 2.** Let ${\alpha \in \mathbb{R}}$ and let ${f_\alpha \colon [0, 1] \to \mathbb{R}}$ be given by
+
+$$
+f_\alpha(x) = \begin{cases} \sin(x^\alpha) & 0 < x \le 1, \\ 0 & x = 0. \end{cases}
+$$
+
+**(1)** Prove that, for every ${\alpha > 0,}$ the function $f_\alpha$ is differentiable almost everywhere, with ${f_\alpha' \in L^1((0, 1)).}$
+
+For the functions $f_\alpha$ of Example 2, let ${\alpha \in \mathbb{R}.}$ The function $x \mapsto x^\alpha$ belongs to ${C^\infty((0, 1]),}$ hence so does ${x \mapsto \sin(x^\alpha),}$ which equals $f_\alpha$ on ${(0, 1].}$ Therefore $f_\alpha'(x)$ exists for every ${x \in (0, 1],}$ with
+
+$$
+f_\alpha'(x) = \cos(x^\alpha) \, \alpha x^{\alpha - 1} \qquad \text{for every } x \in (0, 1].
+$$
+
+Hence, for every ${\alpha \in \mathbb{R},}$ the derivative $f_\alpha'$ exists almost everywhere on ${[0, 1].}$ Now let ${\alpha > 0.}$ For every ${x \in (0, 1],}$ since ${\lvert \cos(x^\alpha) \rvert \le 1,}$
+
+$$
+|f_\alpha'(x)| = |\alpha x^{\alpha - 1} \cos(x^\alpha)| \le \alpha x^{\alpha - 1} = \frac{\alpha}{x^{1 - \alpha}} =: g(x),
+$$
+
+so that ${|f_\alpha'| \le g}$ almost everywhere on ${(0, 1),}$ and
+
+$$
+\int_0^1 g \, d\lambda < +\infty \iff 1 - \alpha < 1 \iff \alpha > 0.
+$$
+
+Therefore, for every ${\alpha > 0,}$ there exists ${g \in L^1((0, 1))}$ such that ${g \ge |f_\alpha'|}$ almost everywhere. Hence ${f_\alpha' \in L^1((0, 1)).}$
+
+(2) Prove that ${f_\alpha \in \mathrm{AC}([0, 1])}$ for every ${\alpha > 0.}$ The first method uses the second fundamental theorem of calculus, Theorem 14 of the ninth post: ${f_\alpha \in \mathrm{AC}([0, 1])}$ if and only if $f_\alpha'$ exists almost everywhere, ${f_\alpha' \in L^1((0, 1)),}$ and
+
+$$
+f_\alpha(y) - f_\alpha(x) = \int_x^y f_\alpha' \, d\lambda \qquad \text{for all } x, y \in [0, 1] \text{ with } x < y.
+$$
+
+By (1), $f_\alpha'$ exists almost everywhere and ${f_\alpha' \in L^1((0, 1))}$ for every ${\alpha > 0,}$ and it remains to prove the identity. We already observed that ${f_\alpha \in C^\infty((0, 1]).}$ Hence the baby fundamental theorem of calculus, in the form of Corollary 8 of the ninth post applied on ${[x, y],}$ gives
+
+$$
+f_\alpha(y) - f_\alpha(x) = \int_x^y f_\alpha' \, d\lambda \qquad \text{for all } x, y \in (0, 1] \text{ with } x < y.
+$$
+
+It remains to check the identity with ${x = 0.}$ Let ${y \in (0, 1].}$ Then
+
+$$
+\begin{aligned}
+f_\alpha(y) - f_\alpha(0) &= \lim_{x \to 0^+} \big( f_\alpha(y) - f_\alpha(x) \big) \\
+&= \lim_{x \to 0^+} \int_x^y f_\alpha' \, d\lambda \\
+&= \int_0^y f_\alpha' \, d\lambda.
+\end{aligned}
+$$
+
+The first equality holds because ${f_\alpha \in C([0, 1])}$ for every ${\alpha > 0.}$ In fact, ${f_\alpha(0) = 0}$ and ${f_\alpha(x) = \sin(x^\alpha) \to 0}$ as ${x \to 0^+.}$ Inside the limit ${x > 0,}$ so the identity on $(0, 1]$ applies, which gives the second equality. With respect to ${x,}$ the integral of $f_\alpha'$ over $(x, y)$ is an integral function of a function of ${L^1.}$ The integral function is continuous by the first fundamental theorem of calculus, Theorem 9 of the ninth post, which gives the third equality.
+
+Therefore ${f_\alpha(y) - f_\alpha(x) = \int_x^y f_\alpha' \, d\lambda}$ for all ${x, y \in [0, 1]}$ with ${x < y.}$ The second fundamental theorem of calculus, Theorem 14 of the ninth post, then gives ${f_\alpha \in \mathrm{AC}([0, 1])}$ for every ${\alpha > 0.}$
+
+The second method uses the equality ${\mathrm{AC}([0, 1]) = W^{1,1}((0, 1))}$ of Theorem 20 of the ninth post. We want to prove that ${f_\alpha \in W^{1,1}((0, 1))}$ for every ${\alpha > 0.}$ By Definition 18 of the ninth post, this means that ${f_\alpha \in L^1((0, 1))}$ and that there exists ${w \in L^1((0, 1))}$ such that
+
+$$
+\int_0^1 f_\alpha \varphi' \, d\lambda = -\int_0^1 w \varphi \, d\lambda \qquad \text{for every } \varphi \in C_c^\infty((0, 1)).
+$$
+
+For ${\alpha > 0}$ and almost every ${x \in (0, 1)}$ we have ${|f_\alpha(x)| \le \lvert \sin(x^\alpha) \rvert \le 1 =: g(x).}$ Since ${g \in L^1((0, 1)),}$ also ${f_\alpha \in L^1((0, 1)).}$ Now let ${\varphi \in C_c^\infty((0, 1)),}$ as in Figure 2. There exists ${\varepsilon > 0}$ such that ${\varphi(x) = 0}$ for every ${x \in (0, \varepsilon) \cup (1 - \varepsilon, 1).}$ Then also ${\varphi' = 0}$ on ${(0, \varepsilon) \cup (1 - \varepsilon, 1),}$ and we compute
+
+$$
+\begin{aligned}
+\int_0^1 f_\alpha \varphi' \, d\lambda &= \int_\varepsilon^{1 - \varepsilon} f_\alpha \varphi' \, d\lambda \\
+&= f_\alpha \varphi \, \Big|_\varepsilon^{1 - \varepsilon} - \int_\varepsilon^{1 - \varepsilon} f_\alpha' \varphi \, d\lambda \\
+&= -\int_\varepsilon^{1 - \varepsilon} f_\alpha' \varphi \, d\lambda \\
+&= -\int_0^1 f_\alpha' \varphi \, d\lambda.
+\end{aligned}
+$$
+
+The first equality holds because ${\varphi' = 0}$ on ${(0, \varepsilon) \cup (1 - \varepsilon, 1),}$ and the last because ${\varphi = 0}$ there. The second is an integration by parts, which works on $[\varepsilon, 1 - \varepsilon]$ because ${f_\alpha \in C^1([\varepsilon, 1 - \varepsilon]).}$ The third holds because
+
+$$
+f_\alpha \varphi \, \Big|_\varepsilon^{1 - \varepsilon} = f_\alpha(1 - \varepsilon) \varphi(1 - \varepsilon) - f_\alpha(\varepsilon) \varphi(\varepsilon) = 0,
+$$
+
+where ${\varphi(1 - \varepsilon) = 0}$ and ${\varphi(\varepsilon) = 0.}$ Hence, for every ${\varphi \in C_c^\infty((0, 1)),}$
+
+$$
+\int_0^1 f_\alpha \varphi' \, d\lambda = -\int_0^1 f_\alpha' \varphi \, d\lambda.
+$$
+
+Also ${f_\alpha' \in L^1((0, 1))}$ by (1). Therefore ${f_\alpha \in W^{1,1}((0, 1)),}$ and ${f_\alpha \in \mathrm{AC}([0, 1])}$ by Theorem 20 of the ninth post.
+
+<Support phi />
+
+**Figure 2.** The drawing of (2) in Example 2: a function $\varphi$ of ${C_c^\infty((0, 1)),}$ equal to 0 on $(0, \varepsilon)$ and on ${(1 - \varepsilon, 1),}$ thick on the axis. An instance.
+
+### The function $\sin(\sqrt{x}) \cos(\sqrt{x})$
+
+**Example 3.** Let ${f \colon [0, 1] \to \mathbb{R}}$ be given by ${f(x) = \sin(\sqrt{x}) \cos(\sqrt{x}).}$\
+**(1)** Is ${f \in \mathrm{AC}([0, 1])?}$
+
+For the function $f$ of Example 3, ${\sqrt{x} \in C^1((0, 1]),}$ hence ${f \in C^1((0, 1]).}$ Therefore, for every ${x \in (0, 1],}$ the derivative $f'(x)$ exists and
+
+$$
+f'(x) = \frac{\cos^2(\sqrt{x})}{2\sqrt{x}} - \frac{\sin^2(\sqrt{x})}{2\sqrt{x}},
+$$
+
+so that $f'(x)$ exists for almost every ${x \in [0, 1].}$ For every ${x \in (0, 1],}$ since ${\cos^2(\sqrt{x}) \le 1}$ and ${\sin^2(\sqrt{x}) \le 1,}$
+
+$$
+\begin{aligned}
+|f'(x)| &= \left| \frac{\cos^2(\sqrt{x})}{2\sqrt{x}} - \frac{\sin^2(\sqrt{x})}{2\sqrt{x}} \right| \\
+&\le \frac{\cos^2(\sqrt{x})}{2\sqrt{x}} + \frac{\sin^2(\sqrt{x})}{2\sqrt{x}} \\
+&\le \frac{1}{2\sqrt{x}} + \frac{1}{2\sqrt{x}} = \frac{1}{\sqrt{x}} =: g(x),
+\end{aligned}
+$$
+
+where ${g \in L^1((0, 1)).}$ Hence ${f' \in L^1((0, 1)).}$ Let ${x, y \in (0, 1]}$ with ${x < y.}$ Since ${f \in C^1((0, 1]),}$ the baby fundamental theorem of calculus, in the form of Corollary 8 of the ninth post applied on ${[x, y],}$ gives ${f(y) - f(x) = \int_x^y f' \, d\lambda.}$ Now take ${x = 0}$ and ${y \in (0, 1].}$ We compute
+
+$$
+\begin{aligned}
+f(y) - f(0) &= \lim_{x \to 0^+} \big( f(y) - f(x) \big) = \lim_{x \to 0^+} \int_x^y f' \, d\lambda \\
+&= \int_0^y f' \, d\lambda.
+\end{aligned}
+$$
+
+The first equality holds because $f$ is continuous at ${0,}$ since ${f(0) = \sin(0) \cos(0) = 0,}$ which is the limit of $f(x)$ as ${x \to 0^+.}$ The second holds because ${x > 0}$ inside the limit, and the third by the first fundamental theorem of calculus, Theorem 9 of the ninth post: the integral function is continuous. Putting these facts together, the second fundamental theorem of calculus, Theorem 14 of the ninth post, gives ${f \in \mathrm{AC}([0, 1]).}$
+
+(2) Compute the weak derivative of ${f.}$ We know that ${f \in \mathrm{AC}([0, 1]) = W^{1,1}((0, 1)),}$ by (1) and Theorem 20 of the ninth post. Hence there exists ${w \in L^1((0, 1)),}$ a weak derivative of ${f.}$ Since ${f \in W^{1,1}((0, 1)),}$ and since absolutely continuous functions satisfy the integration by parts with respect to their derivative, defined almost everywhere, by Corollary 17 of the ninth post, for every ${\varphi \in C_c^\infty((0, 1))}$
+
+$$
+\int_0^1 f \varphi' \, d\lambda = -\int_0^1 w \varphi \, d\lambda \qquad \text{and} \qquad \int_0^1 f \varphi' \, d\lambda = -\int_0^1 f' \varphi \, d\lambda.
+$$
+
+Therefore ${-\int_0^1 w \varphi \, d\lambda = -\int_0^1 f' \varphi \, d\lambda,}$ that is, ${\int_0^1 (f' - w) \varphi \, d\lambda = 0,}$ for every ${\varphi \in C_c^\infty((0, 1)).}$ By the vanishing lemma, (1) of Corollary 16 of the fifth post, ${f' - w = 0}$ almost everywhere, that is, ${w = f'}$ almost everywhere.
+
+### An estimate for absolutely continuous functions
+
+**Example 4.** Let ${-\infty < a < b < +\infty}$ and let ${f \in \mathrm{AC}([a, b]).}$\
+**(1)** Prove that ${|f(y) - f(x)| \le \|f'\|_1}$ for all ${x, y \in [a, b].}$
+
+For the function $f$ of Example 4, the second fundamental theorem of calculus, Theorem 14 of the ninth post, gives that $f'$ exists almost everywhere, that ${f' \in L^1((a, b))}$ and that, for all ${x, y \in [a, b]}$ with ${x < y,}$
+
+$$
+\begin{aligned}
+|f(y) - f(x)| &= \left| \int_x^y f' \, d\lambda \right| \\
+&\le \int_x^y |f'| \, d\lambda \\
+&\le \int_a^b |f'| \, d\lambda = \|f'\|_1.
+\end{aligned}
+$$
+
+Deduce that, if ${f(x_0) = 0}$ for some ${x_0 \in [a, b],}$ then ${\|f\|_\infty \le \|f'\|_1.}$
+
+**Remark 5.** Let ${f \in C([a, b]).}$ Then there exists ${y_0 \in [a, b]}$ such that
+
+$$
+|f(y_0)| = \max_{[a, b]} |f| = \|f\|_\infty,
+$$
+
+where the last equality holds because $f$ is continuous, as in Example 5 (iii) of the tenth post.
+
+By Remark 5 and by (1), since ${f(x_0) = 0,}$ we get
+
+$$
+\|f\|_\infty = |f(y_0)| = |f(y_0) - f(x_0)| \le \|f'\|_1.
+$$
+
+Deduce that, if ${f(x_0) = 0}$ for some ${x_0 \in [a, b],}$ then ${\|f\|_1 \le (b - a) \|f'\|_1.}$ By the previous deduction,
+
+$$
+\|f\|_1 = \int_a^b |f| \, d\lambda \le \int_a^b \|f\|_\infty \, d\lambda = \|f\|_\infty (b - a) \le (b - a) \|f'\|_1.
+$$
+
+### Two norms on $W_0^{1,1}((a, b))$
+
+**Remark 6.** The last estimate of Example 4 applies to the functions ${f \in W_0^{1,1}((a, b))}$ of Example 21 of the tenth post. Indeed, by that example, the absolutely continuous representative of such an $f$ vanishes at ${a,}$ so that ${x_0 = a}$ can be taken. There are two norms on ${W_0^{1,1}((a, b)),}$ $\|\cdot\|_{W^{1,1}}$ of Example 19 of the tenth post and $\|\cdot\|_{W_0^{1,1}}$ of Example 21 of the tenth post. For ${f \in W_0^{1,1}((a, b))}$ the estimate means that
+
+$$
+\begin{aligned}
+\|f\|_{W_0^{1,1}} = \|f'\|_1 &\le \|f\|_1 + \|f'\|_1 = \|f\|_{W^{1,1}} \\
+&\le (b - a) \|f'\|_1 + \|f'\|_1 = \big( 1 + (b - a) \big) \|f\|_{W_0^{1,1}},
+\end{aligned}
+$$
+
+where the second inequality is ${\|f\|_1 \le (b - a) \|f'\|_1.}$ Hence, with ${C = 1 + (b - a) > 0,}$
+
+$$
+\|f\|_{W_0^{1,1}} \le \|f\|_{W^{1,1}} \le C \|f\|_{W_0^{1,1}}.
+$$
+
+### The sequence $5^{-1/n} x^{2n} \chi_{[-1, 1]}$
+
+**Example 7.** On $\mathbb{R}$ with the Lebesgue measure ${\lambda,}$ for every integer ${n \ge 1}$ let ${f_n \colon \mathbb{R} \to \mathbb{R}}$ be given by
+
+$$
+f_n(x) = 5^{-1/n} x^{2n} \chi_{[-1, 1]}(x), \qquad x \in \mathbb{R}.
+$$
+
+**(1)** Study the convergence almost everywhere and pointwise of $(f_n)$ on ${\mathbb{R}.}$
+
+For the functions $f_n$ of Example 7, ${f_n(x) = 0}$ for every ${x \notin [-1, 1].}$ Moreover ${f_n(x) \ge 0}$ for every ${x \in \mathbb{R}.}$ At the points ${\pm 1,}$ since $2n$ is even, ${(\pm 1)^{2n} = 1,}$ and ${\chi_{[-1, 1]}(\pm 1) = 1,}$ so that
+
+$$
+f_n(\pm 1) = 5^{-1/n} (\pm 1)^{2n} \chi_{[-1, 1]}(\pm 1) = \frac{1}{5^{1/n}} \xrightarrow[n \to \infty]{} 1.
+$$
+
+For every ${x \in (-1, 1),}$ instead, ${1/5^{1/n} \to 1}$ and ${x^{2n} \to 0.}$ Hence ${f_n(x) = 5^{-1/n} x^{2n} \to 0}$ as ${n \to \infty.}$ Call $f$ the function given by
+
+$$
+f(x) = \begin{cases} 0 & x \notin [-1, 1], \\ 1 & x = \pm 1, \\ 0 & x \in (-1, 1). \end{cases}
+$$
+
+Then ${f_n \to f}$ pointwise on ${\mathbb{R},}$ and therefore ${f_n \to 0}$ almost everywhere.
+
+(2) Study the convergence of $(f_n)$ in $L^p(\mathbb{R})$ for every ${p \in [1, \infty),}$ and in measure on ${\mathbb{R}.}$ Since ${1/5^{1/n} \le 1}$ and ${x^{2n} \le 1}$ for every ${x \in [-1, 1],}$
+
+$$
+|f_n| = f_n = \frac{1}{5^{1/n}} \, x^{2n} \chi_{[-1, 1]} \le \chi_{[-1, 1]}.
+$$
+
+Notice that ${\chi_{[-1, 1]} \in L^p(\mathbb{R})}$ for every ${p \in [1, \infty).}$ Hence, by the dominated convergence theorem in ${L^p,}$ Theorem 8 of the seventh post, ${f_n \to 0}$ in $L^p(\mathbb{R})$ for every ${p \in [1, \infty).}$ By Theorem 6 of the seventh post, convergence in $L^p$ implies convergence in measure, hence ${f_n \to 0}$ in measure on ${\mathbb{R}.}$
+
+(3) Study the convergence of $(f_n)$ in ${L^\infty(\mathbb{R}).}$ By the uniqueness of limits, Remark 12 of the seventh post, if $(f_n)$ converges in ${L^\infty(\mathbb{R}),}$ it must converge to zero, and
+
+$$
+f_n \to 0 \text{ in } L^\infty \iff \|f_n - 0\|_\infty \to 0 \iff \|f_n\|_\infty \to 0.
+$$
+
+We compute ${\|f_n\|_\infty}$ with the drawing of Figure 3. Since $f_n$ is continuous on $[-1, 1]$ and ${f_n(\pm 1) = 5^{-1/n},}$ we have ${\lambda(\{ f_n > 5^{-1/n} - \varepsilon \}) > 0}$ for every ${\varepsilon > 0.}$ Hence ${\|f_n\|_\infty \ge 5^{-1/n} - \varepsilon}$ for every ${\varepsilon > 0}$ and every ${n.}$ Therefore, since ${5^{-1/n} \to 1}$ by (1),
+
+$$
+\begin{aligned}
+\|f_n\|_\infty \ge 5^{-1/n} \quad \text{for every } n &\Longrightarrow \quad \|f_n\|_\infty \nrightarrow 0 \quad \text{as } n \to \infty \\
+&\Longrightarrow \quad (f_n) \text{ does not converge in } L^\infty(\mathbb{R}).
+\end{aligned}
+$$
+
+<LevelSet client:visible />
+
+**Figure 3.** The drawing of (3) in Example 7: the graph of ${f_n,}$ equal to 0 outside ${[-1, 1],}$ with the values ${f_n(\pm 1) = 5^{-1/n},}$ the level ${M = 5^{-1/n} - \varepsilon,}$ and the set ${\{ f_n > M \},}$ thick on the axis near $-1$ and ${1.}$ The dotted line is the level ${1;}$ the sliders set $n$ and ${\varepsilon.}$
+
+### A sequence in $\ell^1$
+
+**Example 8.** Study the convergence in $\ell^2$ and in $\ell^1$ of the sequence ${(x_n) \subset \ell^1}$ such that, for all integers ${n \ge 1}$ and ${k \ge 1,}$
+
+$$
+x_n^{(k)} = \begin{cases} \dfrac{1}{k} & 1 \le k \le n, \\[6pt] 0 & k > n, \end{cases} \qquad \text{that is,} \qquad
+\begin{aligned}
+x_1 &= (1, 0, 0, \dots), \\
+x_2 &= \Big( 1, \frac{1}{2}, 0, 0, \dots \Big), \\
+&\;\;\vdots \\
+x_n &= \Big( 1, \frac{1}{2}, \frac{1}{3}, \dots, \frac{1}{n}, 0, 0, \dots \Big).
+\end{aligned}
+$$
+
+**Remark 9.** As in Example 8 (ii) of the tenth post, ${\ell^p = L^p(\mathbb{N}, \mathcal{P}(\mathbb{N}), \mu_\#),}$ where $\mu_\#$ is the counting measure on the subsets of ${\mathbb{N}.}$ All the theorems for the spaces $L^p(X, \mathcal{M}, \mu)$ apply to ${\ell^p.}$
+
+By Remark 9, the elements $x_n$ of Example 8 are functions on ${\mathbb{N},}$ and we start from their pointwise convergence. Fix an integer ${k \ge 1}$ and study the sequence of numbers ${x_1^{(k)}, x_2^{(k)}, x_3^{(k)}, \dots.}$ Since ${x_n^{(k)} = 1/k}$ for every ${n \ge k,}$
+
+$$
+\lim_{n \to \infty} x_n^{(k)} = \lim_{n \to \infty} \frac{1}{k} = \frac{1}{k}.
+$$
+
+Hence we define ${x = (1, 1/2, 1/3, 1/4, \dots),}$ that is, ${x^{(k)} = 1/k}$ for every ${k \ge 1.}$ Then ${x_n \to x}$ pointwise, since ${x_n^{(k)} \to x^{(k)}}$ as ${n \to \infty}$ for every ${k.}$
+
+Moreover ${|x_n^{(k)}| \le 1/k}$ for every $k$ and every ${n,}$ that is, ${|x_n^{(k)}| \le x^{(k)},}$ and ${|x_n| \le x}$ as functions on ${\mathbb{N}.}$ Notice that ${x = (1, 1/2, 1/3, \dots) \in \ell^2,}$ because
+
+$$
+\sum_{k=1}^\infty |x^{(k)}|^2 = \sum_{k=1}^\infty \frac{1}{k^2} < +\infty.
+$$
+
+Hence, by the dominated convergence theorem in ${L^2(\mathbb{N}, \mathcal{P}(\mathbb{N}), \mu_\#) = \ell^2,}$ Theorem 8 of the seventh post with ${p = 2,}$ ${x_n \to x}$ in ${\ell^2.}$ On the other hand, ${x \notin \ell^1,}$ because
+
+$$
+\sum_{k=1}^\infty |x^{(k)}| = \sum_{k=1}^\infty \frac{1}{k} = +\infty.
+$$
+
+Therefore ${x_n \nrightarrow x}$ in ${\ell^1.}$ In fact, if a sequence of $L^1(\mathbb{N}, \mathcal{P}(\mathbb{N}), \mu_\#)$ converges in ${L^1,}$ then its limit belongs to ${L^1(\mathbb{N}, \mathcal{P}(\mathbb{N}), \mu_\#) = \ell^1,}$ by Remark 18 of the tenth post with ${p = 1,}$ while ${x \notin \ell^1.}$
+
+### Continuous functions with the $L^1$ norm
+
+**Example 10.** Show that ${(C([-1, 1]), \|\cdot\|_1)}$ is not a Banach space.
+
+For Example 10, we find a Cauchy sequence that does not converge. For every integer ${n \ge 1,}$ let ${f_n \in C([-1, 1])}$ be the function drawn in Figure 4. It is 0 on ${[-1, 0],}$ its graph on $[0, 1/n]$ is the segment from $(0, 0)$ to ${(1/n, 1),}$ and it is 1 on ${[1/n, 1].}$ The distance of $f_n$ from $f_{n+1}$ is the area between their graphs, hatched in Figure 4, that is, ${\|f_{n+1} - f_n\|_1 = \int_{-1}^1 |f_{n+1} - f_n| \, d\lambda.}$ The functions $f_n$ converge pointwise to
+
+$$
+f(x) = \begin{cases} 0 & x \in [-1, 0], \\ 1 & x \in (0, 1]. \end{cases}
+$$
+
+Moreover ${|f_n| \le 1 =: g,}$ with ${g \in L^1((-1, 1)).}$ By the dominated convergence theorem, Theorem 8 of the seventh post with ${p = 1,}$ ${f_n \to f}$ in ${L^1((-1, 1)),}$ that is, ${\|f_n - f\|_1 \to 0.}$
+
+<Ramps client:visible />
+
+**Figure 4.** The drawing of Example 10, for the $n$ of the slider: the functions $f_n$ and ${f_{n+1},}$ equal to 0 on $[-1, 0]$ and to 1 on ${[1/n, 1],}$ and the region between their graphs, hatched, whose area is ${\|f_{n+1} - f_n\|_1.}$
+
+Hence $(f_n)$ is Cauchy: for every ${\varepsilon > 0}$ there exists $N$ such that ${\|f_n - f\|_1 < \varepsilon/2}$ for every ${n \ge N,}$ and then
+
+$$
+\|f_n - f_m\|_1 \le \|f_n - f\|_1 + \|f - f_m\|_1 < \varepsilon \qquad \text{for all } n, m \ge N.
+$$
+
+But there is no ${h \in C([-1, 1])}$ such that ${f_n \to h}$ in ${L^1.}$ Otherwise, by the uniqueness of limits, Remark 12 of the seventh post, ${h = f}$ almost everywhere, and then $h$ is not continuous. Indeed, a function equal to 0 almost everywhere on $(-1, 0)$ and to 1 almost everywhere on $(0, 1)$ is not continuous at ${0.}$ Therefore the Cauchy sequence $(f_n)$ does not converge in ${(C([-1, 1]), \|\cdot\|_1),}$ which is not a Banach space.
