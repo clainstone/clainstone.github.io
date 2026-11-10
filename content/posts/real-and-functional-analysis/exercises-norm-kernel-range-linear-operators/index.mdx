@@ -1,0 +1,368 @@
+---
+title: 'Exercises on the continuity, norm, kernel and range of linear operators'
+date: 2026-11-04
+published: 2026-11-10
+summary: 'Solved exercises on linear operators between normed spaces, given by integrals on $C([-1, 1]),$ $L^\infty((-1, 1))$ and $L^\infty((0, 1)),$ by $(Tf)(x) = (2 + \chi_{[1, 2]}(x)) f(x + 1)$ on $L^1((0, \infty))$ and by $(Tx)^{(k)} = k x^{(k)}/(1 + k^2)$ on ${\ell^2{:}}$ continuity through boundedness, the norm $\|T\|_{\mathcal{L}}$ through an element that attains the least constant or a sequence that approaches it, and injectivity and surjectivity through the kernel and the range. A product of two absolutely continuous functions on $[a, b]$ is absolutely continuous.'
+---
+
+import Ramp from './Ramp.svelte';
+import Exponentials from './Exponentials.svelte';
+import Bump from './Bump.svelte';
+
+The exercises study linear operators between normed spaces, with $\lambda$ the Lebesgue measure on ${\mathbb{R}.}$
+
+## Exercises
+
+### The operator $Tf = \int_{-1}^{1} f g \, d\lambda$
+
+**Example 1.** Prove that the map ${T \colon (C([-1, 1]), \|\cdot\|_\infty) \to (\mathbb{R}, |\cdot|)}$ given by
+
+$$
+Tf := \int_{-1}^{1} f g \, d\lambda, \qquad \text{where} \quad g(x) = \begin{cases} -1 & -1 \le x \le 0, \\ 1 & 0 < x \le 1, \end{cases}
+$$
+
+is linear and continuous.
+
+For the operator $T$ of Example 1, let ${\alpha, \beta \in \mathbb{R}}$ and ${f, h \in C([-1, 1]).}$ Then
+
+$$
+\begin{aligned}
+T(\alpha f + \beta h) &= \int_{-1}^{1} (\alpha f + \beta h) g \, d\lambda \\
+&= \int_{-1}^{1} (\alpha f g + \beta h g) \, d\lambda \\
+&= \int_{-1}^{1} \alpha f g \, d\lambda + \int_{-1}^{1} \beta h g \, d\lambda \\
+&= \alpha \int_{-1}^{1} f g \, d\lambda + \beta \int_{-1}^{1} h g \, d\lambda = \alpha Tf + \beta Th,
+\end{aligned}
+$$
+
+where the third and the fourth equalities are the linearity of the integral, Remark 13 of the fifth post. Hence $T$ is linear.
+
+To prove that $T$ is continuous, we prove that it is bounded. For a linear operator $T$ from a normed space ${(X, \|\cdot\|_X)}$ to a normed space ${(Y, \|\cdot\|_Y)}$ this means, as in Definition 5 (ii) of the previous post, that there exists ${C > 0}$ such that ${\|Tf\|_Y \le C \|f\|_X}$ for every ${f \in X.}$ Here we need ${C > 0}$ such that ${|Tf| \le C \|f\|_\infty}$ for every ${f \in C([-1, 1]).}$ Let ${f \in C([-1, 1]).}$ Then, since ${|f| \le \|f\|_\infty}$ and ${|g| = 1,}$
+
+$$
+\begin{aligned}
+|Tf| = \biggl| \int_{-1}^{1} f g \, d\lambda \biggr| &\le \int_{-1}^{1} |f| \, |g| \, d\lambda \\
+&\le \|f\|_\infty \int_{-1}^{1} |g| \, d\lambda \\
+&= 2 \|f\|_\infty.
+\end{aligned}
+$$
+
+Hence $T$ is bounded, and $T$ is continuous by Theorem 8 of the previous post. We now compute ${\|T\|_{\mathcal{L}},}$ the norm of $T$ in ${\mathcal{L}(C([-1, 1]), \mathbb{R}).}$
+
+**Remark 2.** Let ${(X, \|\cdot\|_X)}$ and ${(Y, \|\cdot\|_Y)}$ be normed spaces and let ${T \in \mathcal{L}(X, Y)}$ with ${T \neq 0.}$ By Proposition 10 of the previous post, $\|T\|_{\mathcal{L}}$ is the least constant ${C > 0}$ such that ${\|Tx\|_Y \le C \|x\|_X}$ for every ${x \in X.}$ In general, to compute ${\|T\|_{\mathcal{L}}{:}}$\
+**(i)** try to estimate ${\|Tx\|_Y \le C \|x\|_X}$ for every ${x \in X,}$ keeping $C$ as small as possible;\
+**(ii)** **(a)** find ${x_0 \in X}$ with ${x_0 \neq 0}$ such that ${\|Tx_0\|_Y = C \|x_0\|_X,}$ or\
+**(b)** find ${(x_n) \subset X \setminus \{0\}}$ such that ${\|Tx_n\|_Y/\|x_n\|_X \to C.}$
+
+For Example 1 we choose (b) of Remark 2. For every integer ${n \ge 1}$ let ${f_n \in C([-1, 1])}$ be equal to $-1$ on ${[-1, -1/n],}$ linear on $[-1/n, 1/n]$ and equal to $1$ on ${[1/n, 1],}$ as in Figure 1, so that ${\|f_n\|_\infty = 1.}$
+
+<Ramp client:visible />
+
+**Figure 1.** The drawing of Example 1: the function $f_n$ for the $n$ of the slider, equal to $-1$ on ${[-1, -1/n],}$ linear on $[-1/n, 1/n]$ and equal to $1$ on ${[1/n, 1].}$
+
+Since ${f_n \, g = 1}$ on ${[-1, -1/n]}$ and on ${[1/n, 1],}$
+
+$$
+\begin{aligned}
+|Tf_n| &= \biggl| \int_{-1}^{1} f_n \, g \, d\lambda \biggr| \\
+&= \biggl| \int_{-1}^{-1/n} f_n \, g \, d\lambda + \int_{-1/n}^{1/n} f_n \, g \, d\lambda + \int_{1/n}^{1} f_n \, g \, d\lambda \biggr| \\
+&= \biggl| -\frac{1}{n} + 1 + 1 - \frac{1}{n} + \int_{-1/n}^{1/n} f_n \, g \, d\lambda \biggr| \\
+&\ge 2 - \biggl| -\frac{2}{n} + \int_{-1/n}^{1/n} f_n \, g \, d\lambda \biggr|.
+\end{aligned}
+$$
+
+Here ${-2/n \to 0}$ and
+
+$$
+\biggl| \int_{-1/n}^{1/n} f_n \, g \, d\lambda \biggr| \le \|f_n\|_\infty \, \frac{2}{n} = \frac{2}{n} \longrightarrow 0.
+$$
+
+Hence
+
+$$
+\frac{|Tf_n|}{\|f_n\|_\infty} = |Tf_n| \ge 2 - \biggl| -\frac{2}{n} + \int_{-1/n}^{1/n} f_n \, g \, d\lambda \biggr| \xrightarrow[n \to +\infty]{} 2.
+$$
+
+In detail, ${|Tf_n| \le 2 \|f_n\|_\infty = 2}$ by the bound proved for the continuity of ${T,}$ so the ratio tends to ${2,}$ and ${\|T\|_{\mathcal{L}} = 2}$ by (b) of Remark 2.
+
+### The operators $T_i f = \int_{-1}^{1} f \, x/(1 + x^2) \, d\lambda$
+
+**Example 3.** Let ${X_1 = L^\infty((-1, 1))}$ and ${X_2 = C([-1, 1]),}$ and for ${i = 1, 2}$ let ${T_i \colon X_i \to X_i}$ be given by
+
+$$
+T_i f := \int_{-1}^{1} f \, \frac{x}{1 + x^2} \, d\lambda.
+$$
+
+**Note 4.** For every ${f \in X_i,}$ the image $T_i f$ is a constant function, and therefore ${\|T_i f\|_{X_i} = \|T_i f\|_\infty = |T_i f|.}$
+
+(1) Is $T_i$ continuous? By Note 4, for every ${f \in X_i,}$
+
+$$
+\begin{aligned}
+\|T_i f\|_\infty = |T_i f| &= \biggl| \int_{-1}^{1} \frac{x}{1 + x^2} \, f \, d\lambda \biggr| \\
+&\le \|f\|_\infty \int_{-1}^{1} \frac{|x|}{1 + x^2} \, d\lambda \\
+&= \|f\|_\infty \int_0^1 \frac{2x}{1 + x^2} \, d\lambda = (\log 2) \, \|f\|_\infty.
+\end{aligned}
+$$
+
+Hence $T_i$ is bounded, hence continuous, for ${i = 1, 2.}$
+
+(2) What is ${\|T_i\|_{\mathcal{L}(X_i, X_i)}?}$ For ${i = 1,}$ that is, ${X_1 = L^\infty((-1, 1)),}$ we choose
+
+$$
+f_0(x) = \begin{cases} -1 & -1 \le x \le 0, \\ 1 & 0 < x \le 1, \end{cases}
+$$
+
+which belongs to ${L^\infty((-1, 1))}$ and satisfies ${\|f_0\|_\infty = 1.}$ Then
+
+$$
+\begin{aligned}
+\frac{\|T_1 f_0\|_\infty}{\|f_0\|_\infty} &= \|T_1 f_0\|_\infty = |T_1 f_0| \\
+&= \biggl| \int_{-1}^{1} \frac{x}{1 + x^2} \, f_0 \, d\lambda \biggr| \\
+&= \biggl| \int_{-1}^{1} \frac{|x|}{1 + x^2} \, d\lambda \biggr| \\
+&= \int_{-1}^{1} \frac{|x|}{1 + x^2} \, d\lambda = \log 2.
+\end{aligned}
+$$
+
+Hence, by (1) and (a) of Remark 2, ${\|T_1\|_{\mathcal{L}(L^\infty, L^\infty)} = \log 2.}$ For ${i = 2,}$ that is, ${X_2 = C([-1, 1]),}$ we take the functions $f_n$ of Figure 1, with ${\|f_n\|_\infty = 1.}$ Then
+
+$$
+\frac{\|T_2 f_n\|_\infty}{\|f_n\|_\infty} = |T_2 f_n| = \biggl| \int_{-1}^{1} \frac{x}{1 + x^2} \, f_n \, d\lambda \biggr|.
+$$
+
+Moreover ${f_n \to H}$ in ${L^1((-1, 1)),}$ where
+
+$$
+H(x) = \begin{cases} -1 & -1 \le x < 0, \\ 1 & 0 < x < 1. \end{cases}
+$$
+
+Hence
+
+$$
+\begin{aligned}
+\lim_{n \to \infty} |T_2 f_n| &= \biggl| \int_{-1}^{1} \frac{x}{1 + x^2} \, H \, d\lambda \biggr| \\
+&= \int_{-1}^{1} \frac{|x|}{1 + x^2} \, d\lambda = \log 2.
+\end{aligned}
+$$
+
+Indeed, ${|x|/(1 + x^2) \le 1}$ on ${(-1, 1),}$ so the integrals of ${x f_n/(1 + x^2)}$ and of ${x H/(1 + x^2)}$ differ at most by ${\|f_n - H\|_1,}$ which tends to ${0.}$ Hence, by (1) and (b) of Remark 2, ${\|T_2\|_{\mathcal{L}(C, C)} = \log 2.}$
+
+(3) Let ${g(x) = x^2}$ for ${x \in (-1, 1).}$ Is ${g \in \operatorname{Ker}(T_1)?}$ Is $T_1$ injective? We compute
+
+$$
+T_1 g = \int_{-1}^{1} \frac{x}{1 + x^2} \, x^2 \, d\lambda = \int_{-1}^{1} \frac{x^3}{1 + x^2} \, d\lambda = 0,
+$$
+
+because the function ${x^3/(1 + x^2)}$ is odd. Hence ${g \in \operatorname{Ker}(T_1).}$
+
+**Remark 5.** Let $T$ be a linear operator between normed spaces. Then $T$ is injective if and only if ${\operatorname{Ker}(T) = \{0\}.}$
+
+By Remark 5, since ${g \neq 0,}$ the operator $T_1$ is not injective.
+
+### The operator $(Tf)(x) = e^{-x} \int_0^x e^y \, f(y) \, dy$
+
+**Example 6.** Let ${T \colon L^\infty((0, 1)) \to L^\infty((0, 1))}$ be given by
+
+$$
+(Tf)(x) := e^{-x} \int_0^x e^y \, f(y) \, dy \qquad \text{for every } f \in L^\infty((0, 1)) \text{ and every } x \in (0, 1).
+$$
+
+**(1)** Is $T$ continuous?
+
+For the operator $T$ of Example 6, let ${f \in L^\infty((0, 1))}$ and ${x \in (0, 1).}$ Then
+
+$$
+\begin{aligned}
+|(Tf)(x)| &= e^{-x} \biggl| \int_0^x e^y \, f(y) \, dy \biggr| \\
+&\le e^{-x} \int_0^x e^y \, |f(y)| \, dy \\
+&\le \|f\|_\infty \, e^{-x} \int_0^x e^y \, dy \\
+&= \|f\|_\infty (1 - e^{-x}) \le (1 - e^{-1}) \|f\|_\infty,
+\end{aligned}
+$$
+
+where the integral of $e^y$ over $(0, x)$ is ${e^x - 1,}$ and ${e^{-x} \ge e^{-1}.}$ Hence ${\|Tf\|_\infty \le (1 - e^{-1}) \|f\|_\infty}$ for every ${f \in L^\infty((0, 1)),}$ and $T$ is continuous.
+
+(2) What is ${\|T\|_{\mathcal{L}}?}$ We choose ${f_0 = 1,}$ so that ${\|f_0\|_\infty = 1.}$ Then
+
+$$
+\begin{aligned}
+\frac{\|Tf_0\|_\infty}{\|f_0\|_\infty} = \|Tf_0\|_\infty &= \biggl\| e^{-x} \int_0^x e^y \, dy \biggr\|_\infty \\
+&= \|1 - e^{-x}\|_\infty = 1 - e^{-1}.
+\end{aligned}
+$$
+
+For the last equality, Figure 2 draws the graphs of ${e^{-x},}$ which decreases from ${1,}$ and of ${1 - e^{-x},}$ which increases from ${0.}$ Hence, by (1) and (a) of Remark 2, ${\|T\|_{\mathcal{L}} = 1 - e^{-1}.}$
+
+<Exponentials />
+
+**Figure 2.** The drawings of (2) in Example 6: on the left the graph of ${e^{-x},}$ on the right the graph of ${1 - e^{-x},}$ for ${x \in [0, 1].}$
+
+(3) Is $T$ injective? The idea is to impose ${f \in \operatorname{Ker}(T),}$ that is, ${Tf = 0,}$ and to look for necessary conditions on ${f.}$ For ${f \in L^\infty((0, 1))}$ let
+
+$$
+F(x) := \int_0^x e^y \, f(y) \, dy \qquad \text{for } x \in [0, 1],
+$$
+
+so that ${(Tf)(x) = e^{-x} \, F(x)}$ for ${x \in (0, 1).}$ Let ${f \in \operatorname{Ker}(T).}$ Then ${e^{-x} \, F(x) = 0}$ for almost every ${x \in (0, 1).}$
+
+In fact, ${e^{-x} \, F(x) = 0}$ for every ${x \in (0, 1).}$ The function ${y \mapsto e^y \, f(y)}$ belongs to ${L^\infty((0, 1)) \subset L^1((0, 1)),}$ so $F$ is continuous by the first fundamental theorem of calculus, Theorem 9 of the ninth post. Hence $Tf$ is continuous, and it vanishes at every point because ${f \in \operatorname{Ker}(T).}$ Indeed, a continuous function that vanishes almost everywhere on $(0, 1)$ vanishes at every point of ${(0, 1),}$ since every nonempty open interval has positive measure.
+
+Since ${e^{-x} > 0,}$ it follows that ${F(x) = 0}$ for almost every ${x \in (0, 1).}$ Moreover, since ${y \mapsto e^y \, f(y)}$ belongs to ${L^1((0, 1)),}$ the function $F$ belongs to ${\mathrm{AC}([0, 1]),}$ and ${F'(x)}$ exists and equals ${e^x \, f(x)}$ for almost every ${x \in (0, 1).}$ In detail, $F$ vanishes at every point of ${(0, 1),}$ because $Tf$ does, so ${F' = 0}$ on ${(0, 1).}$ Hence ${0 = e^x \, f(x)}$ for almost every ${x,}$ where ${e^x > 0.}$ So ${f(x) = 0}$ for almost every ${x,}$ that is, ${f = 0}$ in ${L^\infty((0, 1)).}$ Therefore ${\operatorname{Ker}(T) = \{0\},}$ and $T$ is injective by Remark 5.
+
+(4) Is $T$ surjective? The idea is to look for necessary conditions on $Tf$ as $f$ varies in ${L^\infty((0, 1)).}$
+
+(i) Let ${f \in L^\infty((0, 1)).}$ In ${(Tf)(x) = e^{-x} \, F(x)}$ the factor $e^{-x}$ is continuous, and ${F \in C([0, 1])}$ by the first fundamental theorem of calculus, because $e^y \, f(y)$ belongs to ${L^1((0, 1)).}$ Hence ${Tf \in C([0, 1])}$ for every ${f \in L^\infty((0, 1)).}$ Therefore ${R(T) \subset C([0, 1]) \subsetneq L^\infty((0, 1)),}$ and $T$ is not surjective.
+
+(ii) We can observe that ${R(T) \subset \mathrm{AC}([0, 1]).}$ Both factors of ${(Tf)(x) = e^{-x} \, F(x)}$ belong to ${\mathrm{AC}([0, 1]){:}}$ the function ${e^{-x},}$ and the function $F$ of (3).
+
+**Remark 7.** Let ${a < b}$ be real numbers, let ${v_1, v_2 \in \mathrm{AC}([a, b])}$ and let ${v := v_1 \, v_2.}$ Then ${v \in \mathrm{AC}([a, b]).}$
+
+**Proof (complete).** Let ${\varepsilon > 0.}$ By Definition 11 of the ninth post, applied to $v_1$ and to $v_2$ with ${\varepsilon/(1 + \|v_1\|_\infty + \|v_2\|_\infty)}$ in place of ${\varepsilon,}$ for ${i = 1, 2}$ there exists ${\delta_i > 0}$ such that, for every finite family ${\{ (a_j, b_j) : j = 1, \dots, N \}}$ of pairwise disjoint subintervals of ${[a, b],}$
+
+$$
+\sum_{j=1}^{N} (b_j - a_j) < \delta_i \implies \sum_{j=1}^{N} |v_i(b_j) - v_i(a_j)| < \frac{\varepsilon}{1 + \|v_1\|_\infty + \|v_2\|_\infty}.
+$$
+
+We take ${\delta = \min\{\delta_1, \delta_2\}}$ and estimate. If ${(b_1 - a_1) + \dots + (b_N - a_N) < \delta,}$ then
+
+$$
+\begin{aligned}
+&\sum_{j=1}^{N} |v(b_j) - v(a_j)| = \sum_{j=1}^{N} |v_1(b_j) v_2(b_j) - v_1(a_j) v_2(a_j)| \\
+&\quad \le \sum_{j=1}^{N} \bigl( |v_1(b_j)| \, |v_2(b_j) - v_2(a_j)| + |v_2(a_j)| \, |v_1(b_j) - v_1(a_j)| \bigr) \\
+&\quad \le \|v_1\|_\infty \sum_{j=1}^{N} |v_2(b_j) - v_2(a_j)| + \|v_2\|_\infty \sum_{j=1}^{N} |v_1(b_j) - v_1(a_j)| \\
+&\quad \le \frac{\varepsilon}{1 + \|v_1\|_\infty + \|v_2\|_\infty} \bigl( \|v_1\|_\infty + \|v_2\|_\infty \bigr) < \varepsilon.
+\end{aligned}
+$$
+
+In the first inequality, ${v_1(b_j) v_2(a_j)}$ is added and subtracted inside each absolute value. The second uses ${|v_1(b_j)| \le \|v_1\|_\infty}$ and ${|v_2(a_j)| \le \|v_2\|_\infty,}$ and the third the choice of ${\delta.}$ The last inequality holds because ${\|v_1\|_\infty + \|v_2\|_\infty < 1 + \|v_1\|_\infty + \|v_2\|_\infty.}$ Hence ${v \in \mathrm{AC}([a, b]).}$ $\blacksquare$
+
+By Remark 7, applied on $[0, 1]$ to the functions $e^{-x}$ and ${F,}$ the function $Tf$ belongs to ${\mathrm{AC}([0, 1])}$ for every ${f \in L^\infty((0, 1)).}$ That is, ${R(T) \subset \mathrm{AC}([0, 1]).}$
+
+### The operator $(Tf)(x) = (2 + \chi_{[1, 2]}(x)) f(x + 1)$
+
+**Example 8.** Let ${T \colon L^1((0, \infty)) \to L^1((0, \infty))}$ be given by
+
+$$
+(Tf)(x) := \big( 2 + \chi_{[1, 2]}(x) \big) f(x + 1) \qquad \text{for almost every } x > 0.
+$$
+
+**(1)** Is $T$ continuous?
+
+For the operator $T$ of Example 8 and every ${f \in L^1((0, \infty)),}$
+
+$$
+\begin{aligned}
+\|Tf\|_1 = \int_0^\infty |Tf| \, d\lambda &= \int_0^\infty \big( 2 + \chi_{[1, 2]}(x) \big) \, |f(x + 1)| \, d\lambda \\
+&= \int_0^\infty 2 \, |f(x + 1)| \, d\lambda + \int_1^2 |f(x + 1)| \, d\lambda \\
+&= 2 \int_1^\infty |f(x)| \, d\lambda + \int_2^3 |f(x)| \, d\lambda \\
+&\le 3 \int_0^\infty |f| \, d\lambda = 3 \|f\|_1.
+\end{aligned}
+$$
+
+Hence $T$ is bounded, hence continuous.
+
+(2) What is ${\|T\|_{\mathcal{L}}?}$ Let ${f_0 \in L^1((0, \infty))}$ be a function with ${f_0 \neq 0}$ that vanishes outside ${[2, 3],}$ as in Figure 3.
+
+<Bump a={2} b={3} end={4.4} />
+
+**Figure 3.** The drawing of (2) in Example 8, an instance: a function $f_0$ of ${L^1((0, \infty))}$ with ${f_0 \neq 0,}$ equal to 0 outside ${[2, 3],}$ with the parts where it is 0 thick on the axis.
+
+By the computation of (1),
+
+$$
+\begin{aligned}
+\|Tf_0\|_1 &= 2 \int_1^\infty |f_0| \, d\lambda + \int_2^3 |f_0| \, d\lambda \\
+&= 2 \int_2^3 |f_0| \, d\lambda + \int_2^3 |f_0| \, d\lambda \\
+&= 3 \int_2^3 |f_0| \, d\lambda = 3 \int_0^\infty |f_0| \, d\lambda = 3 \|f_0\|_1.
+\end{aligned}
+$$
+
+Hence, by (1) and (a) of Remark 2, ${\|T\|_{\mathcal{L}} = 3.}$
+
+(3) Is $T$ injective? Let ${f \in \operatorname{Ker}(T),}$ that is, ${Tf = 0.}$ Then ${(2 + \chi_{[1, 2]}(x)) f(x + 1) = 0}$ for almost every ${x > 0,}$ where ${2 + \chi_{[1, 2]}(x) > 0.}$ Hence ${f(x + 1) = 0}$ for almost every ${x > 0.}$ That is, ${f(y) = 0}$ for almost every ${y > 1.}$ Then we take a function ${f_0 \in L^1((0, \infty))}$ with ${f_0 \neq 0}$ that vanishes on ${(1, \infty),}$ as in Figure 4.
+
+<Bump a={0} b={1} end={3.4} dots />
+
+**Figure 4.** The drawing of (3) in Example 8, an instance: a function $f_0$ of ${L^1((0, \infty))}$ with ${f_0 \neq 0,}$ equal to 0 on ${(1, \infty),}$ where it is thick on the axis.
+
+Then ${(Tf_0)(x) = (2 + \chi_{[1, 2]}(x)) f_0(x + 1)}$ for almost every ${x > 0.}$ Notice that ${f_0(x + 1) = 0}$ for every ${x > 0.}$ Hence ${(Tf_0)(x) = 0}$ for almost every ${x,}$ that is, ${Tf_0 = 0}$ in ${L^1((0, \infty)).}$ So ${f_0 \in \operatorname{Ker}(T)}$ and ${f_0 \neq 0,}$ and $T$ is not injective.
+
+(4) Is $T$ surjective? Let ${u \in R(T),}$ so that there exists ${f \in L^1((0, \infty))}$ with ${Tf = u.}$ Then ${u(x) = (2 + \chi_{[1, 2]}(x)) f(x + 1)}$ for almost every ${x > 0,}$ and, since ${2 + \chi_{[1, 2]}(x) > 0,}$
+
+$$
+\begin{aligned}
+f(x + 1) &= \frac{u(x)}{2 + \chi_{[1, 2]}(x)} && \text{for almost every } x > 0, \\
+f(y) &= \frac{u(y - 1)}{2 + \chi_{[1, 2]}(y - 1)} && \text{for almost every } y > 1,
+\end{aligned}
+$$
+
+where the second line is the first with ${y = x + 1.}$ Then, if ${u \in L^1((0, \infty)),}$ consider
+
+$$
+f(y) = \begin{cases} 0 & \text{for almost every } y \in (0, 1), \\[4pt] \dfrac{u(y - 1)}{2 + \chi_{[1, 2]}(y - 1)} & \text{for almost every } y > 1. \end{cases}
+$$
+
+(i) ${f \in L^1((0, \infty)).}$ Indeed, since ${2 + \chi_{[1, 2]}(y - 1) \ge 2,}$
+
+$$
+\begin{aligned}
+\int_0^\infty |f| \, d\lambda &= \int_1^\infty \frac{|u(y - 1)|}{2 + \chi_{[1, 2]}(y - 1)} \, d\lambda \\
+&\le \frac{1}{2} \int_1^\infty |u(y - 1)| \, d\lambda \\
+&= \frac{1}{2} \int_0^\infty |u| \, d\lambda < +\infty.
+\end{aligned}
+$$
+
+(ii) For almost every ${x > 0,}$
+
+$$
+\begin{aligned}
+(Tf)(x) &= \big( 2 + \chi_{[1, 2]}(x) \big) f(x + 1) \\
+&= \big( 2 + \chi_{[1, 2]}(x) \big) \frac{u(x + 1 - 1)}{2 + \chi_{[1, 2]}(x + 1 - 1)} \\
+&= u(x).
+\end{aligned}
+$$
+
+Hence for every ${u \in L^1((0, \infty))}$ there exists ${f \in L^1((0, \infty))}$ such that ${Tf = u,}$ and $T$ is surjective.
+
+### The operator $(Tx)^{(k)} = k x^{(k)}/(1 + k^2)$
+
+**Example 9.** Let ${T \colon \ell^2 \to \ell^2}$ be given by
+
+$$
+(Tx)^{(k)} = \frac{k}{1 + k^2} \, x^{(k)} \qquad \text{for every } x \in \ell^2 \text{ and every } k \in \mathbb{N}, \ k \ge 0.
+$$
+
+**(1)** Is $T$ continuous?
+
+For the operator $T$ of Example 9 and every ${x \in \ell^2,}$
+
+$$
+\begin{aligned}
+\|Tx\|_2^2 &= \sum_{k=0}^{\infty} \Big( \frac{k}{1 + k^2} \, x^{(k)} \Big)^2 \\
+&= \sum_{k=1}^{\infty} \Big( \frac{k}{1 + k^2} \Big)^2 \bigl( x^{(k)} \bigr)^2.
+\end{aligned}
+$$
+
+**Note 10.** For ${k = 0}$ the factor ${k/(1 + k^2)}$ equals ${0.}$
+
+By Note 10, only the indices ${k \ge 1}$ count, and we check that ${k/(1 + k^2) \le 1/2}$ for every ${k \ge 1.}$ This holds if and only if ${2k \le 1 + k^2,}$ that is, ${0 \le k^2 - 2k + 1 = (k - 1)^2,}$ which is true. Hence
+
+$$
+\begin{aligned}
+\|Tx\|_2^2 &= \sum_{k=1}^{\infty} \Big( \frac{k}{1 + k^2} \Big)^2 \bigl( x^{(k)} \bigr)^2 \\
+&\le \frac{1}{4} \sum_{k=1}^{\infty} \bigl( x^{(k)} \bigr)^2 \\
+&\le \frac{1}{4} \|x\|_2^2,
+\end{aligned}
+$$
+
+that is, ${\|Tx\|_2 \le \frac{1}{2} \|x\|_2}$ for every ${x \in \ell^2,}$ and $T$ is continuous.
+
+(2) What is ${\|T\|_{\mathcal{L}}?}$ Let ${x_0 = (0, 1, 0, 0, \dots) \in \ell^2,}$ so that ${\|x_0\|_2 = 1.}$ Since ${x_0^{(k)} \neq 0}$ only for ${k = 1,}$ where ${x_0^{(1)} = 1,}$
+
+$$
+\begin{aligned}
+\frac{\|Tx_0\|_2}{\|x_0\|_2} = \|Tx_0\|_2 &= \biggl( \sum_{k=0}^{\infty} \Big( \frac{k}{1 + k^2} \Big)^2 \bigl( x_0^{(k)} \bigr)^2 \biggr)^{\frac{1}{2}} \\
+&= \biggl( \Big( \frac{1}{1 + 1} \Big)^2 \bigl( x_0^{(1)} \bigr)^2 \biggr)^{\frac{1}{2}} = \frac{1}{2}.
+\end{aligned}
+$$
+
+Hence, by (1) and (a) of Remark 2, ${\|T\|_{\mathcal{L}} = \frac{1}{2}.}$
