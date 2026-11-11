@@ -1,0 +1,242 @@
+---
+title: 'The Banach–Steinhaus, open mapping, closed graph and Hahn–Banach theorems'
+date: 2026-11-11
+summary: 'A family of continuous linear operators between Banach spaces that is bounded at every point is bounded in norm (Banach–Steinhaus), a surjective continuous linear operator between Banach spaces is open, so that a bijective one has a continuous inverse, and a linear operator between Banach spaces is continuous if and only if its graph is closed. By the Hahn–Banach theorem, whose proof uses Zorn''s lemma, every continuous linear functional on a subspace of a normed space extends to the whole space with the same norm.'
+---
+
+import Graph from './Graph.svelte';
+import Zorn from './Zorn.svelte';
+import DomainR from './DomainR.svelte';
+import DomainT from './DomainT.svelte';
+
+Recall the corollary of Baire's lemma of the thirteenth post.
+
+**Corollary 1.** Let ${(X, d)}$ be a nonempty complete metric space and let $(C_m)$ be a sequence of closed sets in $X$ such that ${\bigcup_m C_m = X.}$ Then there exists $m_0$ such that ${\operatorname{int}(C_{m_0}) \neq \emptyset.}$
+
+## Banach–Steinhaus
+
+**Theorem 2 (Banach–Steinhaus).** Let ${(X, \|\cdot\|_X)}$ and ${(Y, \|\cdot\|_Y)}$ be Banach spaces and let ${\mathcal{F} \subset \mathcal{L}(X, Y)}$ be a family of linear continuous operators from $X$ to ${Y.}$ Suppose that for every ${x \in X}$ there exists ${M_x > 0}$ such that
+
+$$
+\|Tx\|_Y \le M_x \qquad \text{for every } T \in \mathcal{F}.
+$$
+
+Then there exists ${M > 0}$ such that ${\|T\|_{\mathcal{L}} \le M}$ for every ${T \in \mathcal{F}.}$ That is, ${\|Tx\|_Y \le M \|x\|_X}$ for every ${T \in \mathcal{F}}$ and every ${x \in X.}$
+
+**Proof (complete).** For every ${m \in \mathbb{N}}$ let ${C_m = \{ x \in X : \|Tx\|_Y \le m \ \text{for every } T \in \mathcal{F} \}.}$ (i) The set $C_m$ is closed. Let ${(x_k) \subset C_m}$ be such that ${x_k \to x}$ in ${X.}$ Then, for every ${T \in \mathcal{F},}$
+
+$$
+\|Tx\|_Y = \lim_{k \to \infty} \|Tx_k\|_Y \le m,
+$$
+
+since ${\|Tx_k\|_Y \le m}$ for every ${k.}$ Indeed, ${Tx_k \to Tx}$ because $T$ is continuous, and the norm is continuous by Remark 3 of the tenth post. Hence ${x \in C_m,}$ and $C_m$ is closed by Lemma 20 (i) of the first post.
+
+(ii) The union of the sets $C_m$ is ${X.}$ Let ${x \in X.}$ By assumption there exists ${M_x > 0}$ such that ${\|Tx\|_Y \le M_x}$ for every ${T \in \mathcal{F}.}$ Then ${x \in C_m}$ for every integer ${m \ge M_x,}$ since ${\|Tx\|_Y \le M_x \le m}$ for all the operators of ${\mathcal{F}.}$
+
+By Corollary 1, applied in ${X,}$ there exists ${m_0 \in \mathbb{N}}$ such that ${\operatorname{int}(C_{m_0}) \neq \emptyset.}$ That is, there exist a point $x_0$ of $X$ and ${r > 0}$ such that ${B_r(x_0) \subset C_{m_0}.}$
+
+We want to estimate the supremum of $\|Tz\|_Y$ over ${z \in B_1(0).}$ Let ${z \in B_1(0).}$ Then ${x_0 + rz \in B_r(x_0) \subset C_{m_0},}$ hence ${\|T(x_0 + rz)\|_Y \le m_0}$ for every ${T \in \mathcal{F}.}$ On the other hand, by the linearity of $T$ and the triangle inequality,
+
+$$
+\|T(x_0 + rz)\|_Y \ge \|T(rz)\|_Y - \|Tx_0\|_Y = r \|Tz\|_Y - \|Tx_0\|_Y.
+$$
+
+Hence, for every ${T \in \mathcal{F}}$ and every ${z \in B_1(0),}$
+
+$$
+\|Tz\|_Y \le \frac{m_0 + \|Tx_0\|_Y}{r} \le \frac{m_0 + M_{x_0}}{r} =: M,
+$$
+
+where the second inequality is the assumption at the point ${x_0.}$ Therefore ${\|T\|_{\mathcal{L}} \le M}$ for every ${T \in \mathcal{F}.}$ In detail, for ${t \in (0, 1)}$ and $x$ in the closed unit ball of ${X,}$ the vector $tx$ lies in ${B_1(0),}$ so that ${t \|Tx\|_Y \le M,}$ and letting $t$ tend to 1 gives ${\|Tx\|_Y \le M.}$ $\blacksquare$
+
+**Corollary 3.** Let ${(X, \|\cdot\|_X)}$ and ${(Y, \|\cdot\|_Y)}$ be Banach spaces and let ${(T_m) \subset \mathcal{L}(X, Y).}$ Suppose that for every ${x \in X}$ the limit of the sequence $(T_m x)$ of points of $Y$ exists in ${Y,}$ that is, $(T_m)$ converges pointwise on ${X.}$ Then the map ${T \colon X \to Y}$ given by
+
+$$
+Tx := \lim_{m \to \infty} T_m x
+$$
+
+belongs to ${\mathcal{L}(X, Y).}$ In particular, $T$ is continuous even though the convergence is only pointwise.
+
+**Proof (complete).** The map $T$ is linear: for all ${x_1, x_2 \in X}$ and ${\alpha, \beta \in \mathbb{R},}$
+
+$$
+\begin{aligned}
+T(\alpha x_1 + \beta x_2) &= \lim_{m \to \infty} T_m(\alpha x_1 + \beta x_2) \\
+&= \lim_{m \to \infty} \big( \alpha T_m x_1 + \beta T_m x_2 \big) = \alpha T x_1 + \beta T x_2.
+\end{aligned}
+$$
+
+For every ${x \in X,}$ the sequence $(T_m x)$ converges in ${Y,}$ hence it is bounded in ${Y.}$ That is, there exists ${M_x > 0}$ such that ${\|T_m x\|_Y \le M_x}$ for every ${m.}$ By the Banach–Steinhaus theorem, Theorem 2, applied to ${\mathcal{F} = \{ T_m : m \in \mathbb{N} \},}$ there exists ${M > 0}$ such that ${\|T_m\|_{\mathcal{L}} \le M}$ for every ${m.}$ Hence, for every ${z \in B_1(0),}$
+
+$$
+\|Tz\|_Y = \lim_{m \to \infty} \|T_m z\|_Y \le M,
+$$
+
+where the equality is the continuity of the norm, Remark 3 of the tenth post, and the inequality holds because ${\|T_m z\|_Y \le \|T_m\|_{\mathcal{L}} \|z\|_X \le M}$ for every ${m.}$ Therefore ${\|T\|_{\mathcal{L}} \le M,}$ as at the end of the proof of Theorem 2, and the linear map $T$ is bounded, hence continuous: ${T \in \mathcal{L}(X, Y).}$ $\blacksquare$
+
+## Open mapping theorem
+
+**Definition 4 (Open function).** Let ${(X, d_X)}$ and ${(Y, d_Y)}$ be metric spaces. A function ${f \colon (X, d_X) \to (Y, d_Y)}$ is said to be *open* if ${f(U)}$ is open in $Y$ for every open set ${U \subset X.}$
+
+**Theorem 5 (Open mapping).** Let ${(X, \|\cdot\|_X)}$ and ${(Y, \|\cdot\|_Y)}$ be Banach spaces and let ${T \in \mathcal{L}(X, Y).}$ If $T$ is surjective, then $T$ is open.
+
+**Proof (sketch).** For ${r > 0}$ and points $x$ of $X$ and $y$ of ${Y,}$ let $B_r^X(x)$ and $B_r^Y(y)$ be the open balls of radius $r$ centred at $x$ in $X$ and at $y$ in ${Y.}$ (i) It is sufficient to prove that ${T(B_1^X(0)) \supset B_r^Y(y_0)}$ for some ${y_0 \in Y}$ and ${r > 0.}$ (ii) We can prove that ${\overline{T(B_1^X(0))} \supset B_r^Y(y_0)}$ for some ${y_0 \in Y}$ and ${r > 0.}$ For (ii), the sets $\overline{T(B_m^X(0))}$ with ${m \ge 1}$ are closed and, since $T$ is surjective,
+
+$$
+\bigcup_{m \ge 1} \overline{T\big( B_m^X(0) \big)} = R(T) = Y.
+$$
+
+Hence, by Corollary 1, applied in ${Y,}$ there exist an integer ${m_0 \ge 1,}$ a point ${z_0 \in Y}$ and ${\rho > 0}$ such that
+
+$$
+B_\rho^Y(z_0) \subset \overline{T\big( B_{m_0}^X(0) \big)}.
+$$
+
+In detail, ${T(B_{m_0}^X(0)) = m_0 \, T(B_1^X(0))}$ by linearity, so that (ii) holds with ${y_0 = z_0/m_0}$ and ${r = \rho/m_0.}$ $\blacksquare$
+
+**Corollary 6.** Let ${(X, \|\cdot\|_X)}$ and ${(Y, \|\cdot\|_Y)}$ be Banach spaces and let ${T \in \mathcal{L}(X, Y).}$ Suppose that $T$ is bijective. Then ${T^{-1} \in \mathcal{L}(Y, X).}$
+
+**Proof (complete).** Consider ${T^{-1} \colon Y \to X.}$ We want to prove that ${(T^{-1})^{-1}(A)}$ is open in $Y$ for every open set ${A \subset X,}$ that is, that $T^{-1}$ is continuous, as in Definition 17 of the first post. In detail, $T^{-1}$ is linear, as the inverse of a bijective linear map, so that its continuity gives ${T^{-1} \in \mathcal{L}(Y, X).}$ Let ${A \subset X}$ be open. Then
+
+$$
+(T^{-1})^{-1}(A) = T(A),
+$$
+
+which is open, because $T$ is an open map by Theorem 5, the open mapping theorem. $\blacksquare$
+
+**Corollary 7 (Embeddings).** Let ${(X, \|\cdot\|_X)}$ and ${(Y, \|\cdot\|_Y)}$ be Banach spaces and let ${T \in \mathcal{L}(X, Y)}$ be injective, with $R(T)$ closed. Then ${T \colon (X, \|\cdot\|_X) \to (R(T), \|\cdot\|_Y)}$ is an isomorphism, that is, ${T^{-1} \colon R(T) \to X}$ is linear and continuous.
+
+**Proof (complete).** The space ${(R(T), \|\cdot\|_Y)}$ is a Banach space. Indeed, $R(T)$ is a subspace of ${Y,}$ closed by assumption, and a closed subspace of a Banach space is a Banach space. Hence ${T \colon (X, \|\cdot\|_X) \to (R(T), \|\cdot\|_Y)}$ is a bijective map between two Banach spaces, and ${T^{-1} \colon R(T) \to X}$ is continuous by Corollary 6. $\blacksquare$
+
+**Corollary 8 (Equivalent norms).** Let $X$ be a vector space with two norms $\|\cdot\|_a$ and $\|\cdot\|_b$ such that ${(X, \|\cdot\|_a)}$ and ${(X, \|\cdot\|_b)}$ are both Banach spaces. Suppose that there exists ${C_1 > 0}$ such that ${\|x\|_b \le C_1 \|x\|_a}$ for every ${x \in X.}$ Then there exists ${C_2 > 0}$ such that ${\|x\|_a \le C_2 \|x\|_b}$ for every ${x \in X,}$ that is, $\|\cdot\|_a$ and $\|\cdot\|_b$ are equivalent.
+
+**Proof (complete).** The assumption says that the map ${\operatorname{id} \colon (X, \|\cdot\|_a) \to (X, \|\cdot\|_b),}$ ${x \mapsto x,}$ is continuous: ${\|\operatorname{id} x\|_b = \|x\|_b \le C_1 \|x\|_a}$ for every $x$ in ${X.}$ The map $\operatorname{id}$ is also bijective. Hence, by Corollary 6, the map ${\operatorname{id} \colon (X, \|\cdot\|_b) \to (X, \|\cdot\|_a)}$ is also continuous. That is, there exists ${C_2 > 0}$ such that ${\|\operatorname{id} x\|_a = \|x\|_a \le C_2 \|x\|_b}$ for every ${x \in X.}$ $\blacksquare$
+
+**Corollary 9 (Isometries).** Let ${(X, \|\cdot\|_X)}$ and ${(Y, \|\cdot\|_Y)}$ be Banach spaces and let ${T \in \mathcal{L}(X, Y)}$ be an isometry, that is, ${\|Tx\|_Y = \|x\|_X}$ for every ${x \in X.}$ Then:\
+**(1)** $R(T)$ is closed;\
+**(2)** ${T \colon (X, \|\cdot\|_X) \to (R(T), \|\cdot\|_Y)}$ is an isometric isomorphism.
+
+**Proof (complete).** (1) Let ${(y_m) \subset R(T)}$ be such that ${y_m \to y}$ in ${Y.}$ Since ${y_m \in R(T),}$ there exists ${x_m \in X}$ such that ${y_m = Tx_m.}$ Now, for all $m$ and ${n,}$
+
+$$
+\|x_m - x_n\|_X = \|T(x_m - x_n)\|_Y = \|Tx_m - Tx_n\|_Y = \|y_m - y_n\|_Y.
+$$
+
+Since $(y_m)$ converges, $(y_m)$ is Cauchy in ${Y.}$ Hence $(x_m)$ is Cauchy in ${X,}$ and, since $X$ is a Banach space, ${x_m \to x}$ in $X$ for some ${x \in X.}$ Since $T$ is continuous, ${y = \lim_m y_m = \lim_m Tx_m = Tx,}$ hence ${y \in R(T),}$ and $R(T)$ is closed by Lemma 20 (i) of the first post.
+
+(2) The range $R(T)$ is closed by (1), and $T$ is injective. Indeed, if ${Tx = 0,}$ then ${\|x\|_X = \|Tx\|_Y = 0.}$ By Corollary 7, ${T \colon (X, \|\cdot\|_X) \to (R(T), \|\cdot\|_Y)}$ is then an isomorphism, and it is also an isometry, that is, an isometric isomorphism. $\blacksquare$
+
+**Corollary 10 (Maps bounded above and below).** Let ${(X, \|\cdot\|_X)}$ and ${(Y, \|\cdot\|_Y)}$ be Banach spaces and let ${T \in \mathcal{L}(X, Y).}$ Suppose that there exist ${C_1, C_2 > 0}$ such that ${C_1 \|x\|_X \le \|Tx\|_Y \le C_2 \|x\|_X}$ for every ${x \in X.}$ Then:\
+**(0)** $T$ is injective;\
+**(1)** $R(T)$ is closed;\
+**(2)** ${T \colon (X, \|\cdot\|_X) \to (R(T), \|\cdot\|_Y)}$ is an isomorphism.
+
+## Closed graph
+
+Let ${(X, \|\cdot\|_X)}$ and ${(Y, \|\cdot\|_Y)}$ be normed spaces and let ${T \colon X \to Y}$ be linear. The *graph* of $T$ is
+
+$$
+\operatorname{graph}(T) = \{ (x, Tx) : x \in X \} \subset X \times Y.
+$$
+
+We say that $\operatorname{graph}(T)$ is *closed* if, for every sequence ${(x_m, Tx_m) \subset \operatorname{graph}(T)}$ that converges to some ${(x, y),}$ we have ${y = Tx.}$ Here $(x_m, Tx_m)$ converges to $(x, y)$ when ${x_m \to x}$ in $X$ and ${Tx_m \to y}$ in ${Y.}$
+
+**Theorem 11 (Closed graph theorem).** Let ${(X, \|\cdot\|_X)}$ and ${(Y, \|\cdot\|_Y)}$ be Banach spaces and let ${T \colon X \to Y}$ be linear. Then $T$ is continuous if and only if ${\operatorname{graph}(T) \subset X \times Y}$ is closed.
+
+**Remark 12.** **(i)** In Theorem 11, the implication from left to right follows from the continuity of ${T{:}}$ if $(x_m, Tx_m)$ converges to ${(x, y),}$ then ${y = \lim_m Tx_m = Tx.}$\
+**(ii)** The converse is false without linearity: the function ${f \colon \mathbb{R} \to \mathbb{R}}$ whose graph is drawn in Figure 1 is discontinuous, and $\operatorname{graph}(f)$ is closed.
+
+<Graph />
+
+**Figure 1.** The drawing of Remark 12 (ii): the graph of ${f,}$ made of a branch over the negative half-line, the dot at the origin and a branch over the positive half-line.
+
+**Proof (complete).** The implication from left to right is Remark 12 (i). Conversely, suppose that $\operatorname{graph}(T)$ is closed, and let
+
+$$
+\|x\|_0 := \|x\|_X + \|Tx\|_Y \qquad \text{for every } x \in X.
+$$
+
+The function $\|\cdot\|_0$ is a norm on ${X.}$ (i) If ${\|x\|_0 = 0,}$ then ${\|x\|_X = 0,}$ hence ${x = 0.}$ (ii)&nbsp;For every ${\alpha \in \mathbb{R}}$ and every ${x \in X,}$
+
+$$
+\|\alpha x\|_0 = \|\alpha x\|_X + \|T(\alpha x)\|_Y = |\alpha| \big( \|x\|_X + \|Tx\|_Y \big).
+$$
+
+(iii) The function $\|\cdot\|_0$ satisfies the triangle inequality. Moreover, ${(X, \|\cdot\|_0)}$ is a Banach space. Let ${(x_m) \subset X}$ be Cauchy with respect to ${\|\cdot\|_0{:}}$ for every ${\varepsilon > 0}$ there exists $N$ such that
+
+$$
+\|x_m - x_n\|_0 = \|x_m - x_n\|_X + \|Tx_m - Tx_n\|_Y \le \varepsilon \qquad \text{for all } m, n \ge N.
+$$
+
+Hence $(x_m)$ is Cauchy with respect to $\|\cdot\|_X$ and $(Tx_m)$ is Cauchy with respect to ${\|\cdot\|_Y.}$ Since $X$ and $Y$ are Banach spaces, there exist points $x$ of $X$ and $y$ of $Y$ such that ${x_m \to x}$ in $X$ and ${Tx_m \to y}$ in ${Y.}$ Since $\operatorname{graph}(T)$ is closed, ${y = Tx.}$ Therefore
+
+$$
+\|x_m - x\|_0 = \|x_m - x\|_X + \|Tx_m - Tx\|_Y = \|x_m - x\|_X + \|Tx_m - y\|_Y,
+$$
+
+where both terms on the right tend to ${0.}$ Hence ${\|x_m - x\|_0 \to 0,}$ that is, ${x_m \to x}$ with respect to ${\|\cdot\|_0.}$
+
+Now ${(X, \|\cdot\|_X)}$ and ${(X, \|\cdot\|_0)}$ are both Banach spaces, and ${\|x\|_X \le \|x\|_X + \|Tx\|_Y = \|x\|_0}$ for every ${x \in X.}$ By Corollary 8, with $\|\cdot\|_0$ in place of $\|\cdot\|_a$ and $\|\cdot\|_X$ in place of ${\|\cdot\|_b,}$ there exists ${C > 0}$ such that ${\|x\|_0 \le C \|x\|_X}$ for every ${x \in X.}$ Since ${\|x\|_0 = \|x\|_X + \|Tx\|_Y \ge \|Tx\|_Y,}$ it follows that ${\|Tx\|_Y \le C \|x\|_X}$ for every ${x \in X,}$ that is, $T$ is bounded, and therefore continuous. $\blacksquare$
+
+## Hahn–Banach theorems
+
+**Remark 13.** **(i)** Let ${(X, \|\cdot\|_X)}$ be a normed space. Then ${X^* = \mathcal{L}(X, \mathbb{R})}$ is a Banach space, whose norm is written ${\|\cdot\|_{X^*}.}$\
+**(ii)** Let ${V \subset X}$ be a subspace. Then ${(V, \|\cdot\|_X)}$ is a normed space, and ${V^* = \mathcal{L}(V, \mathbb{R})}$ is a Banach space, whose norm is written ${\|\cdot\|_{V^*}.}$\
+**(iii)** If ${T \in X^*,}$ it is possible to restrict $T$ to ${V{:}}$ the restriction ${T|_V \colon V \to \mathbb{R}}$ belongs to ${V^*.}$
+
+The question raised by Remark 13 (iii) is the converse. If ${L \in V^*,}$ is it possible to extend $L$ to some ${T \in X^*?}$ The answer is yes.
+
+**Theorem 14 (Hahn–Banach).** Let ${(X, \|\cdot\|_X)}$ be a normed space, let ${V \subset X}$ be a subspace, with the norm ${\|\cdot\|_X,}$ and let ${L \in V^*.}$ Then there exists ${T \in X^*}$ such that
+
+$$
+\begin{aligned}
+&Tv = Lv \quad \text{for every } v \in V, \ \text{that is,} \ T|_V = L, \\
+&\|T\|_{X^*} = \|L\|_{V^*}, \ \text{that is, the norm does not change.}
+\end{aligned}
+$$
+
+The proof of Theorem 14 uses Zorn's lemma, which is equivalent to the [axiom of choice](https://en.wikipedia.org/wiki/Axiom_of_choice). Let $S$ be a set. An *order* on $S$ is a relation $\le$ on $S$ such that, for all ${x, y, z \in S,}$
+
+$$
+x \le x, \qquad x \le y \ \text{and} \ y \le x \implies x = y, \qquad x \le y \ \text{and} \ y \le z \implies x \le z.
+$$
+
+**Lemma 15 (Zorn).** Let $S$ be a set endowed with an order ${{\le}.}$ Suppose that, for every family ${\{ x_\alpha : \alpha \in A \} \subset S}$ such that
+
+$$
+x_\alpha \le x_\beta \ \text{ or } \ x_\beta \le x_\alpha \qquad \text{for all } \alpha, \beta \in A,
+$$
+
+there exists ${x \in S}$ such that ${x_\alpha \le x}$ for every ${\alpha \in A,}$ as in Figure 2. Then there exists ${\bar{x} \in S}$ such that
+
+$$
+\bar{x} \le y \implies \bar{x} = y \qquad \text{for every } y \in S.
+$$
+
+<Zorn />
+
+**Figure 2.** The drawing of Lemma 15: elements of ${S,}$ some joined by segments, a family $\{ x_\alpha \}$ inside the closed curve, as in the hypothesis, and at its top the element $x$ with ${x_\alpha \le x}$ for every ${\alpha \in A.}$
+
+**Proof (sketch).** We prove Theorem 14 with Lemma 15. Let ${L \in V^*.}$ As in Figure 3, let
+
+$$
+S = \left\{ R \colon D_R \to \mathbb{R} \ : \ \begin{aligned} &D_R \subset X \text{ is a subspace}, \\ &V \subset D_R, \\ &R \in \mathcal{L}(D_R, \mathbb{R}), \\ &R|_V = L, \ \|R\|_{D_R^*} = \|L\|_{V^*} \end{aligned} \right\}.
+$$
+
+<DomainR />
+
+**Figure 3.** The drawing of the set $S$ in the proof of Theorem 14: in ${X,}$ a subspace ${D_R,}$ drawn as a plane, that contains the subspace ${V,}$ drawn as a line.
+
+For two elements $R_1$ and $R_2$ of $S$ we define ${R_1 \le R_2}$ if ${D_{R_1} \subset D_{R_2}}$ and ${R_2|_{D_{R_1}} = R_1.}$ By Lemma 15, $S$ has a maximal element ${T \colon D_T \to \mathbb{R}.}$ That is, ${T \le R}$ implies ${T = R}$ for every ${R \in S.}$ The goal is ${D_T = X.}$ Suppose, by contradiction, that ${D_T \neq X,}$ and take ${x_0 \in X \setminus D_T,}$ as in Figure 4.
+
+<DomainT />
+
+**Figure 4.** The drawing of the step by contradiction in the proof of Theorem 14: the subspace ${D_T,}$ drawn as a plane, and a point $x_0$ outside it, joined to a point of $D_T$ by a segment.
+
+The idea is to find ${\tilde{T} \colon \operatorname{Span}(D_T, x_0) \to \mathbb{R},}$ where
+
+$$
+\operatorname{Span}(D_T, x_0) = \{ v + t x_0 : v \in D_T, \ t \in \mathbb{R} \},
+$$
+
+such that ${\tilde{T}|_{D_T} = T}$ and ${\tilde{T} \in S.}$ Then ${T \le \tilde{T}}$ and ${T \neq \tilde{T},}$ against the maximality of ${T.}$ $\blacksquare$
