@@ -50,7 +50,7 @@ export function widest(list) {
 }
 
 /**
- * The typewriter sequence of Example 4: f_n is the characteristic function of
+ * The typewriter sequence of Example 7.4: f_n is the characteristic function of
  * [j/2^k, (j + 1)/2^k], where the k-th group (k ≥ 1) holds the terms with
  * 2^k − 1 ≤ n ≤ 2^(k+1) − 2 and j = n − (2^k − 1).
  */

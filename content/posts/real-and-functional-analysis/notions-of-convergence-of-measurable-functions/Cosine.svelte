@@ -1,5 +1,5 @@
 <script>
-  // Example 13, the drawing of the lecture extended to f_n: on [0, 1], the graph
+  // Example 7.13, the drawing of the lecture extended to f_n: on [0, 1], the graph
   // of x^n, which ends at (1, 1), the graph of f_n(x) = cos(x^n), which ends at
   // (1, cos(1)), and, dashed, the constant 1. The slider sets n.
   import Slider from '@toolkit/Slider.svelte';

@@ -1,5 +1,5 @@
 <script>
-  // The drawing of Example 4. Left: f_n, equal to 0 on [−1, 0], linear on
+  // The drawing of Example 12.4. Left: f_n, equal to 0 on [−1, 0], linear on
   // [0, 1/n] and equal to 1 on [1/n, 1], for the n of the slider, with the
   // dashed vertical at 1/n; H dashed where it differs from f_n, on (0, 1/n),
   // and the region between the two graphs shaded, of area ‖f_n − H‖_1.

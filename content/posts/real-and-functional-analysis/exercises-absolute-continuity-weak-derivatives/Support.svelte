@@ -1,8 +1,8 @@
 <script>
   // The two drawings of the lecture of a function that vanishes near both ends
-  // of an interval, the zero parts thick on the axis. Without `phi`, Remark 1:
+  // of an interval, the zero parts thick on the axis. Without `phi`, Remark 11.1:
   // a function f of C_c((a, b)), zero on (a, a + ε) and on (b − ε, b). With
-  // `phi`, Example 2: a function φ of C_c^∞((0, 1)), zero on (0, ε) and on
+  // `phi`, Example 11.2: a function φ of C_c^∞((0, 1)), zero on (0, ε) and on
   // (1 − ε, 1). An instance of each.
   import { graph } from './plot.js';
   let { phi = false } = $props();

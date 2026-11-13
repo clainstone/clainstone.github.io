@@ -75,7 +75,14 @@ if (images.length > 60) fail(`${images.length} source pages: pass --pages with t
 
 // ---- the post, with line numbers ------------------------------------------
 const numbered = (file) => readFileSync(file, 'utf8').split('\n').map((l, i) => `${String(i + 1).padStart(4)}  ${l}`).join('\n');
-const postFiles = ['index.mdx', ...readdirSync(postDir).filter((f) => f !== 'index.mdx' && /\.(svelte|js|ts|mjs)$/.test(f)).sort()];
+// Only the files the page reaches through its imports: a component left in the folder is not part of the post.
+const postFiles = [];
+const visit = (file) => {
+  if (postFiles.includes(file) || !existsSync(join(postDir, file))) return;
+  postFiles.push(file);
+  for (const m of readFileSync(join(postDir, file), 'utf8').matchAll(/from\s+'\.\/([^'/]+)'/g)) visit(m[1]);
+};
+visit('index.mdx');
 const postText = postFiles.map((f) => `===== FILE ${f} =====\n${numbered(join(postDir, f))}`).join('\n\n');
 
 const prompt = `You are a mathematical verifier. Your only task is to decide whether a lecture post diverges from its sources.
@@ -91,10 +98,10 @@ Check every item of the post against the sources:
 2. Every definition, theorem, proposition, lemma, remark, example: the same hypotheses, the same conclusion, the same quantifiers in the same order.
 3. Every number and datum: matrices, sequences, parameters, answers, counts, names, dates.
 4. Every figure: the data in its component code and the claims of its caption agree with the source.
-5. Content with no counterpart in the sources. The post is allowed to add: a hypothesis without which a source statement is false; an explicit step of an argument the source gives; paragraphs that start with **Details.**; sentences that start with "Indeed", "To see this" or "In detail"; instances of a source construction in a figure that its caption calls an instance. Report such an allowed addition only if it is mathematically wrong or changes the meaning of the source. Report every other addition (a result, example, number, name, date, application or claim not in the sources) as ADDED.
+5. Content with no counterpart in the sources. The post is allowed to add: a hypothesis without which a source statement is false; an explicit step of an argument the source gives; sentences that start with "Indeed", "To see this" or "In detail"; instances of a source construction in a figure that its caption calls an instance. Report such an allowed addition only if it is mathematically wrong or changes the meaning of the source. Report every other addition (a result, example, number, name, date, application or claim not in the sources) as ADDED.
 6. Where the post corrects an apparent slip of the source, report it as CORRECTION and say whether the correction is right. A wrong correction is DIVERGENT.
 
-Do not judge style, English, layout, headings, numbering of statements or the choice of figures. Ignore the frontmatter fields title and date (page metadata set by the author), import lines, and code that only draws (layout, colours, sizes); do check the frontmatter summary. Do not suggest improvements. Do not modify, create or delete any file: everything you need is in this message and in the images, and you may only read. If a passage of the source is unreadable, report it as UNREADABLE instead of guessing.
+Do not judge style, English, layout, headings, numbering of statements or the choice of figures. Ignore the frontmatter fields title, date and lecture (page metadata set by the author), import lines, and code that only draws (layout, colours, sizes); do check the frontmatter summary, and the short descriptions of the frontmatter index, one per statement label, each of which must say what its statement says and nothing more. Do not suggest improvements. Do not modify, create or delete any file: everything you need is in this message and in the images, and you may only read. If a passage of the source is unreadable, report it as UNREADABLE instead of guessing.
 
 Answer in this format and nothing else. One block per finding:
 

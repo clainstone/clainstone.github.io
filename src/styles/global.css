@@ -161,6 +161,8 @@ em, i { font-style: italic; }
 
 .skip {
   position: absolute;
+  /* Above the index button, which takes this corner in narrow windows. */
+  z-index: 6;
   top: 0.5rem;
   left: 0.5rem;
   padding: 0.4rem 0.7rem;
@@ -459,6 +461,122 @@ main > section + section { margin-top: var(--section); }
 }
 @media (forced-colors: active) { .xref-card { border-color: CanvasText; box-shadow: none; } }
 @media print { .xref-card { display: none; } }
+
+/* ---- index of a thread of lectures (src/components/LectureIndex.astro) ----
+   A button in the left margin, level with the bar, fixed so that it can be
+   reached from any point of a post. It opens a panel on the page's paper
+   above the page, which blurs behind it (the one blur of the site, asked
+   for). The panel lists every lecture and its numbered statements; the
+   lecture being read is washed. */
+.index-button {
+  position: fixed;
+  top: var(--top);
+  /* Its right edge 1.5rem left of the column. */
+  right: calc(50% + var(--post-measure) / 2 + 1.5rem);
+  z-index: 5;
+  padding: 0.1rem 0.7rem;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  background: var(--page);
+  color: var(--muted);
+  font: inherit;
+  font-size: var(--small);
+  line-height: var(--leading);
+  cursor: pointer;
+}
+.index-button:hover, .index-button[aria-expanded='true'] { color: var(--ink); border-color: var(--xref-edge); }
+/* In a window too narrow for the margin to hold it (the site is designed at
+   1280 px), the button moves to the top left corner, above the bar. */
+@media (max-width: 1000px) { .index-button { top: 0.75rem; right: auto; left: 0.75rem; } }
+html.index-open { overflow: hidden; }
+.index-overlay {
+  position: fixed;
+  inset: 0;
+  /* Below the preview cards (card.js gives them 20 and up): an entry's card shows above the panel. */
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 2.5rem 1.5rem;
+  background: color-mix(in srgb, var(--page) 55%, transparent);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+.index-overlay[hidden] { display: none; }
+.index-panel {
+  display: flex;
+  flex-direction: column;
+  width: min(46rem, 100%);
+  max-height: 100%;
+  border: 1px solid var(--xref-edge);
+  border-radius: 4px;
+  background: var(--page);
+  color: var(--ink);
+  box-shadow: 0 1px 2px var(--xref-shadow), 0 8px 24px -10px var(--xref-shadow);
+}
+.index-head {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 0.75rem 0.75rem 0.6rem 1.25rem;
+  border-bottom: 1px solid var(--rule);
+}
+.index-head h2 { margin: 0; font-size: var(--heading); font-weight: 600; }
+.index-thread { margin: 0; color: var(--muted); font-size: var(--small); font-style: italic; }
+.index-close {
+  display: grid;
+  place-items: center;
+  align-self: center;
+  width: 2rem;
+  height: 2rem;
+  margin-left: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+}
+.index-close:hover { color: var(--ink); background: var(--control-bg); }
+.index-close svg { width: 1.1rem; height: 1.1rem; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
+.index-body {
+  position: relative;
+  overflow: hidden auto;
+  overscroll-behavior: contain;
+  padding: 0 1.25rem 1rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--rule) transparent;
+}
+.index-body:focus { outline: none; }
+.index-lecture { padding: 0.8rem 0 0.7rem; border-top: 1px solid var(--rule); }
+.index-lecture:first-child { border-top: 0; }
+.index-lecture.is-current { margin-inline: -1.25rem; padding-inline: 1.25rem; background: color-mix(in srgb, var(--link) 6%, transparent); }
+.index-lecture-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+.index-n { flex: none; width: 5.25rem; color: var(--muted); font-weight: 400; font-variant-numeric: tabular-nums; }
+.index-title { color: var(--ink); text-wrap: balance; }
+.index-title:hover { color: var(--link-hover); }
+.index-date { flex: none; margin-left: auto; color: var(--muted); font-size: var(--small); font-weight: 400; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.index-items { margin: 0; padding: 0; list-style: none; }
+.index-items li {
+  display: grid;
+  grid-template-columns: 8.75rem 1fr;
+  gap: 0.75rem;
+  padding: 0.08rem 0;
+  font-size: var(--small);
+  line-height: 1.45;
+}
+.index-items a.xref { color: var(--link); font-variant-numeric: tabular-nums; text-decoration: none; white-space: nowrap; }
+.index-items a.xref:hover, .index-items a.xref.is-open { color: var(--link-hover); text-decoration: underline; }
+.index-what { text-wrap: pretty; }
+@media print { .index-button, .index-overlay { display: none; } }
 .body strong { font-weight: 600; }
 .body code { font-family: var(--mono); font-size: 0.85em; }
 .body :not(pre) > code {

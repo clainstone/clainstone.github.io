@@ -1,5 +1,5 @@
 <script>
-  // The drawing of Step 1 in the proof of Theorem 18, an instance in R^2 with
+  // The drawing of Step 1 in the proof of Theorem 12.18, an instance in R^2 with
   // the Euclidean norm: the closed subspace M, the horizontal line through 0;
   // the dashed circle of the vectors of norm 1; and the vector v = (0, 1) on
   // it, with d(v, M) = 1.

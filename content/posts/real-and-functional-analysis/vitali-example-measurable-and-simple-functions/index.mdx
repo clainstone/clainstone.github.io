@@ -1,8 +1,23 @@
 ---
 title: 'The Vitali example, measurable functions and simple functions'
 date: 2026-09-24
+lecture: 4
 published: 2026-10-06
 summary: 'Every Lebesgue measurable set of positive measure contains a set that is not Lebesgue measurable, and the Cantor function yields a Lebesgue measurable subset of $\mathbb{R}$ that is not a Borel set. Measurable functions are defined through preimages, properties can hold almost everywhere, and every measurable function with values in $[0, +\infty]$ is the limit of a sequence of simple functions.'
+index:
+  Proposition 4.3: 'Measurability can be checked on preimages of a generating family $\mathcal{F}$'
+  Remark 4.5: 'Continuous implies Borel measurable implies measurable, and $g \circ f$ with $g$ continuous'
+  Example 4.6: '$f^+$, $f^-$ and $|f|$ are measurable when $f$ is'
+  Remark 4.7: 'Measurability of sums, products, $\sup$, $\inf$, $\varlimsup$, $\varliminf$ and of $\chi_E$'
+  Example 4.9: 'The Dirichlet function and the derivative of the Cantor function vanish almost everywhere'
+  Remark 4.11: 'Uniform convergence implies pointwise and almost everywhere convergence'
+  Proposition 4.12: 'Equality and limits almost everywhere preserve measurability in a complete measure space'
+  Theorem 4.13: 'A Lebesgue measurable subset of $\mathbb{R}$ that is not Borel, via the Cantor function'
+  Example 4.15: 'A composition $\chi_F \circ g$ of measurable functions that is not measurable'
+  Example 4.18: '$A \times \{x_0\}$ is negligible in $\mathbb{R}^2$ even for $A \notin \mathcal{L}(\mathbb{R})$'
+  Example 4.19: 'The function equal to $x^2$ on $\mathbb{Q}$ and $x^6$ off $\mathbb{Q}$ is measurable'
+  Example 4.20: 'A function equal almost everywhere to a measurable $f$ on $\mathbb{R}$ is measurable'
+  Example 4.21: 'Lower and upper limits of $(-1)^m + m \chi_{[0, 1/m]}$ are $-1$ and $1$ off $0$'
 ---
 
 import Classes from './Classes.svelte';
@@ -18,7 +33,7 @@ The Lebesgue measure of the previous post is defined on the $\sigma$-algebra ${\
 
 ## The Vitali example
 
-**Theorem 1 (Vitali).** Let ${E \in \mathcal{L}(\mathbb{R}^N)}$ with ${\lambda(E) > 0.}$ Then there exists ${F_0 \subset E}$ such that ${F_0 \notin \mathcal{L}(\mathbb{R}^N).}$ In particular, ${\mathcal{L}(\mathbb{R}^N) \subsetneq \mathcal{P}(\mathbb{R}^N).}$
+**Theorem 4.1 (Vitali).** Let ${E \in \mathcal{L}(\mathbb{R}^N)}$ with ${\lambda(E) > 0.}$ Then there exists ${F_0 \subset E}$ such that ${F_0 \notin \mathcal{L}(\mathbb{R}^N).}$ In particular, ${\mathcal{L}(\mathbb{R}^N) \subsetneq \mathcal{P}(\mathbb{R}^N).}$
 
 **Proof (sketch).** Only the case ${E \subset [0, 1] \subset \mathbb{R}}$ is proved, so that ${N = 1.}$ Recall that an *equivalence relation* on $E$ is a binary relation $\sim$ such that, for all ${x, y, z \in E,}$
 
@@ -26,11 +41,11 @@ $$
 x \sim x, \qquad x \sim y \iff y \sim x, \qquad x \sim y, \ y \sim z \implies x \sim z.
 $$
 
-The equivalence classes of $\sim$ split ${E,}$ and picking one element from each equivalence class one can make a new set ${F_0 \subset E,}$ as in Figure 1. The picking uses the [axiom of choice](https://en.wikipedia.org/wiki/Axiom_of_choice).
+The equivalence classes of $\sim$ split ${E,}$ and picking one element from each equivalence class one can make a new set ${F_0 \subset E,}$ as in Figure 4.1. The picking uses the [axiom of choice](https://en.wikipedia.org/wiki/Axiom_of_choice).
 
 <Classes />
 
-**Figure 1.** A set $E$ split into its equivalence classes, and one element picked from each class, darker. The picked elements form the set ${F_0.}$
+**Figure 4.1.** A set $E$ split into its equivalence classes, and one element picked from each class, darker. The picked elements form the set ${F_0.}$
 
 Now consider on $E$ the relation given by ${x \sim y}$ if ${x - y \in \mathbb{Q}.}$ Let ${F_0 \subset E}$ be given by picking an element from each equivalence class, and define
 
@@ -58,9 +73,9 @@ By Step 2 and monotonicity, the left-hand side is at least ${\lambda(E) > 0,}$ h
 
 ## Measurable functions
 
-**Definition 2 (Measurable function).** Let $(X, \mathcal{M}_X)$ and $(Y, \mathcal{M}_Y)$ be measurable spaces. A function ${f \colon X \to Y}$ is called $(\mathcal{M}_X, \mathcal{M}_Y)$-*measurable* if ${f^{-1}(E) \in \mathcal{M}_X}$ for every ${E \in \mathcal{M}_Y.}$
+**Definition 4.2 (Measurable function).** Let $(X, \mathcal{M}_X)$ and $(Y, \mathcal{M}_Y)$ be measurable spaces. A function ${f \colon X \to Y}$ is called $(\mathcal{M}_X, \mathcal{M}_Y)$-*measurable* if ${f^{-1}(E) \in \mathcal{M}_X}$ for every ${E \in \mathcal{M}_Y.}$
 
-**Proposition 3.** Let $(X, \mathcal{M}_X)$ and $(Y, \mathcal{M}_Y)$ be measurable spaces, and suppose that ${\mathcal{M}_Y = \sigma_0(\mathcal{F})}$ for some ${\mathcal{F} \subset \mathcal{P}(Y).}$ Let ${f \colon X \to Y.}$ Then $f$ is $(\mathcal{M}_X, \mathcal{M}_Y)$-measurable if and only if ${f^{-1}(E) \in \mathcal{M}_X}$ for every ${E \in \mathcal{F}.}$
+**Proposition 4.3.** Let $(X, \mathcal{M}_X)$ and $(Y, \mathcal{M}_Y)$ be measurable spaces, and suppose that ${\mathcal{M}_Y = \sigma_0(\mathcal{F})}$ for some ${\mathcal{F} \subset \mathcal{P}(Y).}$ Let ${f \colon X \to Y.}$ Then $f$ is $(\mathcal{M}_X, \mathcal{M}_Y)$-measurable if and only if ${f^{-1}(E) \in \mathcal{M}_X}$ for every ${E \in \mathcal{F}.}$
 
 **Proof (complete).** We prove that the condition on $\mathcal{F}$ implies measurability. Let
 
@@ -92,13 +107,13 @@ $$
 \mathbb{R}, \qquad \overline{\mathbb{R}}, \qquad [0, +\infty), \qquad [0, +\infty], \qquad (-\infty, +\infty];
 $$
 
-on $Y$ only the Borel $\sigma$-algebra $\mathcal{B}(Y)$ of Definition 27 of the first post is considered.
+on $Y$ only the Borel $\sigma$-algebra $\mathcal{B}(Y)$ of Definition 1.27 is considered.
 
-**Definition 4 (Borel measurable and measurable functions).** A function ${f \colon X \to Y}$ is said to be:\
+**Definition 4.4 (Borel measurable and measurable functions).** A function ${f \colon X \to Y}$ is said to be:\
 **(i)** *Borel measurable* if it is $(\mathcal{B}(X), \mathcal{B}(Y))$-measurable;\
 **(ii)** *measurable*, also called *Lebesgue measurable*, if it is $(\mathcal{M}_X, \mathcal{B}(Y))$-measurable.
 
-**Remark 5.** **(i)** If a function ${f \colon X \to Y}$ is Borel measurable, then it is measurable. By Proposition 3, applied to the family of the open sets of ${Y,}$ which generates ${\mathcal{B}(Y),}$ the two properties read as follows:
+**Remark 4.5.** **(i)** If a function ${f \colon X \to Y}$ is Borel measurable, then it is measurable. By Proposition 4.3, applied to the family of the open sets of ${Y,}$ which generates ${\mathcal{B}(Y),}$ the two properties read as follows:
 
 $$
 \begin{array}{ccc}
@@ -111,7 +126,7 @@ $$
 **(ii)** If $f$ is continuous, then $f$ is Borel measurable: for every open set $E$ the set $f^{-1}(E)$ is open, hence ${f^{-1}(E) \in \mathcal{B}(X).}$\
 **(iii)** Let ${g \colon Y \to Z,}$ where $Z$ carries its Borel $\sigma$-algebra ${\mathcal{B}(Z).}$ If $f$ is measurable and $g$ is continuous, then ${g \circ f}$ is measurable.
 
-**Example 6.** If ${f \colon X \to \overline{\mathbb{R}}}$ is measurable, then
+**Example 4.6.** If ${f \colon X \to \overline{\mathbb{R}}}$ is measurable, then
 
 $$
 f^+ := \max\{f, 0\}, \qquad f^- := -\min\{f, 0\}, \qquad |f|
@@ -119,7 +134,7 @@ $$
 
 are all measurable.
 
-**Remark 7.** **(i)** If ${f, g \colon X \to (-\infty, +\infty]}$ are measurable, then ${f + g}$ and ${f \cdot g}$ are both measurable.
+**Remark 4.7.** **(i)** If ${f, g \colon X \to (-\infty, +\infty]}$ are measurable, then ${f + g}$ and ${f \cdot g}$ are both measurable.
 
 **(ii)** If ${f_m \colon X \to \overline{\mathbb{R}}}$ is measurable for every ${m,}$ then the following functions are all measurable:
 
@@ -137,38 +152,38 @@ Then $\chi_E$ is measurable if and only if ${E \in \mathcal{M}_X.}$
 
 ## Properties defined almost everywhere
 
-**Definition 8 (Almost everywhere).** Let ${(X, \mathcal{M}, \mu)}$ be a complete measure space. A property $P$ holds *almost everywhere*, or *$\mu$-almost everywhere*, if the set
+**Definition 4.8 (Almost everywhere).** Let ${(X, \mathcal{M}, \mu)}$ be a complete measure space. A property $P$ holds *almost everywhere*, or *$\mu$-almost everywhere*, if the set
 
 $$
 \{ x \in X : P(x) \text{ is false} \}
 $$
 
-is negligible in the sense of Definition 9 of the second post. In particular, its measure is zero.
+is negligible in the sense of Definition 2.9. In particular, its measure is zero.
 
-**Example 9.** On $\mathbb{R}$ with the Lebesgue measure ${\lambda{:}}$\
-**(i)** if ${f \colon \mathbb{R} \to \mathbb{R}}$ is $0$ at every point except one, where it is ${1,}$ as in Figure 2, then ${f = 0}$ almost everywhere;\
+**Example 4.9.** On $\mathbb{R}$ with the Lebesgue measure ${\lambda{:}}$\
+**(i)** if ${f \colon \mathbb{R} \to \mathbb{R}}$ is $0$ at every point except one, where it is ${1,}$ as in Figure 4.2, then ${f = 0}$ almost everywhere;\
 **(ii)** the *Dirichlet function* ${\chi_{\mathbb{Q}} \colon \mathbb{R} \to \mathbb{R}}$ satisfies ${\chi_{\mathbb{Q}} = 0}$ almost everywhere, because ${\lambda(\mathbb{Q}) = 0;}$\
-**(iii)** the Cantor function ${v \colon [0, 1] \to [0, 1]}$ of Example 8 of the previous post has a derivative $v'$ almost everywhere, and ${v' = 0}$ almost everywhere.
+**(iii)** the Cantor function ${v \colon [0, 1] \to [0, 1]}$ of Example 3.8 has a derivative $v'$ almost everywhere, and ${v' = 0}$ almost everywhere.
 
 <Spike />
 
-**Figure 2.** The function $f$ of Example 9 (i): it is $0$ at every point except one, where it is ${1.}$ The empty circle marks the point of the axis that is not on the graph.
+**Figure 4.2.** The function $f$ of Example 4.9 (i): it is $0$ at every point except one, where it is ${1.}$ The empty circle marks the point of the axis that is not on the graph.
 
-**Definition 10 (Convergence almost everywhere).** Let ${(X, \mathcal{M}, \mu)}$ be a complete measure space, and let ${f_m \colon X \to \overline{\mathbb{R}},}$ for every ${m,}$ and ${f \colon X \to \overline{\mathbb{R}}}$ be measurable. We say that $f_m$ *converges almost everywhere* to $f$ if ${\lim_{m \to +\infty} f_m(x) = f(x)}$ at almost every ${x \in X.}$
+**Definition 4.10 (Convergence almost everywhere).** Let ${(X, \mathcal{M}, \mu)}$ be a complete measure space, and let ${f_m \colon X \to \overline{\mathbb{R}},}$ for every ${m,}$ and ${f \colon X \to \overline{\mathbb{R}}}$ be measurable. We say that $f_m$ *converges almost everywhere* to $f$ if ${\lim_{m \to +\infty} f_m(x) = f(x)}$ at almost every ${x \in X.}$
 
-**Remark 11.** If ${f_m \to f}$ uniformly, then ${f_m \to f}$ pointwise, hence ${f_m \to f}$ almost everywhere (K. Ross, “Elementary Analysis”).
+**Remark 4.11.** If ${f_m \to f}$ uniformly, then ${f_m \to f}$ pointwise, hence ${f_m \to f}$ almost everywhere (K. Ross, “Elementary Analysis”).
 
-**Proposition 12.** Let ${(X, \mathcal{M}, \mu)}$ be a complete measure space.\
+**Proposition 4.12.** Let ${(X, \mathcal{M}, \mu)}$ be a complete measure space.\
 **(1)** If ${f, g \colon X \to \overline{\mathbb{R}},}$ $f$ is measurable and ${f = g}$ almost everywhere, then $g$ is measurable.\
 **(2)** If ${f_m, f \colon X \to \overline{\mathbb{R}},}$ $f_m$ is measurable for every $m$ and ${f_m \to f}$ almost everywhere, then $f$ is measurable.
 
 ## The strict inclusion $\mathcal{B}(\mathbb{R}^N) \subsetneq \mathcal{L}(\mathbb{R}^N)$
 
-The construction uses Theorem 1 and the Cantor function of Example 8 of the previous post.
+The construction uses Theorem 4.1 and the Cantor function of Example 3.8.
 
-**Theorem 13.** There exists ${F \in \mathcal{L}(\mathbb{R}) \setminus \mathcal{B}(\mathbb{R}).}$
+**Theorem 4.13.** There exists ${F \in \mathcal{L}(\mathbb{R}) \setminus \mathcal{B}(\mathbb{R}).}$
 
-**Proof (complete).** Let $T$ be the Cantor set of Definition 5 of the previous post, so that ${T \subset [0, 1].}$ Then
+**Proof (complete).** Let $T$ be the Cantor set of Definition 3.5, so that ${T \subset [0, 1].}$ Then
 
 $$
 T = [0, 1] \setminus A, \qquad A = \bigcup_m (a_m, b_m),
@@ -180,11 +195,11 @@ $$
 \sum_m (b_m - a_m) = 1.
 $$
 
-Let ${v \colon [0, 1] \to [0, 1]}$ be the Cantor function of Example 8 of the previous post, and let ${f \colon [0, 1] \to [0, 2]}$ be ${f(x) = x + v(x),}$ as in Figure 3. The function $f$ is strictly increasing and continuous, hence there exists its inverse ${g = f^{-1} \colon [0, 2] \to [0, 1],}$ and $g$ is continuous.
+Let ${v \colon [0, 1] \to [0, 1]}$ be the Cantor function of Example 3.8, and let ${f \colon [0, 1] \to [0, 2]}$ be ${f(x) = x + v(x),}$ as in Figure 4.3. The function $f$ is strictly increasing and continuous, hence there exists its inverse ${g = f^{-1} \colon [0, 2] \to [0, 1],}$ and $g$ is continuous.
 
 <Graphs />
 
-**Figure 3.** The graphs of the Cantor function $v$ and of ${f(x) = x + v(x)}$ on ${[0, 1].}$
+**Figure 4.3.** The graphs of the Cantor function $v$ and of ${f(x) = x + v(x)}$ on ${[0, 1].}$
 
 Now, since $f$ is bijective,
 
@@ -196,7 +211,7 @@ $$
 \end{aligned}
 $$
 
-Moreover, as in Figure 4,
+Moreover, as in Figure 4.4,
 
 $$
 f\Big( \bigcup_m (a_m, b_m) \Big) = \bigcup_m f\big( (a_m, b_m) \big) = \bigcup_m \big( f(a_m), f(b_m) \big).
@@ -206,7 +221,7 @@ In particular, $f(A)$ is open and ${f(T) = [0, 2] \setminus f(A)}$ is closed, so
 
 <Images client:visible />
 
-**Figure 4.** The graph of ${f,}$ the intervals $(a_m, b_m)$ removed up to the step $k$ of the construction of the Cantor set on the horizontal axis, and their images ${(f(a_m), f(b_m))}$ on the vertical axis. The dashed lines mark ${a,}$ ${b,}$ $f(a)$ and $f(b)$ for one of these intervals, an instance with ${(a, b) = (1/3, 2/3).}$ The slider sets ${k.}$
+**Figure 4.4.** The graph of ${f,}$ the intervals $(a_m, b_m)$ removed up to the step $k$ of the construction of the Cantor set on the horizontal axis, and their images ${(f(a_m), f(b_m))}$ on the vertical axis. The dashed lines mark ${a,}$ ${b,}$ $f(a)$ and $f(b)$ for one of these intervals, an instance with ${(a, b) = (1/3, 2/3).}$ The slider sets ${k.}$
 
 Notice that
 
@@ -229,7 +244,7 @@ $$
 
 where the third equality is $\sigma$-additivity, since the intervals ${(f(a_m), f(b_m))}$ are pairwise disjoint. Hence ${\lambda(f(T)) = 2 - 1 = 1 > 0.}$
 
-By Theorem 1, applied to ${f(T),}$ there exists ${E \subset f(T)}$ such that ${E \notin \mathcal{L}(\mathbb{R}).}$ Let ${F := f^{-1}(E).}$ Then
+By Theorem 4.1, applied to ${f(T),}$ there exists ${E \subset f(T)}$ such that ${E \notin \mathcal{L}(\mathbb{R}).}$ Let ${F := f^{-1}(E).}$ Then
 
 $$
 F = f^{-1}(E) \subset f^{-1}\big( f(T) \big) = T, \qquad \lambda(T) = 0,
@@ -243,13 +258,13 @@ $$
 g^{-1}(F) = g^{-1}\big( f^{-1}(E) \big) = g^{-1}\big( g(E) \big) = E.
 $$
 
-Since $g$ is continuous, it is Borel measurable by Remark 5 (ii), so ${g^{-1}(F) = E}$ is a Borel set. But $E$ is not even in ${\mathcal{L}(\mathbb{R}),}$ which contains ${\mathcal{B}(\mathbb{R}),}$ a contradiction. $\blacksquare$
+Since $g$ is continuous, it is Borel measurable by Remark 4.5 (ii), so ${g^{-1}(F) = E}$ is a Borel set. But $E$ is not even in ${\mathcal{L}(\mathbb{R}),}$ which contains ${\mathcal{B}(\mathbb{R}),}$ a contradiction. $\blacksquare$
 
-**Remark 14 (More consequences).** With the symbols of the proof of Theorem 13:\
+**Remark 4.14 (More consequences).** With the symbols of the proof of Theorem 4.13:\
 **(1)** the function ${g \colon [0, 2] \to [0, 1]}$ is Borel measurable, and ${F \in \mathcal{L}(\mathbb{R})}$ but ${g^{-1}(F) = E \notin \mathcal{L}(\mathbb{R}).}$ This is the reason why the $\sigma$-algebra considered on the target is $\mathcal{B}$ and not ${\mathcal{L};}$\
 **(2)** a composition of measurable functions may be non-measurable.
 
-**Example 15.** Let $g$ be as in Remark 14. The function ${h = \chi_F}$ is measurable. But ${\varphi = h \circ g}$ is not measurable, since
+**Example 4.15.** Let $g$ be as in Remark 4.14. The function ${h = \chi_F}$ is measurable. But ${\varphi = h \circ g}$ is not measurable, since
 
 $$
 \begin{aligned}
@@ -261,19 +276,19 @@ $$
 
 ## Simple functions
 
-**Definition 16 (Simple function).** Let ${(X, \mathcal{M})}$ be a measurable space. A function ${s \colon X \to \overline{\mathbb{R}}}$ is called *simple* if it has the form
+**Definition 4.16 (Simple function).** Let ${(X, \mathcal{M})}$ be a measurable space. A function ${s \colon X \to \overline{\mathbb{R}}}$ is called *simple* if it has the form
 
 $$
 s(x) = \sum_{i=1}^{k} a_i \chi_{D_i}(x),
 $$
 
-with ${a_i \in \overline{\mathbb{R}}}$ and with sets ${D_1, \dots, D_k \in \mathcal{M}}$ that are pairwise disjoint and whose union is ${X,}$ as in Figure 5.
+with ${a_i \in \overline{\mathbb{R}}}$ and with sets ${D_1, \dots, D_k \in \mathcal{M}}$ that are pairwise disjoint and whose union is ${X,}$ as in Figure 4.5.
 
 <Simple />
 
-**Figure 5.** An instance with ${k = 4,}$ where $X$ is an interval split into the intervals ${D_1,}$ ${D_2,}$ $D_3$ and ${D_4{:}}$ the simple function $s$ takes the value $a_i$ on ${D_i.}$
+**Figure 4.5.** An instance with ${k = 4,}$ where $X$ is an interval split into the intervals ${D_1,}$ ${D_2,}$ $D_3$ and ${D_4{:}}$ the simple function $s$ takes the value $a_i$ on ${D_i.}$
 
-**Proposition 17 (Approximation with simple functions).** Let ${(X, \mathcal{M})}$ be a measurable space and ${f \colon X \to [0, +\infty]}$ measurable. Then there exists a sequence $(f_m)$ of simple functions such that:\
+**Proposition 4.17 (Approximation with simple functions).** Let ${(X, \mathcal{M})}$ be a measurable space and ${f \colon X \to [0, +\infty]}$ measurable. Then there exists a sequence $(f_m)$ of simple functions such that:\
 **(i)** ${0 \le f_1 \le f_2 \le \dots \le f;}$\
 **(ii)** ${\lim_{m \to \infty} f_m(x) = f(x)}$ for every ${x \in X;}$
 
@@ -301,11 +316,11 @@ $$
 f_m(x) := \sum_{i=0}^{m-1} \frac{i}{m} \, \chi_{D_m^i}(x).
 $$
 
-By construction, ${f_m(x) \le f(x)}$ for every ${x \in X,}$ as in Figure 6.
+By construction, ${f_m(x) \le f(x)}$ for every ${x \in X,}$ as in Figure 4.6.
 
 <Approx client:visible />
 
-**Figure 6.** An instance: a function $f$ with ${0 \le f < 1}$ on an interval ${X,}$ the levels ${i/m,}$ dashed, and the simple function ${f_m.}$ The slider sets ${m.}$
+**Figure 4.6.** An instance: a function $f$ with ${0 \le f < 1}$ on an interval ${X,}$ the levels ${i/m,}$ dashed, and the simple function ${f_m.}$ The slider sets ${m.}$
 
 Let ${x \in X.}$ Then there exists $j$ such that ${x \in D_m^j,}$ hence
 
@@ -319,13 +334,13 @@ because ${f(x) < (j + 1)/m}$ and ${f_m(x) = j/m}$ for ${x \in D_m^j.}$ This give
 
 ### A product set in the plane
 
-**Example 18.** Let ${A \subset [0, 1]}$ with ${A \notin \mathcal{L}(\mathbb{R}),}$ let ${x_0 \in \mathbb{R},}$ and let
+**Example 4.18.** Let ${A \subset [0, 1]}$ with ${A \notin \mathcal{L}(\mathbb{R}),}$ let ${x_0 \in \mathbb{R},}$ and let
 
 $$
 E = A \times \{x_0\} \subset \mathbb{R}^2.
 $$
 
-Is ${E \in \mathcal{L}(\mathbb{R}^2)?}$ Yes. For every ${m \ge 1}$ let, as in Figure 7,
+Is ${E \in \mathcal{L}(\mathbb{R}^2)?}$ Yes. For every ${m \ge 1}$ let, as in Figure 4.7,
 
 $$
 R_m = (-1, 2) \times \Big( x_0 - \frac{1}{m}, \ x_0 + \frac{1}{m} \Big).
@@ -335,11 +350,11 @@ Then ${\lambda_2^*(E) \le \lambda_2^*(R_m) \to 0}$ as ${m \to \infty.}$ Hence ${
 
 <Strip client:visible />
 
-**Figure 7.** The set ${E = A \times \{x_0\}}$ and the set $A$ on the horizontal axis, both drawn schematically as points, and the rectangle ${R_m.}$ The slider sets ${m.}$
+**Figure 4.7.** The set ${E = A \times \{x_0\}}$ and the set $A$ on the horizontal axis, both drawn schematically as points, and the rectangle ${R_m.}$ The slider sets ${m.}$
 
 ### A function defined differently on rationals and irrationals
 
-**Example 19.** Is the function ${f \colon \mathbb{R} \to \mathbb{R}}$ given by
+**Example 4.19.** Is the function ${f \colon \mathbb{R} \to \mathbb{R}}$ given by
 
 $$
 f(x) = \begin{cases} x^2 & x \in \mathbb{Q}, \\ x^6 & x \notin \mathbb{Q} \end{cases}
@@ -355,9 +370,9 @@ The functions ${x \mapsto x^2,}$ ${\chi_{\mathbb{Q}},}$ ${x \mapsto x^6}$ and $\
 
 ### Functions equal almost everywhere
 
-**Example 20.** On $\mathbb{R}$ with the Lebesgue measure ${\lambda,}$ let ${f \colon \mathbb{R} \to \overline{\mathbb{R}}}$ be measurable and let ${g \colon \mathbb{R} \to \overline{\mathbb{R}}}$ be such that ${f = g}$ almost everywhere. Is $g$ also measurable? The equality ${f = g}$ almost everywhere means that the set ${N = \{ f \neq g \}}$ is negligible, so that ${\lambda(N) = 0.}$ It also means that ${f(x) = g(x)}$ for every ${x \in \mathbb{R} \setminus N.}$
+**Example 4.20.** On $\mathbb{R}$ with the Lebesgue measure ${\lambda,}$ let ${f \colon \mathbb{R} \to \overline{\mathbb{R}}}$ be measurable and let ${g \colon \mathbb{R} \to \overline{\mathbb{R}}}$ be such that ${f = g}$ almost everywhere. Is $g$ also measurable? The equality ${f = g}$ almost everywhere means that the set ${N = \{ f \neq g \}}$ is negligible, so that ${\lambda(N) = 0.}$ It also means that ${f(x) = g(x)}$ for every ${x \in \mathbb{R} \setminus N.}$
 
-To prove that $g$ is measurable, it is enough, by Proposition 3, to prove that ${g^{-1}((a, +\infty]) \in \mathcal{L}(\mathbb{R})}$ for every ${a \in \mathbb{R},}$ since the sets $(a, +\infty]$ are generators of $\mathcal{B}(\overline{\mathbb{R}})$ by Remark 28 of the first post. Now
+To prove that $g$ is measurable, it is enough, by Proposition 4.3, to prove that ${g^{-1}((a, +\infty]) \in \mathcal{L}(\mathbb{R})}$ for every ${a \in \mathbb{R},}$ since the sets $(a, +\infty]$ are generators of $\mathcal{B}(\overline{\mathbb{R}})$ by Remark 1.28. Now
 
 $$
 \begin{aligned}
@@ -370,13 +385,13 @@ The first set is contained in ${N,}$ so it is negligible and belongs to ${\mathc
 
 ### The sequence $(-1)^m + m \chi_{[0, 1/m]}$
 
-**Example 21.** Let ${f_m \colon \mathbb{R} \to \mathbb{R}}$ be
+**Example 4.21.** Let ${f_m \colon \mathbb{R} \to \mathbb{R}}$ be
 
 $$
 f_m(x) = (-1)^m + m \, \chi_{[0, 1/m]}(x) = (-1)^m + g_m(x),
 $$
 
-where ${g_m := m \, \chi_{[0, 1/m]},}$ as in Figure 8. The functions $g_m$ converge pointwise to the function
+where ${g_m := m \, \chi_{[0, 1/m]},}$ as in Figure 4.8. The functions $g_m$ converge pointwise to the function
 
 $$
 g(x) = \begin{cases} 0 & \forall x \neq 0, \\ +\infty & x = 0, \end{cases}
@@ -386,7 +401,7 @@ because ${\lim_{m \to \infty} g_m(0) = \lim_{m \to \infty} m = +\infty,}$ and ${
 
 <Peaks client:visible />
 
-**Figure 8.** The functions $g_m$ and ${f_m = (-1)^m + g_m}$ for the $m$ set by the slider. On ${[0, 1/m]}$ they take the values $m$ and ${(-1)^m + m.}$
+**Figure 4.8.** The functions $g_m$ and ${f_m = (-1)^m + g_m}$ for the $m$ set by the slider. On ${[0, 1/m]}$ they take the values $m$ and ${(-1)^m + m.}$
 
 The lower limit of $(f_m)$ is
 

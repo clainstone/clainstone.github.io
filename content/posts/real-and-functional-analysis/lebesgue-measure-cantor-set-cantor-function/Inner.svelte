@@ -1,5 +1,5 @@
 <script>
-  // The proof of Theorem 4 (4) (ii), an instance: E is an open ellipse, so the
+  // The proof of Theorem 3.4 (4) (ii), an instance: E is an open ellipse, so the
   // closure of E minus E is its boundary, dashed. The open set U, hatched, is a
   // band around it, and K, the closure of E minus U, is shaded.
   const C = [230, 122];

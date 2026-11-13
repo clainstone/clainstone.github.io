@@ -1,5 +1,5 @@
 <script>
-  // The drawing of the proof of Theorem 14 at the step by contradiction, as in
+  // The drawing of the proof of Theorem 15.14 at the step by contradiction, as in
   // the lecture: the subspace D_T drawn as a plane, a parallelogram seen at a
   // slant, and a point x_0 outside it, joined to a point of D_T by a segment.
   // The points are read off the lecture's drawing.

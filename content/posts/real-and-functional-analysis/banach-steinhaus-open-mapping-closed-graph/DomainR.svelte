@@ -1,5 +1,5 @@
 <script>
-  // The drawing of the set S in the proof of Theorem 14, as in the lecture:
+  // The drawing of the set S in the proof of Theorem 15.14, as in the lecture:
   // in the space X, a subspace D_R drawn as a plane, a parallelogram, and in
   // it the subspace V drawn as a line. The points are read off the lecture's
   // drawing.

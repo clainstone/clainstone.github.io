@@ -1,5 +1,5 @@
 <script>
-  // The proof of the claim in Theorem 4 (3), an instance with N = 2 as in the
+  // The proof of the claim in Theorem 3.4 (3), an instance with N = 2 as in the
   // drawing of the lecture: a set Z covered by three rectangles R₁, R₂, R₃ of
   // a sequence (Rₘ), and the rectangle R.
   const cover = [

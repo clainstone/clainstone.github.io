@@ -1,5 +1,5 @@
 <script>
-  // Proposition 5, the drawing of the proof: a set Dᵢ (a triangle) and three
+  // Proposition 5.5, the drawing of the proof: a set Dᵢ (a triangle) and three
   // pairwise disjoint sets E₁, E₂, E₃ (circles), with the pieces Dᵢ ∩ Eₘ shaded.
   const uid = $props.id();
   const tri = [[260, 90], [150, 270], [370, 270]];

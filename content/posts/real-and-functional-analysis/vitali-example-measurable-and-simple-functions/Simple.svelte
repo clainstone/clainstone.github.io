@@ -1,5 +1,5 @@
 <script>
-  // Definition 16, as in the drawing of the lecture, an instance with k = 4:
+  // Definition 4.16, as in the drawing of the lecture, an instance with k = 4:
   // X is an interval split into the intervals D₁, D₂, D₃, D₄, and the simple
   // function s takes the value aᵢ on Dᵢ.
   const OX = 60, OY = 220, UY = 150;

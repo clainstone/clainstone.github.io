@@ -1,8 +1,24 @@
 ---
 title: 'Exercises on limits of integrals and notions of convergence'
 date: 2026-10-08
+lecture: 8
 published: 2026-10-18
 summary: 'Solved exercises: two limits of integrals computed with the dominated convergence theorem, a series of integrals summed with the monotone convergence theorem, and the convergence almost everywhere, in $L^1$ and in $L^\infty$ of sequences of functions on intervals of $\mathbb{R},$ where the uniqueness of limits leaves a single candidate limit.'
+index:
+  Remark 8.1: 'Definitions of $\sinh$, $\cosh$ and $\tanh$, with the graph of $\tanh$'
+  Example 8.2: 'The integrals of $\tanh(nx) / (\sqrt{\sin x} \, (2 + n x^3))$ on $(0, 2)$ tend to $0$'
+  Remark 8.3: 'If $f_n \to f$ in $L^1$, then $\int_X f_n \, d\mu \to \int_X f \, d\mu$'
+  Example 8.4: 'The integrals of $(\pi/2 - \arctan(nx))/(1 + x)$ on $(0, +\infty)$ tend to $0$'
+  Remark 8.5: 'Graph of $\arctan$ on $\mathbb{R}$, with the level $\pi/2$ and the value $-\pi/2$'
+  Remark 8.6: 'Alternative estimate of $\pi/2 - \arctan(nx)$ from $\arctan(y) + \arctan(1/y) = \pi/2$'
+  Example 8.7: '$\sum_{n=1}^\infty \int_0^1 x^n (1 - x) e^x \, d\lambda = 1$ by monotone convergence'
+  Remark 8.8: 'The series $\sum_{n=0}^\infty q^n$ equals $1/(1 - q)$ for $|q| < 1$'
+  Example 8.9: '$f_n \to e^{-x}/(1 + x^2)$ in $L^1$, while $f_n + \chi_{[n, n+1]}$ has no $L^1$ limit'
+  Remark 8.10: '$|a + b| \ge \bigl| |a| - |b| \bigr| \ge |a| - |b|$ for all $a, b \in \mathbb{R}$'
+  Example 8.11: 'Logarithmic $f_n \to 2/x$ but not in $L^1$, and $(x/2)^n \to 0$ in $L^1$, not $L^\infty$'
+  Remark 8.12: 'A limit in $L^1$ of a sequence in $L^1$ belongs to $L^1$'
+  Remark 8.13: '$\|g_n\|_{L^\infty(D)}$ as the essential supremum of $|g_n|$, at least $1 - \varepsilon$'
+  Example 8.14: '$f_n \to 1/((x + 1)(x + 3))$ in $L^1((1, \infty))$ but not in $L^1((-1, \infty))$'
 ---
 
 import Asymptotes from './Asymptotes.svelte';
@@ -16,25 +32,25 @@ The exercises compute limits and series of integrals of functions on intervals o
 
 ### A sequence with $\tanh(nx)$
 
-**Remark 1.** For every ${y \in \mathbb{R},}$ the hyperbolic sine and the hyperbolic cosine of $y$ are
+**Remark 8.1.** For every ${y \in \mathbb{R},}$ the hyperbolic sine and the hyperbolic cosine of $y$ are
 
 $$
 \sinh(y) = \frac{e^y - e^{-y}}{2}, \qquad \cosh(y) = \frac{e^y + e^{-y}}{2},
 $$
 
-and ${\tanh(y) = \sinh(y)/\cosh(y).}$ Figure 1 draws the graph of the function ${\tanh,}$ with the dashed levels 1 and ${-1.}$
+and ${\tanh(y) = \sinh(y)/\cosh(y).}$ Figure 8.1 draws the graph of the function ${\tanh,}$ with the dashed levels 1 and ${-1.}$
 
 <Asymptotes kind="tanh" />
 
-**Figure 1.** The drawing of Remark 1: the graph of the function $\tanh$ on ${\mathbb{R},}$ with the dashed levels 1 and ${-1.}$
+**Figure 8.1.** The drawing of Remark 8.1: the graph of the function $\tanh$ on ${\mathbb{R},}$ with the dashed levels 1 and ${-1.}$
 
-**Example 2.** Compute ${\lim_n \int_0^2 f_n \, d\lambda,}$ where, for every integer ${n \ge 1,}$ the function ${f_n \colon (0, 2) \to \mathbb{R}}$ is given by
+**Example 8.2.** Compute ${\lim_n \int_0^2 f_n \, d\lambda,}$ where, for every integer ${n \ge 1,}$ the function ${f_n \colon (0, 2) \to \mathbb{R}}$ is given by
 
 $$
 f_n(x) = \frac{\tanh(nx)}{\sqrt{\sin x}} \, \frac{1}{2 + n x^3}.
 $$
 
-The functions $f_n$ of Example 2 are nonnegative on ${(0, 2).}$ For every ${x \in (0, 2),}$ since ${\tanh(nx) \le 1,}$
+The functions $f_n$ of Example 8.2 are nonnegative on ${(0, 2).}$ For every ${x \in (0, 2),}$ since ${\tanh(nx) \le 1,}$
 
 $$
 \begin{aligned}
@@ -50,15 +66,15 @@ $$
 0 \le f_n(x) = \frac{\tanh(nx)}{\sqrt{\sin x}} \, \frac{1}{2 + n x^3} \le \frac{1}{2 \sqrt{\sin x}} =: g(x).
 $$
 
-We check that ${\int_0^2 1/\sqrt{\sin x} \, d\lambda < +\infty,}$ with the graph of $\sin x$ in Figure 2.
+We check that ${\int_0^2 1/\sqrt{\sin x} \, d\lambda < +\infty,}$ with the graph of $\sin x$ in Figure 8.2.
 
 <Sine />
 
-**Figure 2.** The drawing of Example 2: the graph of $\sin x$ for ${x \in [0, 2],}$ with its maximum 1 at ${\pi/2,}$ the dotted segment at ${x = 2,}$ and the points ${\pi/2,}$ 2 and $\pi$ on the axis.
+**Figure 8.2.** The drawing of Example 8.2: the graph of $\sin x$ for ${x \in [0, 2],}$ with its maximum 1 at ${\pi/2,}$ the dotted segment at ${x = 2,}$ and the points ${\pi/2,}$ 2 and $\pi$ on the axis.
 
-As ${x \to 0^+}$ we have ${\sin x \sim x,}$ hence ${1/\sqrt{\sin x} \sim 1/\sqrt{x}.}$ Moreover ${\int_0^2 1/\sqrt{x} \, d\lambda < +\infty,}$ hence ${g \in L^1((0, 2)).}$ By the dominated convergence theorem, Theorem 8 of the previous post with ${p = 1,}$ ${f_n \to 0}$ in ${L^1((0, 2)).}$
+As ${x \to 0^+}$ we have ${\sin x \sim x,}$ hence ${1/\sqrt{\sin x} \sim 1/\sqrt{x}.}$ Moreover ${\int_0^2 1/\sqrt{x} \, d\lambda < +\infty,}$ hence ${g \in L^1((0, 2)).}$ By the dominated convergence theorem, Theorem 7.8 with ${p = 1,}$ ${f_n \to 0}$ in ${L^1((0, 2)).}$
 
-**Remark 3.** Let ${(X, \mathcal{M}, \mu)}$ be a measure space and let ${f_n, f \in L^1(X)}$ for every ${n.}$ If ${f_n \to f}$ in ${L^1(X),}$ then
+**Remark 8.3.** Let ${(X, \mathcal{M}, \mu)}$ be a measure space and let ${f_n, f \in L^1(X)}$ for every ${n.}$ If ${f_n \to f}$ in ${L^1(X),}$ then
 
 $$
 \begin{aligned}
@@ -67,7 +83,7 @@ $$
 \end{aligned}
 $$
 
-By Remark 3, applied to the functions $f_n$ of Example 2 with ${f = 0,}$
+By Remark 8.3, applied to the functions $f_n$ of Example 8.2 with ${f = 0,}$
 
 $$
 \lim_n \int_0^2 f_n \, d\lambda = \int_0^2 0 \, d\lambda = 0.
@@ -75,19 +91,19 @@ $$
 
 ### A sequence with $\arctan(nx)$
 
-**Example 4.** Compute ${\lim_n \int_0^\infty f_n \, d\lambda,}$ where, for every integer ${n \ge 1,}$ the function ${f_n \colon (0, +\infty) \to \mathbb{R}}$ is given by
+**Example 8.4.** Compute ${\lim_n \int_0^\infty f_n \, d\lambda,}$ where, for every integer ${n \ge 1,}$ the function ${f_n \colon (0, +\infty) \to \mathbb{R}}$ is given by
 
 $$
 f_n(x) = \frac{\dfrac{\pi}{2} - \arctan(nx)}{1 + x}.
 $$
 
-**Remark 5.** Figure 3 draws the graph of the function arctan on ${\mathbb{R},}$ with the dashed level $\pi/2$ and the value $-\pi/2$ marked on the left.
+**Remark 8.5.** Figure 8.3 draws the graph of the function arctan on ${\mathbb{R},}$ with the dashed level $\pi/2$ and the value $-\pi/2$ marked on the left.
 
 <Asymptotes kind="arctan" />
 
-**Figure 3.** The drawing of Remark 5: the graph of the function arctan on ${\mathbb{R},}$ with the dashed level $\pi/2$ and the value $-\pi/2$ marked on the left.
+**Figure 8.3.** The drawing of Remark 8.5: the graph of the function arctan on ${\mathbb{R},}$ with the dashed level $\pi/2$ and the value $-\pi/2$ marked on the left.
 
-Since ${\arctan(nx) < \pi/2}$ for every ${x \in (0, \infty),}$ the functions $f_n$ of Example 4 are positive on ${(0, \infty).}$ Let ${x \in (0, +\infty).}$ Then ${nx \to +\infty}$ as ${n \to +\infty,}$ hence ${\lim_{n \to \infty} \arctan(nx) = \pi/2.}$ Therefore ${f_n(x) = (\pi/2 - \arctan(nx))/(1 + x) \to 0}$ as ${n \to +\infty,}$ and ${f_n \to 0}$ pointwise on ${(0, \infty).}$ Observe that, since ${-\arctan(nx) \le \pi/2,}$
+Since ${\arctan(nx) < \pi/2}$ for every ${x \in (0, \infty),}$ the functions $f_n$ of Example 8.4 are positive on ${(0, \infty).}$ Let ${x \in (0, +\infty).}$ Then ${nx \to +\infty}$ as ${n \to +\infty,}$ hence ${\lim_{n \to \infty} \arctan(nx) = \pi/2.}$ Therefore ${f_n(x) = (\pi/2 - \arctan(nx))/(1 + x) \to 0}$ as ${n \to +\infty,}$ and ${f_n \to 0}$ pointwise on ${(0, \infty).}$ Observe that, since ${-\arctan(nx) \le \pi/2,}$
 
 $$
 \begin{aligned}
@@ -128,13 +144,13 @@ $$
 |f_n| \le g_2 \chi_{(0, 1)} + g_1 \chi_{(1, \infty)} \qquad \text{almost everywhere on } (0, +\infty),
 $$
 
-where ${g_2 \chi_{(0, 1)}}$ and ${g_1 \chi_{(1, \infty)}}$ belong to ${L^1((0, \infty)),}$ and so does their sum. By the dominated convergence theorem, Theorem 8 of the previous post with ${p = 1,}$ ${f_n \to 0}$ in ${L^1((0, \infty)).}$ Hence, by Remark 3,
+where ${g_2 \chi_{(0, 1)}}$ and ${g_1 \chi_{(1, \infty)}}$ belong to ${L^1((0, \infty)),}$ and so does their sum. By the dominated convergence theorem, Theorem 7.8 with ${p = 1,}$ ${f_n \to 0}$ in ${L^1((0, \infty)).}$ Hence, by Remark 8.3,
 
 $$
 \lim_n \int_0^\infty f_n \, d\lambda = \int_0^\infty 0 \, d\lambda = 0.
 $$
 
-**Remark 6.** For the main estimate of Example 4, the one on ${\pi/2 - \arctan(nx),}$ one may also use the identity
+**Remark 8.6.** For the main estimate of Example 8.4, the one on ${\pi/2 - \arctan(nx),}$ one may also use the identity
 
 $$
 \arctan(y) + \arctan\Big( \frac{1}{y} \Big) = \frac{\pi}{2} \qquad \text{for every } y \in (0, \infty).
@@ -148,13 +164,13 @@ $$
 
 ### A series of integrals
 
-**Example 7.** Compute
+**Example 8.7.** Compute
 
 $$
 \sum_{n=1}^\infty \int_0^1 x^n (1 - x) e^x \, d\lambda.
 $$
 
-In the series of Example 7, for every ${x \in (0, 1)}$ the factors ${x^n,}$ ${1 - x}$ and $e^x$ are positive, so ${x^n (1 - x) e^x \ge 0}$ on ${(0, 1).}$ Hence, by the monotone convergence theorem, in the form of Remark 7 of the sixth post,
+In the series of Example 8.7, for every ${x \in (0, 1)}$ the factors ${x^n,}$ ${1 - x}$ and $e^x$ are positive, so ${x^n (1 - x) e^x \ge 0}$ on ${(0, 1).}$ Hence, by the monotone convergence theorem, in the form of Remark 6.7,
 
 $$
 \begin{aligned}
@@ -163,13 +179,13 @@ $$
 \end{aligned}
 $$
 
-**Remark 8.** For every ${q \in \mathbb{R}}$ with ${|q| < 1,}$
+**Remark 8.8.** For every ${q \in \mathbb{R}}$ with ${|q| < 1,}$
 
 $$
 \sum_{n=0}^\infty q^n = \frac{1}{1 - q}.
 $$
 
-By Remark 8, applied with ${q = x,}$ the series inside the last integral can be summed for every ${x \in (0, 1){:}}$
+By Remark 8.8, applied with ${q = x,}$ the series inside the last integral can be summed for every ${x \in (0, 1){:}}$
 
 $$
 \begin{aligned}
@@ -180,11 +196,11 @@ $$
 \end{aligned}
 $$
 
-Therefore the series of Example 7 equals ${\int_0^1 x e^x \, d\lambda = 1.}$
+Therefore the series of Example 8.7 equals ${\int_0^1 x e^x \, d\lambda = 1.}$
 
 ### A sequence with exponentials
 
-**Example 9.** On ${[0, +\infty)}$ with the Lebesgue measure ${\lambda,}$ for every integer ${n \ge 1}$ let ${f_n \colon [0, +\infty) \to \mathbb{R}}$ be given by
+**Example 8.9.** On ${[0, +\infty)}$ with the Lebesgue measure ${\lambda,}$ for every integer ${n \ge 1}$ let ${f_n \colon [0, +\infty) \to \mathbb{R}}$ be given by
 
 $$
 f_n(x) = \frac{e^{-nx} + n^2 e^{-x}}{n + n^2 + (1 + n^2) x^2}.
@@ -192,7 +208,7 @@ $$
 
 **(1)** Study the convergence almost everywhere of ${(f_n).}$
 
-For the functions $f_n$ of Example 9 and every ${x \in [0, +\infty),}$ dividing the numerator and the denominator by ${n^2,}$
+For the functions $f_n$ of Example 8.9 and every ${x \in [0, +\infty),}$ dividing the numerator and the denominator by ${n^2,}$
 
 $$
 \begin{aligned}
@@ -212,21 +228,21 @@ $$
 \end{aligned}
 $$
 
-Notice that ${g(x) \sim 1/x^2}$ as ${x \to \infty,}$ so that ${g \in L^1((1, \infty)).}$ Also ${\int_0^1 g \, d\lambda < +\infty,}$ hence ${g \in L^1((0, \infty)).}$ By the dominated convergence theorem, Theorem 8 of the previous post with ${p = 1,}$ ${f_n \to f}$ in ${L^1((0, \infty)).}$
+Notice that ${g(x) \sim 1/x^2}$ as ${x \to \infty,}$ so that ${g \in L^1((1, \infty)).}$ Also ${\int_0^1 g \, d\lambda < +\infty,}$ hence ${g \in L^1((0, \infty)).}$ By the dominated convergence theorem, Theorem 7.8 with ${p = 1,}$ ${f_n \to f}$ in ${L^1((0, \infty)).}$
 
-(3) Let ${g_n(x) = f_n(x) + \chi_{[n, n+1]}(x).}$ Study the convergence of $(g_n)$ in ${L^1((0, \infty)).}$ We have ${f_n \to f}$ almost everywhere on ${(0, \infty)}$ and ${\chi_{[n, n+1]} \to 0}$ almost everywhere on ${(0, \infty),}$ hence ${g_n \to f}$ almost everywhere on ${(0, \infty).}$ Observe that, by the uniqueness of limits, Remark 12 of the previous post, if $(g_n)$ converges in ${L^1,}$ the limit must be ${f.}$ So we test the definition:
+(3) Let ${g_n(x) = f_n(x) + \chi_{[n, n+1]}(x).}$ Study the convergence of $(g_n)$ in ${L^1((0, \infty)).}$ We have ${f_n \to f}$ almost everywhere on ${(0, \infty)}$ and ${\chi_{[n, n+1]} \to 0}$ almost everywhere on ${(0, \infty),}$ hence ${g_n \to f}$ almost everywhere on ${(0, \infty).}$ Observe that, by the uniqueness of limits, Remark 7.12, if $(g_n)$ converges in ${L^1,}$ the limit must be ${f.}$ So we test the definition:
 
 $$
 \int_0^\infty |g_n - f| \, d\lambda = \int_0^\infty |f_n + \chi_{[n, n+1]} - f| \, d\lambda.
 $$
 
-**Remark 10.** For all ${a, b \in \mathbb{R},}$
+**Remark 8.10.** For all ${a, b \in \mathbb{R},}$
 
 $$
 |a + b| \ge \bigl|\, |a| - |b| \,\bigr| \ge |a| - |b|.
 $$
 
-Applying Remark 10 at every ${x \in (0, \infty),}$ with ${a = \chi_{[n, n+1]}(x)}$ and ${b = f_n(x) - f(x),}$ and integrating over ${(0, \infty),}$
+Applying Remark 8.10 at every ${x \in (0, \infty),}$ with ${a = \chi_{[n, n+1]}(x)}$ and ${b = f_n(x) - f(x),}$ and integrating over ${(0, \infty),}$
 
 $$
 \begin{aligned}
@@ -245,7 +261,7 @@ Therefore ${\|g_n - f\|_{L^1} \nrightarrow 0}$ as ${n \to \infty,}$ and $(g_n)$ 
 
 ### A sequence with a logarithm and the powers $(x/2)^n$
 
-**Example 11.** On ${(1, \infty)}$ with the Lebesgue measure ${\lambda,}$ for every integer ${n \ge 1}$ consider the functions ${f_n \ge 0}$ given by
+**Example 8.11.** On ${(1, \infty)}$ with the Lebesgue measure ${\lambda,}$ for every integer ${n \ge 1}$ consider the functions ${f_n \ge 0}$ given by
 
 $$
 f_n(x) = \frac{n^2 \log\big( 1 + \frac{2}{nx} \big)}{x + n}.
@@ -253,7 +269,7 @@ $$
 
 **(1)** Study the convergence almost everywhere and in $L^1$ of ${(f_n).}$
 
-For the functions $f_n$ of Example 11, let ${x \in (1, \infty).}$ Since ${2/(nx) \to 0}$ as ${n \to \infty,}$ Taylor's formula for the logarithm gives, as ${n \to \infty,}$
+For the functions $f_n$ of Example 8.11, let ${x \in (1, \infty).}$ Since ${2/(nx) \to 0}$ as ${n \to \infty,}$ Taylor's formula for the logarithm gives, as ${n \to \infty,}$
 
 $$
 \begin{aligned}
@@ -263,17 +279,17 @@ f_n(x) = \frac{n^2 \log\big( 1 + \frac{2}{nx} \big)}{n \big( \frac{x}{n} + 1 \bi
 \end{aligned}
 $$
 
-where ${x/n \to 0}$ and ${o(1) \to 0.}$ Hence ${f_n(x) \to 2/x}$ as ${n \to \infty,}$ for every ${x \in (1, \infty).}$ Therefore ${f_n \to f := 2/x}$ almost everywhere on ${(1, \infty).}$ By the uniqueness of limits, Remark 12 of the previous post, if $(f_n)$ converges in ${L^1((1, \infty))}$ to some function, that function must be ${f.}$
+where ${x/n \to 0}$ and ${o(1) \to 0.}$ Hence ${f_n(x) \to 2/x}$ as ${n \to \infty,}$ for every ${x \in (1, \infty).}$ Therefore ${f_n \to f := 2/x}$ almost everywhere on ${(1, \infty).}$ By the uniqueness of limits, Remark 7.12, if $(f_n)$ converges in ${L^1((1, \infty))}$ to some function, that function must be ${f.}$
 
-**Remark 12.** Let ${(X, \mathcal{M}, \mu)}$ be a measure space, let ${(f_n) \subset L^1(X)}$ and let ${f \colon X \to \mathbb{R}}$ be measurable. If ${f_n \to f}$ in ${L^1(X),}$ then ${f \in L^1(X).}$
+**Remark 8.12.** Let ${(X, \mathcal{M}, \mu)}$ be a measure space, let ${(f_n) \subset L^1(X)}$ and let ${f \colon X \to \mathbb{R}}$ be measurable. If ${f_n \to f}$ in ${L^1(X),}$ then ${f \in L^1(X).}$
 
-By Remark 12, since ${f(x) = 2/x \notin L^1((1, \infty)),}$ ${f_n \nrightarrow f}$ in ${L^1((1, \infty)),}$ and therefore $(f_n)$ does not converge in ${L^1((1, \infty)).}$ Indeed, Remark 12 applies, because ${\log(1 + t) \le t}$ for ${t > 0}$ gives ${0 \le f_n(x) \le 2n/x^2,}$ so that each $f_n$ belongs to ${L^1((1, \infty)).}$
+By Remark 8.12, since ${f(x) = 2/x \notin L^1((1, \infty)),}$ ${f_n \nrightarrow f}$ in ${L^1((1, \infty)),}$ and therefore $(f_n)$ does not converge in ${L^1((1, \infty)).}$ Indeed, Remark 8.12 applies, because ${\log(1 + t) \le t}$ for ${t > 0}$ gives ${0 \le f_n(x) \le 2n/x^2,}$ so that each $f_n$ belongs to ${L^1((1, \infty)).}$
 
-Part 2 of Example 11 concerns the functions ${g_n(x) = 2^{-n} x^n = (x/2)^n}$ for ${x \in \mathbb{R}}$ and every integer ${n \ge 1.}$ Figure 4 draws $g_n$ for $n$ even and for $n$ odd.
+Part 2 of Example 8.11 concerns the functions ${g_n(x) = 2^{-n} x^n = (x/2)^n}$ for ${x \in \mathbb{R}}$ and every integer ${n \ge 1.}$ Figure 8.4 draws $g_n$ for $n$ even and for $n$ odd.
 
 <Powers />
 
-**Figure 4.** The first drawing of Part 2 of Example 11: the graph of $g_n$ for $n$ even and for $n$ odd, on a stretch of ${\mathbb{R}.}$ An instance with ${n = 2}$ and ${n = 3.}$
+**Figure 8.4.** The first drawing of Part 2 of Example 8.11: the graph of $g_n$ for $n$ even and for $n$ odd, on a stretch of ${\mathbb{R}.}$ An instance with ${n = 2}$ and ${n = 3.}$
 
 (1) Find the set ${D \subset \mathbb{R}}$ such that $(g_n)$ converges pointwise on ${D.}$ For every ${x \in \mathbb{R},}$
 
@@ -300,13 +316,13 @@ $$
 |g_n(x)| = \left| \Big( \frac{x}{2} \Big)^n \right| = \frac{|x|^n}{2^n} \le \frac{2^n}{2^n} = 1.
 $$
 
-The constant function ${h = 1}$ on $D$ satisfies ${h \in L^1(D).}$ By the dominated convergence theorem, Theorem 8 of the previous post with ${p = 1,}$ ${g_n \to 0}$ in ${L^1(D).}$
+The constant function ${h = 1}$ on $D$ satisfies ${h \in L^1(D).}$ By the dominated convergence theorem, Theorem 7.8 with ${p = 1,}$ ${g_n \to 0}$ in ${L^1(D).}$
 
-(3) Study the convergence of $(g_n)$ in ${L^\infty(D).}$ By the uniqueness of limits, Remark 12 of the previous post, if $(g_n)$ converges in ${L^\infty(D),}$ then it must converge to zero in ${L^\infty(D).}$ Suppose, by contradiction, that ${g_n \to 0}$ in ${L^\infty(D).}$ Then ${\|g_n\|_{L^\infty(D)} \to 0.}$ Figure 5 draws $g_n$ on $D$ for $n$ even and for $n$ odd, with ${g_n(2) = 1.}$
+(3) Study the convergence of $(g_n)$ in ${L^\infty(D).}$ By the uniqueness of limits, Remark 7.12, if $(g_n)$ converges in ${L^\infty(D),}$ then it must converge to zero in ${L^\infty(D).}$ Suppose, by contradiction, that ${g_n \to 0}$ in ${L^\infty(D).}$ Then ${\|g_n\|_{L^\infty(D)} \to 0.}$ Figure 8.5 draws $g_n$ on $D$ for $n$ even and for $n$ odd, with ${g_n(2) = 1.}$
 
 <Powers marked />
 
-**Figure 5.** The second drawing of Part 2 of Example 11: the graph of $g_n$ on ${D = (-2, 2]}$ for $n$ even and for $n$ odd, with the value ${g_n(2) = 1.}$ The empty circles mark the point ${x = -2,}$ which is not in ${D.}$ An instance with ${n = 2}$ and ${n = 3.}$
+**Figure 8.5.** The second drawing of Part 2 of Example 8.11: the graph of $g_n$ on ${D = (-2, 2]}$ for $n$ even and for $n$ odd, with the value ${g_n(2) = 1.}$ The empty circles mark the point ${x = -2,}$ which is not in ${D.}$ An instance with ${n = 2}$ and ${n = 3.}$
 
 Fix $n$ and ${\varepsilon > 0.}$ Because $g_n$ is continuous and ${g_n(2) = 1,}$ there exists ${\delta > 0}$ such that ${g_n \ge 1 - \varepsilon}$ on ${(2 - \delta, 2].}$ Since ${\lambda((2 - \delta, 2]) = \delta > 0,}$ it follows that ${\|g_n\|_{L^\infty(D)} \ge 1 - \varepsilon.}$ This is true for every ${\varepsilon > 0,}$ for any fixed ${n,}$ hence
 
@@ -320,7 +336,7 @@ $$
 
 This contradicts ${\|g_n\|_{L^\infty(D)} \to 0.}$ Hence $(g_n)$ does not converge in ${L^\infty(D).}$
 
-**Remark 13.** In (3) of Part 2 of Example 11, the norm of $g_n$ in $L^\infty(D)$ is the essential supremum of ${|g_n|,}$ as in Figure 6:
+**Remark 8.13.** In (3) of Part 2 of Example 8.11, the norm of $g_n$ in $L^\infty(D)$ is the essential supremum of ${|g_n|,}$ as in Figure 8.6:
 
 $$
 \begin{aligned}
@@ -333,17 +349,17 @@ hence ${\|g_n\|_{L^\infty(D)} \ge 1 - \varepsilon}$ for every ${\varepsilon > 0.
 
 <EssSup client:visible />
 
-**Figure 6.** The drawing of Remark 13: $g_n$ on ${[0, 2],}$ dashed on the left of ${0,}$ three levels $M$ at or above 1 and the level ${M = 1 - \varepsilon.}$ The part of the graph above this level is thick, and the set ${\{ |g_n| > 1 - \varepsilon \}}$ near 2 is hatched on the axis. The sliders set $n$ and ${\varepsilon.}$
+**Figure 8.6.** The drawing of Remark 8.13: $g_n$ on ${[0, 2],}$ dashed on the left of ${0,}$ three levels $M$ at or above 1 and the level ${M = 1 - \varepsilon.}$ The part of the graph above this level is thick, and the set ${\{ |g_n| > 1 - \varepsilon \}}$ near 2 is hatched on the axis. The sliders set $n$ and ${\varepsilon.}$
 
 ### A sequence with $\sqrt{n}$
 
-**Example 14.** On ${(-1, \infty)}$ with the Lebesgue measure ${\lambda,}$ for every integer ${n \ge 1}$ let ${f_n \colon (-1, \infty) \to \mathbb{R}}$ be given by
+**Example 8.14.** On ${(-1, \infty)}$ with the Lebesgue measure ${\lambda,}$ for every integer ${n \ge 1}$ let ${f_n \colon (-1, \infty) \to \mathbb{R}}$ be given by
 
 $$
 f_n(x) = \frac{\sqrt{n + 1}}{\sqrt{n} \, (x^2 + 2x) + \sqrt{n + \sqrt{n}} \, (2x + 3)}.
 $$
 
-In the denominator of the functions $f_n$ of Example 14, ${x^2 + 2x}$ is a parabola with minimum at ${x = -1,}$ hence ${x^2 + 2x \ge 1 - 2 = -1.}$ Moreover, ${2x + 3 > -2 + 3 = 1}$ for every ${x \in (-1, \infty).}$ Hence, since ${\sqrt{n} \ge 0,}$ the denominator of $f_n$ satisfies
+In the denominator of the functions $f_n$ of Example 8.14, ${x^2 + 2x}$ is a parabola with minimum at ${x = -1,}$ hence ${x^2 + 2x \ge 1 - 2 = -1.}$ Moreover, ${2x + 3 > -2 + 3 = 1}$ for every ${x \in (-1, \infty).}$ Hence, since ${\sqrt{n} \ge 0,}$ the denominator of $f_n$ satisfies
 
 $$
 \sqrt{n} \, (x^2 + 2x) + \sqrt{n + \sqrt{n}} \, (2x + 3) \ge -\sqrt{n} + \sqrt{n + \sqrt{n}} \ge -\sqrt{n} + \sqrt{n} = 0,
@@ -371,7 +387,7 @@ $$
 
 Thus ${f_n \to f}$ pointwise on ${(-1, \infty).}$
 
-(2) Study the convergence of $(f_n)$ in ${L^1((-1, \infty)).}$ By the uniqueness of limits, Remark 12 of the previous post, the candidate limit is ${f.}$ Notice that ${f(x) \sim 1/(2(x + 1))}$ as ${x \to -1^+,}$ and ${1/(2(x + 1)) \notin L^1((-1, 0)).}$ Hence ${f \notin L^1((-1, \infty)).}$ By Remark 12, it is impossible that ${f_n \to f}$ in ${L^1((-1, \infty)),}$ because that would imply ${f \in L^1((-1, \infty)).}$ Indeed, Remark 12 applies: the denominator of $f_n$ is at least ${\sqrt{n + \sqrt{n}} - \sqrt{n} > 0}$ on ${(-1, \infty)}$ and at least ${\sqrt{n} \, x^2}$ for ${x > 0,}$ so each $f_n$ belongs to ${L^1((-1, \infty)).}$
+(2) Study the convergence of $(f_n)$ in ${L^1((-1, \infty)).}$ By the uniqueness of limits, Remark 7.12, the candidate limit is ${f.}$ Notice that ${f(x) \sim 1/(2(x + 1))}$ as ${x \to -1^+,}$ and ${1/(2(x + 1)) \notin L^1((-1, 0)).}$ Hence ${f \notin L^1((-1, \infty)).}$ By Remark 8.12, it is impossible that ${f_n \to f}$ in ${L^1((-1, \infty)),}$ because that would imply ${f \in L^1((-1, \infty)).}$ Indeed, Remark 8.12 applies: the denominator of $f_n$ is at least ${\sqrt{n + \sqrt{n}} - \sqrt{n} > 0}$ on ${(-1, \infty)}$ and at least ${\sqrt{n} \, x^2}$ for ${x > 0,}$ so each $f_n$ belongs to ${L^1((-1, \infty)).}$
 
 (3) Study the convergence of $(f_n)$ in ${L^1((1, \infty)).}$ For every ${x \in (1, \infty),}$
 
@@ -390,4 +406,4 @@ $$
 \frac{\sqrt{n + 1}}{\sqrt{n}} \le \frac{\sqrt{n + n}}{\sqrt{n}} = \frac{\sqrt{2} \, \sqrt{n}}{\sqrt{n}} = \sqrt{2}, \qquad \frac{\sqrt{n + \sqrt{n}}}{\sqrt{n}} \ge \frac{\sqrt{n}}{\sqrt{n}} = 1.
 $$
 
-The function ${\sqrt{2}/((x + 1)(x + 3))}$ belongs to ${L^1((1, \infty)).}$ Moreover, ${f_n \to f}$ pointwise by (1). Hence the dominated convergence theorem, Theorem 8 of the previous post with ${p = 1,}$ gives ${f_n \to f}$ in ${L^1((1, \infty))}$ as ${n \to \infty.}$
+The function ${\sqrt{2}/((x + 1)(x + 3))}$ belongs to ${L^1((1, \infty)).}$ Moreover, ${f_n \to f}$ pointwise by (1). Hence the dominated convergence theorem, Theorem 7.8 with ${p = 1,}$ gives ${f_n \to f}$ in ${L^1((1, \infty))}$ as ${n \to \infty.}$

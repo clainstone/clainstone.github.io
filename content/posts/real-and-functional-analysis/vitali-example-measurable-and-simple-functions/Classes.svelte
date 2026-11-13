@@ -1,5 +1,5 @@
 <script>
-  // Theorem 1, the drawing of the proof: a set E split into its equivalence
+  // Theorem 4.1, the drawing of the proof: a set E split into its equivalence
   // classes, drawn schematically, and one element picked from each class,
   // darker. The picked elements form the set F₀.
   import { blob } from './shapes.js';

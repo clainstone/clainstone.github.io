@@ -1,5 +1,5 @@
 <script>
-  // Remark 2, the drawing of the lecture: f_n = −n on [0, 1/n] and 0 elsewhere,
+  // Remark 6.2, the drawing of the lecture: f_n = −n on [0, 1/n] and 0 elsewhere,
   // with the dashed line at 1/n, and the region between the graph and the
   // axis, of area 1. The slider sets n.
   import Slider from '@toolkit/Slider.svelte';

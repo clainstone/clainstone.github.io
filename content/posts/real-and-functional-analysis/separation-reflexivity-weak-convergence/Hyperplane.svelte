@@ -1,5 +1,5 @@
 <script>
-  // The drawing of Corollary 5, as in the lecture: the hyperplane H = {T = α}
+  // The drawing of Corollary 16.5, as in the lecture: the hyperplane H = {T = α}
   // with α = Tx, drawn as a line, the point x on it and the point y outside
   // it. The points are read off the lecture's drawing.
   import { place } from './plot.js';

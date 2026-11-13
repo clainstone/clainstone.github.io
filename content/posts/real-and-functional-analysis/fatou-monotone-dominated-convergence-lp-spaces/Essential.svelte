@@ -1,5 +1,5 @@
 <script>
-  // Definition 19 (i), the drawing of the lecture: a function f ≥ 0 on an
+  // Definition 6.19 (i), the drawing of the lecture: a function f ≥ 0 on an
   // interval, the dashed level M, dashed lines down from the points where the
   // graph crosses it, and the set {|f| > M} hatched on the axis. The slider
   // sets M.

@@ -1,5 +1,5 @@
 <script>
-  // Example 5 with N = 2, the fourth drawing of the lecture: the ball B_1(0)
+  // Example 10.5 with N = 2, the fourth drawing of the lecture: the ball B_1(0)
   // for ‖·‖_p, the set |v_1|^p + |v_2|^p < 1, for the p of the slider, and,
   // dashed, the balls for ‖·‖_1 and ‖·‖_∞. The boundary is drawn through
   // (sgn cos θ |cos θ|^(2/p), sgn sin θ |sin θ|^(2/p)).

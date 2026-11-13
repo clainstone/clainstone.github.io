@@ -1,5 +1,5 @@
 <script>
-  // The two drawings of Example 8, an instance of each: a function f_0 of
+  // The two drawings of Example 14.8, an instance of each: a function f_0 of
   // L^1((0, ∞)) that is not 0 and vanishes outside [a, b], its zero parts
   // thick on the axis. With a = 2 and b = 3 the drawing of (2); with a = 0
   // and b = 1, and the dots of the lecture at the ends of the bump, that of (3).

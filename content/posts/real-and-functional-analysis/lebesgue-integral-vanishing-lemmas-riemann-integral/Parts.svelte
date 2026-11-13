@@ -1,5 +1,5 @@
 <script>
-  // Definition 11, the drawing "Idea" of the lecture: a function f that is 0,
+  // Definition 5.11, the drawing "Idea" of the lecture: a function f that is 0,
   // then positive, then negative, then 0; its positive part f⁺ over the
   // positive bump and its negative part f⁻, dashed, the negative bump of f
   // reflected above the axis.

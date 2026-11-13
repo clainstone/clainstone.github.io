@@ -1,5 +1,5 @@
 <script>
-  // Remark 10 (2), the drawing of the lecture: the Heaviside function H, equal
+  // Remark 9.10 (2), the drawing of the lecture: the Heaviside function H, equal
   // to 0 on (−∞, 0], with the filled dot at the origin, and to 1 on (0, +∞),
   // with the labels H and 1 placed as in the drawing; the point −3 is marked.
   const X0 = 30, X1 = 610, OY = 160, OX = 330, UNIT = 90, STEP = 52;

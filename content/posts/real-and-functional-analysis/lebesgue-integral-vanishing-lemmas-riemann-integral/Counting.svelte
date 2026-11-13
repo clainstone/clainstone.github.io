@@ -1,5 +1,5 @@
 <script>
-  // Remark 6, the drawing of the lecture: a function f on ℕ as the sequence of
+  // Remark 5.6, the drawing of the lecture: a function f on ℕ as the sequence of
   // its values f₀, f₁, f₂, f₃, …, one bar over each natural number.
   const uid = $props.id();
   const BASE = 150;

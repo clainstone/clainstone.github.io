@@ -1,5 +1,5 @@
 <script>
-  // Example 4: the Dirac delta measure at x₀ on two intervals of ℝ, E around 0
+  // Example 2.4: the Dirac delta measure at x₀ on two intervals of ℝ, E around 0
   // and F around the starting x₀. The slider moves x₀; the value of δ at x₀ on
   // each interval is 1 when x₀ lies in it and 0 otherwise.
   import Slider from '@toolkit/Slider.svelte';

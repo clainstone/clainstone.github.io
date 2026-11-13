@@ -11,11 +11,14 @@ check it.
 | `src/content.config.ts` | collections `threads` and `posts`, schemas, sample filter (in a build, sample posts are excluded from the loader, so their islands are not bundled) |
 | `src/lib/site.ts` | `SITE`, `PHOTO`, `publishedOf`, `getPosts`, `getRecentPosts`, `getThreads`, `postsOf`, `threadOf`, `threadIdOf`, `postUrl`, `threadUrl`, `wordCount`, `formatWords`, `formatDate`, `isoDate`, `mathHtml`, `plain` |
 | `src/lib/cards.ts` | preview cards and icons with satori and resvg |
+| `src/lib/statements.ts` | the index of a thread of lectures: its statements, names and descriptions as HTML, and what breaks the thread's numbering |
 | `src/components/M.astro` | a frontmatter string with its `$...$` typeset |
 | `src/layouts/Base.astro` | head and meta tags, theme scripts, bar, footer |
 | `src/pages/` | the pages and generated files of ARCHITECTURE.md |
 | `src/plugins/heading-anchors.mjs` | ids and hover `#` links for `h2` and `h3` of posts |
 | `src/components/XrefPreview.astro` | the tag of the preview script, rendered by the post page |
+| `src/components/LectureIndex.astro` | in a thread with an index: the button in the margin, the panel, the tag of `src/scripts/lecture-index.js` |
+| `src/pages/threads/[thread]/statements.json.ts` | the index of each thread with `index: true`, fetched by the panel on first use, with the list of problems the checks report |
 | `src/scripts/xref-preview/` | previews of cross-references: `index.js` (intent, nested cards, events), `source.js` (a target's blocks, fetches of other posts, their styles), `card.js` (the card, its scale and place), `jump.js` (the wash and the flight on click) |
 | `src/plugins/cross-refs.mjs` | ids for numbered statements, figures and tagged displays; links from every mention of them, across the posts of a thread |
 | `src/styles/global.css` | every style and token |
@@ -51,7 +54,9 @@ figure an empty `.xref-anchor` just before its visual (so the caption stays
 the visual's next sibling), each tagged display `eq-n`. A mention in prose
 resolves in its own post, then in the post a qualifier names ("of the
 previous post"), then in the only other post that has it; figures only in
-their own post, equations without a dot in their number too. An unresolved
+their own post, equations without a dot in their number too. In a thread
+with an index every number carries its lecture ("Theorem 16.5"), so a
+mention of another post resolves by its number alone. An unresolved
 mention stays text in `<span data-xref-missing>`. Links carry `class="xref"`:
 text colour with an underline, and a brief wash on the target. After
 editing the plugin, restart the dev server: it caches plugins.
@@ -72,6 +77,31 @@ is a second, live instance, hydrated from the server's markup. A link in a
 card opens a card above it. A click on a link whose card is open sends the
 card's blocks to their places with a view transition, and the whole passage
 is washed on arrival.
+
+**Index of a thread.** A thread with `index: true` has one numbering: the
+post with `lecture: N` numbers its statements, figures and tags `N.k`.
+`statements.ts` reads every post's labels from its MDX, takes the name in
+parentheses or the description of the post's `index` field, and writes the
+index as HTML into `/threads/<thread>/statements.json`, with `problems`: a
+number without the lecture's prefix, a counter out of order, a statement
+without name or description, a name or description holding Markdown, a
+description too long, with a full stop or a banned character, or left over,
+and two posts with the same `lecture`. `make check-post` and `make check-site`
+turn them into errors; `check-site` also follows every entry to its id. The
+post page renders `LectureIndex.astro`: a fixed button in the left margin
+and a hidden dialog. `lecture-index.js` moves the dialog to the end of the
+body, fetches the JSON on the first approach to the button, and on opening
+makes every other child of the body inert, locks the page's scroll,
+scrolls the list to the lecture being read and focuses that lecture's title.
+X, Escape (after any open preview), a click beside the panel or on an entry
+closes it, and so does a click on a link of a preview card opened over it;
+the title of the lecture being read goes back to its top without loading
+it again; an entry lands on its statement without the flight of the
+previews, which starts only from links of the post or of a card. An address
+saved before the thread had one numbering (`#theorem-19`) is sent to the
+new id (`#theorem-13-19`). Its entries are `a.xref` links, so the preview
+script shows their targets; cards sit above the panel (their `z-index` is
+20 and up, the panel's 10).
 
 **Build hooks.** After the build, every og:image must exist in `dist/`. A new
 page type therefore needs its card path in `src/pages/og/[...slug].png.ts`,
@@ -148,6 +178,20 @@ Only when the user asks. Commit with the message of section 4, push, then
 follow the workflow (`gh run watch`) and check the live pages with `curl`.
 When the local branch holds commits the user has not asked to publish, put
 the requested ones on the published branch by cherry-picking in a worktree.
+
+When the working tree also holds files the user has not asked to publish
+(other posts in progress), publish only the requested ones:
+
+1. Build what will go online, not the working tree: extract `HEAD` with
+   `git archive` into a new folder, copy in only the requested files and
+   `node_modules`, then `CI=true npm run build` and `make check-post` for each
+   requested post there. A post that passes beside unpublished posts can
+   fail without them, for instance on a mention whose target exists only
+   locally.
+2. Look at the screenshots of that build.
+3. `git add` the requested paths only, commit, push, follow the workflow,
+   and check every changed page with `curl` (addresses have no trailing
+   slash) and its thread page lists it.
 
 ## 8. Gotchas
 

@@ -15,12 +15,17 @@ post never touches a component or a layout.
 - `threads/<slug>.md`: one thread. Frontmatter: `title`, optional
   `description` (one sentence, shown under the title and in link previews),
   `status` (`active` or `closed`; a closed thread keeps its page and is
-  listed after the active ones). No body.
+  listed after the active ones), optional `index: true` for a thread of
+  numbered lectures (one numbering for the whole thread, and an index of
+  every statement opened from a button in the margin of its posts). No body.
 - `posts/<thread-slug>/<post-slug>/index.mdx`: one post. Frontmatter:
   `title`, `date` (the date of the subject, a lecture's date: it orders the
   posts of a thread), optional `published` (the day the post went online,
   when later than `date`: it orders Latest posts and the feed), optional
-  `updated`, optional `summary` (meta description and feed only), optional
+  `updated`, optional `summary` (meta description and feed only), in a
+  thread with an index `lecture` (the lecture's number, the prefix of every
+  label: "Theorem 16.5") and `index` (a short description of each statement
+  whose label has no name, keyed by the label), optional
   `sample: true` for a demonstration post that the
   dev server shows and the published site leaves out. A thread with no
   published post does not appear. Body: Markdown with mathematics (`$…$`, `$$…$$`), fenced
@@ -35,7 +40,8 @@ post never touches a component or a layout.
   replaces a list item.
 - A complex concept may link to Wikipedia once, at its first appearance.
 - Name a numbered statement, figure or equation exactly as its label reads
-  ("Theorem 3.5", "Figure 2", "(6)", "Theorem 10 of the previous post"): the
+  ("Theorem 3.5", "Figure 2", "(6)", "Theorem 10 of the previous post", or
+  "Theorem 13.19" for any post of a thread with an index): the
   build links it to its place, in the same post or another post of the
   thread. Never link it by hand. Resting the pointer on such a link shows
   its target in a preview: a statement runs from its label to the next

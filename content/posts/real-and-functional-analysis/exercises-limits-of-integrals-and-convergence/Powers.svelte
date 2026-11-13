@@ -1,5 +1,5 @@
 <script>
-  // Example 11, Part 2, the two drawings of the lecture: g_n(x) = (x/2)^n for n
+  // Example 8.11, Part 2, the two drawings of the lecture: g_n(x) = (x/2)^n for n
   // even and for n odd, an instance with n = 2 and n = 3. Without `marked`, on
   // a stretch of ℝ with no marks, as the first drawing; with `marked`, on
   // D = (−2, 2] with the ticks −2 and 2, the empty circle at x = −2, which is

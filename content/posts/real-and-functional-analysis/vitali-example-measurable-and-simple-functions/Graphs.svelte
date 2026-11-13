@@ -1,5 +1,5 @@
 <script>
-  // Theorem 13, as in the drawing of the proof: the graphs of the Cantor
+  // Theorem 4.13, as in the drawing of the proof: the graphs of the Cantor
   // function v and of f(x) = x + v(x) on [0, 1]; f goes from 0 to 2.
   import { v, f } from './cantor.js';
 

@@ -1,5 +1,5 @@
 <script>
-  // The drawing of Example 7, an instance on [a, b] = [−1/2, 3/2]: the function
+  // The drawing of Example 13.7, an instance on [a, b] = [−1/2, 3/2]: the function
   // f_m(x) = (1/m) sin²(mπx) on [0, 1/m] and 0 elsewhere, which is C¹, vanishes
   // outside (0, 1/m) and has the value 1/m at 1/(2m); the dashed level 1/m; the
   // dotted chord from (0, 0) to (1/(2m), 1/m), of slope 2; and the tangent at

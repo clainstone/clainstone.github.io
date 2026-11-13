@@ -1,5 +1,5 @@
 <script>
-  // Remark 9, the drawing of the lecture: on the left the Lebesgue measure λ,
+  // Remark 6.9, the drawing of the lecture: on the left the Lebesgue measure λ,
   // a horizontal line; an arrow; on the right the measure φλ, the graph of φ
   // over a dashed line, with the region under it over a small interval
   // hatched.

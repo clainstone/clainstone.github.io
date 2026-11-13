@@ -1,5 +1,5 @@
 <script>
-  // Remark 2 (ii), an instance with N = 2: a rectangle and four rectangles of
+  // Remark 3.2 (ii), an instance with N = 2: a rectangle and four rectangles of
   // F whose union contains it, placed as in the drawing of the lecture.
   const R = { x: 82, y: 68, w: 312, h: 127 };
   const cover = [

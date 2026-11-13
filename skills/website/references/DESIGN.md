@@ -74,6 +74,22 @@ Change both. The animation palette (`--anim-ink`, `--anim-muted`,
    fades out in 0.12 s; a click on the link sends the card's blocks to their
    places in 0.34 s. Nothing moves under `prefers-reduced-motion`.
 
+8. **Index of a thread of lectures** (threads with `index: true`). A button
+   "Index" fixed in the left margin, level with the bar and 1.5rem left of
+   the column, in small muted type with a hairline edge, so that it can be
+   reached from any point of a post. It opens a panel on the page's paper,
+   46rem wide, with the hairline edge, radius and small shadow of the cards,
+   above the page, which blurs behind it (6 px) under a veil of the page's
+   colour. The panel's head holds "Index", the thread's title in muted
+   italic and a thin X; its body scrolls and lists every lecture: "Lecture
+   N", the title, the date at the right, then one row per statement, its
+   label as a link in a fixed column and its name or description beside it.
+   The lecture being read has a faint wash and opens the list. X, Escape, a
+   click beside the panel or a click on an entry closes it. Resting on an
+   entry shows its preview card above the panel. No animation. In a window
+   narrower than 1000 px, where the margin cannot hold it, the button sits
+   in the window's top left corner, above the bar.
+
 ## 5. Mathematics
 
 1. KaTeX at 1.05em. Inline formulas never break across lines
@@ -96,7 +112,7 @@ stay light.
 2. A skip link to the content.
 3. `scrollbar-gutter: stable`, so the bar does not shift between pages.
 4. Text contrast at least 4.5 to 1 in both themes.
-5. A print style: no bar, footer, switch or post navigation; black on white;
+5. A print style: no bar, footer, switch, index or post navigation; black on white;
    link addresses after external links.
 
 ## 8. What never appears
@@ -104,7 +120,8 @@ stay light.
 Bullets or markers of any kind, arrows, em dashes and double hyphens, icon
 sets, emoji, badges, stock images, decorative gradients, glass or blur,
 large shadows, animated backgrounds, pop-ups (the previews of
-cross-references, 4.7, are the one exception), "read more" chevrons.
+cross-references, 4.7, and the index of a thread with its blur, 4.8, asked
+for, are the exceptions), "read more" chevrons.
 
 ## 9. Judging a visual change
 

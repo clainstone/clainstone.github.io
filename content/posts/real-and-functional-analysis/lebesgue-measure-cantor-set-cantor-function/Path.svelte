@@ -1,5 +1,5 @@
 <script>
-  // The proof of Theorem 6 (1): the terms of a sequence of 0s and 1s choose,
+  // The proof of Theorem 3.6 (1): the terms of a sequence of 0s and 1s choose,
   // row after row, the left (0) or the right (1) of the two intervals left in
   // the interval chosen before. The buttons change the first five terms; at
   // the start they are those of (0, 1, 1, 0, 1, …), as in the lecture.

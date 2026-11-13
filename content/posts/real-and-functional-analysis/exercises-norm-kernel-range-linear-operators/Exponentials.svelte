@@ -1,5 +1,5 @@
 <script>
-  // The two drawings of (2) in Example 6: on the left the graph of e^{−x},
+  // The two drawings of (2) in Example 14.6: on the left the graph of e^{−x},
   // which starts at the point (0, 1), marked 1 on the vertical axis; on the
   // right the graph of 1 − e^{−x}, which starts at the origin. Both for x in
   // [0, 1], with the dots of the lecture's drawing.

@@ -1,5 +1,5 @@
 <script>
-  // Definition 11, the drawing of the lecture: the interval [a, b] with the
+  // Definition 9.11, the drawing of the lecture: the interval [a, b] with the
   // subintervals (a₁, b₁), (a₂, b₂), …, (a_m, b_m); above them the values
   // f(a₁), f(b₁), f(a₂), f(b₂) as dots, and at b₁ and b₂ the vertical
   // segments from the level of f(a_i) to f(b_i), of length |f(b_i) − f(a_i)|.

@@ -1,5 +1,5 @@
 <script>
-  // Definition 1 (iii), the drawing of the lecture, an instance in the plane:
+  // Definition 10.1 (iii), the drawing of the lecture, an instance in the plane:
   // the vectors x and y from a common origin, their sum x + y, the vector y
   // again from the end of x (accent), and, dashed, the segment from the end
   // of y to the end of x + y.

@@ -1,5 +1,5 @@
 <script>
-  // Example 19, Step 1: on ℤ, the sets {−k, …, k} and {−k+1, …, k−1} of 𝓕
+  // Example 2.19, Step 1: on ℤ, the sets {−k, …, k} and {−k+1, …, k−1} of 𝓕
   // and their difference {−k, k}. The slider sets k.
   import Slider from '@toolkit/Slider.svelte';
 

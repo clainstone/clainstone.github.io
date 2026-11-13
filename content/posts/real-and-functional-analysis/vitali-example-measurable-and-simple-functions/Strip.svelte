@@ -1,5 +1,5 @@
 <script>
-  // Example 18, as in the drawing of the exercise: the set A on the horizontal
+  // Example 4.18, as in the drawing of the exercise: the set A on the horizontal
   // axis and E = A × {x₀} at height x₀, both drawn schematically as points
   // (seeded), and the open rectangle R_m = (−1, 2) × (x₀ − 1/m, x₀ + 1/m).
   import Slider from '@toolkit/Slider.svelte';

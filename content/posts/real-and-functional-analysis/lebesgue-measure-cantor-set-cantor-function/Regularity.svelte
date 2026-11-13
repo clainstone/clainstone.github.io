@@ -1,5 +1,5 @@
 <script>
-  // Theorem 4 (4), as in the drawing of the lecture: a set E, an open set A
+  // Theorem 3.4 (4), as in the drawing of the lecture: a set E, an open set A
   // that contains it and a compact set K contained in it. The arrows point
   // from A inwards and from K outwards, towards E.
   import { blob, blobPoint } from './shapes.js';

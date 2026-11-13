@@ -1,5 +1,5 @@
 <script>
-  // Definition 5: the sets T₀, T₁, …, T₆ of the construction of the Cantor
+  // Definition 3.5: the sets T₀, T₁, …, T₆ of the construction of the Cantor
   // set, each obtained from the previous one by removing the open middle
   // third of every interval. The slider sets k and highlights T_k; the sets
   // after it are faint.

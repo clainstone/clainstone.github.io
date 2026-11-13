@@ -1,5 +1,5 @@
 <script>
-  // Example 10 on [−1, 1], for the n of the slider. Without `limit`, the drawing
+  // Example 11.10 on [−1, 1], for the n of the slider. Without `limit`, the drawing
   // of the lecture: f_n, equal to 0 on [−1, 0], the segment from (0, 0) to
   // (1/n, 1), and 1 on [1/n, 1]; f_(n+1); and the region between their graphs,
   // hatched, whose area is ‖f_(n+1) − f_n‖₁. With `limit`: f_n, its pointwise

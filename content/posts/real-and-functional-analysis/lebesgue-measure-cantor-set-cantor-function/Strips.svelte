@@ -1,5 +1,5 @@
 <script>
-  // Theorem 4 (1), an instance with N = 2 as in the drawing of the lecture:
+  // Theorem 3.4 (1), an instance with N = 2 as in the drawing of the lecture:
   // R = (0, 3) × (0, 1), its boundary, the rectangles at distance ε outside
   // and inside R, and the rectangles R₁ and R₂ around the left and the right
   // edge, hatched, drawn with second factor (−ε, 1 + ε). The slider sets ε.

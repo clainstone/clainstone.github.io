@@ -32,6 +32,15 @@ This section outranks every other rule in this file and in the skill.
    needs more goes in the report, not in the post: NEVER a `**Details.**`
    paragraph unless the user asks for one for that proof. A claim the source
    states without proof gets no proof: at most the 2 marked sentences.
+   Write an added sentence only when a careful reader would stop at that step
+   without it. NEVER write one that:
+   a. restates the step, the display above it or the plan of the proof;
+   b. checks a hypothesis of a cited result that the reader sees at once
+      (measurable because continuous, integrable because bounded on a set of
+      finite measure);
+   c. covers only part of the claim (one case of two, finite values when the
+      claim also allows $+\infty$): a partial reason misleads;
+   d. proves a fact the source calls obvious, clear or easy to show.
 6. Keep the source's order, its section headings, its kinds of label (a Remark
    stays a Remark, a Note a Note; an unlabelled paragraph gets no label), its
    numbering and its notation. A bibliographic pointer in the source ("[Folland]")
@@ -97,8 +106,15 @@ This section outranks every other rule in this file and in the skill.
    nothing, ONE counter runs through every Definition, Theorem, Proposition,
    Lemma, Corollary, Remark, Note and Example of the post. Notation, Proof,
    Details and Figure do not take it. Figures have their own counter.
+   In a thread with an index (its file in `content/threads/` has
+   `index: true`, as Real and Functional Analysis), the thread has one
+   numbering: every number of the post of lecture N is `N.k`, with N the
+   post's `lecture` field (the number on the notes, "XVI" is 16) and k the
+   counter above: `**Theorem 16.5 (Name).**`, `**Figure 16.2.**`,
+   `\tag{16.1}`. The counters still start at 1 in every post.
 3. A name in parentheses is given when the source names the statement or the
-   statement defines a named term; otherwise none.
+   statement defines a named term; otherwise none. The name is the source's
+   own words ("Obvious implications" stays whole), NEVER a name of yours.
 4. Item labels `**(i)**`, `**(ii)**` are bold only inside a statement. In
    proofs and references they are plain: "by (ii)". "Case 1." is plain.
 5. Bold is used for labels and for nothing else. Italics are used once per
@@ -129,15 +145,26 @@ This section outranks every other rule in this file and in the skill.
     b. a figure as "Figure n", only in its own post;
     c. an equation by its tag in parentheses, "(6)" or `${(6),}$`, and only a
        display with `\tag{6}` can be cited so;
-    d. an item of another post, when its number also exists in this post or
-       in more than one post of the thread, with "of the previous post",
-       "of the first post", "of the second post" right after the mention (or
-       after a list of mentions, which it then qualifies as a whole).
+    d. in a thread with an index (4.2), an item of another post by its number
+       alone, which names its lecture: "Theorem 13.19", "Remark 15.13 (i)",
+       with no qualifier. In any other thread, an item of another post ALWAYS
+       with a qualifier right after the mention (or after a list of
+       mentions, which it then qualifies as a whole): "of the previous post",
+       "of the next post", "of the first post" … "of the tenth post". An
+       unqualified mention that resolves today because only one other post
+       has that number breaks when a later post adds the same number. The
+       build knows the ordinals up to "tenth" only: for a later post use
+       "previous" or "next", or reword so that no number is cited.
     The mention resolves in this post first, then in the post the qualifier
     names, then in the only other post of the thread that has it. NEVER write
     a cross-reference as a Markdown link. A mention with no target (a removed
     theorem, a wrong number) fails `make check-post`: correct the number or
     the qualifier, or reword so that no number is cited.
+    f. Cite an earlier statement only where the source uses or recalls it
+       ("by Thm", "recall", "as we saw", "Ex last week"), or inside an added
+       sentence that 1.5 allows. NEVER add a sentence, a clause or an "in the
+       sense of Definition n" only to place a link: a mention is not a reason
+       to keep a sentence.
     e. Resting the pointer on a mention shows a preview of its target: the
        statement from its label to the first heading, figure, paragraph with
        a bold label (the proof, a caption, the next statement) or paragraph
@@ -147,7 +174,30 @@ This section outranks every other rule in this file and in the skill.
        follow its label directly, with no figure between them, and a
        paragraph of commentary right after a statement opens by naming it
        ("By Definition 3.1, ..."). `make check-post` prints where each
-       preview ends.
+       preview ends. Removing or moving a figure can let a preview run on
+       into the next paragraphs: end it again with a heading or by naming
+       the statement in the paragraph that follows, never with an added
+       figure.
+
+12. Index descriptions. In a thread with an index, the panel of the thread
+    lists every statement with its name, and a statement without a name with
+    a short description from the frontmatter field `index`, keyed by its
+    label, in single quotes:
+
+    ```
+    index:
+      Remark 16.4: 'For $\alpha = 0$ the hyperplane is $\operatorname{Ker} T$'
+      Example 16.18: 'Indicators of $[m, m+1]$ converge weakly but not strongly to $0$ in $L^2$'
+    ```
+
+    One line for each statement without a name and none for a named one.
+    The line says what the statement establishes, defines or shows, from the
+    post alone: at most about 12 words (the check stops at 95 characters as
+    read), sentence case, no full stop, no evaluative word, no bullet, arrow
+    outside mathematics, em dash or double hyphen. Mathematics between `$`,
+    in the post's notation, no Markdown (links, emphasis). A single quote
+    inside is doubled: `$f''$`. `make check-post` reports a missing, extra,
+    long or malformed description and a name in a label that holds Markdown.
 
 ## 5. Mathematics
 
@@ -180,31 +230,52 @@ This section outranks every other rule in this file and in the skill.
 9. Sentences added by you use the thread's declared symbols (`\subset` in Real
    and Functional Analysis), never a variant.
 10. Counts of mathematical objects are numerals: 7 states, 11 positions.
+11. Nested bars and norms are written so that they read one way only:
+    `\bigl|\, \|x\| - \|y\| \,\bigr|`, `\bigl\|\, |f_n| \,\bigr\|_p`, never
+    `||x\| - \|y||` or `\big\| |f| \big\|`.
+12. Delimiters are as tall as what they enclose: around a sum, an integral,
+    a union or a fraction with limits or subscripts use `\left … \right` or
+    `\biggl … \biggr`, and an outer pair is larger than the inner one.
+13. No stacked fraction in a subscript or an exponent: `5^{-1/n}`,
+    `B_{1/2}`, `\chi_{[0, 1/m]}`.
+14. A thin space `\,` between factors that would touch: `m \, \chi_A`,
+    `p_{ij} \, \mathbb{E}_j[V]`, `x^{a} \, x^{b}`. Absolute values of a named
+    function are `\lvert \sin x \rvert`, which keeps the bar next to the
+    function name. A minus that opens a cell of `aligned` is grouped,
+    `{-\tfrac{1}{3}}`, or it is spaced as a binary operator.
+15. Named operators are `\operatorname{card}`, never `\mathrm{card}`. A word
+    that begins with a symbol and a hyphen ("σ-algebra") can break at the
+    hyphen: when the screenshot shows a line that starts with "-", join it
+    with a word joiner, `$\sigma$&#8288;-additivity`.
 
 ## 6. Visuals
 
-### 6.1 Method: the visual inventory (mandatory, before writing)
+### 6.1 Which figures (before writing)
 
-Go through the source page by page, item by item. For each item answer the
-twelve questions; each yes is a candidate.
+A figure earns its place in one of two ways, and in no other:
 
-| # | The source… | Visual |
-|---|---|---|
-| T1 | draws something | reproduce it: MANDATORY |
-| T2 | defines an object that lives in a space | static figure |
-| T3 | defines or uses a map between sets | arrow diagram |
-| T4 | alternates quantifiers (for every… there exists…) | interactive: reader sets the "for every", figure answers |
-| T5 | states a set identity or closure property | Venn diagram in steps |
-| T6 | gives a recursion, algorithm or stepwise construction | step animation |
-| T7 | has a quantity indexed by $n$, a limit | plot against $n$ or slider on $n$ |
-| T8 | has a free parameter | slider |
-| T9 | gives two representations of one object | linked highlight |
-| T10 | states a number for a concrete example | figure that reproduces it |
-| T11 | proves by cases or contradiction with a witness | highlight witness and cases |
-| T12 | says smallest, largest, generated, intersection of a family | nested-families diagram |
+1. **The source draws it.** Every drawing of the source is reproduced
+   (never the scan itself): MANDATORY.
+2. **It shows a non-trivial construction or step of the lecture** that the
+   text alone makes hard to see: a set built by a limiting construction, a
+   sequence of functions that converges in one sense and not in another, a
+   simulation rule the lecture defines. Say in the working map why the text
+   alone does not show it.
 
-Write the inventory in the working map: page, item, trigger, visual, static or
-interactive, built or reason dropped.
+A figure is trivial, and NEVER built, when it:
+
+1. shows what the reader sees at once from the formula: a vector sum for the
+   triangle inequality, a ball, an interval on a line, two points on a number
+   line, a rectangle, the graph of a standard function or distribution;
+2. repeats a formula, an identity or a computed value as a picture: Venn
+   diagrams of a set identity, bars of a closed formula, a plot of a limit
+   the text states, a numerical check of a result;
+3. draws an instance with invented data that adds nothing, or an example of
+   another lecture (a chain, a matrix, a walk the source does not use here);
+4. decorates: nested ovals for a chain of inclusions, arrows between sets.
+
+Write the candidates in the working map: page, item, figure, built or reason
+dropped. No figure is a valid outcome for a lecture that draws nothing.
 
 ### 6.2 Fidelity filter (in this order)
 
@@ -216,40 +287,43 @@ interactive, built or reason dropped.
    construction, enumeration, counterexample or proof the source omits.
    (If the notes say $\#\mathbb{N} = \#\mathbb{Q}$ with no bijection, there is
    no zig-zag picture.)
-4. Interactive only under T4, T6, T7 or T8. Otherwise static SVG, no
-   `client:` directive.
+4. Interactive only when the reader's choice is the point: a parameter the
+   lecture varies, a step of a construction, an $n$ that grows. Otherwise
+   static SVG, no `client:` directive.
 
-The only valid reasons to drop a candidate are a failed filter step or
-duplication of another visual of the same post. More visuals NEVER means more
-content.
+More visuals NEVER means more content, and there is no minimum number.
 
-### 6.3 Minimum density
+### 6.3 Files
 
-1. Every drawing in the source is reproduced (never the scan itself).
-2. Every `##` part has at least one visual, unless its inventory has no
-   surviving candidate, which the report states.
-3. At least 1 visual per 300 words of body, and no more than 3 desktop screens
-   (2700 px at 1280 px) of text between two visuals, under the same exception.
-4. There is no maximum.
+Every `.svelte` and `.js` file in the post folder is reached from
+`index.mdx` through its imports. A figure that is dropped takes its
+component and the helpers only it used with it; `make check-post` warns
+about a file the page does not reach.
 
 ### 6.4 Presentation
 
 1. Each visual is followed immediately by a caption paragraph:
    `**Figure n.** What is drawn. What the controls change. (An instance, if so.)`
-   At most 3 sentences, no claim beyond the source. The text before it refers
+   At most 3 sentences, no claim beyond the source, no reasoning and no
+   restatement of the statement it illustrates. The text before it refers
    to "Figure n", never to "the figure".
-2. Build rules are those of `VISUALS.md` (toolkit, palette, seeded randomness,
+2. A sentence that only points at a figure ("Figure 2 draws these values.")
+   is not written: the mention goes in a sentence the post needs anyway.
+3. Build rules are those of `VISUALS.md` (toolkit, palette, seeded randomness,
    60–180 lines, accessibility label).
 
 ## 7. Flow
 
-1. Opening: 1 to 3 sentences that state the question or object. It does not
-   pre-state a definition the post gives later, and it is not a summary.
+1. Opening: one sentence, the source's own opening line or a plain sentence
+   that names the object of the lecture. It does not pre-state a definition
+   the post gives later, it is not a summary of the parts, and it invents no
+   question or motivation.
 2. Each part opens with the source's own motivation when the source has one
    (its "Idea:", its question heading), rewritten as a full sentence with a
-   real verb. When the source has none, the part opens with one sentence that
-   says which earlier item of THIS post it builds on. No other transition is
-   invented.
+   real verb. When the source has none, the part opens directly with its
+   first item. No transition is invented, and no part (an Exercises part
+   included) opens with a sentence that says what it will do or which
+   results it uses.
 3. Say each thing once. When the source repeats itself (slide text plus
    annotation), merge. A caveat or convention is stated once, where it first
    matters.
@@ -257,7 +331,11 @@ content.
    most one marker per paragraph; two consecutive paragraphs NEVER both open
    with a marker; at most 1 marker per 150 words over the post.
 5. NEVER write about the text ("the questions below", "the following standard
-   definitions"). NEVER open a sentence with "But" or "So" twice in a section.
+   definitions", a forward pointer such as "its topology is given in Example
+   16"). NEVER open a sentence with "But" or "So" twice in a section.
+   NEVER remind the reader of the notation of earlier posts ("As in the
+   previous posts, …") unless the post uses a symbol it never defines; then
+   one sentence defines it.
 6. A check that uses a result is placed after that result.
 7. The post ends on the last item of the source, in the source's words made
    explicit, not on added reasoning.
@@ -281,22 +359,25 @@ Run every line; fix or justify in the report.
    a cross-reference with no target (4.11).
 9. Look at the whole 1280 px screenshot: no line begins with a punctuation
    mark, no label alone, no paragraph over 8 lines, no display broken where the
-   source keeps one line, every visual drawn and captioned, at most 3 screens
-   between visuals.
-10. Visual count ≥ words / 300; every source drawing reproduced; every `##`
-    part has a visual or a stated reason.
-11. First and last paragraph reread against 7.1 and 7.7.
-12. `make verify-post POST=<thread>/<slug> SRC=<source> PAGES=<pages>` ends
+   source keeps one line, no ambiguous bars or undersized delimiters (5.11,
+   5.12), every visual drawn and captioned.
+10. Every source drawing reproduced; every other figure passes 6.1; no file
+    of the post folder left unused (6.3).
+11. First and last paragraph reread against 7.1 and 7.7. Every marked
+    sentence reread against 1.5: is the gap real, and does the sentence
+    cover the whole claim?
+12. In a thread with an index: `lecture` is set, every label reads `N.k`,
+    and every statement without a name has its line in `index` (4.12);
+    `make check-post` reports what is missing.
+13. `make verify-post POST=<thread>/<slug> SRC=<source> PAGES=<pages>` ends
     with `VERDICT: OK`, or every open finding is in the report with the reason
     the post is right (`SKILL.md`, step 8).
-13. The `preview` lines of `make check-post`: each statement's preview ends
+14. The `preview` lines of `make check-post`: each statement's preview ends
     where the source's statement ends (4.11 e).
 
 ## 9. Precedence over the older rules
 
-1. `VISUALS.md`, "You are free to add every animation…": freedom is limited to
-   objects of the source (6.2). "Most lectures need one to three" and "may have
-   no visual" are void: 6.1 and 6.3 apply.
+1. `VISUALS.md`: which figures to build is decided by 6.1 and 6.2 alone.
 2. `VISUALS.md` rule 9, words "before or after": a numbered caption after (6.4).
 3. `WRITING.md`, proof label 4 ("Indeed") and proof label 3 ("one-sentence
    check"): replaced by 1.5 and 7.4.

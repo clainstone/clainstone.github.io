@@ -1,5 +1,5 @@
 <script>
-  // The drawing of Definition 8: the ball B_r(x_0), its edge dashed because it
+  // The drawing of Definition 12.8: the ball B_r(x_0), its edge dashed because it
   // does not belong to the ball, its centre x_0, a radius of length r, and a
   // point x of D in the ball.
   const C = [380, 128], R = 104;

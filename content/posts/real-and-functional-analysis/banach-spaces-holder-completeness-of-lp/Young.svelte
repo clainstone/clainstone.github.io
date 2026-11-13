@@ -1,5 +1,5 @@
 <script>
-  // Lemma 11, the drawing of the proof: the graph of log and its chord between
+  // Lemma 10.11, the drawing of the proof: the graph of log and its chord between
   // the points with abscissas α = a^p and β = b^(p'), p' = p/(p − 1), for the
   // a, b and p of the sliders (an instance: a, b in [0.7, 1.25], p in [1.5, 3]).
   // Above the abscissa tα + (1 − t)β with t = 1/p, which is a^p/p + b^(p')/p',

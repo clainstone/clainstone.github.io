@@ -1,5 +1,5 @@
 <script>
-  // Remark 3, the drawing of the lecture: five notions of convergence of f_n
+  // Remark 7.3, the drawing of the lecture: five notions of convergence of f_n
   // to f, a double arrow for each implication and a crossed double arrow for
   // each implication that does not hold. Uniformly ⇒ pointwise ⇒ almost
   // everywhere, uniformly ⇒ in L^∞, in L^∞ ⇒ almost everywhere (the long

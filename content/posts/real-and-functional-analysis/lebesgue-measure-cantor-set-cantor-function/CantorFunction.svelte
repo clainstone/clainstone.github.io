@@ -1,5 +1,5 @@
 <script>
-  // Example 8: the graph of vₘ for the m set by the slider and, thinner, the
+  // Example 3.8: the graph of vₘ for the m set by the slider and, thinner, the
   // graph of vₘ₋₁, from v₀(x) = x and the recursion of the lecture. For m ≥ 2
   // the dashed lines mark x = 7/9 and x = 8/9, as in the drawing of v₂.
   import Slider from '@toolkit/Slider.svelte';

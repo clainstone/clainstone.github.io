@@ -1,5 +1,5 @@
 <script>
-  // Proposition 17, the drawing of the proof, an instance: a function f with
+  // Proposition 4.17, the drawing of the proof, an instance: a function f with
   // 0 ≤ f < 1 on an interval X, the levels i/m (dashed) and the simple
   // function f_m = Σ (i/m) χ of D_m^i, equal to j/m where j/m ≤ f < (j+1)/m.
   import Slider from '@toolkit/Slider.svelte';

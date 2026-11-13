@@ -1,8 +1,25 @@
 ---
 title: 'Equivalent norms, density and compactness in infinite dimensions'
 date: 2026-10-28
+lecture: 12
 published: 2026-11-05
 summary: 'Two norms on a vector space are equivalent when each is bounded by a constant times the other; equivalent norms induce the same topology, and on a space of finite dimension all norms are equivalent. The continuous functions are dense in $L^1((0, 1))$ but not in $L^\infty((-1, 1)),$ the closed unit ball of a normed space is compact if and only if the space has finite dimension (Riesz), and by the Ascoli–Arzelà theorem a subset of $C([a, b])$ is precompact if and only if it is bounded and uniformly equicontinuous.'
+index:
+  Example 12.2: 'Equivalence of all $\|\cdot\|_p$ on $\mathbb{R}^N$ and of two norms on $W_0^{1,p}((a, b))$'
+  Remark 12.3: 'Equivalent norms give the same topology, closed sets, compact sets and continuous functions'
+  Example 12.4: 'On $C([-1, 1])$, $\|f\|_1 \le 2 \|f\|_\infty$, but no $C$ gives $\|f\|_\infty \le C \|f\|_1$'
+  Remark 12.5: 'A basis identifies a finite-dimensional space with $\mathbb{R}^N$ via an isomorphism $\phi$'
+  Theorem 12.6: 'On a finite-dimensional vector space all norms are equivalent'
+  Corollary 12.7: 'In finite dimension, for any norm, compact sets are the closed and bounded sets'
+  Remark 12.9: 'Equivalent characterizations of density, by sequences in $D$ and by $\overline{D} = X$'
+  Example 12.10: 'The set $\mathbb{Q}$ is dense in $\mathbb{R}$'
+  Example 12.11: 'A proper subspace $V$ of $\mathbb{R}^N$ is closed, Banach, not dense, with closest points'
+  Example 12.12: 'The subspace $C([0, 1])$ of $L^1((0, 1))$ is not Banach, not closed, but dense'
+  Theorem 12.13: 'Every $f \in L^1((0, 1))$ is the $L^1$ limit of functions of $C([0, 1])$'
+  Remark 12.14: 'Finite-dimensional subspaces are closed, Banach subspaces of Banach spaces are the closed ones'
+  Example 12.16: 'The space $C([-1, 1])$ is not dense in $L^\infty((-1, 1))$'
+  Remark 12.17: 'For any norm on $\mathbb{R}^N$ the closed unit ball $\overline{B}_1(0)$ is compact'
+  Remark 12.20: 'Equilipschitz and $W^{1,p}$-bounded sequences, $p > 1$, are uniformly equicontinuous'
 ---
 
 import Ramps from './Ramps.svelte';
@@ -17,7 +34,7 @@ The lecture studies the topology of normed spaces of infinite dimension.
 
 ## Equivalent norms
 
-**Definition 1 (Equivalent norms).** Let $X$ be a vector space and let $\|\cdot\|_a$ and $\|\cdot\|_b$ be two norms on ${X.}$ These norms are *equivalent* if there exist ${C_1, C_2 > 0}$ such that
+**Definition 12.1 (Equivalent norms).** Let $X$ be a vector space and let $\|\cdot\|_a$ and $\|\cdot\|_b$ be two norms on ${X.}$ These norms are *equivalent* if there exist ${C_1, C_2 > 0}$ such that
 
 $$
 C_1 \|x\|_a \le \|x\|_b \le C_2 \|x\|_a \qquad \text{for every } x \in X.
@@ -25,18 +42,18 @@ $$
 
 The first inequality means that ${B_r^{\|\cdot\|_b}(0) \subset B_{r/C_1}^{\|\cdot\|_a}(0),}$ and the second means that ${B_r^{\|\cdot\|_a}(0) \subset B_{C_2 r}^{\|\cdot\|_b}(0),}$ for every ${r > 0.}$ Here ${B_r^{\|\cdot\|_a}(0) = \{ x \in X : \|x\|_a < r \}}$ and ${B_{C_2 r}^{\|\cdot\|_b}(0) = \{ x \in X : \|x\|_b < C_2 r \}}$ are balls of the distances induced by the two norms.
 
-**Example 2.** **(i)** Let $N$ be a positive integer. One can prove that, for all ${p, q \in [1, +\infty],}$ the norms $\|\cdot\|_p$ and $\|\cdot\|_q$ on $\mathbb{R}^N$ of Example 5 (ii) of the tenth post are equivalent.\
-**(ii)** Let ${-\infty < a < b < +\infty}$ and ${p \in [1, +\infty].}$ The norms $\|\cdot\|_{W^{1,p}}$ and $\|\cdot\|_{W_0^{1,p}}$ on ${W_0^{1,p}((a, b))}$ of Examples 19 and 21 of the tenth post are equivalent, as in Remark 6 of the previous post.
+**Example 12.2.** **(i)** Let $N$ be a positive integer. One can prove that, for all ${p, q \in [1, +\infty],}$ the norms $\|\cdot\|_p$ and $\|\cdot\|_q$ on $\mathbb{R}^N$ of Example 10.5 (ii) are equivalent.\
+**(ii)** Let ${-\infty < a < b < +\infty}$ and ${p \in [1, +\infty].}$ The norms $\|\cdot\|_{W^{1,p}}$ and $\|\cdot\|_{W_0^{1,p}}$ on ${W_0^{1,p}((a, b))}$ of Examples 10.19 and 10.21 are equivalent, as in Remark 11.6.
 
-**Remark 3.** Let $X$ be a vector space and let $\|\cdot\|_a$ and $\|\cdot\|_b$ be two norms on ${X.}$ The norm $\|\cdot\|_a$ induces a distance, as in Definition 1 of the tenth post, hence balls and a topology ${\tau_a,}$ as in Definition 19 of the first post. In the same way $\|\cdot\|_b$ induces a topology ${\tau_b.}$ If $\|\cdot\|_a$ is equivalent to ${\|\cdot\|_b,}$ then ${\tau_a = \tau_b.}$ In particular:\
+**Remark 12.3.** Let $X$ be a vector space and let $\|\cdot\|_a$ and $\|\cdot\|_b$ be two norms on ${X.}$ The norm $\|\cdot\|_a$ induces a distance, as in Definition 10.1, hence balls and a topology ${\tau_a,}$ as in Definition 1.19. In the same way $\|\cdot\|_b$ induces a topology ${\tau_b.}$ If $\|\cdot\|_a$ is equivalent to ${\|\cdot\|_b,}$ then ${\tau_a = \tau_b.}$ In particular:\
 **(i)** ${(X, \|\cdot\|_a)}$ and ${(X, \|\cdot\|_b)}$ also have the same closed sets and the same compact sets;\
 **(ii)** a function ${f \colon X \to \mathbb{R}}$ is continuous as a map ${f \colon (X, \|\cdot\|_a) \to \mathbb{R}}$ if and only if it is continuous as a map ${f \colon (X, \|\cdot\|_b) \to \mathbb{R}.}$
 
-**Proof (sketch).** Only the inclusion ${\tau_b \subset \tau_a}$ is proved, with ${C_1, C_2 > 0}$ as in Definition 1. Let $U$ be open in ${\tau_b.}$ For every ${x \in U}$ there exists ${r > 0}$ such that ${B_r^{\|\cdot\|_b}(x) \subset U.}$ Hence ${B_{r/C_2}^{\|\cdot\|_a}(x) \subset B_r^{\|\cdot\|_b}(x) \subset U,}$ and $U$ is open in ${\tau_a.}$ Indeed, if ${\|y - x\|_a < r/C_2,}$ then ${\|y - x\|_b \le C_2 \|y - x\|_a < r}$ by Definition 1. $\blacksquare$
+**Proof (sketch).** Only the inclusion ${\tau_b \subset \tau_a}$ is proved, with ${C_1, C_2 > 0}$ as in Definition 12.1. Let $U$ be open in ${\tau_b.}$ For every ${x \in U}$ there exists ${r > 0}$ such that ${B_r^{\|\cdot\|_b}(x) \subset U.}$ Hence ${B_{r/C_2}^{\|\cdot\|_a}(x) \subset B_r^{\|\cdot\|_b}(x) \subset U,}$ and $U$ is open in ${\tau_a.}$ Indeed, if ${\|y - x\|_a < r/C_2,}$ then ${\|y - x\|_b \le C_2 \|y - x\|_a < r}$ by Definition 12.1. $\blacksquare$
 
 ### Two norms on $C([-1, 1])$
 
-**Example 4.** Let ${X = C([-1, 1]),}$ with the norm $\|\cdot\|_\infty$ of Example 5 (iii) of the tenth post and the norm ${\|\cdot\|_1.}$
+**Example 12.4.** Let ${X = C([-1, 1]),}$ with the norm $\|\cdot\|_\infty$ of Example 10.5 (iii) and the norm ${\|\cdot\|_1.}$
 
 **(1)** For every ${f \in C([-1, 1]),}$
 
@@ -46,13 +63,13 @@ $$
 
 **(2)** There exists no ${C > 0}$ such that ${\|f\|_\infty \le C \|f\|_1}$ for every ${f \in C([-1, 1]).}$
 
-To prove Example 4 (2), for every integer ${n \ge 1}$ let ${f_n \in C([-1, 1])}$ be equal to 0 on ${[-1, 0],}$ linear on $[0, 1/n]$ and equal to 1 on ${[1/n, 1],}$ as in Figure 1. Let $H$ be equal to 0 on $[-1, 0]$ and to 1 on ${(0, 1].}$
+To prove Example 12.4 (2), for every integer ${n \ge 1}$ let ${f_n \in C([-1, 1])}$ be equal to 0 on ${[-1, 0],}$ linear on $[0, 1/n]$ and equal to 1 on ${[1/n, 1],}$ as in Figure 12.1. Let $H$ be equal to 0 on $[-1, 0]$ and to 1 on ${(0, 1].}$
 
 <Ramps client:visible />
 
-**Figure 1.** The drawing of Example 4: on the left the function $f_n$ for the $n$ of the slider and, dashed where it differs from ${f_n,}$ the function ${H,}$ with the region between the two graphs shaded, of area ${\|f_n - H\|_1;}$ on the right the function ${H.}$
+**Figure 12.1.** The drawing of Example 12.4: on the left the function $f_n$ for the $n$ of the slider and, dashed where it differs from ${f_n,}$ the function ${H,}$ with the region between the two graphs shaded, of area ${\|f_n - H\|_1;}$ on the right the function ${H.}$
 
-Then, as in Example 10 of the previous post, ${\|f_n - H\|_1 \to 0}$ as ${n \to \infty.}$ Hence $(f_n)$ is Cauchy in ${L^1,}$ as in the proof of Remark 18 of the tenth post: for every ${\varepsilon > 0}$ there exists $N$ such that ${\|f_n - f_m\|_1 < \varepsilon}$ for all ${n, m \ge N.}$
+Then, as in Example 11.10, ${\|f_n - H\|_1 \to 0}$ as ${n \to \infty.}$ Hence $(f_n)$ is Cauchy in ${L^1,}$ as in the proof of Remark 10.18: for every ${\varepsilon > 0}$ there exists $N$ such that ${\|f_n - f_m\|_1 < \varepsilon}$ for all ${n, m \ge N.}$
 
 If there were ${C > 0}$ such that ${\|f\|_\infty \le C \|f\|_1}$ for every ${f \in C([-1, 1]),}$ then $(f_n)$ would be Cauchy with respect to ${\|\cdot\|_\infty,}$ and $(f_n)$ should converge uniformly to a continuous function.
 
@@ -60,7 +77,7 @@ This is false, so no such $C$ exists. In detail, a uniform limit is also a point
 
 ### Spaces of finite dimension
 
-**Remark 5.** Let $X$ be a vector space of finite dimension, that is, with a basis ${\mathcal{B} = \{ e_1, \dots, e_N \} \subset X.}$ Then one can consider
+**Remark 12.5.** Let $X$ be a vector space of finite dimension, that is, with a basis ${\mathcal{B} = \{ e_1, \dots, e_N \} \subset X.}$ Then one can consider
 
 $$
 \begin{aligned}
@@ -72,15 +89,15 @@ $$
 
 where the 1 is in the $i$-th place. The map $\phi$ is an isomorphism between $X$ and ${\mathbb{R}^N,}$ so any finite-dimensional vector space can be identified with ${\mathbb{R}^N.}$
 
-**Theorem 6.** Let $X$ be a vector space of finite dimension and let $\|\cdot\|_a$ and $\|\cdot\|_b$ be two norms on ${X.}$ Then $\|\cdot\|_a$ and $\|\cdot\|_b$ are equivalent.
+**Theorem 12.6.** Let $X$ be a vector space of finite dimension and let $\|\cdot\|_a$ and $\|\cdot\|_b$ be two norms on ${X.}$ Then $\|\cdot\|_a$ and $\|\cdot\|_b$ are equivalent.
 
-**Corollary 7.** Let $X$ be a vector space of finite dimension and let $\|\cdot\|$ be a norm on ${X.}$ Then a set ${K \subset X}$ is compact if and only if $K$ is closed and bounded.
+**Corollary 12.7.** Let $X$ be a vector space of finite dimension and let $\|\cdot\|$ be a norm on ${X.}$ Then a set ${K \subset X}$ is compact if and only if $K$ is closed and bounded.
 
-**Proof (sketch).** By Theorem 6, $\|\cdot\|$ is equivalent to the Euclidean norm ${x \mapsto |\phi(x)|,}$ with $\phi$ as in Remark 5. Hence, by Remark 3 (i), $K$ is compact in ${(X, \|\cdot\|)}$ if and only if $K$ is compact with respect to the Euclidean topology. In detail, by the Heine–Borel theorem, Theorem 15 of the first post, via ${\phi,}$ this holds if and only if $K$ is closed and bounded for the Euclidean norm, hence for $\|\cdot\|$ by Remark 3 (i) and Definition 1. $\blacksquare$
+**Proof (sketch).** By Theorem 12.6, $\|\cdot\|$ is equivalent to the Euclidean norm ${x \mapsto |\phi(x)|,}$ with $\phi$ as in Remark 12.5. Hence, by Remark 12.3 (i), $K$ is compact in ${(X, \|\cdot\|)}$ if and only if $K$ is compact with respect to the Euclidean topology. In detail, by the Heine–Borel theorem, Theorem 1.15, via ${\phi,}$ this holds if and only if $K$ is closed and bounded for the Euclidean norm, hence for $\|\cdot\|$ by Remark 12.3 (i) and Definition 12.1. $\blacksquare$
 
 ## Subspaces and density
 
-**Definition 8 (Dense subset).** Let ${(X, d)}$ be a metric space. A subset ${D \subset X}$ is *dense* if, as in Figure 2,
+**Definition 12.8 (Dense subset).** Let ${(X, d)}$ be a metric space. A subset ${D \subset X}$ is *dense* if, as in Figure 12.2,
 
 $$
 \forall x_0 \in X \quad \forall r > 0 \quad \exists x \in D \ \text{ such that } \ d(x, x_0) < r, \ \text{ that is, } \ x \in B_r(x_0).
@@ -88,60 +105,60 @@ $$
 
 <DenseBall />
 
-**Figure 2.** The drawing of Definition 8: the ball $B_r(x_0)$ and a point ${x \in D}$ in it.
+**Figure 12.2.** The drawing of Definition 12.8: the ball $B_r(x_0)$ and a point ${x \in D}$ in it.
 
-**Remark 9.** Let ${(X, d)}$ be a metric space and let ${D \subset X.}$ The following are equivalent.\
+**Remark 12.9.** Let ${(X, d)}$ be a metric space and let ${D \subset X.}$ The following are equivalent.\
 **(i)** $D$ is dense.\
 **(ii)** For every ${x_0 \in X}$ there exists ${(x_n) \subset D}$ such that ${x_n \to x_0}$ in ${X.}$\
-**(iii)** ${\overline{D} = X,}$ where $\overline{D}$ is the closure of $D$ of Definition 12 (i) of the first post.
+**(iii)** ${\overline{D} = X,}$ where $\overline{D}$ is the closure of $D$ of Definition 1.12 (i).
 
-**Example 10.** The set $\mathbb{Q}$ is dense in ${\mathbb{R},}$ with the distance ${d(x, y) = |x - y|.}$
+**Example 12.10.** The set $\mathbb{Q}$ is dense in ${\mathbb{R},}$ with the distance ${d(x, y) = |x - y|.}$
 
-**Example 11.** Let $N$ be a positive integer and let $V$ be a subspace of $\mathbb{R}^N$ with ${V \neq \mathbb{R}^N.}$\
+**Example 12.11.** Let $N$ be a positive integer and let $V$ be a subspace of $\mathbb{R}^N$ with ${V \neq \mathbb{R}^N.}$\
 **(i)** $V$ is closed in ${\mathbb{R}^N.}$\
 **(ii)** ${(V, \|\cdot\|_2)}$ is a Banach space.\
 **(iii)** $V$ is not dense.\
-**(iv)** Let ${x \in \mathbb{R}^N \setminus V.}$ Then ${d(x, V) = \inf_{v \in V} |x - v| > 0,}$ and there exists ${\bar{v} \in V}$ such that ${|x - \bar{v}| = d(x, V),}$ as in Figure 3: $\bar{v}$ is the closest point to $x$ in ${V.}$
+**(iv)** Let ${x \in \mathbb{R}^N \setminus V.}$ Then ${d(x, V) = \inf_{v \in V} |x - v| > 0,}$ and there exists ${\bar{v} \in V}$ such that ${|x - \bar{v}| = d(x, V),}$ as in Figure 12.3: $\bar{v}$ is the closest point to $x$ in ${V.}$
 
 <Closest client:visible />
 
-**Figure 3.** The drawing of Example 11, an instance with ${N = 2}$ and $V$ a line: the point $x$ of the sliders, the point $\bar{v}$ of $V$ closest to ${x,}$ at distance ${|x - \bar{v}| = d(x, V),}$ and a ball around a point $x_0$ that does not meet ${V.}$
+**Figure 12.3.** The drawing of Example 12.11, an instance with ${N = 2}$ and $V$ a line: the point $x$ of the sliders, the point $\bar{v}$ of $V$ closest to ${x,}$ at distance ${|x - \bar{v}| = d(x, V),}$ and a ball around a point $x_0$ that does not meet ${V.}$
 
 ### The continuous functions in $L^1((0, 1))$
 
-**Example 12.** Consider ${C([0, 1]) \subset L^1((0, 1)),}$ as in Remark 16 of the sixth post, that is, ${(C([0, 1]), \|\cdot\|_1) \subset (L^1((0, 1)), \|\cdot\|_1).}$ Here ${V = C([0, 1])}$ is a subspace of ${L^1,}$ and ${V \neq L^1.}$\
-**(i)** ${(V, \|\cdot\|_1)}$ is not a Banach space, as in Example 10 of the previous post.\
+**Example 12.12.** Consider ${C([0, 1]) \subset L^1((0, 1)),}$ as in Remark 6.16, that is, ${(C([0, 1]), \|\cdot\|_1) \subset (L^1((0, 1)), \|\cdot\|_1).}$ Here ${V = C([0, 1])}$ is a subspace of ${L^1,}$ and ${V \neq L^1.}$\
+**(i)** ${(V, \|\cdot\|_1)}$ is not a Banach space, as in Example 11.10.\
 **(ii)** ${V \subset L^1}$ is not closed.\
-**(iii)** $V$ is dense in ${L^1,}$ by Theorem 13.
+**(iii)** $V$ is dense in ${L^1,}$ by Theorem 12.13.
 
-**Theorem 13.** For every ${f \in L^1((0, 1))}$ there exists ${(f_n) \subset V = C([0, 1])}$ such that ${f_n \to f}$ in ${L^1((0, 1)).}$
+**Theorem 12.13.** For every ${f \in L^1((0, 1))}$ there exists ${(f_n) \subset V = C([0, 1])}$ such that ${f_n \to f}$ in ${L^1((0, 1)).}$
 
-**Proof (sketch).** The idea is drawn in Figure 4. We know that $f$ can be approximated by simple functions, as in Proposition 17 of the fourth post, and any simple function can be approximated by continuous functions. $\blacksquare$
+**Proof (sketch).** The idea is drawn in Figure 12.4. We know that $f$ can be approximated by simple functions, as in Proposition 4.17, and any simple function can be approximated by continuous functions. $\blacksquare$
 
 <Idea />
 
-**Figure 4.** The drawing of the proof of Theorem 13, an instance: a function ${f \in L^1,}$ below it a simple function constant on three intervals, and a continuous function $f_n$ close to the simple function.
+**Figure 12.4.** The drawing of the proof of Theorem 12.13, an instance: a function ${f \in L^1,}$ below it a simple function constant on three intervals, and a continuous function $f_n$ close to the simple function.
 
-In particular, by Theorem 13, if ${f \in L^1 \setminus V,}$ then ${d(f, V) = \inf_{g \in V} \|f - g\|_1 = 0,}$ and it makes no sense to speak of the closest point to $f$ in ${V.}$
+In particular, by Theorem 12.13, if ${f \in L^1 \setminus V,}$ then ${d(f, V) = \inf_{g \in V} \|f - g\|_1 = 0,}$ and it makes no sense to speak of the closest point to $f$ in ${V.}$
 
 ### Closed and dense subspaces
 
-**Remark 14.** Let ${(X, \|\cdot\|)}$ be a normed space.\
+**Remark 12.14.** Let ${(X, \|\cdot\|)}$ be a normed space.\
 **(1)** If ${V \subset X}$ is a subspace and ${\dim V < +\infty,}$ then $V$ is closed.\
 **(2)** If ${(X, \|\cdot\|)}$ is a Banach space and ${V \subset X}$ is a subspace, then ${(V, \|\cdot\|)}$ is a Banach space if and only if ${V \subset X}$ is closed.
 
-**Remark 15 (Dense subspaces).** **(1)** ([Stone–Weierstrass](https://en.wikipedia.org/wiki/Stone%E2%80%93Weierstrass_theorem)) Let ${-\infty < a < b < +\infty.}$ The subspace $V$ of the polynomials is dense in ${(C([a, b]), \|\cdot\|_\infty).}$\
+**Remark 12.15 (Dense subspaces).** **(1)** ([Stone–Weierstrass](https://en.wikipedia.org/wiki/Stone%E2%80%93Weierstrass_theorem)) Let ${-\infty < a < b < +\infty.}$ The subspace $V$ of the polynomials is dense in ${(C([a, b]), \|\cdot\|_\infty).}$\
 **(2)** Let ${1 \le p < +\infty}$ and let ${U \subset \mathbb{R}^N}$ be open, with the Lebesgue measure. Then the set of the simple functions that belong to $L^p(U)$ is dense in ${L^p(U),}$ $C_c(U)$ is dense in $L^p(U)$ and $C_c^\infty(U)$ is dense in ${L^p(U).}$ Here $C_c(U)$ and $C_c^\infty(U)$ are defined as in the notation of the fifth post, with $U$ in place of ${(a, b).}$
 
 ### The continuous functions in $L^\infty((-1, 1))$
 
-**Example 16.** Remark 15 (2) is false for ${p = +\infty{:}}$ ${C([-1, 1]) \subset L^\infty((-1, 1))}$ is not dense.
+**Example 12.16.** Remark 12.15 (2) is false for ${p = +\infty{:}}$ ${C([-1, 1]) \subset L^\infty((-1, 1))}$ is not dense.
 
-To prove Example 16, let $H$ be the function of Example 4 and let ${B_{1/3}(H) = \{ f \in L^\infty((-1, 1)) : \|f - H\|_\infty < 1/3 \}.}$ We claim that ${f \notin C([-1, 1])}$ for every ${f \in B_{1/3}(H),}$ as in Figure 5.
+To prove Example 12.16, let $H$ be the function of Example 12.4 and let ${B_{1/3}(H) = \{ f \in L^\infty((-1, 1)) : \|f - H\|_\infty < 1/3 \}.}$ We claim that ${f \notin C([-1, 1])}$ for every ${f \in B_{1/3}(H),}$ as in Figure 12.5.
 
 <Jump />
 
-**Figure 5.** The drawing of Example 16: the function ${H,}$ the dashed levels $-1/3$ and $1/3$ over ${(-1, 0)}$ and $2/3$ and $4/3$ over ${(0, 1),}$ and between them a function $f$ of ${B_{1/3}(H),}$ an instance. At 0 a bracket marks the gap between the levels $1/3$ and ${2/3.}$
+**Figure 12.5.** The drawing of Example 12.16: the function ${H,}$ the dashed levels $-1/3$ and $1/3$ over ${(-1, 0)}$ and $2/3$ and $4/3$ over ${(0, 1),}$ and between them a function $f$ of ${B_{1/3}(H),}$ an instance. At 0 a bracket marks the gap between the levels $1/3$ and ${2/3.}$
 
 If ${f \in B_{1/3}(H),}$ then
 
@@ -164,15 +181,15 @@ where the left-hand side is at most $1/3$ and the right-hand side is at least ${
 
 ## Compactness
 
-**Remark 17.** Let $\|\cdot\|$ be a norm on ${\mathbb{R}^N,}$ a space of finite dimension. Then a set ${K \subset \mathbb{R}^N}$ is compact if and only if $K$ is closed and bounded. In particular, the closed ball ${\overline{B}_1(0) = \{ x \in \mathbb{R}^N : \|x\| \le 1 \}}$ is compact.
+**Remark 12.17.** Let $\|\cdot\|$ be a norm on ${\mathbb{R}^N,}$ a space of finite dimension. Then a set ${K \subset \mathbb{R}^N}$ is compact if and only if $K$ is closed and bounded. In particular, the closed ball ${\overline{B}_1(0) = \{ x \in \mathbb{R}^N : \|x\| \le 1 \}}$ is compact.
 
-**Theorem 18 (Riesz).** Let ${(X, \|\cdot\|)}$ be a normed space and let ${\overline{B}_1(0) = \{ x \in X : \|x\| \le 1 \}.}$ Then $\overline{B}_1(0)$ is compact if and only if ${\dim X < +\infty.}$ In particular, $\overline{B}_1(0)$ is never compact in a normed space of infinite dimension.
+**Theorem 12.18 (Riesz).** Let ${(X, \|\cdot\|)}$ be a normed space and let ${\overline{B}_1(0) = \{ x \in X : \|x\| \le 1 \}.}$ Then $\overline{B}_1(0)$ is compact if and only if ${\dim X < +\infty.}$ In particular, $\overline{B}_1(0)$ is never compact in a normed space of infinite dimension.
 
-**Proof (complete).** If ${\dim X < +\infty,}$ then $\overline{B}_1(0)$ is compact, as in Remark 17. Indeed, $\overline{B}_1(0)$ is closed and bounded, hence compact by Corollary 7.
+**Proof (complete).** If ${\dim X < +\infty,}$ then $\overline{B}_1(0)$ is compact, as in Remark 12.17. Indeed, $\overline{B}_1(0)$ is closed and bounded, hence compact by Corollary 12.7.
 
 Conversely, let $\overline{B}_1(0)$ be compact. For ${x \in X}$ and a subspace $M$ of $X$ let ${d(x, M) = \inf_{m \in M} \|x - m\|.}$
 
-Step 1. Let ${M \subset X}$ be a closed subspace with ${M \neq X.}$ Then for every ${\varepsilon > 0}$ there exists ${v \in X}$ such that, as in Figure 6,
+Step 1. Let ${M \subset X}$ be a closed subspace with ${M \neq X.}$ Then for every ${\varepsilon > 0}$ there exists ${v \in X}$ such that, as in Figure 12.6,
 
 $$
 \|v\| = 1 \qquad \text{and} \qquad d(v, M) \ge 1 - \varepsilon.
@@ -180,9 +197,9 @@ $$
 
 <UnitVector />
 
-**Figure 6.** The drawing of Step 1 in the proof of Theorem 18, an instance in $\mathbb{R}^2$ with the Euclidean norm: a closed subspace ${M,}$ a line, the dashed circle of the vectors of norm ${1,}$ and a vector $v$ on it with ${d(v, M) = 1.}$
+**Figure 12.6.** The drawing of Step 1 in the proof of Theorem 12.18, an instance in $\mathbb{R}^2$ with the Euclidean norm: a closed subspace ${M,}$ a line, the dashed circle of the vectors of norm ${1,}$ and a vector $v$ on it with ${d(v, M) = 1.}$
 
-Proof of Step 1. Since ${M \neq X,}$ there exists ${x_0 \in X \setminus M.}$ Notice that ${d(x_0, M) > 0.}$ Suppose, by contradiction, that ${d(x_0, M) = 0.}$ Then there exists ${(x_n) \subset M}$ such that ${d(x_0, x_n) \to 0,}$ that is, $(x_n)$ converges to ${x_0 \in X.}$ Since $M$ is closed, ${x_0 \in M}$ by Lemma 20 (i) of the first post, but ${x_0 \in X \setminus M,}$ a contradiction.
+Proof of Step 1. Since ${M \neq X,}$ there exists ${x_0 \in X \setminus M.}$ Notice that ${d(x_0, M) > 0.}$ Suppose, by contradiction, that ${d(x_0, M) = 0.}$ Then there exists ${(x_n) \subset M}$ such that ${d(x_0, x_n) \to 0,}$ that is, $(x_n)$ converges to ${x_0 \in X.}$ Since $M$ is closed, ${x_0 \in M}$ by Lemma 1.20 (i), but ${x_0 \in X \setminus M,}$ a contradiction.
 
 Now fix ${\varepsilon \in (0, 1).}$ By the definition of the distance ${d(x_0, M),}$ there exists ${m_0 \in M}$ such that
 
@@ -190,7 +207,7 @@ $$
 0 < \|x_0 - m_0\| \le \frac{1}{1 - \varepsilon} \, d(x_0, M).
 $$
 
-Indeed, the right-hand side is larger than the infimum ${d(x_0, M) > 0,}$ because ${1/(1 - \varepsilon) > 1,}$ and ${\|x_0 - m_0\| > 0}$ because $x_0$ is not in ${M.}$ Take, as in Figure 7,
+Indeed, the right-hand side is larger than the infimum ${d(x_0, M) > 0,}$ because ${1/(1 - \varepsilon) > 1,}$ and ${\|x_0 - m_0\| > 0}$ because $x_0$ is not in ${M.}$ Take, as in Figure 12.7,
 
 $$
 v := \frac{x_0 - m_0}{\|x_0 - m_0\|}.
@@ -198,7 +215,7 @@ $$
 
 <Riesz client:visible />
 
-**Figure 7.** The drawing of the proof of Step 1, an instance in $\mathbb{R}^2$ with the Euclidean norm: the point ${x_0 \notin M,}$ the thick part of $M$ where ${\|x_0 - m\| \le d(x_0, M)/(1 - \varepsilon),}$ a point $m_0$ in it, the vector $v$ and the dashed line at distance ${1 - \varepsilon}$ from ${M.}$ The sliders set $\varepsilon$ and the position of ${m_0.}$
+**Figure 12.7.** The drawing of the proof of Step 1, an instance in $\mathbb{R}^2$ with the Euclidean norm: the point ${x_0 \notin M,}$ the thick part of $M$ where ${\|x_0 - m\| \le d(x_0, M)/(1 - \varepsilon),}$ a point $m_0$ in it, the vector $v$ and the dashed line at distance ${1 - \varepsilon}$ from ${M.}$ The sliders set $\varepsilon$ and the position of ${m_0.}$
 
 Then ${\|v\| = 1,}$ and for every ${m \in M}$
 
@@ -215,13 +232,13 @@ The first inequality holds because ${m_0 + m \, \|x_0 - m_0\|}$ belongs to the s
 
 Step 2. We prove that ${\dim X < +\infty.}$ Suppose, by contradiction, that ${\dim X = +\infty.}$ We construct inductively a sequence of vectors.
 
-(i) Fix ${v_0 \in X}$ with ${\|v_0\| = 1}$ and let ${M_0 = \operatorname{Span}(v_0) = \{ \alpha v_0 : \alpha \in \mathbb{R} \}.}$ Then ${M_0 \neq X,}$ because $M_0$ has dimension 1 and $X$ has infinite dimension, and $M_0$ is closed by Remark 14 (1), because it has finite dimension.
+(i) Fix ${v_0 \in X}$ with ${\|v_0\| = 1}$ and let ${M_0 = \operatorname{Span}(v_0) = \{ \alpha v_0 : \alpha \in \mathbb{R} \}.}$ Then ${M_0 \neq X,}$ because $M_0$ has dimension 1 and $X$ has infinite dimension, and $M_0$ is closed by Remark 12.14 (1), because it has finite dimension.
 
 (ii) Apply Step 1 to ${M = M_0}$ with ${\varepsilon = 1/2.}$ It gives ${v_1 \in X}$ with ${\|v_1\| = 1}$ and ${d(v_1, M_0) \ge 1 - \varepsilon = 1/2.}$ Now consider ${M_1 = \operatorname{Span}(v_0, v_1).}$ Then ${M_1 \neq X,}$ because $M_1$ has dimension 2 and $X$ has infinite dimension, and $M_1$ is closed, because it has finite dimension. So the construction can be iterated.
 
 (iii) Let ${M_{n-1} = \operatorname{Span}(v_0, v_1, \dots, v_{n-1})}$ be given, of finite dimension, closed and different from ${X.}$ Then Step 1 gives ${v_n \in X}$ such that ${\|v_n\| = 1}$ and ${d(v_n, M_{n-1}) \ge 1/2.}$
 
-In the end we found vectors $v_n$ of $X$ such that ${\|v_n\| = 1}$ for every $n$ and ${d(v_n, M_{n-1}) \ge 1/2}$ for every ${n \ge 1.}$ However, ${\|v_n\| = 1}$ for every $n$ gives ${(v_n) \subset \overline{B}_1(0),}$ which is compact by assumption. Hence, by Lemma 20 (ii) of the first post, there exist a subsequence $(v_{n_k})$ and ${w \in X}$ such that ${v_{n_k} \to w}$ in $X$ as ${k \to \infty.}$ That is, ${d(w, v_{n_k}) \to 0.}$
+In the end we found vectors $v_n$ of $X$ such that ${\|v_n\| = 1}$ for every $n$ and ${d(v_n, M_{n-1}) \ge 1/2}$ for every ${n \ge 1.}$ However, ${\|v_n\| = 1}$ for every $n$ gives ${(v_n) \subset \overline{B}_1(0),}$ which is compact by assumption. Hence, by Lemma 1.20 (ii), there exist a subsequence $(v_{n_k})$ and ${w \in X}$ such that ${v_{n_k} \to w}$ in $X$ as ${k \to \infty.}$ That is, ${d(w, v_{n_k}) \to 0.}$
 
 Therefore $(v_{n_k})$ is Cauchy in ${X{:}}$ for every ${\varepsilon_0 > 0}$ there exists $N$ such that ${d(v_{n_k}, v_{n_{k-1}}) < \varepsilon_0}$ for every ${k \ge N.}$ But, for every ${k \ge 1,}$
 
@@ -239,13 +256,13 @@ $$
 x, y \in [a, b], \ \ |x - y| < \delta \quad \Longrightarrow \quad |f(x) - f(y)| < \varepsilon \quad \text{for every } f \in \mathcal{F}.
 $$
 
-**Theorem 19 (Ascoli–Arzelà).** Let ${-\infty < a < b < +\infty,}$ consider ${(C([a, b]), \|\cdot\|_\infty)}$ and let ${\mathcal{F} \subset C([a, b]).}$ Then $\mathcal{F}$ is precompact, that is, $\overline{\mathcal{F}}$ is compact, as in Definition 14 of the first post, if and only if $\mathcal{F}$ is bounded and uniformly equicontinuous.
+**Theorem 12.19 (Ascoli–Arzelà).** Let ${-\infty < a < b < +\infty,}$ consider ${(C([a, b]), \|\cdot\|_\infty)}$ and let ${\mathcal{F} \subset C([a, b]).}$ Then $\mathcal{F}$ is precompact, that is, $\overline{\mathcal{F}}$ is compact, as in Definition 1.14, if and only if $\mathcal{F}$ is bounded and uniformly equicontinuous.
 
 In particular, let ${(f_n) \subset C([a, b])}$ be such that ${\sup_n \|f_n\|_\infty < +\infty}$ and ${\mathcal{F} = \{ f_n : n \in \mathbb{N} \}}$ is uniformly equicontinuous. Then there exist a subsequence $(f_{n_k})$ and ${g \in C([a, b])}$ such that ${f_{n_k} \to g}$ in $\|\cdot\|_\infty$ as ${k \to \infty.}$
 
-**Remark 20.** Let ${-\infty < a < b < +\infty.}$\
+**Remark 12.20.** Let ${-\infty < a < b < +\infty.}$\
 **(i)** Let ${(f_n) \subset C([a, b])}$ be *equilipschitz*: there exists ${L > 0}$ such that, for every $n$ and all $x$ and $y$ in ${[a, b],}$ ${|f_n(x) - f_n(y)| \le L |x - y|.}$ Then $(f_n)$ is uniformly equicontinuous.\
-**(ii)** Let ${p \in (1, +\infty]}$ and let ${(f_n) \subset W^{1,p}((a, b))}$ be bounded in ${W^{1,p},}$ that is, ${\sup_n \|f_n\|_{W^{1,p}} < +\infty,}$ with the norm of Example 19 of the tenth post. Then $(f_n)$ is bounded in $\|\cdot\|_\infty$ and uniformly equicontinuous, by estimates analogous to those of Example 4 and Remark 6 of the previous post, so there exists a subsequence $(f_{n_k})$ that converges uniformly, by Theorem 19. Here each $f_n$ is identified with its absolutely continuous representative, as in Example 21 of the tenth post.
+**(ii)** Let ${p \in (1, +\infty]}$ and let ${(f_n) \subset W^{1,p}((a, b))}$ be bounded in ${W^{1,p},}$ that is, ${\sup_n \|f_n\|_{W^{1,p}} < +\infty,}$ with the norm of Example 10.19. Then $(f_n)$ is bounded in $\|\cdot\|_\infty$ and uniformly equicontinuous, by estimates analogous to those of Example 11.4 and Remark 11.6, so there exists a subsequence $(f_{n_k})$ that converges uniformly, by Theorem 12.19. Here each $f_n$ is identified with its absolutely continuous representative, as in Example 10.21.
 
 **Proof (sketch).** Only (i) is proved. Let ${\varepsilon > 0}$ and choose ${\delta > 0}$ with ${\delta < \varepsilon/L.}$ Then, for every $n$ and all ${x, y \in [a, b]}$ with ${|x - y| < \delta,}$
 

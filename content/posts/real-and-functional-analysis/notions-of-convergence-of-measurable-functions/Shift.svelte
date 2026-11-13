@@ -1,5 +1,5 @@
 <script>
-  // After Theorem 5, the drawing of the lecture: f_n = χ_[n, n+1] on ℝ, equal to
+  // After Theorem 7.5, the drawing of the lecture: f_n = χ_[n, n+1] on ℝ, equal to
   // 1 on [n, n + 1] and 0 elsewhere, the dashed level 1/2, and the set
   // {|f_n| > 1/2} = [n, n + 1] hatched on the axis. The slider sets n.
   import Slider from '@toolkit/Slider.svelte';

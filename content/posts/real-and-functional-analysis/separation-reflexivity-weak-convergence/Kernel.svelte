@@ -1,5 +1,5 @@
 <script>
-  // The drawing of Corollary 6, as in the lecture: the kernel of T drawn as a
+  // The drawing of Corollary 16.6, as in the lecture: the kernel of T drawn as a
   // plane, a parallelogram seen at a slant, the closed subspace V drawn as a
   // line through 0 inside it, and the point x_0 above the plane, outside it.
   // The points are read off the lecture's drawing.

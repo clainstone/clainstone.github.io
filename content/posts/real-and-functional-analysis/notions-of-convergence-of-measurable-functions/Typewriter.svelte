@@ -1,5 +1,5 @@
 <script>
-  // Example 4, the drawing of the lecture: the functions f_1, …, f_14 of the
+  // Example 7.4, the drawing of the lecture: the functions f_1, …, f_14 of the
   // typewriter sequence in rows of 2, 4 and 8, each on its own copy of [0, 1],
   // with f_1, f_3 and f_7 circled. The k-th row holds the characteristic
   // functions of the intervals [j/2^k, (j + 1)/2^k], from left to right.

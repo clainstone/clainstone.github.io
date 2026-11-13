@@ -1,18 +1,28 @@
 ---
 title: 'Separation, reflexivity and weak convergence'
 date: 2026-11-12
+lecture: 16
 published: 2026-11-13
 summary: 'By the Hahn–Banach theorem the continuous linear functionals on a normed space separate points and separate a point from a closed subspace, and the canonical map of a Banach space into its bidual is an isometry, surjective when the space is reflexive. By the Riesz representation theorem the dual of $L^p$ is identified with $L^{p''}$ for $1 < p < \infty,$ so that $L^p$ is reflexive, and a sequence $(x_m)$ converges weakly to $x$ when ${T x_m \to T x}$ for every continuous linear functional ${T.}$'
+index:
+  Corollary 16.2: 'For $x_0 \neq 0$, some $T \in X^*$ has norm $1$ and $T x_0 = \|x_0\|_X$'
+  Remark 16.4: 'For $\alpha = 0$ the hyperplane is $\operatorname{Ker} T$, in $\mathbb{R}^M$ a classical hyperplane'
+  Theorem 16.9: 'The canonical map $\tau$ is a linear isometry of $X$ onto its closed range $R(\tau)$'
+  Remark 16.11: 'For reflexive $X$, $\tau$ is an isometric isomorphism of $X$ onto $X^{**}$'
+  Remark 16.12: 'Integration against $f \in L^{p''}$ gives an isometry $f \mapsto T_f$ into $(L^p)^*$'
+  Remark 16.14: 'In general $(L^\infty)^*$ is not isometrically isomorphic to $L^1$, nor is $L^1$ reflexive'
+  Remark 16.17: 'Strong convergence implies weak convergence'
+  Example 16.18: 'Indicators of $[m, m+1]$ converge weakly but not strongly to $0$ in $L^2$'
 ---
 
 import Hyperplane from './Hyperplane.svelte';
 import Kernel from './Kernel.svelte';
 
-Recall the Hahn–Banach theorem, Theorem 14 of the previous post.
+Recall the Hahn–Banach theorem, Theorem 15.14.
 
 ## Hahn–Banach theorems (continued)
 
-**Theorem 1 (Hahn–Banach).** Let ${(X, \|\cdot\|_X)}$ be a normed space, let ${V \subset X}$ be a subspace, with the norm ${\|\cdot\|_X,}$ and let ${L \in V^*.}$ Then there exists ${T \in X^*}$ such that
+**Theorem 16.1 (Hahn–Banach).** Let ${(X, \|\cdot\|_X)}$ be a normed space, let ${V \subset X}$ be a subspace, with the norm ${\|\cdot\|_X,}$ and let ${L \in V^*.}$ Then there exists ${T \in X^*}$ such that
 
 $$
 \begin{aligned}
@@ -21,7 +31,7 @@ $$
 \end{aligned}
 $$
 
-**Corollary 2.** Let ${(X, \|\cdot\|_X)}$ be a normed space and let ${x_0 \in X}$ with ${x_0 \neq 0.}$ Then there exists ${T \in X^*}$ such that ${\|T\|_{X^*} = 1}$ and ${T x_0 = \|x_0\|_X.}$
+**Corollary 16.2.** Let ${(X, \|\cdot\|_X)}$ be a normed space and let ${x_0 \in X}$ with ${x_0 \neq 0.}$ Then there exists ${T \in X^*}$ such that ${\|T\|_{X^*} = 1}$ and ${T x_0 = \|x_0\|_X.}$
 
 **Proof (complete).** Since ${x_0 \neq 0,}$ we can consider the subspace ${V = \operatorname{Span}(x_0) := \{ t x_0 : t \in \mathbb{R} \}.}$ Let ${L \colon V \to \mathbb{R}}$ be given by ${L(t x_0) = t \, \|x_0\|_X.}$ The map $L$ is linear, and it belongs to $V^*$ with ${\|L\|_{V^*} = 1,}$ because
 
@@ -33,9 +43,9 @@ $$
 \end{aligned}
 $$
 
-By the Hahn–Banach theorem, Theorem 1, there exists ${T \in X^*}$ such that ${T|_V = L}$ and ${\|T\|_{X^*} = \|L\|_{V^*} = 1.}$ Moreover, ${T x_0 = L x_0 = \|x_0\|_X,}$ since ${x_0 \in V.}$ $\blacksquare$
+By the Hahn–Banach theorem, Theorem 16.1, there exists ${T \in X^*}$ such that ${T|_V = L}$ and ${\|T\|_{X^*} = \|L\|_{V^*} = 1.}$ Moreover, ${T x_0 = L x_0 = \|x_0\|_X,}$ since ${x_0 \in V.}$ $\blacksquare$
 
-**Definition 3 (Hyperplane).** Let ${(X, \|\cdot\|_X)}$ be a normed space and let ${T \colon X \to \mathbb{R}}$ be linear. A *hyperplane* is a subset of $X$ given, for some ${\alpha \in \mathbb{R},}$ by
+**Definition 16.3 (Hyperplane).** Let ${(X, \|\cdot\|_X)}$ be a normed space and let ${T \colon X \to \mathbb{R}}$ be linear. A *hyperplane* is a subset of $X$ given, for some ${\alpha \in \mathbb{R},}$ by
 
 $$
 H = \{ x \in X : Tx = \alpha \}.
@@ -43,26 +53,26 @@ $$
 
 **Notation.** We write ${H = \{ T = \alpha \} = T^{-1}(\{\alpha\}).}$
 
-**Remark 4.** **(i)** If ${\alpha = 0,}$ then ${H = \{ T = 0 \} = \operatorname{Ker} T.}$\
+**Remark 16.4.** **(i)** If ${\alpha = 0,}$ then ${H = \{ T = 0 \} = \operatorname{Ker} T.}$\
 **(ii)** If ${X = \mathbb{R}^M}$ for a positive integer ${M,}$ so that ${T \colon \mathbb{R}^M \to \mathbb{R},}$ and $T$ is not identically zero, then ${H = \{ T = \alpha \}}$ is a classical hyperplane.
 
-**Corollary 5 (Separation of points).** Let ${(X, \|\cdot\|_X)}$ be a normed space and let ${x, y \in X}$ with ${x \neq y.}$ Then there exists ${T \in X^*}$ such that ${Tx \neq Ty.}$ That is, the hyperplane ${H = \{ T = \alpha \}}$ with ${\alpha = Tx}$ contains $x$ and does not contain ${y,}$ as in Figure 1.
+**Corollary 16.5 (Separation of points).** Let ${(X, \|\cdot\|_X)}$ be a normed space and let ${x, y \in X}$ with ${x \neq y.}$ Then there exists ${T \in X^*}$ such that ${Tx \neq Ty.}$ That is, the hyperplane ${H = \{ T = \alpha \}}$ with ${\alpha = Tx}$ contains $x$ and does not contain ${y,}$ as in Figure 16.1.
 
 <Hyperplane />
 
-**Figure 1.** The drawing of Corollary 5: the hyperplane ${H = \{ T = \alpha \},}$ with ${\alpha = Tx,}$ drawn as a line, the point $x$ on it and the point $y$ outside it.
+**Figure 16.1.** The drawing of Corollary 16.5: the hyperplane ${H = \{ T = \alpha \},}$ with ${\alpha = Tx,}$ drawn as a line, the point $x$ on it and the point $y$ outside it.
 
-**Proof (complete).** Let ${x_0 := x - y.}$ Then ${x_0 \neq 0,}$ because ${x \neq y.}$ By Corollary 2 there exists ${T \in X^*}$ such that ${T x_0 = \|x_0\|_X,}$ where ${T x_0 = T(x - y) = Tx - Ty.}$ Hence, since ${\|x_0\|_X > 0,}$
+**Proof (complete).** Let ${x_0 := x - y.}$ Then ${x_0 \neq 0,}$ because ${x \neq y.}$ By Corollary 16.2 there exists ${T \in X^*}$ such that ${T x_0 = \|x_0\|_X,}$ where ${T x_0 = T(x - y) = Tx - Ty.}$ Hence, since ${\|x_0\|_X > 0,}$
 
 $$
 Tx = Ty + \|x_0\|_X > Ty. \tag*{$\blacksquare$}
 $$
 
-**Corollary 6 (Separation of point and subspace).** Let ${(X, \|\cdot\|_X)}$ be a normed space and let ${V \subset X}$ be a closed subspace with ${V \neq X.}$ Let ${x_0 \in X \setminus V.}$ Then there exists ${T \in X^*}$ such that ${T x_0 \neq 0}$ and ${Tv = 0}$ for every $v$ in ${V.}$ That is, ${x_0 \notin \operatorname{Ker} T}$ and ${V \subset \operatorname{Ker} T,}$ as in Figure 2.
+**Corollary 16.6 (Separation of point and subspace).** Let ${(X, \|\cdot\|_X)}$ be a normed space and let ${V \subset X}$ be a closed subspace with ${V \neq X.}$ Let ${x_0 \in X \setminus V.}$ Then there exists ${T \in X^*}$ such that ${T x_0 \neq 0}$ and ${Tv = 0}$ for every $v$ in ${V.}$ That is, ${x_0 \notin \operatorname{Ker} T}$ and ${V \subset \operatorname{Ker} T,}$ as in Figure 16.2.
 
 <Kernel />
 
-**Figure 2.** The drawing of Corollary 6: the kernel ${\operatorname{Ker} T,}$ drawn as a plane, the subspace ${V,}$ drawn as a line through $0$ inside it, and the point $x_0$ outside it.
+**Figure 16.2.** The drawing of Corollary 16.6: the kernel ${\operatorname{Ker} T,}$ drawn as a plane, the subspace ${V,}$ drawn as a line through $0$ inside it, and the point $x_0$ outside it.
 
 **Proof (complete).** Since $V$ is closed and ${x_0 \notin V,}$
 
@@ -70,7 +80,7 @@ $$
 d(x_0, V) := \inf_{v \in V} \|x_0 - v\|_X > 0,
 $$
 
-as in the proof of the Riesz theorem on closed balls of the twelfth post. Let
+as in the proof of the Riesz theorem on closed balls, Theorem 12.18. Let
 
 $$
 Z := \operatorname{Span}(V, x_0) = \{ v + t x_0 : v \in V, \ t \in \mathbb{R} \},
@@ -94,11 +104,11 @@ $$
 |Lz| = |t| \le \frac{1}{d(x_0, V)} \, \|z\|_X.
 $$
 
-By Cases 1 and 2, ${|Lz| \le \|z\|_X / d(x_0, V)}$ for every ${z \in Z,}$ hence ${L \in Z^*.}$ By the Hahn–Banach theorem, Theorem 1, there exists ${T \in X^*}$ such that ${T|_Z = L.}$ In particular, ${T x_0 = L x_0 = 1}$ and ${Tv = Lv = 0}$ for every ${v \in V.}$ $\blacksquare$
+By Cases 1 and 2, ${|Lz| \le \|z\|_X / d(x_0, V)}$ for every ${z \in Z,}$ hence ${L \in Z^*.}$ By the Hahn–Banach theorem, Theorem 16.1, there exists ${T \in X^*}$ such that ${T|_Z = L.}$ In particular, ${T x_0 = L x_0 = 1}$ and ${Tv = Lv = 0}$ for every ${v \in V.}$ $\blacksquare$
 
 ## Duals, biduals, reflexivity
 
-**Definition 7 (Bidual space).** Let ${(X, \|\cdot\|_X)}$ be a normed space, and let ${X^* = \mathcal{L}(X, \mathbb{R})}$ be its dual, a Banach space by Remark 13 (i) of the previous post. The *bidual space* of $X$ is ${X^{**} := \mathcal{L}(X^*, \mathbb{R}).}$
+**Definition 16.7 (Bidual space).** Let ${(X, \|\cdot\|_X)}$ be a normed space, and let ${X^* = \mathcal{L}(X, \mathbb{R})}$ be its dual, a Banach space by Remark 15.13 (i). The *bidual space* of $X$ is ${X^{**} := \mathcal{L}(X^*, \mathbb{R}).}$
 
 **Notation.** For $T$ in ${X^*,}$ $x$ in $X$ and $\phi$ in ${X^{**},}$ we write
 
@@ -109,7 +119,7 @@ Tx &= {}_{X^*}\langle T, x \rangle_X = {}_*\langle T, x \rangle, \\
 \end{aligned}
 $$
 
-**Definition 8 (Canonical map).** Let ${(X, \|\cdot\|_X)}$ be a normed space. The *canonical map*, also called the *evaluation map*, is the map ${\tau \colon X \to X^{**},}$ ${x \mapsto \tau(x) \in X^{**},}$ defined by
+**Definition 16.8 (Canonical map).** Let ${(X, \|\cdot\|_X)}$ be a normed space. The *canonical map*, also called the *evaluation map*, is the map ${\tau \colon X \to X^{**},}$ ${x \mapsto \tau(x) \in X^{**},}$ defined by
 
 $$
 {}_{**}\langle \tau(x), T \rangle_* := {}_*\langle T, x \rangle = Tx
@@ -117,7 +127,7 @@ $$
 
 for every ${T \in X^*.}$ That is, $\tau(x)$ acts on any ${T \in X^*}$ by evaluating $T$ at ${x.}$
 
-**Theorem 9.** Let ${(X, \|\cdot\|_X)}$ be a Banach space and let $\tau$ be its canonical map. Then:\
+**Theorem 16.9.** Let ${(X, \|\cdot\|_X)}$ be a Banach space and let $\tau$ be its canonical map. Then:\
 **(i)** the map $\tau$ is linear and continuous;\
 **(ii)** the map ${\tau \colon (X, \|\cdot\|_X) \to (X^{**}, \|\cdot\|_{X^{**}})}$ is an isometry, that is, ${\|\tau(x)\|_{X^{**}} = \|x\|_X}$ for every ${x \in X;}$\
 **(iii)** the range $R(\tau)$ is closed in ${X^{**};}$\
@@ -134,7 +144,7 @@ $$
 \end{aligned}
 $$
 
-where the first equality is the definition of ${\tau,}$ Definition 8. The map $\tau$ is an isometry: for every ${x \in X,}$
+where the first equality is the definition of ${\tau,}$ Definition 16.8. The map $\tau$ is an isometry: for every ${x \in X,}$
 
 $$
 \begin{aligned}
@@ -143,7 +153,7 @@ $$
 \end{aligned}
 $$
 
-In the last equality, ${|Tx| \le \|T\|_{X^*} \, \|x\|_X \le \|x\|_X}$ for every ${T \in X^*}$ with ${\|T\|_{X^*} \le 1.}$ Moreover, if ${x \neq 0,}$ Corollary 2 applied to $x$ gives a functional $T$ of $X^*$ with ${\|T\|_{X^*} = 1}$ and ${Tx = \|x\|_X,}$ so that
+In the last equality, ${|Tx| \le \|T\|_{X^*} \, \|x\|_X \le \|x\|_X}$ for every ${T \in X^*}$ with ${\|T\|_{X^*} \le 1.}$ Moreover, if ${x \neq 0,}$ Corollary 16.2 applied to $x$ gives a functional $T$ of $X^*$ with ${\|T\|_{X^*} = 1}$ and ${Tx = \|x\|_X,}$ so that
 
 $$
 \sup_{\substack{T \in X^* \\ \|T\|_{X^*} \le 1}} |Tx| = \max_{\substack{T \in X^* \\ \|T\|_{X^*} \le 1}} |Tx| = \|x\|_X.
@@ -151,15 +161,15 @@ $$
 
 In detail, for ${x = 0}$ both sides of the equality to prove vanish, because ${\tau(0) = 0}$ by linearity. Therefore $\tau$ is an isometry, hence bounded, and so continuous.
 
-Corollary 9 of the previous post, applied to ${\tau,}$ gives the rest of the theorem. Indeed, $X$ is a Banach space by assumption, and ${X^{**} = (X^*)^*}$ is a Banach space by Remark 13 (i) of the previous post. $\blacksquare$
+Corollary 15.9, applied to ${\tau,}$ gives the rest of the theorem. Indeed, $X$ is a Banach space by assumption, and ${X^{**} = (X^*)^*}$ is a Banach space by Remark 15.13 (i). $\blacksquare$
 
-**Definition 10 (Reflexive space).** Let ${(X, \|\cdot\|_X)}$ be a Banach space. If the canonical map ${\tau \colon X \to X^{**}}$ is surjective, that is, ${R(\tau) = X^{**},}$ we say that $X$ is *reflexive*.
+**Definition 16.10 (Reflexive space).** Let ${(X, \|\cdot\|_X)}$ be a Banach space. If the canonical map ${\tau \colon X \to X^{**}}$ is surjective, that is, ${R(\tau) = X^{**},}$ we say that $X$ is *reflexive*.
 
-**Remark 11.** Let ${(X, \|\cdot\|_X)}$ be a reflexive Banach space. Then ${\tau \colon (X, \|\cdot\|_X) \to (X^{**}, \|\cdot\|_{X^{**}})}$ is an isometric isomorphism.
+**Remark 16.11.** Let ${(X, \|\cdot\|_X)}$ be a reflexive Banach space. Then ${\tau \colon (X, \|\cdot\|_X) \to (X^{**}, \|\cdot\|_{X^{**}})}$ is an isometric isomorphism.
 
 ### The $L^p$ spaces
 
-**Remark 12.** Let ${(\Omega, \mathcal{M}, \mu)}$ be a measure space, let ${p \in (1, \infty)}$ and let ${p' \in (1, \infty)}$ be such that ${1/p + 1/p' = 1.}$ Consider ${L^p = L^p(\Omega, \mathcal{M}, \mu).}$
+**Remark 16.12.** Let ${(\Omega, \mathcal{M}, \mu)}$ be a measure space, let ${p \in (1, \infty)}$ and let ${p' \in (1, \infty)}$ be such that ${1/p + 1/p' = 1.}$ Consider ${L^p = L^p(\Omega, \mathcal{M}, \mu).}$
 
 **(i)** For every ${f \in L^{p'}}$ we can define a corresponding functional ${T_f \in (L^p)^*}$ by
 
@@ -170,7 +180,7 @@ $$
 and ${\|T_f\|_{(L^p)^*} = \|f\|_{p'}.}$\
 **(ii)** The map ${F \colon L^{p'} \to (L^p)^*,}$ ${f \mapsto T_f,}$ is an isometry.
 
-**Proof (complete).** By the Hölder inequality, Proposition 12 of the tenth post, ${|T_f(g)| \le \|f\|_{p'} \, \|g\|_p}$ for every ${g \in L^p,}$ hence ${\|T_f\|_{(L^p)^*} \le \|f\|_{p'}.}$ Now let ${g = |f|^{p'-1} \operatorname{sgn} f,}$ where $\operatorname{sgn}$ is the sign function. Notice that ${g \in L^p,}$ since ${|g|^p = |f|^{p(p'-1)} = |f|^{p'}}$ and ${\int_\Omega |g|^p \, d\mu = \int_\Omega |f|^{p'} \, d\mu < +\infty.}$ With this ${g,}$
+**Proof (complete).** By the Hölder inequality, Proposition 10.12, ${|T_f(g)| \le \|f\|_{p'} \, \|g\|_p}$ for every ${g \in L^p,}$ hence ${\|T_f\|_{(L^p)^*} \le \|f\|_{p'}.}$ Now let ${g = |f|^{p'-1} \operatorname{sgn} f,}$ where $\operatorname{sgn}$ is the sign function. Notice that ${g \in L^p,}$ since ${|g|^p = |f|^{p(p'-1)} = |f|^{p'}}$ and ${\int_\Omega |g|^p \, d\mu = \int_\Omega |f|^{p'} \, d\mu < +\infty.}$ With this ${g,}$
 
 $$
 \begin{aligned}
@@ -182,9 +192,9 @@ $$
 
 Hence ${\|T_f\|_{(L^p)^*} = \|f\|_{p'}.}$ Indeed, if ${f \neq 0,}$ then ${\|g\|_p > 0}$ and ${\|T_f\|_{(L^p)^*} \ge |T_f(g)|/\|g\|_p = \|f\|_{p'},}$ while for $f$ equal to $0$ both sides vanish. We found that the map $F$ is an isometry, which is (ii). $\blacksquare$
 
-The question raised by Remark 12 (ii) is whether $F$ is surjective. The answer is yes.
+The question raised by Remark 16.12 (ii) is whether $F$ is surjective. The answer is yes.
 
-**Theorem 13 (Riesz representation in $L^p$).** Let ${(\Omega, \mathcal{M}, \mu)}$ be a measure space.
+**Theorem 16.13 (Riesz representation in $L^p$).** Let ${(\Omega, \mathcal{M}, \mu)}$ be a measure space.
 
 **(1)** If ${p \in (1, \infty),}$ then for every ${T \in (L^p)^*}$ there exists a unique ${f \in L^{p'}}$ such that
 
@@ -192,7 +202,7 @@ $$
 Tg = \int_\Omega f g \, d\mu \qquad \text{for every } g \in L^p.
 $$
 
-Moreover, ${\|T\|_{(L^p)^*} = \|f\|_{p'},}$ and $L^p$ is reflexive. The idea of the reflexivity is that $(L^p)^*$ is identified with $L^{p'}$ by the first part of (1), and $(L^{p'})^*$ with $L^p$ by the first part of (1) applied to ${p',}$ since ${(p')' = p}$ by Remark 10 (i) of the tenth post:
+Moreover, ${\|T\|_{(L^p)^*} = \|f\|_{p'},}$ and $L^p$ is reflexive. The idea of the reflexivity is that $(L^p)^*$ is identified with $L^{p'}$ by the first part of (1), and $(L^{p'})^*$ with $L^p$ by the first part of (1) applied to ${p',}$ since ${(p')' = p}$ by Remark 10.10 (i):
 
 $$
 \begin{array}{ccccc}
@@ -210,7 +220,7 @@ $$
 
 Moreover, ${\|T\|_{(L^1)^*} = \|f\|_\infty.}$
 
-**Remark 14.** Let ${(\Omega, \mathcal{M}, \mu)}$ be a measure space. In general, $(L^\infty)^*$ is not isometrically isomorphic to ${L^1,}$ and $L^1$ is not reflexive.
+**Remark 16.14.** Let ${(\Omega, \mathcal{M}, \mu)}$ be a measure space. In general, $(L^\infty)^*$ is not isometrically isomorphic to ${L^1,}$ and $L^1$ is not reflexive.
 
 **Proof (sketch).** Consider ${([0, 1], \mathcal{L}([0, 1]), \lambda).}$ We want to find ${T \in (L^\infty)^*}$ that is not represented by an $L^1$ function, that is, such that ${T \neq T_f}$ for every ${f \in L^1,}$ where
 
@@ -218,7 +228,7 @@ $$
 T_f(g) := \int_0^1 f g \, d\lambda \qquad \text{for every } g \in L^\infty.
 $$
 
-Consider ${(C([0, 1]), \|\cdot\|_\infty) \subset L^\infty,}$ a closed subspace of ${L^\infty,}$ and fix ${f_0 \in L^\infty \setminus C([0, 1]).}$ By Corollary 6 there exists ${T \in (L^\infty)^*}$ such that ${T f_0 \neq 0}$ and $T$ vanishes on ${C([0, 1]).}$
+Consider ${(C([0, 1]), \|\cdot\|_\infty) \subset L^\infty,}$ a closed subspace of ${L^\infty,}$ and fix ${f_0 \in L^\infty \setminus C([0, 1]).}$ By Corollary 16.6 there exists ${T \in (L^\infty)^*}$ such that ${T f_0 \neq 0}$ and $T$ vanishes on ${C([0, 1]).}$
 
 We claim that there is no ${u \in L^1}$ such that ${T = T_u.}$ Suppose, by contradiction, that there exists ${u \in L^1}$ such that ${T = T_u,}$ that is,
 
@@ -232,7 +242,7 @@ $$
 \int_0^1 g u \, d\lambda = 0 \qquad \text{for every } g \in C([0, 1]),
 $$
 
-hence ${u = 0}$ almost everywhere. Indeed, every ${g \in C_c^\infty(0, 1),}$ extended by 0, belongs to ${C([0, 1]),}$ so that (1) of Corollary 16 of the fifth post applies. Therefore, as ${T f_0 \neq 0}$ and ${u = 0}$ almost everywhere, we reach the contradiction
+hence ${u = 0}$ almost everywhere. Indeed, every ${g \in C_c^\infty(0, 1),}$ extended by 0, belongs to ${C([0, 1]),}$ so that (1) of Corollary 5.16 applies. Therefore, as ${T f_0 \neq 0}$ and ${u = 0}$ almost everywhere, we reach the contradiction
 
 $$
 0 \neq T f_0 = T_u f_0 = \int_0^1 f_0 \, u \, d\lambda = 0. \tag*{$\blacksquare$}
@@ -240,7 +250,7 @@ $$
 
 ### Final remarks
 
-**Theorem 15 (Reflexivity versus topology).** Let ${(X, \|\cdot\|_X)}$ be a Banach space.\
+**Theorem 16.15 (Reflexivity versus topology).** Let ${(X, \|\cdot\|_X)}$ be a Banach space.\
 **(1)** If $X$ is reflexive and ${V \subset X}$ is a closed subspace, then $V$ is reflexive.\
 **(2)** The space $X$ is reflexive if and only if $X^*$ is reflexive.\
 **(3)** If $X^*$ is separable, then $X$ is separable.\
@@ -252,11 +262,11 @@ $$
 (X^*)^{**} = X^{***} = (X^{**})^* = X^*.
 $$
 
-Conversely, let $X^*$ be reflexive. Then ${X^{**} = (X^*)^*}$ is reflexive, by the first implication applied to the Banach space ${X^*.}$ The range $\tau(X)$ of the canonical map ${\tau \colon X \to X^{**}}$ is closed in $X^{**}$ by Theorem 9, hence $\tau(X)$ is reflexive by (1), and therefore $X$ is reflexive. $\blacksquare$
+Conversely, let $X^*$ be reflexive. Then ${X^{**} = (X^*)^*}$ is reflexive, by the first implication applied to the Banach space ${X^*.}$ The range $\tau(X)$ of the canonical map ${\tau \colon X \to X^{**}}$ is closed in $X^{**}$ by Theorem 16.9, hence $\tau(X)$ is reflexive by (1), and therefore $X$ is reflexive. $\blacksquare$
 
 ## Weak convergence (part 1)
 
-**Definition 16 (Weak convergence).** Let ${(X, \|\cdot\|_X)}$ be a Banach space, let ${(x_m) \subset X}$ and let ${x \in X.}$ We say that $(x_m)$ *weakly converges* to $x$ if
+**Definition 16.16 (Weak convergence).** Let ${(X, \|\cdot\|_X)}$ be a Banach space, let ${(x_m) \subset X}$ and let ${x \in X.}$ We say that $(x_m)$ *weakly converges* to $x$ if
 
 $$
 \lim_{m \to \infty} T x_m = T x \qquad \text{for every } T \in X^*.
@@ -273,11 +283,11 @@ $$
 \end{aligned}
 $$
 
-**Remark 17.** If ${x_m \to x}$ in ${X,}$ that is, ${\|x_m - x\|_X \to 0,}$ which is called *strong convergence*, then ${x_m \rightharpoonup x.}$
+**Remark 16.17.** If ${x_m \to x}$ in ${X,}$ that is, ${\|x_m - x\|_X \to 0,}$ which is called *strong convergence*, then ${x_m \rightharpoonup x.}$
 
 ### Weak convergence in $L^2((0, \infty))$
 
-**Example 18.** Let ${X = L^2((0, \infty)),}$ with the Lebesgue measure ${\lambda.}$ By Theorem 13 (1) with ${p = p' = 2,}$ $X^*$ is isometrically isomorphic to ${L^2((0, \infty)).}$ Notice that, for ${(f_m) \subset L^2((0, \infty))}$ and ${f \in L^2((0, \infty)),}$
+**Example 16.18.** Let ${X = L^2((0, \infty)),}$ with the Lebesgue measure ${\lambda.}$ By Theorem 16.13 (1) with ${p = p' = 2,}$ $X^*$ is isometrically isomorphic to ${L^2((0, \infty)).}$ Notice that, for ${(f_m) \subset L^2((0, \infty))}$ and ${f \in L^2((0, \infty)),}$
 
 $$
 \begin{aligned}
@@ -286,7 +296,7 @@ f_m \rightharpoonup f &\iff T f_m \to T f \quad \text{for every } T \in (L^2)^* 
 \end{aligned}
 $$
 
-by Definition 16 and by Theorem 13 (1). Let ${f_m = \chi_{[m, m+1]}}$ for every ${m \in \mathbb{N}.}$ Then ${f_m \to 0}$ almost everywhere, and ${f_m \nrightarrow 0}$ in ${L^2.}$ Indeed, ${\|f_m\|_2 = 1}$ for every ${m.}$ Moreover, for every ${g \in L^2((0, \infty)),}$ by the Hölder inequality, Proposition 12 of the tenth post,
+by Definition 16.16 and by Theorem 16.13 (1). Let ${f_m = \chi_{[m, m+1]}}$ for every ${m \in \mathbb{N}.}$ Then ${f_m \to 0}$ almost everywhere, and ${f_m \nrightarrow 0}$ in ${L^2.}$ Indeed, ${\|f_m\|_2 = 1}$ for every ${m.}$ Moreover, for every ${g \in L^2((0, \infty)),}$ by the Hölder inequality, Proposition 10.12,
 
 $$
 \biggl| \int_0^\infty f_m \, g \, d\lambda \biggr| = \biggl| \int_m^{m+1} g \, d\lambda \biggr| \le \biggl( \int_m^{m+1} g^2 \, d\lambda \biggr)^{\frac{1}{2}} \xrightarrow[m \to \infty]{} 0,
@@ -302,6 +312,6 @@ that is, ${f_m \rightharpoonup 0}$ weakly in ${L^2((0, \infty)).}$
 
 ### Weak convergence in $L^p$
 
-**Remark 19 (Weak convergence in $L^p$).** Let ${(\Omega, \mathcal{M}, \mu)}$ be a $\sigma$-finite measure space, let ${p \in [1, \infty),}$ and let ${(f_m) \subset L^p}$ and ${f \in L^p.}$\
+**Remark 16.19 (Weak convergence in $L^p$).** Let ${(\Omega, \mathcal{M}, \mu)}$ be a $\sigma$-finite measure space, let ${p \in [1, \infty),}$ and let ${(f_m) \subset L^p}$ and ${f \in L^p.}$\
 **(i)** We have ${f_m \rightharpoonup f}$ w-$L^p$ if and only if ${\int_\Omega f_m \, g \, d\mu \to \int_\Omega f g \, d\mu}$ for every ${g \in L^{p'}.}$\
 **(ii)** If ${f_m \rightharpoonup f_1}$ w-$L^p$ and ${f_m \to f_2}$ almost everywhere, then ${f_1 = f_2}$ almost everywhere.

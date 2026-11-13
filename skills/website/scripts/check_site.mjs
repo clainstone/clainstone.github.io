@@ -12,7 +12,9 @@
 //    every data-xref-part and data-xref-lead names an id of the page; a post
 //    with cross-references loads the preview script (the module script that
 //    contains "xref-card"), at most 7168 bytes gzipped with the chunks it
-//    imports; every published post is built and no sample post is.
+//    imports; every published post is built and no sample post is. For each
+//    thread with an index, statements.json reports no problem, every entry
+//    leads to an id that exists and every formula typesets.
 // 3. A headless browser at 1280 px, in light and in dark: console errors and
 //    [xref-preview] warnings, horizontal overflow, islands that did not mount,
 //    canvases of zero size, displays that scroll, inline formulas split across
@@ -185,6 +187,22 @@ for (const { file, path } of pages) {
     }
   }
   if (POST.test(path) && /<a href="#(?!figure-|eq-)[^"]+" class="xref"/.test(html)) statementPosts.push(path);
+}
+
+// Threads with an index (src/lib/statements.ts): the build's list of what
+// breaks their numbering or lacks a description is empty, and every entry
+// leads to a statement.
+for (const thread of existsSync(join(DIST, 'threads')) ? readdirSync(join(DIST, 'threads')) : []) {
+  const file = join(DIST, 'threads', thread, 'statements.json');
+  if (!existsSync(file)) continue;
+  const index = JSON.parse(readFileSync(file, 'utf8'));
+  for (const p of index.problems) error(`${p.post}: index: ${p.message}`);
+  for (const [, href] of index.html.matchAll(/<a class="xref" href="([^"]*)"/g)) {
+    const [to, frag] = href.split('#');
+    const target = join(DIST, `${to}.html`);
+    if (!existsSync(target) || !readFileSync(target, 'utf8').includes(`id="${frag}"`)) error(`/threads/${thread}/statements.json: entry ${href} leads nowhere`);
+  }
+  if (index.html.includes('katex-error')) error(`/threads/${thread}/statements.json: a formula of the index does not typeset`);
 }
 
 // Published posts are built; sample posts are not.

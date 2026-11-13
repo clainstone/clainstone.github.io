@@ -1,5 +1,5 @@
 <script>
-  // The drawing of the proof of Theorem 13, an instance: a function f ∈ L^1
+  // The drawing of the proof of Theorem 12.13, an instance: a function f ∈ L^1
   // with a jump at x = 3.3, drawn through control points; below it a simple
   // function s, constant on [1.3, 3.3], [3.3, 6.85] and [6.85, 8.85] with
   // values 1.3, 2.65 and 1.8; and a continuous function f_n close to s, equal to

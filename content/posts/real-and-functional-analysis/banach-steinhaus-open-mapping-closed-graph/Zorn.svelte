@@ -1,5 +1,5 @@
 <script>
-  // The drawing of Lemma 15, as in the lecture: elements of S, some joined by
+  // The drawing of Lemma 15.15, as in the lecture: elements of S, some joined by
   // segments; a vertical row of them inside a closed curve, the family {x_α};
   // at its top a larger dot, the element x, with an arrow from its label; and
   // a branch of other elements at the left. The points are read off the

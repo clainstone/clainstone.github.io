@@ -1,8 +1,22 @@
 ---
 title: 'Fatou''s lemma, monotone and dominated convergence, and the $L^p$ spaces'
 date: 2026-10-01
+lecture: 6
 published: 2026-10-14
 summary: 'Fatou''s lemma bounds the integral of the lower limit of nonnegative measurable functions by the lower limit of their integrals; it gives the monotone convergence theorem and, with its reverse form, the dominated convergence theorem, and every nonnegative measurable function induces a measure. The spaces $L^p$ are made of classes of functions equal almost everywhere, with the norm $\|f\|_p$ for $1 \le p < +\infty$ and the essential supremum of $|f|$ for $p = +\infty.$'
+index:
+  Remark 6.2: 'Without $f_n \ge 0$, Fatou''s lemma fails for $f_n = -n \chi_{[0, 1/n]}$ on $\mathbb{R}$'
+  Remark 6.5: 'Without $f_{n+1} \ge f_n$, monotone convergence fails for $f_n = \chi_{[n, n+1]}$'
+  Remark 6.7: 'Series of nonnegative measurable functions can be integrated term by term'
+  Remark 6.9: 'Integrals for the measure $\nu$ satisfy $\int_X f \, d\nu = \int_X f \varphi \, d\mu$'
+  Remark 6.11: 'Term by term integration of $\sum_n f_n$ when $\sum_n \int_X |f_n| \, d\mu < +\infty$'
+  Definition 6.12: 'The set $\mathcal{L}^p$ of measurable $f$ with $\int_X |f|^p \, d\mu < +\infty$'
+  Remark 6.13: 'Equality almost everywhere preserves $\int_X |f|^p \, d\mu$ and is an equivalence relation'
+  Remark 6.15: 'Integrals, sums and products make sense in $L^p$, $f(x_0)$ with $\mu(\{x_0\}) = 0$ does not'
+  Remark 6.16: 'Almost everywhere convergence makes sense in $L^p$, and $C([0, 1]) \subset L^p([0, 1])$'
+  Remark 6.18: '$L^p$ is a vector space, and $\|f - g\|_p = 0$ if and only if $f = g$ almost everywhere'
+  Remark 6.20: '$|f| \le \|f\|_\infty$ almost everywhere for $f \in L^\infty$'
+  Lemma 6.21: 'For $\mu(X) < +\infty$, $f \in L^\infty$ if and only if $\lim_p \|f\|_p < +\infty$, and the limit is $\|f\|_\infty$'
 ---
 
 import Fatou from './Fatou.svelte';
@@ -16,7 +30,7 @@ The lecture gives three theorems on the integrals of sequences of measurable fun
 
 ## Three most important theorems
 
-**Theorem 1 (Fatou's lemma).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space and let $(f_n)$ be a sequence of measurable functions ${f_n \colon X \to [0, +\infty].}$ Let ${f \colon X \to [0, +\infty]}$ be given by ${f(x) = \varliminf_{n \to \infty} f_n(x),}$ written ${f = \varliminf_n f_n.}$ Then
+**Theorem 6.1 (Fatou's lemma).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space and let $(f_n)$ be a sequence of measurable functions ${f_n \colon X \to [0, +\infty].}$ Let ${f \colon X \to [0, +\infty]}$ be given by ${f(x) = \varliminf_{n \to \infty} f_n(x),}$ written ${f = \varliminf_n f_n.}$ Then
 
 $$
 \varliminf_n \int_X f_n \, d\mu \ge \int_X f \, d\mu, \qquad \text{that is,} \qquad \varliminf_n \int_X f_n \, d\mu \ge \int_X \varliminf_n f_n \, d\mu.
@@ -28,17 +42,17 @@ $$
 s = \sum_{k=1}^{m} a_k \chi_{A_k}
 $$
 
-be a simple function such that ${0 \le s \le f,}$ written as in Definition 16 of the fourth post. Only the case ${0 < a_k < +\infty}$ for every ${k = 1, \dots, m}$ is treated. Let ${t \in (0, 1).}$ For every ${k = 1, \dots, m}$ and every ${n \in \mathbb{N}}$ define
+be a simple function such that ${0 \le s \le f,}$ written as in Definition 4.16. Only the case ${0 < a_k < +\infty}$ for every ${k = 1, \dots, m}$ is treated. Let ${t \in (0, 1).}$ For every ${k = 1, \dots, m}$ and every ${n \in \mathbb{N}}$ define
 
 $$
 B_{k,n} := \{ x \in A_k : f_j(x) \ge t a_k \ \text{for every } j \ge n \} \subset A_k,
 $$
 
-as in Figure 1. These sets satisfy ${B_{k,n} \subset B_{k,n+1}}$ for every $n$ and every ${k.}$
+as in Figure 6.1. These sets satisfy ${B_{k,n} \subset B_{k,n+1}}$ for every $n$ and every ${k.}$
 
 <Fatou client:visible />
 
-**Figure 1.** The drawing of the proof, with an instance on an interval $X$ and ${\mu = \lambda{:}}$ the function ${f,}$ the level $a_k$ of $s$ over the set ${A_k,}$ the dotted level ${t a_k,}$ the function $f_n$ and, faint, the next functions $f_j$ with ${j > n.}$ On the axis, the set ${B_{k,n},}$ under hatched rectangles of height ${t a_k;}$ the sliders set $n$ and ${t.}$
+**Figure 6.1.** The drawing of the proof, with an instance on an interval $X$ and ${\mu = \lambda{:}}$ the function ${f,}$ the level $a_k$ of $s$ over the set ${A_k,}$ the dotted level ${t a_k,}$ the function $f_n$ and, faint, the next functions $f_j$ with ${j > n.}$ On the axis, the set ${B_{k,n},}$ under hatched rectangles of height ${t a_k;}$ the sliders set $n$ and ${t.}$
 
 Let ${x \in A_k.}$ Then ${f(x) = \varliminf_n f_n(x) \ge s(x) = a_k > t a_k.}$ Hence there exists ${n_x \in \mathbb{N}}$ such that ${f_j(x) \ge t a_k}$ for every ${j \ge n_x.}$ In other words, for every ${x \in A_k}$ there exists $n_x$ such that ${x \in B_{k, n_x},}$ so that
 
@@ -46,7 +60,7 @@ $$
 \bigcup_n B_{k,n} = A_k
 $$
 
-and, by the continuity of measures, Proposition 6 (i) of the second post,
+and, by the continuity of measures, Proposition 2.6 (i),
 
 $$
 \mu(A_k) = \lim_{n \to +\infty} \mu(B_{k,n}).
@@ -73,7 +87,7 @@ $$
 \end{aligned}
 $$
 
-Taking the supremum over the simple functions $s$ with ${0 \le s \le f}$ gives, by Definition 3 of the previous post,
+Taking the supremum over the simple functions $s$ with ${0 \le s \le f}$ gives, by Definition 5.3,
 
 $$
 \varliminf_n \int_X f_n \, d\mu \ge t \int_X f \, d\mu,
@@ -85,7 +99,7 @@ $$
 \varliminf_n \int_X f_n \, d\mu \ge \int_X f \, d\mu. \tag*{$\blacksquare$}
 $$
 
-**Remark 2.** In Theorem 1 the assumption ${f_n \colon X \to [0, +\infty]}$ is needed. Otherwise, on $\mathbb{R}$ with the Lebesgue measure ${\lambda,}$ let ${f_n = -n \chi_{[0, 1/n]}}$ for every ${n \ge 1,}$ as in Figure 2. Then ${\int_{\mathbb{R}} f_n \, d\lambda = -1}$ for every ${n,}$ and ${f_n \to 0}$ almost everywhere, so that, with ${f = 0,}$
+**Remark 6.2.** In Theorem 6.1 the assumption ${f_n \colon X \to [0, +\infty]}$ is needed. Otherwise, on $\mathbb{R}$ with the Lebesgue measure ${\lambda,}$ let ${f_n = -n \chi_{[0, 1/n]}}$ for every ${n \ge 1,}$ as in Figure 6.2. Then ${\int_{\mathbb{R}} f_n \, d\lambda = -1}$ for every ${n,}$ and ${f_n \to 0}$ almost everywhere, so that, with ${f = 0,}$
 
 $$
 \int_{\mathbb{R}} f \, d\lambda = 0 \not\le \varliminf_n \int_{\mathbb{R}} f_n \, d\lambda = -1.
@@ -93,9 +107,9 @@ $$
 
 <Negative client:visible />
 
-**Figure 2.** The drawing of Remark 2: the function ${f_n,}$ equal to $-n$ on $[0, 1/n]$ and to $0$ elsewhere, and the region of area $1$ between its graph and the axis. The slider sets ${n.}$
+**Figure 6.2.** The drawing of Remark 6.2: the function ${f_n,}$ equal to $-n$ on $[0, 1/n]$ and to $0$ elsewhere, and the region of area $1$ between its graph and the axis. The slider sets ${n.}$
 
-**Remark 3 (Reverse Fatou's lemma).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space, let $(f_n)$ be a sequence of measurable functions ${f_n \colon X \to [0, +\infty),}$ and let ${f = \varlimsup_n f_n.}$ Assume that there exists a measurable ${g \colon X \to [0, +\infty]}$ such that ${g \in \mathcal{L}^1}$ and ${g \ge f_n}$ almost everywhere for every ${n.}$ Then
+**Remark 6.3 (Reverse Fatou's lemma).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space, let $(f_n)$ be a sequence of measurable functions ${f_n \colon X \to [0, +\infty),}$ and let ${f = \varlimsup_n f_n.}$ Assume that there exists a measurable ${g \colon X \to [0, +\infty]}$ such that ${g \in \mathcal{L}^1}$ and ${g \ge f_n}$ almost everywhere for every ${n.}$ Then
 
 $$
 \varlimsup_n \int_X f_n \, d\mu \le \int_X f \, d\mu.
@@ -107,7 +121,7 @@ $$
 \varliminf_n h_n = g - \varlimsup_n f_n = g - f.
 $$
 
-Fatou's lemma, Theorem 1, applied to $(h_n)$ gives
+Fatou's lemma, Theorem 6.1, applied to $(h_n)$ gives
 
 $$
 \varliminf_n \int_X h_n \, d\mu \ge \int_X (g - f) \, d\mu,
@@ -119,7 +133,7 @@ $$
 \varliminf_n \int_X h_n \, d\mu = \int_X g \, d\mu - \varlimsup_n \int_X f_n \, d\mu. \tag*{$\blacksquare$}
 $$
 
-**Theorem 4 (Monotone convergence, Beppo Levi).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space and let $(f_n)$ be a sequence of measurable functions ${f_n \colon X \to [0, +\infty].}$ Assume that ${f_{n+1} \ge f_n}$ almost everywhere for every ${n.}$ Let ${f \colon X \to [0, +\infty]}$ be such that ${f = \lim_{n \to \infty} f_n}$ almost everywhere, that is, ${f(x) = \sup_n f_n(x)}$ for almost every ${x.}$ Then
+**Theorem 6.4 (Monotone convergence, Beppo Levi).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space and let $(f_n)$ be a sequence of measurable functions ${f_n \colon X \to [0, +\infty].}$ Assume that ${f_{n+1} \ge f_n}$ almost everywhere for every ${n.}$ Let ${f \colon X \to [0, +\infty]}$ be such that ${f = \lim_{n \to \infty} f_n}$ almost everywhere, that is, ${f(x) = \sup_n f_n(x)}$ for almost every ${x.}$ Then
 
 $$
 \lim_{n \to \infty} \int_X f_n \, d\mu = \int_X f \, d\mu, \qquad \text{that is,} \qquad \sup_n \int_X f_n \, d\mu = \int_X \sup_n f_n \, d\mu.
@@ -134,23 +148,23 @@ $$
 \end{aligned}
 $$
 
-where the first inequality is Fatou's lemma, Theorem 1, and the third is monotonicity, as ${f_n \le f}$ almost everywhere. $\blacksquare$
+where the first inequality is Fatou's lemma, Theorem 6.1, and the third is monotonicity, as ${f_n \le f}$ almost everywhere. $\blacksquare$
 
-**Remark 5.** In Theorem 4 the assumption ${f_{n+1} \ge f_n}$ almost everywhere for every $n$ is needed. Otherwise, on $\mathbb{R}$ with the Lebesgue measure ${\lambda,}$ let ${f_n = \chi_{[n, n+1]}}$ for every ${n \in \mathbb{N},}$ as in Figure 3. Then ${f_n \to 0}$ pointwise and ${\int_{\mathbb{R}} f_n \, d\lambda = 1}$ for every ${n.}$
+**Remark 6.5.** In Theorem 6.4 the assumption ${f_{n+1} \ge f_n}$ almost everywhere for every $n$ is needed. Otherwise, on $\mathbb{R}$ with the Lebesgue measure ${\lambda,}$ let ${f_n = \chi_{[n, n+1]}}$ for every ${n \in \mathbb{N},}$ as in Figure 6.3. Then ${f_n \to 0}$ pointwise and ${\int_{\mathbb{R}} f_n \, d\lambda = 1}$ for every ${n.}$
 
 <Bump client:visible />
 
-**Figure 3.** The drawing of Remark 5: the function ${f_n,}$ equal to $1$ on ${[n, n + 1]}$ and to $0$ elsewhere, and the region of area $1$ under its graph. The slider sets ${n.}$
+**Figure 6.3.** The drawing of Remark 6.5: the function ${f_n,}$ equal to $1$ on ${[n, n + 1]}$ and to $0$ elsewhere, and the region of area $1$ under its graph. The slider sets ${n.}$
 
-**Remark 6 (Reverse monotone convergence).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space and let $(f_n)$ be a sequence of measurable functions ${f_n \colon X \to [0, +\infty).}$ Assume that ${f_{n+1} \le f_n}$ almost everywhere for every ${n.}$ Let ${f \colon X \to [0, +\infty]}$ be such that ${f = \lim_n f_n}$ almost everywhere, that is, ${f(x) = \inf_n f_n(x)}$ for almost every ${x.}$ Suppose that ${\int_X f_0 \, d\mu < +\infty.}$ Then
+**Remark 6.6 (Reverse monotone convergence).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space and let $(f_n)$ be a sequence of measurable functions ${f_n \colon X \to [0, +\infty).}$ Assume that ${f_{n+1} \le f_n}$ almost everywhere for every ${n.}$ Let ${f \colon X \to [0, +\infty]}$ be such that ${f = \lim_n f_n}$ almost everywhere, that is, ${f(x) = \inf_n f_n(x)}$ for almost every ${x.}$ Suppose that ${\int_X f_0 \, d\mu < +\infty.}$ Then
 
 $$
 \lim_n \int_X f_n \, d\mu = \int_X f \, d\mu, \qquad \text{that is,} \qquad \inf_n \int_X f_n \, d\mu = \int_X \inf_n f_n \, d\mu.
 $$
 
-**Proof (sketch).** Let ${h_n = f_0 - f_n.}$ Then ${h_{n+1} \ge h_n}$ almost everywhere, and the monotone convergence theorem, Theorem 4, applies to ${(h_n).}$ $\blacksquare$
+**Proof (sketch).** Let ${h_n = f_0 - f_n.}$ Then ${h_{n+1} \ge h_n}$ almost everywhere, and the monotone convergence theorem, Theorem 6.4, applies to ${(h_n).}$ $\blacksquare$
 
-**Remark 7.** Let ${(X, \mathcal{M}, \mu)}$ be a measure space and let $(f_n)$ be a sequence of measurable functions ${f_n \colon X \to [0, +\infty].}$ Then
+**Remark 6.7.** Let ${(X, \mathcal{M}, \mu)}$ be a measure space and let $(f_n)$ be a sequence of measurable functions ${f_n \colon X \to [0, +\infty].}$ Then
 
 $$
 \int_X \Big( \sum_{n=0}^{\infty} f_n \Big) \, d\mu = \sum_{n=0}^{\infty} \int_X f_n \, d\mu,
@@ -178,9 +192,9 @@ $$
 \end{aligned}
 $$
 
-where the first equality is the monotone convergence theorem, Theorem 4. $\blacksquare$
+where the first equality is the monotone convergence theorem, Theorem 6.4. $\blacksquare$
 
-**Proposition 8 (Measure induced by a nonnegative function).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space, let ${\varphi \colon X \to [0, +\infty]}$ be measurable, and define ${\nu \colon \mathcal{M} \to [0, +\infty]}$ by
+**Proposition 6.8 (Measure induced by a nonnegative function).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space, let ${\varphi \colon X \to [0, +\infty]}$ be measurable, and define ${\nu \colon \mathcal{M} \to [0, +\infty]}$ by
 
 $$
 \nu(E) := \int_E \varphi \, d\mu.
@@ -188,25 +202,25 @@ $$
 
 Then $\nu$ is a measure on ${\mathcal{M}.}$
 
-**Remark 9.** Let $\varphi$ and $\nu$ be as in Proposition 8. For every measurable function ${f \colon X \to [0, +\infty),}$
+**Remark 6.9.** Let $\varphi$ and $\nu$ be as in Proposition 6.8. For every measurable function ${f \colon X \to [0, +\infty),}$
 
 $$
 \int_X f \, d\nu = \int_X f \varphi \, d\mu.
 $$
 
-For example, let ${X = \mathbb{R},}$ ${\mu = \lambda}$ and ${\varphi \colon \mathbb{R} \to [0, +\infty]}$ be measurable: Figure 4 draws $\lambda$ and the measure ${\nu,}$ written ${\varphi \lambda.}$
+For example, let ${X = \mathbb{R},}$ ${\mu = \lambda}$ and ${\varphi \colon \mathbb{R} \to [0, +\infty]}$ be measurable: Figure 6.4 draws $\lambda$ and the measure ${\nu,}$ written ${\varphi \lambda.}$
 
 <Density />
 
-**Figure 4.** The drawing of Remark 9: on the left the Lebesgue measure ${\lambda,}$ drawn as a horizontal line, and on the right, after the arrow, the measure ${\varphi \lambda,}$ drawn as the graph of ${\varphi,}$ with the region under it over a small interval hatched.
+**Figure 6.4.** The drawing of Remark 6.9: on the left the Lebesgue measure ${\lambda,}$ drawn as a horizontal line, and on the right, after the arrow, the measure ${\varphi \lambda,}$ drawn as the graph of ${\varphi,}$ with the region under it over a small interval hatched.
 
-**Proof (sketch).** Only the $\sigma$-additivity of the function $\nu$ of Proposition 8 is proved. Let ${(E_n) \subset \mathcal{M}}$ be pairwise disjoint and let ${E = \bigcup_n E_n.}$ The goal is
+**Proof (sketch).** Only the $\sigma$-additivity of the function $\nu$ of Proposition 6.8 is proved. Let ${(E_n) \subset \mathcal{M}}$ be pairwise disjoint and let ${E = \bigcup_n E_n.}$ The goal is
 
 $$
 \nu(E) = \sum_{n=0}^{\infty} \nu(E_n), \qquad \text{that is,} \qquad \int_E \varphi \, d\mu = \sum_{n=0}^{\infty} \int_{E_n} \varphi \, d\mu.
 $$
 
-We compute, as in Figure 5,
+We compute, as in Figure 6.5,
 
 $$
 \begin{aligned}
@@ -217,13 +231,13 @@ $$
 \end{aligned}
 $$
 
-where the second equality is Remark 7 and the third holds because the series inside the integral is ${\varphi \chi_E.}$ $\blacksquare$
+where the second equality is Remark 6.7 and the third holds because the series inside the integral is ${\varphi \chi_E.}$ $\blacksquare$
 
 <Cylinders />
 
-**Figure 5.** The drawing of the proof: three of the pairwise disjoint sets ${E_n,}$ here ${E_1,}$ $E_2$ and ${E_3,}$ in a plane, and above each of them, at height ${1,}$ the graph of its characteristic function, the first one marked ${\chi_{E_1}.}$
+**Figure 6.5.** The drawing of the proof: three of the pairwise disjoint sets ${E_n,}$ here ${E_1,}$ $E_2$ and ${E_3,}$ in a plane, and above each of them, at height ${1,}$ the graph of its characteristic function, the first one marked ${\chi_{E_1}.}$
 
-**Theorem 10 (Dominated convergence).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space, let $(f_n)$ be a sequence of measurable functions ${f_n \colon X \to \mathbb{R},}$ and let ${f \colon X \to \mathbb{R}.}$ Suppose that ${f_n \to f}$ almost everywhere and that there exists ${g \in \mathcal{L}^1(X)}$ such that ${|f_n| \le g}$ almost everywhere for every ${n.}$ Then ${f \in \mathcal{L}^1(X)}$ and
+**Theorem 6.10 (Dominated convergence).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space, let $(f_n)$ be a sequence of measurable functions ${f_n \colon X \to \mathbb{R},}$ and let ${f \colon X \to \mathbb{R}.}$ Suppose that ${f_n \to f}$ almost everywhere and that there exists ${g \in \mathcal{L}^1(X)}$ such that ${|f_n| \le g}$ almost everywhere for every ${n.}$ Then ${f \in \mathcal{L}^1(X)}$ and
 
 $$
 \lim_{n \to \infty} \int_X |f_n - f| \, d\mu = 0.
@@ -254,7 +268,7 @@ $$
 
 where ${|f_n| \le g}$ almost everywhere by assumption and ${|f| \le g}$ almost everywhere by the first step.
 
-(ii) By Fatou's lemma, Theorem 1, and by the reverse Fatou's lemma, Remark 3, applied to the sequence ${(|f_n - f|)}$ with $2g$ in place of ${g,}$
+(ii) By Fatou's lemma, Theorem 6.1, and by the reverse Fatou's lemma, Remark 6.3, applied to the sequence ${(|f_n - f|)}$ with $2g$ in place of ${g,}$
 
 $$
 \begin{aligned}
@@ -268,7 +282,7 @@ $$
 
 where ${\varliminf_n |f_n - f| = \varlimsup_n |f_n - f| = 0}$ almost everywhere. Hence the limit of ${\int_X |f_n - f| \, d\mu}$ exists and is ${0.}$ $\blacksquare$
 
-**Remark 11.** Let ${(X, \mathcal{M}, \mu)}$ be a measure space and let ${(f_n) \subset \mathcal{L}^1(X).}$ Suppose that
+**Remark 6.11.** Let ${(X, \mathcal{M}, \mu)}$ be a measure space and let ${(f_n) \subset \mathcal{L}^1(X).}$ Suppose that
 
 $$
 \sum_{n=0}^{\infty} \int_X |f_n| \, d\mu < +\infty.
@@ -282,13 +296,13 @@ $$
 
 ## The $L^p$ spaces
 
-**Definition 12.** Let ${(X, \mathcal{M}, \mu)}$ be a measure space. For every ${p \in [1, +\infty)}$ we define
+**Definition 6.12.** Let ${(X, \mathcal{M}, \mu)}$ be a measure space. For every ${p \in [1, +\infty)}$ we define
 
 $$
 \mathcal{L}^p(X, \mathcal{M}, \mu) := \Big\{ f \colon X \to \mathbb{R} : f \text{ measurable}, \ \int_X |f|^p \, d\mu < +\infty \Big\}.
 $$
 
-**Remark 13.** Let ${(X, \mathcal{M}, \mu)}$ be a measure space and let ${p \in [1, +\infty).}$\
+**Remark 6.13.** Let ${(X, \mathcal{M}, \mu)}$ be a measure space and let ${p \in [1, +\infty).}$\
 **(i)** If ${f, g \colon X \to \mathbb{R}}$ are measurable and ${f = g}$ almost everywhere, then ${\int_X |f|^p \, d\mu = \int_X |g|^p \, d\mu.}$
 
 **(ii)** For functions ${f, g \colon X \to \mathbb{R},}$ the relation given by ${f \sim g}$ if and only if ${f = g}$ almost everywhere is an equivalence relation. Hence we can consider the equivalence class of a function ${f,}$
@@ -297,7 +311,7 @@ $$
 [f] = \{ g : g \sim f \}.
 $$
 
-**Definition 14 ($L^p$ spaces).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space and let ${p \in [1, +\infty).}$ We define
+**Definition 6.14 ($L^p$ spaces).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space and let ${p \in [1, +\infty).}$ We define
 
 $$
 L^p(X, \mathcal{M}, \mu) := \{ [f] : f \in \mathcal{L}^p(X, \mathcal{M}, \mu) \},
@@ -307,11 +321,11 @@ also written ${L^p(X)}$ or ${L^p.}$
 
 **Notation.** The elements of $L^p$ are indicated simply by ${f,}$ thinking of $f$ as a representative of ${[f].}$
 
-**Remark 15.** Let ${(X, \mathcal{M}, \mu)}$ be a measure space, let ${p \in [1, +\infty)}$ and let ${f, g \in L^p.}$\
+**Remark 6.15.** Let ${(X, \mathcal{M}, \mu)}$ be a measure space, let ${p \in [1, +\infty)}$ and let ${f, g \in L^p.}$\
 **(1)** It makes sense to write ${\int_X |f|^p \, d\mu,}$ because it does not depend on the choice of the representative. It makes sense to write ${f + g}$ and ${f \cdot g,}$ since ${f + g}$ is a representative of the class ${[f + g]}$ for any choice of representatives $f$ and $g$ of $[f]$ and ${[g],}$ and the same holds for ${f \cdot g.}$ It makes sense to write ${f \ge g}$ almost everywhere.\
 **(2)** It does not make sense to write ${f(x_0)}$ for a fixed ${x_0 \in X,}$ if ${\mu(\{x_0\}) = 0.}$ It does not make sense to write ${f \ge g}$ for every ${x \in X.}$
 
-**Remark 16.** Let ${(f_n) \subset L^p}$ and ${f \in L^p.}$ Then it makes sense to write ${f_n \to f}$ almost everywhere. We also write
+**Remark 6.16.** Let ${(f_n) \subset L^p}$ and ${f \in L^p.}$ Then it makes sense to write ${f_n \to f}$ almost everywhere. We also write
 
 $$
 C([0, 1]) \subset L^p([0, 1], \mathcal{L}([0, 1]), \lambda),
@@ -319,7 +333,7 @@ $$
 
 where ${C([0, 1])}$ is the set of the continuous functions on ${[0, 1].}$
 
-**Definition 17 ($L^p$-norm).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space and let ${p \in [1, +\infty).}$ For ${f \in L^p(X)}$ we define the *$L^p$-norm* of $f$ as
+**Definition 6.17 ($L^p$-norm).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space and let ${p \in [1, +\infty).}$ For ${f \in L^p(X)}$ we define the *$L^p$-norm* of $f$ as
 
 $$
 \|f\|_p := \Big( \int_X |f|^p \, d\mu \Big)^{1/p}.
@@ -327,7 +341,7 @@ $$
 
 **Notation.** The norm ${\|f\|_p}$ is also written ${\|f\|_{L^p}}$ or ${\|f\|_{L^p(X)}.}$
 
-**Remark 18.** Let ${(X, \mathcal{M}, \mu)}$ be a measure space and let ${p \in [1, +\infty).}$\
+**Remark 6.18.** Let ${(X, \mathcal{M}, \mu)}$ be a measure space and let ${p \in [1, +\infty).}$\
 **(i)** The set ${L^p(X, \mathcal{M}, \mu)}$ is a vector space.
 
 **(ii)** If ${f, g \in L^p(X, \mathcal{M}, \mu),}$ then
@@ -355,10 +369,10 @@ $$
 |a + b|^p \le 2^{p-1} \big( |a|^p + |b|^p \big).
 $$
 
-In (ii), the equivalence of ${\|f - g\|_p = 0}$ and ${f = g}$ almost everywhere is the vanishing lemma for nonnegative functions, (1) of Corollary 10 of the previous post, applied to ${|f - g|^p.}$ $\blacksquare$
+In (ii), the equivalence of ${\|f - g\|_p = 0}$ and ${f = g}$ almost everywhere is the vanishing lemma for nonnegative functions, (1) of Corollary 5.10, applied to ${|f - g|^p.}$ $\blacksquare$
 
-**Definition 19 (Essentially bounded functions and $L^\infty$).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space.\
-**(i)** A measurable function ${f \colon X \to \mathbb{R}}$ is said to be *essentially bounded* if there exists ${M \ge 0}$ such that ${\mu(\{ |f| > M \}) = 0,}$ as in Figure 6.
+**Definition 6.19 (Essentially bounded functions and $L^\infty$).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space.\
+**(i)** A measurable function ${f \colon X \to \mathbb{R}}$ is said to be *essentially bounded* if there exists ${M \ge 0}$ such that ${\mu(\{ |f| > M \}) = 0,}$ as in Figure 6.6.
 
 **(ii)** For a measurable function ${f \colon X \to \mathbb{R}}$ we define
 
@@ -384,11 +398,11 @@ $$
 
 <Essential client:visible />
 
-**Figure 6.** The drawing of Definition 19 (i): a function ${f,}$ the dashed level $M$ and the set ${\{ |f| > M \},}$ hatched on the axis. The slider sets ${M.}$
+**Figure 6.6.** The drawing of Definition 6.19 (i): a function ${f,}$ the dashed level $M$ and the set ${\{ |f| > M \},}$ hatched on the axis. The slider sets ${M.}$
 
-**Remark 20.** If ${f \in L^\infty(X),}$ then ${|f| \le \|f\|_\infty}$ almost everywhere.
+**Remark 6.20.** If ${f \in L^\infty(X),}$ then ${|f| \le \|f\|_\infty}$ almost everywhere.
 
-**Lemma 21.** Let ${(X, \mathcal{M}, \mu)}$ be a measure space with ${\mu(X) < +\infty,}$ and let ${f \colon X \to \mathbb{R}}$ be measurable. Then ${f \in L^\infty(X)}$ if and only if the limit ${\lim_{p \to +\infty} \|f\|_p}$ exists and is finite. Moreover, in this case,
+**Lemma 6.21.** Let ${(X, \mathcal{M}, \mu)}$ be a measure space with ${\mu(X) < +\infty,}$ and let ${f \colon X \to \mathbb{R}}$ be measurable. Then ${f \in L^\infty(X)}$ if and only if the limit ${\lim_{p \to +\infty} \|f\|_p}$ exists and is finite. Moreover, in this case,
 
 $$
 \lim_{p \to \infty} \|f\|_p = \|f\|_\infty.

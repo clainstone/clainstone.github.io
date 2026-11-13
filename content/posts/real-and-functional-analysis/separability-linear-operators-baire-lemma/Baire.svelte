@@ -1,5 +1,5 @@
 <script>
-  // The drawing of the proof of Theorem 19 (1), in three steps: the open set O;
+  // The drawing of the proof of Theorem 13.19 (1), in three steps: the open set O;
   // then U_1 and the closed ball B̄_{r_1}(x_1) ⊂ O ∩ U_1, with O ∩ U_1 shaded;
   // then U_2 and the closed ball B̄_{r_2}(x_2) ⊂ B_{r_1}(x_1) ∩ U_2, with
   // B_{r_1}(x_1) ∩ U_2 shaded. The shapes follow the lecture's drawing: O an

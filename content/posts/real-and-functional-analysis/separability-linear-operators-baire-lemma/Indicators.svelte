@@ -1,5 +1,5 @@
 <script>
-  // The drawing of the proof of Theorem 4 (3), with α < β as in the lecture.
+  // The drawing of the proof of Theorem 13.4 (3), with α < β as in the lecture.
   // Left: the graphs of f_α = χ_(−α, α), solid, and f_β = χ_(−β, β), dashed;
   // the hatched rectangles of height 1 over (−β, −α] ∪ [α, β), where
   // |f_α − f_β| = 1. Right: the balls U_α and U_β of radius 1/2 drawn as discs,

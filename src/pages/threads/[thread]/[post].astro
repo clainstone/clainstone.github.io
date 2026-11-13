@@ -3,6 +3,7 @@ import { render } from 'astro:content';
 import Base from '../../../layouts/Base.astro';
 import M from '../../../components/M.astro';
 import XrefPreview from '../../../components/XrefPreview.astro';
+import LectureIndex from '../../../components/LectureIndex.astro';
 import { getPosts, postsOf, threadOf, threadUrl, postUrl, wordCount, formatWords, formatDate, isoDate, publishedOf, plain, type Post } from '../../../lib/site';
 
 export async function getStaticPaths() {
@@ -28,6 +29,7 @@ const next = siblings[at + 1];
   section="threads"
   article={{ published: publishedOf(post), modified: post.data.updated, section: thread.data.title }}
 >
+  {thread.data.index && <LectureIndex thread={thread.id} title={thread.data.title} lecture={post.data.lecture} />}
   <article class="post">
     <header>
       <p class="thread"><a href={threadUrl(thread)}><M text={thread.data.title} /></a></p>

@@ -1,5 +1,5 @@
 <script>
-  // Example 5 with N = 2, the drawings of the lecture: the balls B_1(0) for
+  // Example 10.5 with N = 2, the drawings of the lecture: the balls B_1(0) for
   // the norms |·| (a disc), ‖·‖_∞ (a square with corners (±1, ±1)) and ‖·‖_1
   // (a square with vertices (±1, 0) and (0, ±1)).
   const C = [120, 118];

@@ -1,5 +1,5 @@
 <script>
-  // Lemma 18 (i), as drawn in the notes: a closed set V of the plane, its
+  // Lemma 1.20 (i), as drawn in the notes: a closed set V of the plane, its
   // boundary solid because it belongs to V, and a sequence (x_n) ⊂ V that
   // converges to a point x0 of the boundary. The terms appear one at a time;
   // their distance to x0 tends to 0 and the limit x0 lies in V.

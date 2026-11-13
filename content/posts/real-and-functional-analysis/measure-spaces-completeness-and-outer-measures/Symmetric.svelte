@@ -1,5 +1,5 @@
 <script>
-  // Example 19: an instance of a symmetric set of integers, each pair {−k, k}
+  // Example 2.19: an instance of a symmetric set of integers, each pair {−k, k}
   // joined by an arc, and, with `complement`, its complement in ℤ, which is
   // symmetric too.
   let { complement = false } = $props();

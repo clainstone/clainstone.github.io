@@ -1,5 +1,5 @@
 // The Cantor function v of the previous post and the open intervals removed
-// in the construction of the Cantor set, for the figures of Theorem 13.
+// in the construction of the Cantor set, for the figures of Theorem 4.13.
 
 /** v(x) from v₀(x) = x and the recursion of the previous post, `depth` steps deep. */
 export function v(x, depth = 30) {

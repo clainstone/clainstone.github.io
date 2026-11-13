@@ -1,5 +1,5 @@
 <script>
-  // Remarks 1 and 5, the drawings of the lecture: on ℝ, the graph of tanh with
+  // Remarks 8.1 and 8.5, the drawings of the lecture: on ℝ, the graph of tanh with
   // the dashed levels 1 and −1 (kind="tanh"), or the graph of arctan with the
   // dashed level π/2 and the value −π/2 marked on the left (kind="arctan"), as
   // on p02, where only π/2 is dashed.

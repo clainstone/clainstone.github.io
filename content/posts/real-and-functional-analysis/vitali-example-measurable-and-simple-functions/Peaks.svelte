@@ -1,5 +1,5 @@
 <script>
-  // Example 21, as in the drawing of the exercise: g_m = m χ of [0, 1/m],
+  // Example 4.21, as in the drawing of the exercise: g_m = m χ of [0, 1/m],
   // thin, and f_m = (−1)^m + g_m, thick, for the m of the slider. On [0, 1/m]
   // they take the values m and (−1)^m + m, elsewhere 0 and (−1)^m.
   import Slider from '@toolkit/Slider.svelte';

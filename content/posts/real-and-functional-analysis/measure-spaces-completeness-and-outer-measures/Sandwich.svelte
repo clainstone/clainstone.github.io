@@ -1,5 +1,5 @@
 <script>
-  // The proof of Theorem 10: a set E between two sets F₁ ⊂ E ⊂ F₂ of 𝓜 whose
+  // The proof of Theorem 2.10: a set E between two sets F₁ ⊂ E ⊂ F₂ of 𝓜 whose
   // difference F₂ \ F₁ has measure zero, drawn as a thin band.
   import { blob } from './shapes.js';
   const W = [[0.06, 3, 0.9], [0.03, 6, 0.2]];

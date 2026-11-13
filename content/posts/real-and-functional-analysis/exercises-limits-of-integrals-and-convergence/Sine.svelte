@@ -1,5 +1,5 @@
 <script>
-  // Example 2, the drawing of the lecture: the graph of sin x for x in [0, 2],
+  // Example 8.2, the drawing of the lecture: the graph of sin x for x in [0, 2],
   // its maximum 1 at π/2, the ticks π/2, 2 and π on the axis, and the dotted
   // segment from the axis to the graph at x = 2.
   import { graph } from './plot.js';

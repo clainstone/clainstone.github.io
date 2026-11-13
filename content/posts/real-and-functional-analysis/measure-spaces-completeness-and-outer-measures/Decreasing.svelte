@@ -1,5 +1,5 @@
 <script>
-  // Proposition 6 (ii), an instance: nested sets E₀ ⊃ E₁ ⊃ … shrinking towards
+  // Proposition 2.6 (ii), an instance: nested sets E₀ ⊃ E₁ ⊃ … shrinking towards
   // their intersection E (dashed). The slider sets n; the shaded set is
   // Aₙ = E₀ \ Eₙ, which grows with n towards E₀ \ E.
   import Slider from '@toolkit/Slider.svelte';

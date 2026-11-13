@@ -1,5 +1,5 @@
 <script>
-  // Proposition 7 and Theorem 14: a triangle E and a sequence of sets whose
+  // Proposition 2.7 and Theorem 2.14: a triangle E and a sequence of sets whose
   // union contains it, disks named Eₙ or ellipses named Aₙ as in the two
   // drawings of the lecture.
   let { name = 'E' } = $props();

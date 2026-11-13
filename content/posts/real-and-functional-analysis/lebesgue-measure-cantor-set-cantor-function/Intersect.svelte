@@ -1,5 +1,5 @@
 <script>
-  // Remark 2 (i), an instance with N = 2: two overlapping rectangles and their
+  // Remark 3.2 (i), an instance with N = 2: two overlapping rectangles and their
   // intersection, hatched, which is again a rectangle.
   const A = { x: 60, y: 70, w: 210, h: 110 };
   const B = { x: 195, y: 30, w: 170, h: 95 };

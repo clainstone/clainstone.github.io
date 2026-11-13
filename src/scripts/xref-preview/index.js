@@ -165,7 +165,10 @@ function install() {
     cancel();
     if (path !== HERE) { closeFrom(0, true); return; } // another post: the browser navigates
     still = true;
-    if (open && !reduce.matches && morph(id, open, () => closeFrom(0, true))) { e.preventDefault(); return; }
+    // The flight starts from a link of the page or of a card; an entry of the
+    // thread's index (lecture-index.js) closes its panel and lands plainly.
+    const flies = !!link.closest('article.post .body, .xref-card');
+    if (open && flies && !reduce.matches && morph(id, open, () => closeFrom(0, true))) { e.preventDefault(); return; }
     closeFrom(0, true);
     if (hashId() === id) requestAnimationFrame(() => washExtent(id)); // no hashchange follows
   });
@@ -173,7 +176,8 @@ function install() {
   addEventListener('pagehide', () => { cancel(); closeFrom(0, true); });
 }
 
-if (document.querySelector('article.post .body a.xref')) install();
+// The index of a thread (lecture-index.js) lists cross-references too, fetched later.
+if (document.querySelector('article.post .body a.xref, .index-button')) install();
 addEventListener('hashchange', () => {
   still = true;
   cancel();

@@ -1,5 +1,5 @@
 <script>
-  // Theorem 13: the graph of f(x) = x + v(x), the open intervals (a_m, b_m)
+  // Theorem 4.13: the graph of f(x) = x + v(x), the open intervals (a_m, b_m)
   // removed up to the step k of the construction of the Cantor set, on the
   // horizontal axis, and their images (f(a_m), f(b_m)), on the vertical axis.
   // Over each removed interval v is constant and f rises with slope 1, so the

@@ -1,8 +1,19 @@
 ---
 title: 'Differentiation of measures, the fundamental theorems of calculus and Sobolev spaces'
 date: 2026-10-14
+lecture: 9
 published: 2026-10-18
 summary: 'A $\sigma$-finite measure that is absolutely continuous with respect to a $\sigma$-finite measure $\mu$ is of the form $f\mu$ by the Radon–Nikodym theorem. On a bounded interval, the integral ${x \mapsto \int_a^x f \, d\lambda}$ of an integrable function is continuous and, by the Lebesgue differentiation theorem, differentiable almost everywhere with derivative ${f;}$ the functions that are the integrals of their derivatives are the absolutely continuous ones, and they form the Sobolev space ${W^{1,1}.}$'
+index:
+  Remark 9.1: 'A measurable $f \ge 0$ defines the measure $\nu = f\mu$ by $\nu(E) = \int_E f \, d\mu$'
+  Example 9.3: 'Every $f\mu$ satisfies $f\mu \ll \mu$, while $\lambda \not\ll \delta_0$ on $\mathbb{R}$'
+  Remark 9.5: 'The counting measure on $[0, 1]$ shows that Radon–Nikodym needs $\sigma$-finiteness'
+  Corollary 9.8: 'For $g \in C^1([a, b])$, $g(x) = g(a) + \int_a^x g''(t) \, dt$'
+  Remark 9.10: 'Cantor and Heaviside functions fail $g(y) - g(x) = \int_x^y g'' \, d\lambda$'
+  Example 9.15: 'The Cantor function is uniformly continuous but not in $\mathrm{AC}([0, 1])$'
+  Example 9.16: 'The function $g(x) = \sqrt{x}$ is in $\mathrm{AC}([0, 1])$ but not Lipschitz'
+  Remark 9.19: 'The space $W^{1,p}((a, b))$, with $f$ and its weak derivative in $L^p$'
+  Theorem 9.20: 'Equality $\mathrm{AC}([a, b]) = W^{1,1}((a, b))$ and continuous representatives of $W^{1,1}$'
 ---
 
 import Heaviside from './Heaviside.svelte';
@@ -12,34 +23,34 @@ A measure can be obtained from another measure by integrating a function, and a 
 
 ## Differentiation of measures
 
-**Remark 1.** Let ${(X, \mathcal{M}, \mu)}$ be a measure space and let ${f \colon X \to [0, +\infty)}$ be measurable. Then ${\nu = f\mu,}$ defined by
+**Remark 9.1.** Let ${(X, \mathcal{M}, \mu)}$ be a measure space and let ${f \colon X \to [0, +\infty)}$ be measurable. Then ${\nu = f\mu,}$ defined by
 
 $$
 \nu(E) := \int_E f \, d\mu \qquad \text{for every } E \in \mathcal{M},
 $$
 
-is another measure on ${(X, \mathcal{M}),}$ by Proposition 8 of the sixth post with $f$ in place of ${\varphi.}$
+is another measure on ${(X, \mathcal{M}),}$ by Proposition 6.8 with $f$ in place of ${\varphi.}$
 
-The question raised by Remark 1 is the converse. Given two measures $\nu$ and $\mu$ on ${(X, \mathcal{M}),}$ does there exist $f$ such that ${\nu = f\mu?}$
+The question raised by Remark 9.1 is the converse. Given two measures $\nu$ and $\mu$ on ${(X, \mathcal{M}),}$ does there exist $f$ such that ${\nu = f\mu?}$
 
-**Definition 2 (Absolutely continuous measure).** Let ${(X, \mathcal{M})}$ be a measurable space and let ${\mu, \nu \colon \mathcal{M} \to [0, +\infty]}$ be two measures. We say that $\nu$ is *absolutely continuous* with respect to ${\mu,}$ and we write ${\nu \ll \mu,}$ if
+**Definition 9.2 (Absolutely continuous measure).** Let ${(X, \mathcal{M})}$ be a measurable space and let ${\mu, \nu \colon \mathcal{M} \to [0, +\infty]}$ be two measures. We say that $\nu$ is *absolutely continuous* with respect to ${\mu,}$ and we write ${\nu \ll \mu,}$ if
 
 $$
 \mu(E) = 0 \implies \nu(E) = 0 \qquad \text{for every } E \in \mathcal{M}.
 $$
 
-**Example 3.** **(i)** Let ${\mu, \nu \colon \mathcal{M} \to [0, +\infty]}$ be two measures on a measurable space ${(X, \mathcal{M})}$ such that ${\nu = f\mu}$ for some measurable ${f \colon X \to [0, +\infty).}$ Then ${\nu \ll \mu{:}}$ if ${\mu(E) = 0,}$ then ${\nu(E) = \int_E f \, d\mu = 0.}$\
-**(ii)** On ${(\mathbb{R}, \mathcal{L}(\mathbb{R})),}$ consider the Lebesgue measure $\lambda$ and the Dirac delta $\delta_0$ at zero of Example 4 of the second post. Then ${\lambda \not\ll \delta_0.}$ The set ${E = [1, 2]}$ does not contain ${0,}$ so that ${\delta_0(E) = 0,}$ but ${\lambda(E) = 1 \neq 0.}$
+**Example 9.3.** **(i)** Let ${\mu, \nu \colon \mathcal{M} \to [0, +\infty]}$ be two measures on a measurable space ${(X, \mathcal{M})}$ such that ${\nu = f\mu}$ for some measurable ${f \colon X \to [0, +\infty).}$ Then ${\nu \ll \mu{:}}$ if ${\mu(E) = 0,}$ then ${\nu(E) = \int_E f \, d\mu = 0.}$\
+**(ii)** On ${(\mathbb{R}, \mathcal{L}(\mathbb{R})),}$ consider the Lebesgue measure $\lambda$ and the Dirac delta $\delta_0$ at zero of Example 2.4. Then ${\lambda \not\ll \delta_0.}$ The set ${E = [1, 2]}$ does not contain ${0,}$ so that ${\delta_0(E) = 0,}$ but ${\lambda(E) = 1 \neq 0.}$
 
-**Theorem 4 (Radon–Nikodym).** Let ${(X, \mathcal{M})}$ be a measurable space and let ${\mu, \nu \colon \mathcal{M} \to [0, +\infty]}$ be two measures. Suppose that ${\nu \ll \mu}$ and that $\mu$ and $\nu$ are $\sigma$-finite. Then there exists a measurable function ${f \colon X \to [0, +\infty)}$ such that ${\nu = f\mu.}$
+**Theorem 9.4 (Radon–Nikodym).** Let ${(X, \mathcal{M})}$ be a measurable space and let ${\mu, \nu \colon \mathcal{M} \to [0, +\infty]}$ be two measures. Suppose that ${\nu \ll \mu}$ and that $\mu$ and $\nu$ are $\sigma$-finite. Then there exists a measurable function ${f \colon X \to [0, +\infty)}$ such that ${\nu = f\mu.}$
 
-In Theorem 4, the measure $\mu$ is $\sigma$-finite as in Definition 8 (iii) of the second post. That is, there exists ${(E_m) \subset \mathcal{M}}$ with ${\bigcup_m E_m = X}$ and ${\mu(E_m) < +\infty}$ for every ${m.}$
+In Theorem 9.4, the measure $\mu$ is $\sigma$-finite as in Definition 2.8 (iii). That is, there exists ${(E_m) \subset \mathcal{M}}$ with ${\bigcup_m E_m = X}$ and ${\mu(E_m) < +\infty}$ for every ${m.}$
 
-A function $f$ as in Theorem 4 is called a *Radon–Nikodym derivative* of $\nu$ with respect to ${\mu.}$ Theorem 4 says that ${d\nu = f \, d\mu,}$ which suggests the notation ${f = d\nu/d\mu.}$
+A function $f$ as in Theorem 9.4 is called a *Radon–Nikodym derivative* of $\nu$ with respect to ${\mu.}$ Theorem 9.4 says that ${d\nu = f \, d\mu,}$ which suggests the notation ${f = d\nu/d\mu.}$
 
 ### The counting measure on $[0, 1]$
 
-**Remark 5.** In Theorem 4 the assumption that $\mu$ is $\sigma$-finite is needed. Otherwise, on ${([0, 1], \mathcal{L}([0, 1])),}$ take the Lebesgue measure $\lambda$ and the counting measure $\mu$ on ${[0, 1]}$ of Example 3 of the second post. Then $\mu$ is not $\sigma$-finite, ${\lambda \ll \mu,}$ and there exists no measurable ${f \colon [0, 1] \to [0, +\infty)}$ such that ${\lambda = f\mu.}$
+**Remark 9.5.** In Theorem 9.4 the assumption that $\mu$ is $\sigma$-finite is needed. Otherwise, on ${([0, 1], \mathcal{L}([0, 1])),}$ take the Lebesgue measure $\lambda$ and the counting measure $\mu$ on ${[0, 1]}$ of Example 2.3. Then $\mu$ is not $\sigma$-finite, ${\lambda \ll \mu,}$ and there exists no measurable ${f \colon [0, 1] \to [0, +\infty)}$ such that ${\lambda = f\mu.}$
 
 The measure $\mu$ is not $\sigma$-finite on ${[0, 1],}$ because ${\mu(E) < +\infty}$ if and only if $E$ is finite. If there existed ${(E_m) \subset \mathcal{L}([0, 1])}$ with ${\mu(E_m) < +\infty}$ for every $m$ and ${[0, 1] = \bigcup_m E_m,}$ then ${[0, 1]}$ would be countable, which is impossible.
 
@@ -59,7 +70,7 @@ which is impossible.
 
 ### Lebesgue differentiation theorem
 
-**Theorem 6 (Lebesgue differentiation theorem).** Let ${f \in \mathcal{L}^1(\mathbb{R}^N, \mathcal{L}(\mathbb{R}^N), \lambda).}$ Then, for almost every ${x \in \mathbb{R}^N,}$
+**Theorem 9.6 (Lebesgue differentiation theorem).** Let ${f \in \mathcal{L}^1(\mathbb{R}^N, \mathcal{L}(\mathbb{R}^N), \lambda).}$ Then, for almost every ${x \in \mathbb{R}^N,}$
 
 $$
 \lim_{r \to 0^+} \frac{1}{\lambda(B_r(x))} \int_{B_r(x)} |f(\cdot) - f(x)| \, d\lambda = 0,
@@ -75,7 +86,7 @@ $$
 
 For continuous functions the fundamental theorem of calculus is already known.
 
-**Theorem 7 (Baby fundamental theorem of calculus).** Let ${a < b}$ be real numbers, let ${f \colon [a, b] \to \mathbb{R}}$ be continuous, and define
+**Theorem 9.7 (Baby fundamental theorem of calculus).** Let ${a < b}$ be real numbers, let ${f \colon [a, b] \to \mathbb{R}}$ be continuous, and define
 
 $$
 F(x) = \int_a^x f(t) \, dt, \qquad x \in [a, b].
@@ -83,7 +94,7 @@ $$
 
 Then $F$ is continuous on ${[a, b],}$ and $F$ is differentiable at every ${x \in [a, b],}$ with ${F'(x) = f(x).}$ Moreover, ${F(y) - F(x) = \int_x^y f(t) \, dt}$ for all ${x, y \in [a, b]}$ with ${x < y.}$
 
-**Corollary 8.** Let ${a < b}$ be real numbers and let ${g \colon [a, b] \to \mathbb{R}}$ belong to ${C^1([a, b]),}$ the set of the continuously differentiable functions on ${[a, b].}$ Then
+**Corollary 9.8.** Let ${a < b}$ be real numbers and let ${g \colon [a, b] \to \mathbb{R}}$ belong to ${C^1([a, b]),}$ the set of the continuously differentiable functions on ${[a, b].}$ Then
 
 $$
 g(x) = g(a) + \int_a^x g'(t) \, dt \qquad \text{for every } x \in [a, b].
@@ -97,7 +108,7 @@ $$
 F(x) = \int_a^x f \, d\lambda.
 $$
 
-**Theorem 9 (First fundamental theorem of calculus).** Let ${-\infty < a < b < +\infty,}$ let ${f \in L^1((a, b)),}$ and let
+**Theorem 9.9 (First fundamental theorem of calculus).** Let ${-\infty < a < b < +\infty,}$ let ${f \in L^1((a, b)),}$ and let
 
 $$
 F(x) := \int_a^x f \, d\lambda \qquad \text{for every } x \in [a, b].
@@ -111,7 +122,7 @@ $$
 F(x_n) = \int_a^{x_n} f \, d\lambda = \int_a^b f \chi_{(a, x_n)} \, d\lambda,
 $$
 
-where ${f \chi_{(a, x_n)} \to f \chi_{(a, x_0)}}$ almost everywhere as ${n \to \infty,}$ and ${|f \chi_{(a, x_n)}| \le |f| \in L^1((a, b))}$ for every ${n.}$ By the dominated convergence theorem, Theorem 10 of the sixth post, ${f \chi_{(a, x_n)} \to f \chi_{(a, x_0)}}$ in ${L^1((a, b)).}$ Hence
+where ${f \chi_{(a, x_n)} \to f \chi_{(a, x_0)}}$ almost everywhere as ${n \to \infty,}$ and ${|f \chi_{(a, x_n)}| \le |f| \in L^1((a, b))}$ for every ${n.}$ By the dominated convergence theorem, Theorem 6.10, ${f \chi_{(a, x_n)} \to f \chi_{(a, x_0)}}$ in ${L^1((a, b)).}$ Hence
 
 $$
 \begin{aligned}
@@ -121,7 +132,7 @@ $$
 \end{aligned}
 $$
 
-Next, choose a representative ${f \in \mathcal{L}^1((a, b))}$ of the class of ${f.}$ By Theorem 6 with ${N = 1,}$ at almost every ${x \in (a, b),}$
+Next, choose a representative ${f \in \mathcal{L}^1((a, b))}$ of the class of ${f.}$ By Theorem 9.6 with ${N = 1,}$ at almost every ${x \in (a, b),}$
 
 $$
 \lim_{r \to 0^+} \frac{1}{2r} \int_{x-r}^{x+r} |f - f(x)| \, d\lambda = 0.
@@ -153,15 +164,15 @@ $$
 
 ### The Cantor and Heaviside functions
 
-**Remark 10.** Let ${g \colon (a, b) \to \mathbb{R}}$ be such that $g'(x)$ exists for almost every ${x \in (a, b)}$ and ${g' \in L^1((a, b)).}$ Does it follow that “${g(x) = \int_a^x g' \, d\lambda}$”, in the sense of Corollary 8, that is, ${g(y) - g(x) = \int_x^y g' \, d\lambda}$ for ${x < y?}$ No, as (1) and (2) show.
+**Remark 9.10.** Let ${g \colon (a, b) \to \mathbb{R}}$ be such that $g'(x)$ exists for almost every ${x \in (a, b)}$ and ${g' \in L^1((a, b)).}$ Does it follow that “${g(x) = \int_a^x g' \, d\lambda}$”, in the sense of Corollary 9.8, that is, ${g(y) - g(x) = \int_x^y g' \, d\lambda}$ for ${x < y?}$ No, as (1) and (2) show.
 
-**(1)** Let ${v \colon [0, 1] \to \mathbb{R}}$ be the Cantor function of Example 8 of the third post. Then $v'(x)$ exists and ${v'(x) = 0}$ for almost every ${x,}$ by Example 9 (iii) of the fourth post, and ${v' = 0 \in L^1((0, 1)).}$ But the formula fails for ${x = 0}$ and ${y = 1{:}}$
+**(1)** Let ${v \colon [0, 1] \to \mathbb{R}}$ be the Cantor function of Example 3.8. Then $v'(x)$ exists and ${v'(x) = 0}$ for almost every ${x,}$ by Example 4.9 (iii), and ${v' = 0 \in L^1((0, 1)).}$ But the formula fails for ${x = 0}$ and ${y = 1{:}}$
 
 $$
 v(1) - v(0) = 1 \neq \int_0^1 v' \, d\lambda = \int_0^1 0 \, d\lambda = 0.
 $$
 
-**(2)** Let ${H \colon \mathbb{R} \to \mathbb{R}}$ be the Heaviside function, equal to 0 on ${(-\infty, 0]}$ and to 1 on ${(0, +\infty),}$ as in Figure 1. Then $H'(x)$ exists and ${H'(x) = 0}$ for every ${x \neq 0,}$ but, for every ${x > 0,}$
+**(2)** Let ${H \colon \mathbb{R} \to \mathbb{R}}$ be the Heaviside function, equal to 0 on ${(-\infty, 0]}$ and to 1 on ${(0, +\infty),}$ as in Figure 9.1. Then $H'(x)$ exists and ${H'(x) = 0}$ for every ${x \neq 0,}$ but, for every ${x > 0,}$
 
 $$
 \int_{-3}^x H' \, d\lambda = 0 \neq H(x) - H(-3).
@@ -169,23 +180,23 @@ $$
 
 <Heaviside />
 
-**Figure 1.** The drawing of Remark 10 (2), with the point $-3$ of the formula marked on the axis: the graph of the Heaviside function ${H.}$
+**Figure 9.1.** The drawing of Remark 9.10 (2), with the point $-3$ of the formula marked on the axis: the graph of the Heaviside function ${H.}$
 
 ### Absolutely continuous functions
 
-**Definition 11 (Absolutely continuous function).** Let ${a < b}$ be real numbers and ${f \colon [a, b] \to \mathbb{R}.}$ We say that $f$ is *absolutely continuous* on ${[a, b]}$ if for every positive $\varepsilon$ there exists a positive $\delta$ such that, for every finite family ${\{ (a_i, b_i) : i = 1, \dots, m \}}$ of pairwise disjoint subintervals of ${[a, b],}$
+**Definition 9.11 (Absolutely continuous function).** Let ${a < b}$ be real numbers and ${f \colon [a, b] \to \mathbb{R}.}$ We say that $f$ is *absolutely continuous* on ${[a, b]}$ if for every positive $\varepsilon$ there exists a positive $\delta$ such that, for every finite family ${\{ (a_i, b_i) : i = 1, \dots, m \}}$ of pairwise disjoint subintervals of ${[a, b],}$
 
 $$
 \sum_{i=1}^{m} (b_i - a_i) < \delta \qquad \text{implies} \qquad \sum_{i=1}^{m} |f(b_i) - f(a_i)| < \varepsilon.
 $$
 
-Here the intervals are numbered so that ${a \le a_1 < b_1 \le a_2 < b_2 \le \dots < b_m \le b,}$ as in Figure 2, and we write ${f \in \mathrm{AC}([a, b]).}$
+Here the intervals are numbered so that ${a \le a_1 < b_1 \le a_2 < b_2 \le \dots < b_m \le b,}$ as in Figure 9.2, and we write ${f \in \mathrm{AC}([a, b]).}$
 
 <Intervals />
 
-**Figure 2.** The drawing of Definition 11: the interval ${[a, b]}$ with the subintervals ${(a_1, b_1),}$ ${(a_2, b_2)}$ and so on up to ${(a_m, b_m),}$ the values ${f(a_1),}$ ${f(b_1),}$ $f(a_2)$ and $f(b_2)$ above them, and the vertical segments of lengths ${|f(b_1) - f(a_1)|}$ and ${|f(b_2) - f(a_2)|.}$
+**Figure 9.2.** The drawing of Definition 9.11: the interval ${[a, b]}$ with the subintervals ${(a_1, b_1),}$ ${(a_2, b_2)}$ and so on up to ${(a_m, b_m),}$ the values ${f(a_1),}$ ${f(b_1),}$ $f(a_2)$ and $f(b_2)$ above them, and the vertical segments of lengths ${|f(b_1) - f(a_1)|}$ and ${|f(b_2) - f(a_2)|.}$
 
-**Remark 12 (Lipschitz and uniformly continuous functions).** Let ${a < b}$ be real numbers and ${f \colon [a, b] \to \mathbb{R}.}$ The function $f$ is *Lipschitz* on ${[a, b]}$ if there exists ${L > 0}$ such that ${|f(y) - f(x)| \le L |y - x|}$ for all ${x, y \in [a, b].}$ It is *uniformly continuous* on ${[a, b]}$ if for every positive $\varepsilon$ there exists a positive $\delta$ such that, for all ${x < y}$ in ${[a, b],}$ ${|y - x| < \delta}$ implies ${|f(y) - f(x)| < \varepsilon.}$ In this case we write ${f \in \mathrm{UC}([a, b]).}$ Then
+**Remark 9.12 (Lipschitz and uniformly continuous functions).** Let ${a < b}$ be real numbers and ${f \colon [a, b] \to \mathbb{R}.}$ The function $f$ is *Lipschitz* on ${[a, b]}$ if there exists ${L > 0}$ such that ${|f(y) - f(x)| \le L |y - x|}$ for all ${x, y \in [a, b].}$ It is *uniformly continuous* on ${[a, b]}$ if for every positive $\varepsilon$ there exists a positive $\delta$ such that, for all ${x < y}$ in ${[a, b],}$ ${|y - x| < \delta}$ implies ${|f(y) - f(x)| < \varepsilon.}$ In this case we write ${f \in \mathrm{UC}([a, b]).}$ Then
 
 $$
 \begin{aligned}
@@ -194,13 +205,13 @@ f \text{ Lipschitz on } [a, b] &\implies f \in \mathrm{AC}([a, b]) \\
 \end{aligned}
 $$
 
-**Lemma 13 (Absolute continuity of the integral).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space and let ${f \in L^1.}$ Then for every positive $\varepsilon$ there exists a positive $\delta$ such that, for every ${E \in \mathcal{M}}$ with ${\mu(E) < \delta,}$
+**Lemma 9.13 (Absolute continuity of the integral).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space and let ${f \in L^1.}$ Then for every positive $\varepsilon$ there exists a positive $\delta$ such that, for every ${E \in \mathcal{M}}$ with ${\mu(E) < \delta,}$
 
 $$
 \int_E |f| \, d\mu < \varepsilon.
 $$
 
-**Proof (complete).** Let ${\varepsilon > 0.}$ Take a function $s$ such that (1) $s$ is simple, (2) ${0 \le s \le |f|}$ almost everywhere, and (3) ${\int_X s \, d\mu \ge \int_X |f| \, d\mu - \varepsilon/2.}$ Indeed, such an $s$ exists by Definition 3 of the fifth post, because ${\int_X |f| \, d\mu < +\infty,}$ and it can be taken with ${s \le |f|}$ at every point.
+**Proof (complete).** Let ${\varepsilon > 0.}$ Take a function $s$ such that (1) $s$ is simple, (2) ${0 \le s \le |f|}$ almost everywhere, and (3) ${\int_X s \, d\mu \ge \int_X |f| \, d\mu - \varepsilon/2.}$ Indeed, such an $s$ exists by Definition 5.3, because ${\int_X |f| \, d\mu < +\infty,}$ and it can be taken with ${s \le |f|}$ at every point.
 
 Let ${M := \max_X s.}$ We can take ${\delta := \varepsilon/(2M).}$ In detail, $M$ is a real number, because $s$ takes finitely many values and is at most $|f|$ at every point, and if ${M = 0}$ every ${\delta > 0}$ works, because (3) then gives ${\int_X |f| \, d\mu \le \varepsilon/2.}$ So take ${E \in \mathcal{M}}$ with ${\mu(E) < \delta.}$ Then
 
@@ -217,7 +228,7 @@ where ${|f| - s \ge 0,}$ the first inequality is monotonicity, in the domain of 
 
 ### Second fundamental theorem of calculus
 
-**Theorem 14 (Second fundamental theorem of calculus).** Let ${a < b}$ be real numbers and let ${f \colon [a, b] \to \mathbb{R}}$ be measurable. The following are equivalent.
+**Theorem 9.14 (Second fundamental theorem of calculus).** Let ${a < b}$ be real numbers and let ${f \colon [a, b] \to \mathbb{R}}$ be measurable. The following are equivalent.
 
 **(1)** The function $f$ is differentiable almost everywhere on ${(a, b),}$ with ${f' \in L^1((a, b)),}$ and
 
@@ -228,9 +239,9 @@ $$
 **(2)** ${f \in \mathrm{AC}([a, b]).}$\
 In particular, let ${g \in L^1((a, b))}$ and ${F(x) = \int_a^x g \, d\lambda}$ for ${x \in [a, b].}$ Then ${F \in \mathrm{AC}([a, b]).}$
 
-The last claim of Theorem 14 follows from the implication from (1) to (2), since $F$ satisfies (1) by Theorem 9.
+The last claim of Theorem 9.14 follows from the implication from (1) to (2), since $F$ satisfies (1) by Theorem 9.9.
 
-**Proof (sketch).** Only the implication from (1) to (2) is proved. Fix ${\varepsilon > 0}$ and let ${\delta > 0}$ be given by Lemma 13, applied on ${([a, b], \mathcal{L}([a, b]), \lambda)}$ to ${f' \in L^1.}$ This means that, for every ${E \in \mathcal{L}([a, b]),}$
+**Proof (sketch).** Only the implication from (1) to (2) is proved. Fix ${\varepsilon > 0}$ and let ${\delta > 0}$ be given by Lemma 9.13, applied on ${([a, b], \mathcal{L}([a, b]), \lambda)}$ to ${f' \in L^1.}$ This means that, for every ${E \in \mathcal{L}([a, b]),}$
 
 $$
 \lambda(E) < \delta \implies \int_E |f'| \, d\lambda < \varepsilon.
@@ -254,17 +265,17 @@ $$
 
 where the first equality is (1), and the last inequality is the choice of ${\delta,}$ as the integral is over a set $E$ with ${\lambda(E) < \delta.}$ $\blacksquare$
 
-**Example 15.** Let ${v \colon [0, 1] \to \mathbb{R}}$ be the Cantor function of Example 8 of the third post. The function $v$ is continuous on ${[0, 1],}$ but ${v \notin \mathrm{AC}([0, 1])}$ by Theorem 14. Still, ${v \in \mathrm{UC}([0, 1])}$ by the [Heine–Cantor theorem](https://en.wikipedia.org/wiki/Heine%E2%80%93Cantor_theorem): if ${u \colon [a, b] \to \mathbb{R}}$ is continuous, then ${u \in \mathrm{UC}([a, b]).}$
+**Example 9.15.** Let ${v \colon [0, 1] \to \mathbb{R}}$ be the Cantor function of Example 3.8. The function $v$ is continuous on ${[0, 1],}$ but ${v \notin \mathrm{AC}([0, 1])}$ by Theorem 9.14. Still, ${v \in \mathrm{UC}([0, 1])}$ by the [Heine–Cantor theorem](https://en.wikipedia.org/wiki/Heine%E2%80%93Cantor_theorem): if ${u \colon [a, b] \to \mathbb{R}}$ is continuous, then ${u \in \mathrm{UC}([a, b]).}$
 
-**Example 16.** There exists ${g \in \mathrm{AC}([0, 1])}$ that is not Lipschitz, for example ${g(x) = \sqrt{x}}$ for ${x \in [0, 1].}$ It satisfies ${g'(x) = 1/(2\sqrt{x})}$ for every ${x \in (0, 1)}$ and
+**Example 9.16.** There exists ${g \in \mathrm{AC}([0, 1])}$ that is not Lipschitz, for example ${g(x) = \sqrt{x}}$ for ${x \in [0, 1].}$ It satisfies ${g'(x) = 1/(2\sqrt{x})}$ for every ${x \in (0, 1)}$ and
 
 $$
 g(y) - g(x) = \int_x^y \frac{1}{2\sqrt{t}} \, dt \qquad \text{for all } x, y \in [0, 1] \text{ with } x < y,
 $$
 
-so that ${g \in \mathrm{AC}([0, 1])}$ by Theorem 14. In detail, ${g' \in L^1((0, 1))}$ by (2) of Theorem 17 of the fifth post, because ${g' \ge 0}$ and its generalized Riemann integral over $(0, 1)$ is ${g(1) - g(0) = 1.}$
+so that ${g \in \mathrm{AC}([0, 1])}$ by Theorem 9.14. In detail, ${g' \in L^1((0, 1))}$ by (2) of Theorem 5.17, because ${g' \ge 0}$ and its generalized Riemann integral over $(0, 1)$ is ${g(1) - g(0) = 1.}$
 
-**Corollary 17 (Integration by parts in AC).** Let ${a < b}$ be real numbers and ${f \in \mathrm{AC}([a, b]).}$ Then, for every ${\varphi \in C_c^\infty(a, b),}$
+**Corollary 9.17 (Integration by parts in AC).** Let ${a < b}$ be real numbers and ${f \in \mathrm{AC}([a, b]).}$ Then, for every ${\varphi \in C_c^\infty(a, b),}$
 
 $$
 \int_a^b f \varphi' \, d\lambda = -\int_a^b f' \varphi \, d\lambda,
@@ -274,9 +285,9 @@ where $f'$ is the derivative of ${f,}$ defined almost everywhere.
 
 ## Sobolev spaces (introduction)
 
-Sobolev spaces are defined through the identity of Corollary 17, with a function $w$ in place of ${f'.}$
+Sobolev spaces are defined through the identity of Corollary 9.17, with a function $w$ in place of ${f'.}$
 
-**Definition 18 (Sobolev space ${W^{1,1},}$ weak derivative).** Let ${-\infty \le a < b \le +\infty}$ and ${f \in L^1((a, b)).}$ We say that ${f \in W^{1,1}((a, b)),}$ the *Sobolev space* $W^{1,1}$ on ${(a, b),}$ if there exists ${w \in L^1((a, b))}$ such that
+**Definition 9.18 (Sobolev space ${W^{1,1},}$ weak derivative).** Let ${-\infty \le a < b \le +\infty}$ and ${f \in L^1((a, b)).}$ We say that ${f \in W^{1,1}((a, b)),}$ the *Sobolev space* $W^{1,1}$ on ${(a, b),}$ if there exists ${w \in L^1((a, b))}$ such that
 
 $$
 \int_a^b f \varphi' \, d\lambda = -\int_a^b w \varphi \, d\lambda \qquad \text{for every } \varphi \in C_c^\infty(a, b).
@@ -284,22 +295,22 @@ $$
 
 The function $w$ is called a *weak derivative* of ${f.}$
 
-**Remark 19.** In the same way one can take ${f \in L^p((a, b))}$ with a weak derivative ${w \in L^p((a, b)).}$ In this case one writes ${f \in W^{1,p}((a, b)).}$
+**Remark 9.19.** In the same way one can take ${f \in L^p((a, b))}$ with a weak derivative ${w \in L^p((a, b)).}$ In this case one writes ${f \in W^{1,p}((a, b)).}$
 
-**Theorem 20.** Let ${-\infty < a < b < +\infty.}$ Then ${\mathrm{AC}([a, b]) = W^{1,1}((a, b));}$ more precisely, ${f \in \mathrm{AC}([a, b])}$ if and only if ${f \in W^{1,1}((a, b)),}$ where $f$ is identified with its class in ${L^1((a, b)).}$ In particular, every ${f \in W^{1,1}((a, b))}$ has a continuous representative.
+**Theorem 9.20.** Let ${-\infty < a < b < +\infty.}$ Then ${\mathrm{AC}([a, b]) = W^{1,1}((a, b));}$ more precisely, ${f \in \mathrm{AC}([a, b])}$ if and only if ${f \in W^{1,1}((a, b)),}$ where $f$ is identified with its class in ${L^1((a, b)).}$ In particular, every ${f \in W^{1,1}((a, b))}$ has a continuous representative.
 
-**Proof (complete).** First, let ${f \in \mathrm{AC}([a, b]).}$ By Theorem 14 and Corollary 17, $f'$ exists almost everywhere, ${f' \in L^1((a, b)),}$ and ${\int_a^b f \varphi' \, d\lambda = -\int_a^b f' \varphi \, d\lambda}$ for every ${\varphi \in C_c^\infty(a, b).}$ Hence ${f \in W^{1,1}((a, b)).}$
+**Proof (complete).** First, let ${f \in \mathrm{AC}([a, b]).}$ By Theorem 9.14 and Corollary 9.17, $f'$ exists almost everywhere, ${f' \in L^1((a, b)),}$ and ${\int_a^b f \varphi' \, d\lambda = -\int_a^b f' \varphi \, d\lambda}$ for every ${\varphi \in C_c^\infty(a, b).}$ Hence ${f \in W^{1,1}((a, b)).}$
 
-Conversely, let ${f \in W^{1,1}((a, b))}$ and let $w$ be a weak derivative of ${f.}$ Let ${F(x) = \int_a^x w \, d\lambda}$ for ${x \in [a, b].}$ Then ${F \in \mathrm{AC}([a, b])}$ by Theorem 14, and $F'$ exists and ${F' = w}$ almost everywhere by Theorem 9. Let ${\varphi \in C_c^\infty(a, b).}$ Then
+Conversely, let ${f \in W^{1,1}((a, b))}$ and let $w$ be a weak derivative of ${f.}$ Let ${F(x) = \int_a^x w \, d\lambda}$ for ${x \in [a, b].}$ Then ${F \in \mathrm{AC}([a, b])}$ by Theorem 9.14, and $F'$ exists and ${F' = w}$ almost everywhere by Theorem 9.9. Let ${\varphi \in C_c^\infty(a, b).}$ Then
 
 $$
 \int_a^b F \varphi' \, d\lambda = -\int_a^b F' \varphi \, d\lambda = -\int_a^b w \varphi \, d\lambda = \int_a^b f \varphi' \, d\lambda,
 $$
 
-where the first equality is Corollary 17, the second holds because ${F' = w}$ almost everywhere, and the third because ${f \in W^{1,1}((a, b)).}$ Hence
+where the first equality is Corollary 9.17, the second holds because ${F' = w}$ almost everywhere, and the third because ${f \in W^{1,1}((a, b)).}$ Hence
 
 $$
 \int_a^b (F - f) \varphi' \, d\lambda = 0 \qquad \text{for every } \varphi \in C_c^\infty(a, b).
 $$
 
-By the constancy lemma, (2) of Corollary 16 of the fifth post, there exists ${C \in \mathbb{R}}$ such that ${F - f = C}$ almost everywhere. Hence ${f = F - C}$ almost everywhere, where ${F \in \mathrm{AC}([a, b])}$ and $C$ is a constant, so $f$ is equal almost everywhere to a function of ${\mathrm{AC}([a, b]).}$ Therefore $f$ has a representative in ${\mathrm{AC}([a, b]).}$ $\blacksquare$
+By the constancy lemma, (2) of Corollary 5.16, there exists ${C \in \mathbb{R}}$ such that ${F - f = C}$ almost everywhere. Hence ${f = F - C}$ almost everywhere, where ${F \in \mathrm{AC}([a, b])}$ and $C$ is a constant, so $f$ is equal almost everywhere to a function of ${\mathrm{AC}([a, b]).}$ Therefore $f$ has a representative in ${\mathrm{AC}([a, b]).}$ $\blacksquare$

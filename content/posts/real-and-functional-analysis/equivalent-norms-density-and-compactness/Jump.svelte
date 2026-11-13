@@ -1,5 +1,5 @@
 <script>
-  // The drawing of Example 16: H on (−1, 1), equal to 0 on (−1, 0) and to 1 on
+  // The drawing of Example 12.16: H on (−1, 1), equal to 0 on (−1, 0) and to 1 on
   // (0, 1); the dashed levels −1/3 and 1/3 over (−1, 0) and 2/3 and 4/3 over
   // (0, 1); an instance f of the ball B_{1/3}(H): f = 0.14 + 0.15 w(14x) on
   // (−1, 0) and f = 1 + 0.17 sin(25x + 0.6) on (0, 1), with w a triangle wave

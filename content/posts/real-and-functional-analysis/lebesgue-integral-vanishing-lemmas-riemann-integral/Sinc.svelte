@@ -1,5 +1,5 @@
 <script>
-  // Example 18. Above: (sin x)/x on [π, (N+1)π], with the regions above and
+  // Example 5.18. Above: (sin x)/x on [π, (N+1)π], with the regions above and
   // below the axis. Below: |sin x|/x and, under it on each [mπ, (m+1)π) with
   // 1 ≤ m ≤ N, the function |sin x|/((m+1)π) of the proof of (ii), its
   // integral 2/(π(m+1)) shaded. Beyond (N+1)π the graphs are faint. The

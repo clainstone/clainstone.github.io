@@ -1,5 +1,5 @@
 <script>
-  // Proposition 8, the drawing of the proof: three pairwise disjoint sets
+  // Proposition 6.8, the drawing of the proof: three pairwise disjoint sets
   // E₁, E₂, E₃ in a plane (ellipses seen in perspective) and, above each of
   // them at height 1, the graph of its characteristic function, joined to
   // the set by dashed lines; the first one is marked χ_{E₁}.

@@ -1,5 +1,5 @@
 <script>
-  // The drawing of the claim in the proof of Theorem 19 (1), an instance in the
+  // The drawing of the claim in the proof of Theorem 13.19 (1), an instance in the
   // plane: radii r_m = 0.9/2^m < 1/2^m and centres x_m = x_{m-1} + 0.35 r_{m-1} e_m
   // with unit vectors e_m, so that d(x_m, x_{m-1}) + r_m < r_{m-1} and each closed
   // ball lies in the open ball before it. For the N of the slider: the closed

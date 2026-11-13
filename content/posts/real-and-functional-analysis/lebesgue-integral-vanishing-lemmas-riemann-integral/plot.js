@@ -33,7 +33,7 @@ export function intervals(pred, a, b, n = 2000) {
   return out;
 }
 
-// The simple function of Figures 1 and 2, as in the drawing of the lecture:
+// The simple function of Figures 5.1 and 5.2, as in the drawing of the lecture:
 // three adjacent sets D₁, D₂, D₃ on a line, the values on them (heights in
 // page units), and a set E that ends inside D₁ and D₃.
 export const STEPS = { cuts: [45, 140, 230, 325], heights: [70, 125, 38], E: [112, 262] };

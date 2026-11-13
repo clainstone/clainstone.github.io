@@ -1,5 +1,5 @@
 <script>
-  // Proposition 6 (i), an instance: nested sets E₀ ⊂ E₁ ⊂ … growing towards
+  // Proposition 2.6 (i), an instance: nested sets E₀ ⊂ E₁ ⊂ … growing towards
   // their union E (dashed). The slider sets N; the rings F₀ = E₀ and
   // Fₙ₊₁ = Eₙ₊₁ \ Eₙ up to F_N are shaded, and their union is E_N.
   import Slider from '@toolkit/Slider.svelte';

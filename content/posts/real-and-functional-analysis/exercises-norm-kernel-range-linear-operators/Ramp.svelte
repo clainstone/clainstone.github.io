@@ -1,5 +1,5 @@
 <script>
-  // The drawing of Example 1, used again in Example 3: the function f_n,
+  // The drawing of Example 14.1, used again in Example 14.3: the function f_n,
   // equal to −1 on [−1, −1/n], linear on [−1/n, 1/n] and equal to 1 on
   // [1/n, 1], for the n of the slider, with the dotted verticals of the
   // lecture's drawing at −1/n and 1/n.

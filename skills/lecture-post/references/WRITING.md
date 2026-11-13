@@ -7,11 +7,9 @@ about it.
 
 ## Shape
 
-**Opening.** One to three sentences that state the question or the object the
-lecture is about, in mathematical terms. When the lecture continues an earlier
-one, link to the earlier post at its first mention, with a root-absolute
-address such as `/threads/real-and-functional-analysis/lecture-3-outer-measure`.
-Do not open with "In this lecture" or "Today".
+**Opening.** One sentence: the source's own opening line, or a plain sentence
+naming the object the lecture is about (`STYLE.md` 7.1). No summary, no
+invented question. Do not open with "In this lecture" or "Today".
 
 **Body.** Follow the order of the lecture. Use `##` headings for its main parts
 and `###` only when a part is long. A heading names the mathematics, for
@@ -33,7 +31,9 @@ own paragraph with a bold run-in label:
 ```
 
 Keep the professor's numbering. When the notes number nothing, use one counter
-for all numbered statements in the post: Definition 1, Lemma 2, Theorem 3.
+for all numbered statements in the post: Definition 1, Lemma 2, Theorem 3. In a
+thread with an index the numbers carry the lecture: Definition 16.1, Lemma
+16.2, Theorem 16.3 (`STYLE.md` 4.2).
 
 **Proof labels.** Every proof says what the lecture gave.
 
@@ -44,14 +44,16 @@ for all numbered statements in the post: Definition 1, Lemma 2, Theorem 3.
    ends with $\blacksquare$. No `**Details.**` paragraph follows a proof
    unless the user asks for one for that proof: the verifications the post
    leaves out go in the report.
-3. A statement the lecture gives without any argument gets no proof label.
-   A one-sentence check may follow it, starting with "Indeed".
+3. A statement the lecture gives without any argument gets no proof label
+   and, as a rule, no check: one only when a careful reader would stop there
+   (`STYLE.md` 1.5).
 4. A justification the post adds, including a reason for a claim inside a
    statement or a step inside a complete proof, goes in its own sentence
    starting with "Indeed", never in a "since" clause of the lecture's sentence.
    Keep the lecture's order of steps and put the added sentence right after
    the step it justifies. The reader then tells the lecture's words from the
-   added reasoning.
+   added reasoning. Write it only for a real gap, and only when it covers the
+   whole claim (`STYLE.md` 1.5).
 
 **No lists.** The site does not use bullet or numbered lists. Write properties
 as sentences, as a displayed formula with `aligned`, or as consecutive
@@ -70,10 +72,10 @@ Professors compress. The post decompresses without changing the mathematics.
 2. **Logic symbols in prose become words.** For every, there exists, implies,
    hence, if and only if, such that, with respect to. Quantifiers may stay
    inside a displayed formal statement. A sentence never begins with a symbol.
-3. **Named results are named in full, and their hypotheses are checked.** "By
-   DCT" becomes "by the dominated convergence theorem. Indeed, $|f_n| \le g$
-   for every $n$ and $g \in L^1$." The check is added reasoning, so it takes
-   its own "Indeed" sentence, as the proof labels below require.
+3. **Named results are named in full.** "By DCT" becomes "by the dominated
+   convergence theorem". Check its hypotheses yourself; write the check in
+   the post only when a hypothesis is not visible from the text around it,
+   in its own "Indeed" sentence.
 4. **Implicit steps become explicit** when a careful reader would stop there:
    a change of variables, an inequality used silently, the case that "is
    similar". Do not add steps that change the proof's strategy.
@@ -154,8 +156,8 @@ The table is a starting point. Expand any other shorthand the same way.
    or judge it.
 5. Present tense. Paragraphs of two to six sentences.
 6. Put a defined term in italics where it is defined: `*outer measure*`.
-7. Before a long proof one sentence may list its steps, when it only names
-   what follows.
+7. No sentence announces the steps of a proof or restates what a display
+   already says.
 
 Shorthand copied as it is:
 

@@ -1,5 +1,5 @@
 <script>
-  // Remark 9, the drawings of the lecture: above, f_n = χ_[0, 1 − 1/n] and,
+  // Remark 7.9, the drawings of the lecture: above, f_n = χ_[0, 1 − 1/n] and,
   // dashed, its limit χ_[0, 1]; below, their difference |χ_[0, 1] − f_n| =
   // χ_(1 − 1/n, 1], whose essential supremum is 1 for every n. The slider
   // sets n.

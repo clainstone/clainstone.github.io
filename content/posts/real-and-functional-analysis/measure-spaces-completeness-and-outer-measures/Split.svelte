@@ -1,5 +1,5 @@
 <script>
-  // Definition 16: a set E and a test set Z; the definition splits Z into the
+  // Definition 2.16: a set E and a test set Z; the definition splits Z into the
   // part inside E and the part outside it.
 </script>
 

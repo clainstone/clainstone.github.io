@@ -1,5 +1,5 @@
 <script>
-  // Remark 5 (i): a set E inside a set F, and the difference F \ E, shaded.
+  // Remark 2.5 (i): a set E inside a set F, and the difference F \ E, shaded.
   import { blob } from './shapes.js';
   const F = blob(250, 125, 200, 100, [[0.05, 3, 0.8], [0.03, 5, 0.1]]);
   const E = blob(190, 128, 88, 52, [[0.06, 2, 1.1], [0.03, 5, 2.0]]);

@@ -1,8 +1,18 @@
 ---
 title: 'The Lebesgue integral, vanishing lemmas and the Riemann integral'
 date: 2026-09-30
+lecture: 5
 published: 2026-10-11
 summary: 'The Lebesgue integral is defined for simple functions, for nonnegative measurable functions as a supremum over the simple functions below them, and for real valued functions through their positive and negative parts; it satisfies the Chebyshev inequality and the vanishing lemmas. It agrees with the Riemann integral on closed bounded intervals and with the generalized Riemann integral when the absolute value is Riemann integrable in the generalized sense, while $(\sin x)/x$ on $[\pi, +\infty)$ is Riemann integrable in the generalized sense but not Lebesgue integrable.'
+index:
+  Remark 5.2: 'For simple $s$, the integral over $E$ is the integral of $s \chi_E$ over $X$'
+  Remark 5.6: 'For the counting measure on $\mathbb{N}$, the integral of $f$ is $\sum_{m=0}^{\infty} f_m$'
+  Remark 5.7: 'Nonnegative functions equal almost everywhere have equal integrals'
+  Example 5.8: '$\chi_{\mathbb{Q}}$ has Lebesgue integral $0$ on $\mathbb{R}$ and no Riemann integral'
+  Corollary 5.10: 'Vanishing lemma for $f \ge 0$, and a finite integral gives $\mu(\{ f = +\infty \}) = 0$'
+  Remark 5.12: '$f$ integrable if and only if $|f|$ is, and $|\int_X f \, d\mu| \le \int_X |f| \, d\mu$'
+  Remark 5.13: '$\mathcal{L}^1$ is a vector space and the integral is linear on it'
+  Example 5.18: '$(\sin x)/x$ on $[\pi, +\infty)$ is generalized Riemann integrable, not Lebesgue integrable'
 ---
 
 import Idea from './Idea.svelte';
@@ -15,15 +25,15 @@ The Lebesgue integral is defined on a measure space and compared, on intervals o
 
 ## Lebesgue integral
 
-The aim is a new definition of the integral. Its idea is drawn in Figure 1: first the integral of a simple function over a set ${E,}$ then simple functions placed below the graph of a function ${f.}$
+The aim is a new definition of the integral. Its idea is drawn in Figure 5.1: first the integral of a simple function over a set ${E,}$ then simple functions placed below the graph of a function ${f.}$
 
 <Idea />
 
-**Figure 1.** On the left, a simple function, constant on each of the sets ${D_1,}$ $D_2$ and ${D_3,}$ with the region under its graph hatched, and a set $E$ over which that region is shaded. On the right, a function $f$ and, below its graph, the region under a simple function.
+**Figure 5.1.** On the left, a simple function, constant on each of the sets ${D_1,}$ $D_2$ and ${D_3,}$ with the region under its graph hatched, and a set $E$ over which that region is shaded. On the right, a function $f$ and, below its graph, the region under a simple function.
 
 ### Nonnegative functions
 
-**Definition 1 (Lebesgue integral of a simple function).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space, let ${s \colon X \to [0, +\infty]}$ be a simple function, written as in Definition 16 of the previous post,
+**Definition 5.1 (Lebesgue integral of a simple function).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space, let ${s \colon X \to [0, +\infty]}$ be a simple function, written as in Definition 4.16,
 
 $$
 s = \sum_{i=1}^{k} a_i \chi_{D_i},
@@ -35,21 +45,21 @@ $$
 \int_E s \, d\mu := \sum_{i=1}^{k} a_i \, \mu(E \cap D_i),
 $$
 
-where ${+\infty \cdot 0 = 0,}$ as in Definition 5 of the first post.
+where ${+\infty \cdot 0 = 0,}$ as in Definition 1.5.
 
-**Remark 2.** Let ${(X, \mathcal{M}, \mu),}$ $E$ and $s$ be as in Definition 1. Then $\chi_E$ is simple, ${s \chi_E}$ is simple, and
+**Remark 5.2.** Let ${(X, \mathcal{M}, \mu),}$ $E$ and $s$ be as in Definition 5.1. Then $\chi_E$ is simple, ${s \chi_E}$ is simple, and
 
 $$
 \int_E s \, d\mu = \int_X s \chi_E \, d\mu.
 $$
 
-**Definition 3 (Lebesgue integral of a nonnegative function).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space, let ${f \colon X \to [0, +\infty]}$ be measurable and let ${E \in \mathcal{M}.}$ We define the Lebesgue integral of $f$ over $E$ as
+**Definition 5.3 (Lebesgue integral of a nonnegative function).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space, let ${f \colon X \to [0, +\infty]}$ be measurable and let ${E \in \mathcal{M}.}$ We define the Lebesgue integral of $f$ over $E$ as
 
 $$
 \int_E f \, d\mu := \sup \Big\{ \int_E s \, d\mu : s \text{ simple}, \ 0 \le s \le f \Big\}.
 $$
 
-**Remark 4 (Basic properties).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space, let ${f_1, f_2 \colon X \to [0, +\infty]}$ be measurable, and let ${N, E, F \in \mathcal{M}.}$\
+**Remark 5.4 (Basic properties).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space, let ${f_1, f_2 \colon X \to [0, +\infty]}$ be measurable, and let ${N, E, F \in \mathcal{M}.}$\
 **(1)** If ${\mu(N) = 0,}$ then ${\int_N f_1 \, d\mu = 0.}$\
 **(2)** If ${f_1 \le f_2,}$ then ${\int_E f_1 \, d\mu \le \int_E f_2 \, d\mu.}$\
 **(3)** If ${E \subset F,}$ then ${\int_E f_1 \, d\mu \le \int_F f_1 \, d\mu.}$\
@@ -58,7 +68,7 @@ $$
 **(6)** If ${E \cap F = \emptyset,}$ then ${\int_E f_1 \, d\mu + \int_F f_1 \, d\mu = \int_{E \cup F} f_1 \, d\mu.}$\
 Properties (2) and (3) are called *monotonicity*, and properties (4) and (5) *linearity*.
 
-**Proposition 5 (Measure induced by simple functions).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space, let ${s \colon X \to [0, +\infty]}$ be simple, and let ${\nu \colon \mathcal{M} \to [0, +\infty]}$ be defined by
+**Proposition 5.5 (Measure induced by simple functions).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space, let ${s \colon X \to [0, +\infty]}$ be simple, and let ${\nu \colon \mathcal{M} \to [0, +\infty]}$ be defined by
 
 $$
 \nu(E) := \int_E s \, d\mu.
@@ -66,7 +76,7 @@ $$
 
 Then $\nu$ is a measure.
 
-**Proof (sketch).** Only the $\sigma$-additivity of $\nu$ is proved. Let ${(E_m) \subset \mathcal{M}}$ be pairwise disjoint, let ${E = \bigcup_m E_m,}$ and write $s$ as in Definition 1, so that ${D_i \cap E = \bigcup_m (D_i \cap E_m)}$ for every ${i,}$ as in Figure 2. The fourth equality below is the $\sigma$&#8288;-additivity of ${\mu{:}}$
+**Proof (sketch).** Only the $\sigma$-additivity of $\nu$ is proved. Let ${(E_m) \subset \mathcal{M}}$ be pairwise disjoint, let ${E = \bigcup_m E_m,}$ and write $s$ as in Definition 5.1, so that ${D_i \cap E = \bigcup_m (D_i \cap E_m)}$ for every ${i,}$ as in Figure 5.2. The fourth equality below is the $\sigma$&#8288;-additivity of ${\mu{:}}$
 
 $$
 \begin{aligned}
@@ -83,9 +93,9 @@ and ${\int_{E_m} s \, d\mu = \nu(E_m)}$ for every ${m.}$ $\blacksquare$
 
 <Pieces />
 
-**Figure 2.** The drawing of the proof: a set $D_i$ and three of the pairwise disjoint sets ${E_m,}$ here ${E_1,}$ $E_2$ and ${E_3,}$ with the pieces ${D_i \cap E_m}$ shaded.
+**Figure 5.2.** The drawing of the proof: a set $D_i$ and three of the pairwise disjoint sets ${E_m,}$ here ${E_1,}$ $E_2$ and ${E_3,}$ with the pieces ${D_i \cap E_m}$ shaded.
 
-**Remark 6.** Let ${X = \mathbb{N},}$ ${\mathcal{M} = \mathcal{P}(\mathbb{N})}$ and ${\mu = \mu_\#,}$ the counting measure. In this case a function ${f \colon \mathbb{N} \to [0, +\infty]}$ is a sequence ${(f_m),}$ with ${f_m = f(m) \ge 0,}$ as in Figure 3, and
+**Remark 5.6.** Let ${X = \mathbb{N},}$ ${\mathcal{M} = \mathcal{P}(\mathbb{N})}$ and ${\mu = \mu_\#,}$ the counting measure. In this case a function ${f \colon \mathbb{N} \to [0, +\infty]}$ is a sequence ${(f_m),}$ with ${f_m = f(m) \ge 0,}$ as in Figure 5.3, and
 
 $$
 \int_{\mathbb{N}} f \, d\mu_\# = \sum_{m=0}^{\infty} f_m.
@@ -93,9 +103,9 @@ $$
 
 <Counting />
 
-**Figure 3.** The drawing of Remark 6: the values ${f_0,}$ ${f_1,}$ $f_2$ and $f_3$ of a sequence, as bars over the points ${0,}$ ${1,}$ $2$ and $3$ of ${\mathbb{N}.}$
+**Figure 5.3.** The drawing of Remark 5.6: the values ${f_0,}$ ${f_1,}$ $f_2$ and $f_3$ of a sequence, as bars over the points ${0,}$ ${1,}$ $2$ and $3$ of ${\mathbb{N}.}$
 
-**Remark 7.** Let ${(X, \mathcal{M}, \mu)}$ be a complete measure space and let ${f, g \colon X \to [0, +\infty]}$ be measurable. If ${f = g}$ almost everywhere, then
+**Remark 5.7.** Let ${(X, \mathcal{M}, \mu)}$ be a complete measure space and let ${f, g \colon X \to [0, +\infty]}$ be measurable. If ${f = g}$ almost everywhere, then
 
 $$
 \int_X f \, d\mu = \int_X g \, d\mu.
@@ -111,11 +121,11 @@ $$
 \end{aligned}
 $$
 
-The integrals over $N$ are $0$ by (1) of Remark 4. $\blacksquare$
+The integrals over $N$ are $0$ by (1) of Remark 5.4. $\blacksquare$
 
-**Example 8.** On $\mathbb{R}$ with the Lebesgue measure ${\lambda,}$ the function $\chi_{\mathbb{Q}}$ satisfies ${\chi_{\mathbb{Q}} = 0}$ almost everywhere. Hence ${\int_{\mathbb{R}} \chi_{\mathbb{Q}} \, d\lambda = 0}$ by Remark 7. The Riemann integral of this function does not exist.
+**Example 5.8.** On $\mathbb{R}$ with the Lebesgue measure ${\lambda,}$ the function $\chi_{\mathbb{Q}}$ satisfies ${\chi_{\mathbb{Q}} = 0}$ almost everywhere. Hence ${\int_{\mathbb{R}} \chi_{\mathbb{Q}} \, d\lambda = 0}$ by Remark 5.7. The Riemann integral of this function does not exist.
 
-**Proposition 9 (Chebyshev inequality, or Markov inequality).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space, let ${f \colon X \to [0, +\infty]}$ be measurable and let ${c \in (0, +\infty).}$ Then
+**Proposition 5.9 (Chebyshev inequality, or Markov inequality).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space, let ${f \colon X \to [0, +\infty]}$ be measurable and let ${c \in (0, +\infty).}$ Then
 
 $$
 c \, \mu(\{ f > c \}) \le \int_{\{ f > c \}} f \, d\mu \le \int_X f \, d\mu,
@@ -123,7 +133,7 @@ $$
 
 where ${\{ f > c \} = \{ x \in X : f(x) > c \}.}$
 
-**Proof (complete).** By monotonicity with respect to the domain of integration, (3) of Remark 4, and by monotonicity with respect to the function, (2) of Remark 4,
+**Proof (complete).** By monotonicity with respect to the domain of integration, (3) of Remark 5.4, and by monotonicity with respect to the function, (2) of Remark 5.4,
 
 $$
 \int_X f \, d\mu \ge \int_{\{ f > c \}} f \, d\mu \ge \int_{\{ f > c \}} c \, d\mu = c \, \mu(\{ f > c \}). \tag*{$\blacksquare$}
@@ -131,11 +141,11 @@ $$
 
 From now on, the measure space ${(X, \mathcal{M}, \mu)}$ is assumed complete.
 
-**Corollary 10.** Let ${(X, \mathcal{M}, \mu)}$ be a complete measure space, let ${f \colon X \to [0, +\infty]}$ be measurable and let ${E \in \mathcal{M}.}$\
+**Corollary 5.10.** Let ${(X, \mathcal{M}, \mu)}$ be a complete measure space, let ${f \colon X \to [0, +\infty]}$ be measurable and let ${E \in \mathcal{M}.}$\
 **(1)** ${\int_E f \, d\mu = 0}$ if and only if ${f = 0}$ almost everywhere on ${E.}$ This is the *vanishing lemma for nonnegative functions*.\
 **(2)** If ${\int_X f \, d\mu < +\infty,}$ then ${\mu(\{ f = +\infty \}) = 0.}$
 
-**Proof (sketch).** Only (1) is proved. If ${f = 0}$ almost everywhere on ${E,}$ then ${\int_E f \, d\mu = 0}$ by Remark 7. Conversely, suppose that ${\int_E f \, d\mu = 0,}$ and for every ${m \in \mathbb{N}}$ with ${m \ge 1}$ let
+**Proof (sketch).** Only (1) is proved. If ${f = 0}$ almost everywhere on ${E,}$ then ${\int_E f \, d\mu = 0}$ by Remark 5.7. Conversely, suppose that ${\int_E f \, d\mu = 0,}$ and for every ${m \in \mathbb{N}}$ with ${m \ge 1}$ let
 
 $$
 E_m = \Big\{ x \in E : f(x) > \frac{1}{m} \Big\}.
@@ -147,7 +157,7 @@ $$
 \bigcup_m E_m = \{ x \in E : f(x) > 0 \},
 $$
 
-and the goal is to prove that this set has measure zero. By Proposition 9 with ${c = 1/m,}$ applied on ${E,}$
+and the goal is to prove that this set has measure zero. By Proposition 5.9 with ${c = 1/m,}$ applied on ${E,}$
 
 $$
 \mu(E_m) \le m \int_E f \, d\mu = 0,
@@ -161,7 +171,7 @@ $$
 
 ### Real valued functions
 
-**Definition 11 (Integrable function, Lebesgue integral).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space and let ${f \colon X \to \mathbb{R}}$ be measurable.\
+**Definition 5.11 (Integrable function, Lebesgue integral).** Let ${(X, \mathcal{M}, \mu)}$ be a measure space and let ${f \colon X \to \mathbb{R}}$ be measurable.\
 **(i)** The function $f$ is said to be *integrable* if ${\int_X |f| \, d\mu < +\infty.}$
 
 **(ii)** If $f$ is integrable, we define the Lebesgue integral of $f$ as the real number
@@ -178,7 +188,7 @@ $$
 
 <Parts />
 
-**Figure 4.** The idea of Definition 11: a function ${f,}$ its positive part ${f^+,}$ and its negative part ${f^-,}$ dashed, which is the part of $f$ below the axis reflected above it.
+**Figure 5.4.** The idea of Definition 5.11: a function ${f,}$ its positive part ${f^+,}$ and its negative part ${f^-,}$ dashed, which is the part of $f$ below the axis reflected above it.
 
 **Notation.** The integrable functions form the set
 
@@ -188,7 +198,7 @@ $$
 
 also written ${\mathcal{L}^1(X)}$ or ${\mathcal{L}^1.}$ The calligraphic $\mathcal{L}^1$ is different from ${L^1.}$
 
-**Remark 12.** Let ${(X, \mathcal{M}, \mu)}$ be a measure space and let ${f \colon X \to \mathbb{R}}$ be measurable.\
+**Remark 5.12.** Let ${(X, \mathcal{M}, \mu)}$ be a measure space and let ${f \colon X \to \mathbb{R}}$ be measurable.\
 **(1)** ${f \in \mathcal{L}^1}$ if and only if ${|f| \in \mathcal{L}^1,}$ if and only if $f^+$ and $f^-$ belong to ${\mathcal{L}^1.}$\
 **(2)** If ${f \in \mathcal{L}^1,}$ then ${\bigl| \int_X f \, d\mu \bigr| \le \int_X |f| \, d\mu.}$
 
@@ -204,7 +214,7 @@ $$
 
 since ${f^+ + f^- = |f|.}$ $\blacksquare$
 
-**Remark 13.** The set ${\mathcal{L}^1(X, \mathcal{M}, \mu)}$ is a vector space, and the map
+**Remark 5.13.** The set ${\mathcal{L}^1(X, \mathcal{M}, \mu)}$ is a vector space, and the map
 
 $$
 \begin{aligned}
@@ -221,7 +231,7 @@ $$
 
 for all ${\alpha, \beta \in \mathbb{R}}$ and ${f, g \in \mathcal{L}^1.}$
 
-**Proposition 14 (Vanishing lemma for real valued functions).** Let ${(X, \mathcal{M}, \mu)}$ be a complete measure space and let ${f, g \in \mathcal{L}^1(X, \mathcal{M}, \mu).}$ The following are equivalent:\
+**Proposition 5.14 (Vanishing lemma for real valued functions).** Let ${(X, \mathcal{M}, \mu)}$ be a complete measure space and let ${f, g \in \mathcal{L}^1(X, \mathcal{M}, \mu).}$ The following are equivalent:\
 **(1)** ${f = g}$ almost everywhere;\
 **(2)** ${\int_X |f - g| \, d\mu = 0;}$\
 **(3)** ${\int_E f \, d\mu = \int_E g \, d\mu}$ for every ${E \in \mathcal{M}.}$\
@@ -238,7 +248,7 @@ $$
 \end{aligned}
 $$
 
-where the first inequality is (2) of Remark 12, the second is monotonicity and the last equality is the hypothesis (2).
+where the first inequality is (2) of Remark 5.12, the second is monotonicity and the last equality is the hypothesis (2).
 
 To prove that (3) implies ${(1),}$ let ${E = \{ x \in X : f(x) \ge g(x) \}.}$ We prove that ${f = g}$ almost everywhere on ${E;}$ in the same way one gets ${f = g}$ almost everywhere on ${\{ f \le g \}.}$ By ${(3),}$
 
@@ -246,11 +256,11 @@ $$
 0 = \int_E f \, d\mu - \int_E g \, d\mu = \int_E (f - g) \, d\mu,
 $$
 
-where ${f - g \ge 0}$ on ${E.}$ Hence ${f - g = 0}$ almost everywhere on $E$ by the vanishing lemma for nonnegative functions, (1) of Corollary 10. $\blacksquare$
+where ${f - g \ge 0}$ on ${E.}$ Hence ${f - g = 0}$ almost everywhere on $E$ by the vanishing lemma for nonnegative functions, (1) of Corollary 5.10. $\blacksquare$
 
 **Notation.** The set of the *continuous functions with compact support*, the continuous functions from $\mathbb{R}^N$ to $\mathbb{R}$ whose [support](https://en.wikipedia.org/wiki/Support_(mathematics)) is compact, is denoted ${C_c(\mathbb{R}^N).}$
 
-**Theorem 15 (Vanishing for $\lambda$ with respect to other classes of functions).** Let ${f \colon \mathbb{R}^N \to \mathbb{R}}$ with ${f \in \mathcal{L}^1(\mathbb{R}^N, \mathcal{L}(\mathbb{R}^N), \lambda).}$ If
+**Theorem 5.15 (Vanishing for $\lambda$ with respect to other classes of functions).** Let ${f \colon \mathbb{R}^N \to \mathbb{R}}$ with ${f \in \mathcal{L}^1(\mathbb{R}^N, \mathcal{L}(\mathbb{R}^N), \lambda).}$ If
 
 $$
 \int_{\mathbb{R}^N} f g \, d\lambda = 0 \qquad \text{for every } g \in C_c(\mathbb{R}^N),
@@ -264,7 +274,7 @@ $$
 C_c^\infty(a, b) := C_c((a, b)) \cap C^\infty((a, b)).
 $$
 
-**Corollary 16 (Vanishing and constancy on intervals).** Let ${f \in \mathcal{L}^1((a, b), \mathcal{L}((a, b)), \lambda).}$\
+**Corollary 5.16 (Vanishing and constancy on intervals).** Let ${f \in \mathcal{L}^1((a, b), \mathcal{L}((a, b)), \lambda).}$\
 **(1)** If ${\int_{(a, b)} f g \, d\lambda = 0}$ for every ${g \in C_c^\infty(a, b),}$ then ${f = 0}$ almost everywhere.\
 **(2)** If ${\int_{(a, b)} f g' \, d\lambda = 0}$ for every ${g \in C_c^\infty(a, b),}$ then there exists ${c \in \mathbb{R}}$ such that ${f = c}$ almost everywhere.\
 **(3)** If ${\int_{(a, b)} f g \, d\lambda = 0}$ for every ${g \in C_c^\infty(a, b)}$ such that ${\int_{(a, b)} g \, d\lambda = 0,}$ then there exists ${c \in \mathbb{R}}$ such that ${f = c}$ almost everywhere.
@@ -273,7 +283,7 @@ $$
 
 **Notation.** In this part, ${\int_{(a, b)} f \, d\lambda}$ denotes the Lebesgue integral and ${\int_a^b f \, dx}$ the Riemann integral.
 
-**Theorem 17 (Comparison of Lebesgue and Riemann integrals).** **(1)** Let ${a, b \in \mathbb{R}}$ with ${a < b,}$ and let ${f \colon [a, b] \to \mathbb{R}}$ be Riemann integrable. Then ${f \in \mathcal{L}^1([a, b], \mathcal{L}([a, b]), \lambda)}$ and
+**Theorem 5.17 (Comparison of Lebesgue and Riemann integrals).** **(1)** Let ${a, b \in \mathbb{R}}$ with ${a < b,}$ and let ${f \colon [a, b] \to \mathbb{R}}$ be Riemann integrable. Then ${f \in \mathcal{L}^1([a, b], \mathcal{L}([a, b]), \lambda)}$ and
 
 $$
 \int_{[a, b]} f \, d\lambda = \int_a^b f \, dx.
@@ -289,7 +299,7 @@ where the right-hand side is the Riemann integral in the generalized sense.
 
 ### The function $(\sin x)/x$
 
-**Example 18.** Let ${f \colon [\pi, +\infty) \to \mathbb{R}}$ be given by ${f(x) = (\sin x)/x.}$\
+**Example 5.18.** Let ${f \colon [\pi, +\infty) \to \mathbb{R}}$ be given by ${f(x) = (\sin x)/x.}$\
 **(i)** The function $f$ is Riemann integrable in the generalized sense. Integration by parts gives, for every ${R > \pi,}$
 
 $$
@@ -335,6 +345,6 @@ since the last series behaves like the [harmonic series](https://en.wikipedia.or
 
 <Sinc client:visible />
 
-**Figure 5.** Above, the function $(\sin x)/x$ on ${[\pi, (N+1)\pi],}$ with the regions above and below the axis. Below, its absolute value and, under it on each ${[m\pi, (m+1)\pi),}$ the function ${\lvert \sin x \rvert/((m+1)\pi)}$ used for (ii), whose integral ${2/(\pi(m+1))}$ is the shaded region. The slider sets ${N.}$
+**Figure 5.5.** Above, the function $(\sin x)/x$ on ${[\pi, (N+1)\pi],}$ with the regions above and below the axis. Below, its absolute value and, under it on each ${[m\pi, (m+1)\pi),}$ the function ${\lvert \sin x \rvert/((m+1)\pi)}$ used for (ii), whose integral ${2/(\pi(m+1))}$ is the shaded region. The slider sets ${N.}$
 
 From now on, ${\int_a^b f}$ and ${\int_a^b f \, d\lambda}$ denote Lebesgue integrals over intervals, and every integral is understood in the sense of Lebesgue.

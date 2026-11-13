@@ -1,5 +1,5 @@
 <script>
-  // Theorem 1, the drawing of the proof with an instance on an interval X,
+  // Theorem 6.1, the drawing of the proof with an instance on an interval X,
   // μ = λ: the function f, the level a_k of s over A_k, the dotted level
   // t a_k, the first functions f_j with j ≥ n, faint, and f_n in the accent.
   // On the axis the set B_{k,n}, where every f_j with j ≥ n is at least t a_k,

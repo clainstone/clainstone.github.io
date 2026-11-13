@@ -55,11 +55,15 @@ it for its own task.
    Arrows inside mathematics are mathematics and are fine.
 3. **Minimal.** Nothing that was not asked for: no search, newsletter,
    comments, cookie banner, icon set, emoji, badge, stock image, decorative
-   gradient, large shadow or animated background.
+   gradient, large shadow or animated background. The index of a thread of
+   lectures was asked for: its button, panel and blur are part of the design
+   (DESIGN.md 4.8).
 4. **No JavaScript in the shell** beyond the inline theme scripts and the
    404 page's trailing-slash redirect. A post page adds one script, the
-   previews of cross-references (`src/scripts/xref-preview/`); otherwise
-   JavaScript reaches a page only through the islands a post mounts.
+   previews of cross-references (`src/scripts/xref-preview/`), and in a
+   thread with an index the index's own (`src/scripts/lecture-index.js`);
+   otherwise JavaScript reaches a page only through the islands a post
+   mounts.
 5. **Content and code stay apart.** Posts, threads and the site's own data
    live in `content/`; only interface words live in the code. While writing
    a post, do not touch layouts, styles, the toolkit or other posts; build

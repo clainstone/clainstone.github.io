@@ -1,5 +1,5 @@
 <script>
-  // Remark 13, the drawing of the lecture, for the n and the ε of the sliders:
+  // Remark 8.13, the drawing of the lecture, for the n and the ε of the sliders:
   // g_n(x) = (x/2)^n on [0, 2], solid, and on the left of 0, dashed; three
   // levels M at or above 1; the level M = 1 − ε; the part of the graph above it,
   // thick; dotted lines down to the axis, where the set {|g_n| > 1 − ε} near 2,

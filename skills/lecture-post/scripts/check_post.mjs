@@ -10,7 +10,10 @@
 //    arrows, em dashes or double hyphens, no first person singular, no
 //    sentence about the professor, the exam or the notes. Leftover shorthand,
 //    evaluative words and logic symbols in prose are warnings.
-// 3. Build of the whole site with `make build`.
+// 3. Build of the whole site with `make build`. In a thread with an index,
+//    the build's list of problems for this post (src/lib/statements.ts): a
+//    number without the lecture's prefix, a counter out of order, a statement
+//    without name or description, a description too long or malformed.
 // 4. The built page: visible text without KaTeX, KaTeX errors, every
 //    cross-reference resolved and leading to an id that exists, every
 //    data-xref-part and data-xref-lead naming an id of the page, and the
@@ -181,6 +184,20 @@ for (const m of source.matchAll(/^import\s+\w+\s+from\s+'(\.\/[^']+)';?$/gm)) {
   if (!existsSync(join(postDir, m[1]))) error(`import ${m[1]} does not exist in the post folder`);
 }
 
+// Code files that the page no longer reaches: a removed figure takes its files with it.
+{
+  const reached = new Set();
+  const visit = (file) => {
+    if (reached.has(file) || !existsSync(join(postDir, file))) return;
+    reached.add(file);
+    for (const m of readFileSync(join(postDir, file), 'utf8').matchAll(/from\s+'\.\/([^'/]+)'/g)) visit(m[1]);
+  };
+  visit('index.mdx');
+  for (const f of readdirSync(postDir).filter((f) => /\.(svelte|js|ts|mjs)$/.test(f)).sort()) {
+    if (!reached.has(f)) warn(`${f} is not used by the page: delete it with the figure it belonged to`);
+  }
+}
+
 // ---- 3. build ---------------------------------------------------------------
 
 const env = { ...process.env, PATH: `${HOME}/.local/node/bin:${process.env.PATH ?? ''}` };
@@ -199,6 +216,12 @@ if (!flags.has('--no-build')) {
 // ---- 4. built page -------------------------------------------------------------
 
 const dist = join(SITE, 'dist');
+// In a thread with an index (src/lib/statements.ts), the build lists what
+// breaks the thread's numbering or lacks a description, post by post.
+const indexFile = join(dist, 'threads', thread, 'statements.json');
+if (existsSync(indexFile)) {
+  for (const p of JSON.parse(readFileSync(indexFile, 'utf8')).problems) if (p.post === id) error(`index: ${p.message}`);
+}
 const pageFile = join(dist, 'threads', thread, `${slug}.html`);
 if (!existsSync(pageFile)) {
   error(`${pageFile} was not built${flags.has('--no-build') ? ' (run without --no-build)' : ''}`);

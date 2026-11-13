@@ -1,5 +1,5 @@
 <script>
-  // The drawing of the proof of Step 1 (Theorem 18), an instance in R^2 with
+  // The drawing of the proof of Step 1 (Theorem 12.18), an instance in R^2 with
   // the Euclidean norm: M the horizontal line through 0, x_0 = (1.75, 1.3), so
   // that d(x_0, M) = 1.3; the thick part of M where
   // ‖x_0 − m‖ ≤ d(x_0, M)/(1 − ε), for the ε of the first slider; m_0 in it,

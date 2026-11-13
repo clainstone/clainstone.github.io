@@ -1,5 +1,5 @@
 <script>
-  // Step 1 of the proof of Theorem 18 (ii): two disjoint sets E and F, and
+  // Step 1 of the proof of Theorem 2.18 (ii): two disjoint sets E and F, and
   // the test set Z = E ∪ F.
 </script>
 

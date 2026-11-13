@@ -1,5 +1,5 @@
 <script>
-  // Example 14, the drawing of the lecture: f_n = (1/n^α) χ_[0, n] on ℝ, the
+  // Example 7.14, the drawing of the lecture: f_n = (1/n^α) χ_[0, n] on ℝ, the
   // region under its graph, of area n^(1 − α), the dashed level ε, and the set
   // {f_n > ε} = [0, n] hatched on the axis when 1/n^α > ε (otherwise it is
   // empty). The sliders set n, α and ε.

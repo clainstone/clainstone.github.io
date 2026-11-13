@@ -16,7 +16,9 @@ section, a redesign, a change of host.
 The bar holds the name (to the main page), Threads and the theme switch,
 nothing else. The footer holds the contacts and the feed. The site also
 generates `/feed.xml`, `/sitemap.xml`, `/robots.txt`, a 1200 by 630 preview
-card per page (`/og/<path>.png`) and its icons. None of these is committed.
+card per page (`/og/<path>.png`), its icons, and for each thread with an
+index `/threads/<thread>/statements.json`, the list its posts' Index panel
+shows. None of these is committed.
 
 ## 2. Stack
 

@@ -21,6 +21,10 @@ export const threads = defineCollection({
     /** One sentence on what the thread is, under its title and in link previews. */
     description: z.string().optional(),
     status: z.enum(['active', 'closed']).default('active'),
+    /** A thread of numbered lectures: one numbering for the whole thread
+        ("Theorem 16.5" in the post with `lecture: 16`) and an index of every
+        statement, opened from a button in the margin of each post. */
+    index: z.boolean().default(false),
   }),
 });
 
@@ -39,6 +43,12 @@ export const posts = defineCollection({
     /** The day the post went online, when it differs from `date`. Orders Latest posts and the feed. */
     published: z.coerce.date().optional(),
     updated: z.coerce.date().optional(),
+    /** In a thread with an index: the number of the lecture, the prefix of
+        every label of the post ("Theorem 16.5"). */
+    lecture: z.number().int().positive().optional(),
+    /** In a thread with an index: a short description of each statement
+        whose label has no name, keyed by its label ("Remark 16.4"). */
+    index: z.record(z.string(), z.string()).optional(),
     summary: z.string().optional(),
     sample: z.boolean().default(false),
   }),

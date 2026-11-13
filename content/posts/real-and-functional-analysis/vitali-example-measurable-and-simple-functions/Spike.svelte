@@ -1,5 +1,5 @@
 <script>
-  // Example 9 (i), as in the drawing of the lecture: a function f on the real
+  // Example 4.9 (i), as in the drawing of the lecture: a function f on the real
   // line that is 0 at every point except one, where it is 1. The empty circle
   // marks the point of the axis that is not on the graph.
   const X0 = 30, X1 = 610, OY = 150, OX = 220, P = 380, UNIT = 90;

@@ -1,5 +1,5 @@
 <script>
-  // Theorem 4 (2), an instance with N = 2 as in the drawing of the lecture: a
+  // Theorem 3.4 (2), an instance with N = 2 as in the drawing of the lecture: a
   // set E covered by two rectangles, and x₀ + E covered by the same
   // rectangles translated by x₀.
   import { blob } from './shapes.js';

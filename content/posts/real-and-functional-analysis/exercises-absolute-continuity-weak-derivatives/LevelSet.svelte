@@ -1,5 +1,5 @@
 <script>
-  // Example 7 (3), the drawing of the lecture with the values f_n(±1) = 5^(−1/n)
+  // Example 11.7 (3), the drawing of the lecture with the values f_n(±1) = 5^(−1/n)
   // of (1), for the n and the ε of the sliders: the graph of f_n, zero and thick
   // outside [−1, 1]; the level M = 5^(−1/n) − ε; the set {f_n > M}, the two
   // intervals near −1 and 1, thick on the axis; dotted, the level 1.

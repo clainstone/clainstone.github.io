@@ -1,5 +1,5 @@
 <script>
-  // The drawing of Remark 12 (ii), as in the lecture: the two axes, the graph
+  // The drawing of Remark 15.12 (ii), as in the lecture: the two axes, the graph
   // of f, made of a branch over the negative half-line, a branch over the
   // positive half-line and the dot at the origin, and the label "graph f" with
   // its three arrows. The points are read off the lecture's drawing.

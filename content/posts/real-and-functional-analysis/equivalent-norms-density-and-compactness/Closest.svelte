@@ -1,5 +1,5 @@
 <script>
-  // The drawing of Example 11, an instance with N = 2 and V the horizontal
+  // The drawing of Example 12.11, an instance with N = 2 and V the horizontal
   // line through 0: the point x = (x_1, x_2) of the sliders, with x_2 > 0 so
   // that x ∉ V, the point v̄ = (x_1, 0) of V, the dotted segment from x to v̄
   // of length |x − v̄| = d(x, V), and a ball around a point x_0 that does not

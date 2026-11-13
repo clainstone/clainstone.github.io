@@ -1,5 +1,5 @@
 <script>
-  // Remark 7, the drawing of the lecture: f_n = n χ_[0, 1/n] on ℝ, the region of
+  // Remark 7.7, the drawing of the lecture: f_n = n χ_[0, 1/n] on ℝ, the region of
   // area 1 under its graph, the dashed level ε and the set {|f_n| > ε}, hatched
   // on the axis: it is [0, 1/n] when n > ε and empty otherwise. The sliders
   // set n and ε.
