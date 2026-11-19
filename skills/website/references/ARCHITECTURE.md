@@ -11,10 +11,12 @@ section, a redesign, a change of host.
 | Threads (`/threads`) | threads with post count and optional one-sentence description; closed threads last |
 | A thread (`/threads/<thread>`) | its posts, oldest first, with word count and date |
 | A post (`/threads/<thread>/<post>`) | thread, title, word count and dates, body, previous and next post; resting on a cross-reference shows its target in a preview |
+| Blog (`/blog`) | blog posts, newest first, with their date |
+| A blog post (`/blog/<post>`) | the kicker "Blog", title, date, body |
 | Not found (`/404`) | one line and links back; `noindex` |
 
-The bar holds the name (to the main page), Threads and the theme switch,
-nothing else. The footer holds the contacts and the feed. The site also
+The bar holds the name (to the main page), Threads, Blog and the theme
+switch, nothing else. The footer holds the contacts and the feed. The site also
 generates `/feed.xml`, `/sitemap.xml`, `/robots.txt`, a 1200 by 630 preview
 card per page (`/og/<path>.png`), its icons, and for each thread with an
 index `/threads/<thread>/statements.json`, the list its posts' Index panel
@@ -46,6 +48,7 @@ Posts, threads and the site's own data live in `content/`:
 | `photo.*` | the portrait, square |
 | `threads/<slug>.md` | frontmatter only: `title`, optional `description`, `status` (`active` or `closed`) |
 | `posts/<thread>/<slug>/index.mdx` | one post, with its components and assets in the same folder |
+| `blog/<slug>/index.mdx` | one blog post, with its files in the same folder |
 | `toolkit/` | the animation helpers, imported as `@toolkit/...` |
 
 Post frontmatter: `title` (`$...$` allowed); `date`, the date of the subject,

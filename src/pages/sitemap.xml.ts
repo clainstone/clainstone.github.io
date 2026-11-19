@@ -1,6 +1,6 @@
 // Every published page, at the address GitHub Pages serves it (no .html).
 import type { APIRoute } from 'astro';
-import { getPosts, getThreads, postUrl, threadUrl, publishedOf, isoDate } from '../lib/site';
+import { getPosts, getThreads, getBlogPosts, postUrl, threadUrl, blogUrl, publishedOf, isoDate } from '../lib/site';
 
 export const GET: APIRoute = async ({ site }) => {
   const posts = await getPosts();
@@ -11,6 +11,10 @@ export const GET: APIRoute = async ({ site }) => {
     rows.push([threadUrl(thread), own.sort((a, b) => b.getTime() - a.getTime())[0]]);
   }
   for (const p of posts) rows.push([postUrl(p), p.data.updated ?? publishedOf(p)]);
+  const blog = await getBlogPosts();
+  const blogLast = blog.map((p) => p.data.updated ?? p.data.date).sort((a, b) => b.getTime() - a.getTime())[0];
+  rows.push(['/blog', blogLast]);
+  for (const p of blog) rows.push([blogUrl(p), p.data.updated ?? p.data.date]);
   const body = rows
     .map(([path, last]) => `  <url><loc>${new URL(path, site)}</loc>${last ? `<lastmod>${isoDate(last)}</lastmod>` : ''}</url>`)
     .join('\n');

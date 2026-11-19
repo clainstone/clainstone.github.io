@@ -128,3 +128,12 @@ for, are the exceptions), "read more" chevrons.
 Compare screenshots before and after, at 1280 px, in light and dark. Look at
 the rhythm of the rows, the alignment of baselines, the weight of the muted
 text, the figures in both themes, and that nothing moved that should not.
+
+## 10. The Blog
+
+The Blog (list and posts) takes its type from Mia's AI Lab (mia-ai.net):
+Instrument Serif 400 for titles (3.25rem, 3.75rem for "Blog", tracking
+-0.02em), headings (2rem) and row titles, Geist for the text (0.9rem, 17 px,
+leading 1.65), and a kicker in Geist 500 capitals spaced 0.3em. Colours,
+the bar and the footer stay the site's. Songs are rows on hairlines: the
+genre in Instrument Serif at the left, the browser's player at the right.

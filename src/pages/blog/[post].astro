@@ -1,0 +1,34 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import '../../styles/blog.css';
+import { getBlogPosts, formatDate, isoDate, type BlogPost } from '../../lib/site';
+
+export async function getStaticPaths() {
+  const posts = await getBlogPosts();
+  return posts.map((post) => ({ params: { post: post.id }, props: { post } }));
+}
+const { post } = Astro.props as { post: BlogPost };
+const { Content } = await render(post);
+---
+<Base
+  title={post.data.title}
+  description={post.data.summary ?? `${post.data.title}, a post in the blog.`}
+  section="blog"
+  article={{ published: post.data.date, modified: post.data.updated, section: 'Blog' }}
+>
+  <article class="post blog blog-post">
+    <header>
+      <p class="kicker"><a href="/blog">Blog</a></p>
+      <h1 class="title">{post.data.title}</h1>
+      <p class="date">
+        <time datetime={isoDate(post.data.date)}>{formatDate(post.data.date)}</time>{
+          post.data.updated && <>{', updated '}<time datetime={isoDate(post.data.updated)}>{formatDate(post.data.updated)}</time></>
+        }
+      </p>
+    </header>
+    <div class="body">
+      <Content />
+    </div>
+  </article>
+</Base>

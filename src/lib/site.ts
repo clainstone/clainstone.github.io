@@ -4,6 +4,7 @@ import site from '../../content/site.json';
 
 export type Thread = CollectionEntry<'threads'>;
 export type Post = CollectionEntry<'posts'>;
+export type BlogPost = CollectionEntry<'blog'>;
 
 export const SITE = site;
 
@@ -12,7 +13,7 @@ const photos = import.meta.glob<{ default: ImageMetadata }>('../../content/photo
 export const PHOTO: ImageMetadata = Object.entries(photos).find(([p]) => p.endsWith(`/${site.photo}`))![1].default;
 
 /** When a post appeared on the site: `published`, else the date of its subject. */
-export const publishedOf = (post: Post) => post.data.published ?? post.data.date;
+export const publishedOf = (post: { data: { date: Date; published?: Date } }) => post.data.published ?? post.data.date;
 
 /** Posts, newest first by the date of their subject (a lecture's date). */
 export async function getPosts(): Promise<Post[]> {
@@ -60,6 +61,13 @@ export async function getThreads(): Promise<{ thread: Thread; count: number; las
   return rows.sort((a, b) => closed(a) - closed(b) || b.last.getTime() - a.last.getTime() || a.thread.data.title.localeCompare(b.thread.data.title));
 }
 
+/** Blog posts, newest first. */
+export async function getBlogPosts(): Promise<BlogPost[]> {
+  const all = await getCollection('blog');
+  return all.sort((a, b) => b.data.date.getTime() - a.data.date.getTime() || b.id.localeCompare(a.id));
+}
+
+export const blogUrl = (post: BlogPost) => `/blog/${post.id}`;
 export const postUrl = (post: Post) => `/threads/${post.id}`;
 export const threadUrl = (thread: Thread | string) => `/threads/${typeof thread === 'string' ? thread : thread.id}`;
 

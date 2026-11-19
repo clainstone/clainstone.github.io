@@ -1,0 +1,40 @@
+---
+/**
+ * One song of the post: its genre and a player. The MP3 is looked up among
+ * the files of this folder, so that a misspelt name stops the build. Songs
+ * are named by their genre only, on the page and in the file names. The
+ * player loads nothing before Play (preload="none"): the ten songs are 21 MB.
+ */
+interface Props { file: string; genre: string }
+const { file, genre } = Astro.props;
+const files = import.meta.glob<string>('./*.mp3', { eager: true, query: '?url', import: 'default' });
+const src = files[`./${file}`];
+if (!src) throw new Error(`Song: there is no ${file} beside the post`);
+---
+<li class="song">
+  <span class="genre">{genre}</span>
+  <audio controls preload="none" src={src} aria-label={genre}></audio>
+</li>
+
+<style>
+  .song {
+    display: grid;
+    grid-template-columns: 1fr 20rem;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 0.55rem 0;
+    border-top: 1px solid var(--rule);
+  }
+  .song:last-child { border-bottom: 1px solid var(--rule); }
+  .genre {
+    font: 400 1.5rem/1.15 var(--blog-serif);
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+  audio { display: block; width: 100%; height: 2.5rem; }
+  /* Chromium's grey panel, in the paper's control colour of either theme. */
+  audio::-webkit-media-controls-enclosure { background-color: var(--control-bg); }
+  /* With nothing loaded Chromium does not know the length and shows
+     "0:00 / 0:00": keep the elapsed time, drop the total. */
+  audio::-webkit-media-controls-time-remaining-display { display: none; }
+</style>

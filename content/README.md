@@ -31,6 +31,13 @@ post never touches a component or a layout.
   published post does not appear. Body: Markdown with mathematics (`$…$`, `$$…$$`), fenced
   code, images, and MDX imports for animations. The post's own components and
   assets sit in the same folder.
+- `blog/<post-slug>/index.mdx`: one blog post, a short post outside the
+  threads, listed at `/blog` newest first and shown at `/blog/<post-slug>`.
+  Frontmatter: `title`, `date` (the day it went online), optional `updated`,
+  optional `summary` (meta description and feed only), optional `sample: true`. Its files (audio,
+  video, its own components) sit in the same folder. The Blog has its own
+  type (Instrument Serif and Geist, `src/styles/blog.css`); the writing
+  rules below hold for it too.
 - `toolkit/`: the animation helpers every post can import as `@toolkit/…`.
 
 ## Writing rules

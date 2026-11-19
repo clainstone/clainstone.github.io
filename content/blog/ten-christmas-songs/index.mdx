@@ -1,0 +1,57 @@
+---
+title: "MiniMax Music 3 in llama.cpp: ten Christmas songs on two RTX\u00a05070\u00a0Ti"
+date: 2026-11-19
+summary: MiniMax Music 3 runs in llama.cpp, so I made ten Christmas songs with it on two RTX 5070 Ti, fully local. The setup, the generation stats and the ten songs, each named by its genre.
+---
+
+import Slide from './Slide.astro';
+import Song from './Song.astro';
+
+{/* The video of the slide: Slide.astro shows ./slide.mp4 when that file is in this folder, and nothing otherwise. */}
+
+<Slide />
+
+MiniMax Music 3 just landed in [llama.cpp](https://github.com/ggml-org/llama.cpp/pull/32435).
+
+So I made 10 Christmas songs on my 2x RTX 5070 Ti, fully local:
+
+90 s of music in 127 s per song\
+18.0 GiB of VRAM with Q8_0 (BF16 doesn't fit)\
+about 10.6 Wh per song, 21 min for all 10
+
+Seed 42, first take, no cherry-picking. Prompts and lyrics by Claude.
+
+Gotta say, way better than my first try this morning. The one in the video is the 1950s big band swing.
+
+## Setup
+
+**Model.** MiniMax Music 3, [Q8_0 GGUF](https://huggingface.co/ggml-org/MiniMax-Music3-GGUF) (ggml-org), mmproj in BF16. The BF16 weights did not fit in 2 x 16 GB.
+
+**Runtime.** llama-tts from llama.cpp, upstream master (edec462, 18 Nov 2026), split across both GPUs.
+
+**Machine.** 2x RTX 5070 Ti 16 GB, Intel Core Ultra 7 270K Plus, 64 GB RAM, Ubuntu 26.04.
+
+## Generation
+
+**Speed.** 90 s of stereo audio (44.1 kHz) per song in 127 s: 1.41 s of compute per second of music.
+
+**Memory and power.** Peak VRAM 18.0 GiB (12.6 GiB on GPU 0, 5.4 GiB on GPU 1). GPU 0 does most of the work: about 236 W against 57 W on GPU 1.
+
+**Energy.** About 10.6 Wh of GPU energy per song; 21 minutes and 106 Wh for all ten.
+
+**Sampling.** Seed 42, first take, no retries.
+
+## The ten songs
+
+<ol class="songs">
+  <Song file="01-big-band-swing.mp3" genre="1950s big band swing" />
+  <Song file="02-wall-of-sound.mp3" genre="1960s wall of sound" />
+  <Song file="03-folk-lullaby.mp3" genre="Acoustic folk lullaby" />
+  <Song file="04-synth-pop.mp3" genre="1980s synth-pop" />
+  <Song file="05-power-ballad.mp3" genre="Piano power ballad" />
+  <Song file="06-gospel.mp3" genre="Gospel" />
+  <Song file="07-indie-rock.mp3" genre="Indie rock" />
+  <Song file="08-rnb-slow-jam.mp3" genre="R&B slow jam" />
+  <Song file="09-bossa-nova.mp3" genre="Bossa nova" />
+  <Song file="10-dark-synthwave.mp3" genre="Dark synthwave" />
+</ol>

@@ -1,8 +1,9 @@
 // The link-preview card of every page: /og/index.png for the main page,
-// /og/threads.png, /og/threads/<thread>.png and /og/threads/<thread>/<post>.png.
+// /og/threads.png, /og/threads/<thread>.png, /og/threads/<thread>/<post>.png,
+// /og/blog.png and /og/blog/<post>.png.
 import type { APIRoute } from 'astro';
 import { cardPng, type Card } from '../../lib/cards';
-import { SITE, getPosts, getThreads, threadOf, formatDate, plain } from '../../lib/site';
+import { SITE, getPosts, getThreads, getBlogPosts, threadOf, formatDate, plain } from '../../lib/site';
 
 export async function getStaticPaths() {
   const paths: { params: { slug: string }; props: { card: Card } }[] = [
@@ -20,6 +21,13 @@ export async function getStaticPaths() {
     paths.push({
       params: { slug: `threads/${post.id}` },
       props: { card: { kicker: plain(thread.data.title), title: plain(post.data.title), note: formatDate(post.data.date) } },
+    });
+  }
+  paths.push({ params: { slug: 'blog' }, props: { card: { kicker: 'Blog', title: 'Short posts, outside the threads' } } });
+  for (const post of await getBlogPosts()) {
+    paths.push({
+      params: { slug: `blog/${post.id}` },
+      props: { card: { kicker: 'Blog', title: plain(post.data.title), note: formatDate(post.data.date) } },
     });
   }
   return paths;

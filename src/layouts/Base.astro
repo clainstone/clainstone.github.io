@@ -11,8 +11,8 @@ import { SITE, plain, isoDate } from '../lib/site';
 interface Props {
   title?: string;
   description?: string;
-  /** main | threads: the section of the bar this page belongs to */
-  section?: 'main' | 'threads';
+  /** main | threads | blog: the section of the bar this page belongs to */
+  section?: 'main' | 'threads' | 'blog';
   /** A post: its dates and thread, for the article tags of link previews. */
   article?: { published: Date; modified?: Date; section: string };
   /** Keep the page out of search engines (the 404 page). */
@@ -85,6 +85,7 @@ const current = (href: string, own: boolean) => (cleanPath === href ? 'page' : o
       <nav aria-label="Sections">
         <ul>
           <li><a href="/threads" aria-current={current('/threads', section === 'threads')}>Threads</a></li>
+          <li><a href="/blog" aria-current={current('/blog', section === 'blog')}>Blog</a></li>
         </ul>
       </nav>
       <button class="theme-toggle" type="button" aria-label="Switch to dark mode" title="Dark mode">

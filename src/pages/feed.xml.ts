@@ -1,11 +1,15 @@
 import rss from '@astrojs/rss';
 import type { APIContext } from 'astro';
-import { SITE, getRecentPosts, postUrl, plain, publishedOf } from '../lib/site';
+import { SITE, getRecentPosts, getBlogPosts, postUrl, blogUrl, plain, publishedOf } from '../lib/site';
 
 export async function GET(context: APIContext) {
-  const posts = await getRecentPosts();
+  // Thread posts and blog posts together, most recently published first.
+  const items = [
+    ...(await getRecentPosts()).map((p) => ({ data: p.data, link: postUrl(p) })),
+    ...(await getBlogPosts()).map((p) => ({ data: p.data, link: blogUrl(p) })),
+  ].sort((a, b) => publishedOf(b).getTime() - publishedOf(a).getTime());
   const site = context.site ?? new URL('http://localhost');
-  const newest = posts[0] ? publishedOf(posts[0]) : new Date(0);
+  const newest = items[0] ? publishedOf(items[0]) : new Date(0);
   return rss({
     title: SITE.name,
     description: SITE.description,
@@ -17,11 +21,11 @@ export async function GET(context: APIContext) {
       `<lastBuildDate>${newest.toUTCString()}</lastBuildDate>`,
       `<atom:link href="${new URL('/feed.xml', site)}" rel="self" type="application/rss+xml"/>`,
     ].join(''),
-    items: posts.map((p) => ({
+    items: items.map((p) => ({
       title: plain(p.data.title),
       pubDate: publishedOf(p),
       description: plain(p.data.summary ?? p.data.title),
-      link: postUrl(p),
+      link: p.link,
     })),
   });
 }

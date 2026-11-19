@@ -1,7 +1,7 @@
 # Site
 
-Alessandro Palliccia's personal website: Main and Threads, posts in MDX with
-mathematics, code and in-page animations. Astro 7, Svelte 5, static output,
+Alessandro Palliccia's personal website: Main, Threads and Blog, posts in MDX
+with mathematics, code and in-page animations. Astro 7, Svelte 5, static output,
 published on GitHub Pages by `.github/workflows/deploy.yml` on every push to
 `main`.
 
@@ -10,7 +10,8 @@ published on GitHub Pages by `.github/workflows/deploy.yml` on every push to
 Everything the site says is in `content/` (see `content/README.md`). A thread
 is `content/threads/<slug>.md`; a post is
 `content/posts/<thread>/<post>/index.mdx`, with its animation components in
-the same folder.
+the same folder. A blog post is `content/blog/<post>/index.mdx`, with its
+files (audio, video, components) beside it.
 
 ## Run
 

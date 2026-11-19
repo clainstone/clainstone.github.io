@@ -1,0 +1,26 @@
+---
+/**
+ * The video of the slide, at the top of the post. Alessandro picks one of the
+ * five versions later: copy it into this folder as slide.mp4 and it appears
+ * here, with its sound (the swing song). Until that file exists the glob
+ * finds nothing, nothing is shown, and the page builds and reads as it is.
+ */
+const slide = Object.values(import.meta.glob<string>('./slide.mp4', { eager: true, query: '?url', import: 'default' }))[0];
+---
+{slide && (
+  <figure class="slide">
+    <video src={slide} controls playsinline preload="metadata" aria-label="The slide of the ten songs, with the swing song"></video>
+  </figure>
+)}
+
+<style>
+  /* Room under the video before the text, more than between paragraphs. */
+  .slide { margin: 0 0 1.75rem; }
+  video {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 4px;
+    background: var(--code-bg);
+  }
+</style>

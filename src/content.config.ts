@@ -1,18 +1,20 @@
 import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
-import { globSync, readFileSync } from 'node:fs';
+import { existsSync, globSync, readFileSync } from 'node:fs';
 
 // The content lives in ./content. Paths are relative to the project root.
 const CONTENT = './content';
 
 // Sample posts (`sample: true`) are demonstrations: the dev server shows them,
 // a build leaves them out of the collection so their components are not bundled.
-const SAMPLES = import.meta.env.DEV
-  ? []
-  : globSync('**/index.mdx', { cwd: `${CONTENT}/posts` }).filter((file) =>
-      /^sample:\s*true\s*$/m.test(readFileSync(`${CONTENT}/posts/${file}`, 'utf8').split(/^---\s*$/m)[1] ?? ''),
-    );
+const samplesIn = (dir: string) =>
+  import.meta.env.DEV || !existsSync(`${CONTENT}/${dir}`)
+    ? []
+    : globSync('**/index.mdx', { cwd: `${CONTENT}/${dir}` }).filter((file) =>
+        /^sample:\s*true\s*$/m.test(readFileSync(`${CONTENT}/${dir}/${file}`, 'utf8').split(/^---\s*$/m)[1] ?? ''),
+      );
+const SAMPLES = samplesIn('posts');
 
 export const threads = defineCollection({
   loader: glob({ pattern: '*.md', base: `${CONTENT}/threads` }),
@@ -54,4 +56,23 @@ export const posts = defineCollection({
   }),
 });
 
-export const collections = { threads, posts };
+/** Blog posts: short posts outside the threads, one folder each with the
+    post's own files ("ten-christmas-songs/index.mdx"). */
+export const blog = defineCollection({
+  loader: glob({
+    pattern: ['*/index.mdx', ...samplesIn('blog').map((file) => `!${file}`)],
+    base: `${CONTENT}/blog`,
+    generateId: ({ entry }) => entry.replace(/\/index\.mdx$/, ''),
+  }),
+  schema: z.object({
+    title: z.string(),
+    /** The day the post went online: it orders the list and the feed. */
+    date: z.coerce.date(),
+    updated: z.coerce.date().optional(),
+    /** Meta description and feed only. */
+    summary: z.string().optional(),
+    sample: z.boolean().default(false),
+  }),
+});
+
+export const collections = { threads, posts, blog };

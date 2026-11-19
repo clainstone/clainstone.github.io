@@ -8,8 +8,8 @@ check it.
 | File | Role |
 |---|---|
 | `astro.config.mjs` | integrations, KaTeX and Shiki, addresses, dev port, `@toolkit` alias, CI guard, og:image hook |
-| `src/content.config.ts` | collections `threads` and `posts`, schemas, sample filter (in a build, sample posts are excluded from the loader, so their islands are not bundled) |
-| `src/lib/site.ts` | `SITE`, `PHOTO`, `publishedOf`, `getPosts`, `getRecentPosts`, `getThreads`, `postsOf`, `threadOf`, `threadIdOf`, `postUrl`, `threadUrl`, `wordCount`, `formatWords`, `formatDate`, `isoDate`, `mathHtml`, `plain` |
+| `src/content.config.ts` | collections `threads`, `posts` and `blog`, schemas, sample filter (in a build, sample posts are excluded from the loader, so their islands are not bundled) |
+| `src/lib/site.ts` | `SITE`, `PHOTO`, `publishedOf`, `getPosts`, `getRecentPosts`, `getBlogPosts`, `getThreads`, `postsOf`, `threadOf`, `threadIdOf`, `postUrl`, `blogUrl`, `threadUrl`, `wordCount`, `formatWords`, `formatDate`, `isoDate`, `mathHtml`, `plain` |
 | `src/lib/cards.ts` | preview cards and icons with satori and resvg |
 | `src/lib/statements.ts` | the index of a thread of lectures: its statements, names and descriptions as HTML, and what breaks the thread's numbering |
 | `src/components/M.astro` | a frontmatter string with its `$...$` typeset |
@@ -22,6 +22,7 @@ check it.
 | `src/scripts/xref-preview/` | previews of cross-references: `index.js` (intent, nested cards, events), `source.js` (a target's blocks, fetches of other posts, their styles), `card.js` (the card, its scale and place), `jump.js` (the wash and the flight on click) |
 | `src/plugins/cross-refs.mjs` | ids for numbered statements, figures and tagged displays; links from every mention of them, across the posts of a thread |
 | `src/styles/global.css` | every style and token |
+| `src/styles/blog.css`, `src/fonts/` | the Blog's type, loaded by `src/pages/blog/` only: Instrument Serif and Geist, self-hosted woff2 with their licences |
 | `content/toolkit/` | `Canvas.svelte`, `Slider.svelte`, `Figure.astro`, `Video.astro`, `loop.js`, `toolkit.css` |
 | `Makefile` | `help`, `start`, `stop`, `status`, `logs`, `dev`, `preview`, `build`, `check-site` |
 
@@ -102,6 +103,14 @@ saved before the thread had one numbering (`#theorem-19`) is sent to the
 new id (`#theorem-13-19`). Its entries are `a.xref` links, so the preview
 script shows their targets; cards sit above the panel (their `z-index` is
 20 and up, the panel's 10).
+
+**Blog.** `src/pages/blog/index.astro` lists the `blog` collection,
+`src/pages/blog/[post].astro` renders one post inside `<article class="post
+blog blog-post">`, so that the body styles of global.css apply and
+blog.css changes mostly the type. Blog posts are in the feed, the sitemap and
+the cards; the main page's Latest posts lists thread posts only. Audio and
+video in a blog post are files of its folder, found by `import.meta.glob`
+in a component of the post, so that a missing optional file builds.
 
 **Build hooks.** After the build, every og:image must exist in `dist/`. A new
 page type therefore needs its card path in `src/pages/og/[...slug].png.ts`,

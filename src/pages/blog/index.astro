@@ -1,0 +1,19 @@
+---
+import Base from '../../layouts/Base.astro';
+import '../../styles/blog.css';
+import { getBlogPosts, blogUrl, formatDate, isoDate, SITE } from '../../lib/site';
+const posts = await getBlogPosts();
+---
+<Base title="Blog" description={`Short posts by ${SITE.name}, outside the threads.`} section="blog">
+  <div class="blog blog-list">
+    <h1 class="title">Blog</h1>
+    <ul class="entries">
+      {posts.map((post) => (
+        <li>
+          <a href={blogUrl(post)}>{post.data.title}</a>{' '}
+          <time class="date" datetime={isoDate(post.data.date)}>{formatDate(post.data.date)}</time>
+        </li>
+      ))}
+    </ul>
+  </div>
+</Base>

@@ -12,7 +12,7 @@
 //    every data-xref-part and data-xref-lead names an id of the page; a post
 //    with cross-references loads the preview script (the module script that
 //    contains "xref-card"), at most 7168 bytes gzipped with the chunks it
-//    imports; every published post is built and no sample post is. For each
+//    imports; every published post and blog post is built and no sample is. For each
 //    thread with an index, statements.json reports no problem, every entry
 //    leads to an id that exists and every formula typesets.
 // 3. A headless browser at 1280 px, in light and in dark: console errors and
@@ -214,6 +214,16 @@ for (const file of readdirSync(postsDir, { recursive: true }).map(String).filter
   const built = existsSync(join(DIST, 'threads', `${id}.html`));
   if (sample && built) error(`sample post ${id} is in the build: it would be published`);
   if (!sample && !built && !ONLY.length) error(`post ${id} is not in the build`);
+}
+// The same for blog posts: content/blog/<slug>/index.mdx is /blog/<slug>.
+const blogDir = join(SITE, 'content', 'blog');
+for (const file of existsSync(blogDir) ? readdirSync(blogDir, { recursive: true }).map(String).filter((f) => f.endsWith('/index.mdx')) : []) {
+  const id = file.replace(/\/index\.mdx$/, '');
+  const head = readFileSync(join(blogDir, file), 'utf8').split(/^---\s*$/m)[1] ?? '';
+  const sample = /^sample:\s*true\s*$/m.test(head);
+  const built = existsSync(join(DIST, 'blog', `${id}.html`));
+  if (sample && built) error(`sample blog post ${id} is in the build: it would be published`);
+  if (!sample && !built && !ONLY.length) error(`blog post ${id} is not in the build`);
 }
 
 // ---- 3. browser ----------------------------------------------------------------------
