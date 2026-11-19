@@ -35,9 +35,9 @@ post never touches a component or a layout.
   threads, listed at `/blog` newest first and shown at `/blog/<post-slug>`.
   Frontmatter: `title`, `date` (the day it went online), optional `updated`,
   optional `summary` (meta description and feed only), optional `sample: true`. Its files (audio,
-  video, its own components) sit in the same folder. The Blog has its own
-  type (Instrument Serif and Geist, `src/styles/blog.css`); the writing
-  rules below hold for it too.
+  video, its own components) sit in the same folder. The Blog uses the
+  site's type, as the thread posts do (`src/styles/blog.css` adds only its
+  layout); the writing rules below hold for it too.
 - `toolkit/`: the animation helpers every post can import as `@toolkit/…`.
 
 ## Writing rules

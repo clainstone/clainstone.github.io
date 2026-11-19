@@ -22,7 +22,7 @@ check it.
 | `src/scripts/xref-preview/` | previews of cross-references: `index.js` (intent, nested cards, events), `source.js` (a target's blocks, fetches of other posts, their styles), `card.js` (the card, its scale and place), `jump.js` (the wash and the flight on click) |
 | `src/plugins/cross-refs.mjs` | ids for numbered statements, figures and tagged displays; links from every mention of them, across the posts of a thread |
 | `src/styles/global.css` | every style and token |
-| `src/styles/blog.css`, `src/fonts/` | the Blog's type, loaded by `src/pages/blog/` only: Instrument Serif and Geist, self-hosted woff2 with their licences |
+| `src/styles/blog.css` | the Blog's layout, loaded by `src/pages/blog/` only; the type is the site's (`src/fonts/` holds unused woff2 files from a first version, with their licences) |
 | `content/toolkit/` | `Canvas.svelte`, `Slider.svelte`, `Figure.astro`, `Video.astro`, `loop.js`, `toolkit.css` |
 | `Makefile` | `help`, `start`, `stop`, `status`, `logs`, `dev`, `preview`, `build`, `check-site` |
 

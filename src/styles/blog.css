@@ -1,130 +1,25 @@
 /* Blog: the list at /blog and its posts (src/pages/blog).
-   The type follows Mia's AI Lab (mia-ai.net): Instrument Serif for titles
-   and headings, Geist for the text, small letterspaced capitals for the
-   kicker. Colours, the bar and the footer stay the site's, and no other
-   page loads this sheet. Both families are self-hosted under the SIL Open
-   Font License (src/fonts/<family>/OFL.txt): the latin and latin-ext
-   subsets of the Fontsource 5.3.0 builds of Google Fonts. */
+   Since 2026-11-19 the type is the site's own, as in the thread posts:
+   Source Serif for everything, the sizes of global.css. This sheet only adds
+   the Blog's layout (the rows of the list, the run-in facts of a post).
+   No other page loads it. */
 
-@font-face {
-  font-family: 'Instrument Serif';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('../fonts/instrument-serif/instrument-serif-latin-400-normal.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-@font-face {
-  font-family: 'Instrument Serif';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('../fonts/instrument-serif/instrument-serif-latin-ext-400-normal.woff2') format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-@font-face {
-  font-family: 'Instrument Serif';
-  font-style: italic;
-  font-weight: 400;
-  font-display: swap;
-  src: url('../fonts/instrument-serif/instrument-serif-latin-400-italic.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-@font-face {
-  font-family: 'Instrument Serif';
-  font-style: italic;
-  font-weight: 400;
-  font-display: swap;
-  src: url('../fonts/instrument-serif/instrument-serif-latin-ext-400-italic.woff2') format('woff2');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-/* Geist is variable: one file per subset and style holds every weight. */
-@font-face {
-  font-family: 'Geist';
-  font-style: normal;
-  font-weight: 100 900;
-  font-display: swap;
-  src: url('../fonts/geist/geist-latin-wght-normal.woff2') format('woff2-variations');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-@font-face {
-  font-family: 'Geist';
-  font-style: normal;
-  font-weight: 100 900;
-  font-display: swap;
-  src: url('../fonts/geist/geist-latin-ext-wght-normal.woff2') format('woff2-variations');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-@font-face {
-  font-family: 'Geist';
-  font-style: italic;
-  font-weight: 100 900;
-  font-display: swap;
-  src: url('../fonts/geist/geist-latin-wght-italic.woff2') format('woff2-variations');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-@font-face {
-  font-family: 'Geist';
-  font-style: italic;
-  font-weight: 100 900;
-  font-display: swap;
-  src: url('../fonts/geist/geist-latin-ext-wght-italic.woff2') format('woff2-variations');
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
-
-/* Sized fallbacks, as in global.css: system faces scaled to the webfonts'
-   average width and given their hhea ascent and descent, so that the swap
-   does not move the text. */
-@font-face {
-  font-family: 'Instrument Serif Fallback';
-  src: local('Times New Roman'), local('Liberation Serif');
-  size-adjust: 78.5%;
-  ascent-override: 126.1%;
-  descent-override: 39.5%;
-  line-gap-override: 0%;
-}
-@font-face {
-  font-family: 'Geist Fallback';
-  src: local('Arial'), local('Helvetica'), local('Liberation Sans');
-  size-adjust: 100.5%;
-  ascent-override: 100%;
-  descent-override: 29.4%;
-  line-gap-override: 0%;
-}
-
-.blog {
-  --blog-serif: 'Instrument Serif', 'Instrument Serif Fallback', 'Times New Roman', serif;
-  --blog-sans: 'Geist', 'Geist Fallback', Arial, sans-serif;
-  /* Geist has a taller x-height than Source Serif: 17 px of it reads like
-     the site's 19 px. */
-  --blog-text: 0.9rem;
-  /* Small text stays smaller than the text: dates, captions, tables. */
-  --small: 0.8125rem;
-  font-family: var(--blog-sans);
-  font-size: var(--blog-text);
-  line-height: 1.65;
-}
-
-/* The kicker above a title: small capitals spaced wide, Mia's eyebrow. */
-.blog .kicker {
-  font: 500 0.6875rem/1 var(--blog-sans);
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
+/* The line above a title, as the thread line above a thread post. */
+.blog .kicker { color: var(--muted); font-style: italic; }
 .blog .kicker a { color: inherit; }
 .blog .kicker a:hover { color: var(--ink); }
 
-/* A class, so that it outranks the post page's `.post h1` of global.css. */
+/* A class, so that it outranks the post page's `.post h1` of global.css:
+   the same size and leading as a thread post's title. */
 .blog .title {
   margin: 0;
-  font: 400 3.25rem/1.02 var(--blog-serif);
-  letter-spacing: -0.02em;
+  font-size: var(--title);
+  line-height: 1.15;
 }
 
 /* ---- the list ----------------------------------------------------------- */
 
-.blog-list .title { font-size: 3.75rem; }
+.blog-list .title { font-size: var(--page-heading); line-height: 1.2; }
 .blog-list .entries { margin-top: 1.75rem; }
 .blog-list .entries > li {
   display: flex;
@@ -136,8 +31,6 @@
 }
 .blog-list .entries > li:last-child { border-bottom: 1px solid var(--rule); }
 .blog-list .entries a {
-  font: 400 1.75rem/1.12 var(--blog-serif);
-  letter-spacing: -0.01em;
   color: var(--ink);
   text-wrap: balance;
 }
@@ -146,26 +39,13 @@
   flex: none;
   white-space: nowrap;
   color: var(--muted);
-  font-size: var(--small);
 }
 
 /* ---- a post ------------------------------------------------------------- */
 
-.blog-post header .title { margin-top: 0.85rem; }
-.blog-post header .date { margin-top: 0.9rem; color: var(--muted); font-size: var(--small); }
-.blog.blog-post .body { margin-top: 2.25rem; }
-.blog .body h2 {
-  margin-top: 1.6em;
-  font: 400 2rem/1.1 var(--blog-serif);
-  letter-spacing: -0.01em;
-}
-.blog .body h3 {
-  margin-top: 1.5em;
-  font: 400 1.5rem/1.15 var(--blog-serif);
-  letter-spacing: -0.01em;
-}
-.blog .body :is(h2, h3) + * { margin-top: 0.6em; }
-.blog .body .anchor { font-family: var(--blog-sans); font-size: 0.5em; vertical-align: 0.35em; }
+.blog-post header .title { margin-top: 0.4rem; }
+.blog-post header .date { margin-top: 0.6rem; color: var(--muted); }
+.blog.blog-post .body { margin-top: 2rem; }
 /* Run-in labels here open short facts, not statements: the paragraph
    spacing, not the wider space global.css gives a labelled statement.
    After a paragraph only, so that a caption after a visual keeps its rule. */

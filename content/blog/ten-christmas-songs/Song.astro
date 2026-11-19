@@ -26,11 +26,7 @@ if (!src) throw new Error(`Song: there is no ${file} beside the post`);
     border-top: 1px solid var(--rule);
   }
   .song:last-child { border-bottom: 1px solid var(--rule); }
-  .genre {
-    font: 400 1.5rem/1.15 var(--blog-serif);
-    letter-spacing: -0.01em;
-    text-wrap: balance;
-  }
+  .genre { text-wrap: balance; }
   audio { display: block; width: 100%; height: 2.5rem; }
   /* Chromium's grey panel, in the paper's control colour of either theme. */
   audio::-webkit-media-controls-enclosure { background-color: var(--control-bg); }

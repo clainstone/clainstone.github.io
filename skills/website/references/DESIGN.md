@@ -131,9 +131,10 @@ text, the figures in both themes, and that nothing moved that should not.
 
 ## 10. The Blog
 
-The Blog (list and posts) takes its type from Mia's AI Lab (mia-ai.net):
-Instrument Serif 400 for titles (3.25rem, 3.75rem for "Blog", tracking
--0.02em), headings (2rem) and row titles, Geist for the text (0.9rem, 17 px,
-leading 1.65), and a kicker in Geist 500 capitals spaced 0.3em. Colours,
-the bar and the footer stay the site's. Songs are rows on hairlines: the
-genre in Instrument Serif at the left, the browser's player at the right.
+The Blog (list and posts) uses the site's own type, as the thread posts do:
+Source Serif at the sizes of global.css, the title at `--title`, the line
+above it muted and italic like a post's thread line. Colours, the bar and the
+footer are the site's. Songs are rows on hairlines: the genre at the left,
+the browser's player at the right. From 2026-11-19 to the same evening the
+Blog used Mia AI Lab's Instrument Serif and Geist; Alessandro asked to go
+back to the site's type. The font files stay in `src/fonts/`, unused.
