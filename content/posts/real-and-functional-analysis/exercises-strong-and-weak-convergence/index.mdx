@@ -1,0 +1,449 @@
+---
+title: 'Exercises on strong, weak and weak${}^*$ convergence in $L^p$ and $\ell^p$'
+date: 2026-11-19
+lecture: 18
+published: 2026-11-22
+summary: 'Solved exercises on strong, weak and weak${}^*$ convergence: the functions equal to $m^\alpha$ on $(0, 1/m]$ and to $0$ on $(1/m, 1)$ converge to $0$ in $L^p((0, 1))$ for $\alpha < 1/p$ and weakly for $\alpha = 1/p,$ while $\sin(mx)$ converges to $0$ weakly in $L^p((0, 1))$ for $1 \le p < \infty$ and weakly${}^*$ in ${L^\infty,}$ but not in ${L^p;}$ sequences unbounded in norm do not converge weakly, and the translates $h(x - x_m)$ of a bounded function converge weakly${}^*$ in $L^\infty(\mathbb{R})$ when $x_m \to x_0.$ In $\ell^p$ weak convergence implies the convergence of every component, and a sequence of $\ell^3$ converges to $0$ weakly in $\ell^3$ and in $\ell^p$ only for $p > 3.$'
+index:
+  Example 18.1: '$m^\alpha \chi_{(0, 1/m]}$ tends to $0$ in $L^p((0, 1))$ for $\alpha < 1/p$, weakly for $\alpha = 1/p$'
+  Lemma 18.2: 'Bounded in $L^p$ with $\int_0^1 f_m g \, d\lambda \to 0$ on $C_c^\infty((0, 1))$ gives $f_m \to 0$ weakly'
+  Remark 18.3: 'For $\alpha > 1/p$ the sequence is not bounded in $L^p$ and does not converge weakly'
+  Example 18.4: '$(e^{2m} + 1) \chi_{(-1, 1)}(x(m + 1))$ tends to $0$ almost everywhere, not weakly in $L^1$'
+  Example 18.5: '$\sin(mx)$ converges weakly to $0$ in $L^p((0, 1))$ for $1 < p < \infty$'
+  Remark 18.6: '$\sin(mx)$ does not tend to $0$ in $L^p$, tends to $0$ weakly in $L^1$ and weakly${}^*$ in $L^\infty$'
+  Example 18.7: 'If $x_m \to x_0$, then $h(x - x_m)$ converges weakly${}^*$ in $L^\infty(\mathbb{R})$ to $h(x - x_0)$'
+  Example 18.8: '$e^{-x^2/m}/\sqrt{m}$ tends to $0$ in $L^p(\mathbb{R})$ for $p > 1$, not weakly in $L^1(\mathbb{R})$'
+  Remark 18.9: 'Weak convergence in $\ell^p$, $1 \le p < \infty$, tested against every $y \in \ell^{p''}$'
+  Example 18.11: 'Weak convergence in $\ell^p$ implies the convergence of every component'
+  Example 18.12: 'A sequence of $\ell^3$ tends to $0$ weakly in $\ell^3$, and in $\ell^p$ only for $p > 3$'
+---
+
+import Support from './Support.svelte';
+import Sine from './Sine.svelte';
+import Periods from './Periods.svelte';
+import Shift from './Shift.svelte';
+
+The exercises study the strong, weak and weak${}^*$ convergence of sequences of functions and of sequences of ${\ell^p,}$ with $\lambda$ the Lebesgue measure on ${\mathbb{R}.}$
+
+## Exercises
+
+### The functions $m^\alpha \chi_{(0, 1/m]}$
+
+**Example 18.1.** Let ${p \in (1, \infty).}$ For every ${\alpha > 0}$ and every integer ${m \ge 1}$ let ${f_m \colon (0, 1) \to \mathbb{R}}$ be given by
+
+$$
+f_m(x) = \begin{cases} m^\alpha & x \in (0, 1/m], \\ 0 & x \in (1/m, 1). \end{cases}
+$$
+
+**(1)** Show that ${f_m \to 0}$ in $L^p((0, 1))$ for every ${\alpha \in (0, 1/p).}$
+
+For the functions $f_m$ of Example 18.1 we compute
+
+$$
+\begin{aligned}
+\|f_m\|_p^p &= \int_0^1 |f_m|^p \, d\lambda = \int_0^{1/m} m^{\alpha p} \, d\lambda \\
+&= m^{\alpha p - 1} \xrightarrow[m \to \infty]{} 0 \iff \alpha p - 1 < 0 \\
+&\hphantom{{}= m^{\alpha p - 1} \xrightarrow[m \to \infty]{} 0} \iff \alpha < \frac{1}{p}.
+\end{aligned}
+$$
+
+(2) Fix ${\alpha = 1/p.}$ Show that ${f_m \to 0 \ \text{w-}L^p((0, 1)).}$ For every ${m,}$
+
+$$
+\|f_m\|_p^p = \int_0^1 |f_m|^p \, d\lambda = \int_0^{1/m} m^{(1/p) p} \, d\lambda = \int_0^{1/m} m \, d\lambda = 1.
+$$
+
+Now let ${g \in C_c^\infty((0, 1)),}$ as in Figure 18.1. Then
+
+$$
+\int_0^1 f_m \, g \, d\lambda = \int_0^{1/m} m^{1/p} \, g \, d\lambda.
+$$
+
+There exists ${\varepsilon > 0}$ such that ${g(x) = 0}$ for every ${x \in (0, \varepsilon).}$ For every $m$ such that ${1/m < \varepsilon}$ we have ${\int_0^{1/m} m^{1/p} \, g \, d\lambda = 0,}$ hence
+
+$$
+\lim_{m \to \infty} \int_0^1 f_m \, g \, d\lambda = 0 \qquad \text{for every } g \in C_c^\infty((0, 1)).
+$$
+
+<Support />
+
+**Figure 18.1.** The drawing of (2) in Example 18.1: a function $g$ of ${C_c^\infty((0, 1)),}$ equal to 0 near 0 and near ${1,}$ where it is thick on the axis. An instance.
+
+**Lemma 18.2.** Let ${p \in (1, \infty)}$ and ${(f_m) \subset L^p((0, 1)).}$ If $(f_m)$ is bounded in $L^p((0, 1))$ and ${\int_0^1 f_m \, g \, d\lambda \to 0}$ for every $g$ in ${C_c^\infty((0, 1)),}$ which is dense in ${L^{p'}((0, 1)),}$ then ${f_m \to 0 \ \text{w-}L^p((0, 1)),}$ by Lemma 17.5 as in Remark 17.6 (ii).
+
+By Lemma 18.2, the functions $f_m$ of Example 18.1 with ${\alpha = 1/p}$ satisfy ${f_m \to 0 \ \text{w-}L^p((0, 1)),}$ since ${\|f_m\|_p = 1}$ for every $m$ and the integrals $\int_0^1 f_m \, g \, d\lambda$ tend to $0$ for every $g$ in ${C_c^\infty((0, 1)).}$
+
+**Remark 18.3.** What about ${\alpha > 1/p}$ in Example 18.1? In this case
+
+$$
+\|f_m\|_p^p = \int_0^{1/m} m^{\alpha p} \, d\lambda = m^{\alpha p - 1} \xrightarrow[m \to \infty]{} \infty,
+$$
+
+since ${\alpha p - 1 > (1/p) p - 1 = 0.}$ Hence $(f_m)$ is not bounded in ${L^p((0, 1)),}$ and $(f_m)$ does not converge weakly in ${L^p((0, 1)).}$ Indeed, a weakly convergent sequence is bounded, by Lemma 17.3 (4).
+
+### The functions $(e^{2m} + 1) \chi_{(-1, 1)}(x(m + 1))$
+
+**Example 18.4.** Let ${(f_m) \subset L^1((-1, 1))}$ be given, for every integer ${m \ge 1,}$ by
+
+$$
+f_m(x) = (e^{2m} + 1) \, \chi_{(-1, 1)}(x(m + 1)).
+$$
+
+**(1)** Study the pointwise and almost everywhere convergence on ${(-1, 1).}$
+
+For the functions $f_m$ of Example 18.4, notice that, for every ${x \in (-1, 1),}$
+
+$$
+\begin{aligned}
+\chi_{(-1, 1)}(x(m + 1)) = 1 &\iff x(m + 1) \in (-1, 1) \\
+&\iff x \in \Bigl( -\frac{1}{m + 1}, \frac{1}{m + 1} \Bigr).
+\end{aligned}
+$$
+
+Hence
+
+$$
+\begin{aligned}
+\chi_{(-1, 1)}(x(m + 1)) &= \chi_{(-1/(m+1), 1/(m+1))}(x), \\
+f_m(x) &= (e^{2m} + 1) \, \chi_{(-1/(m+1), 1/(m+1))}(x).
+\end{aligned}
+$$
+
+Therefore, for every ${x \in (-1, 1) \setminus \{0\},}$ we have ${f_m(x) = 0}$ for every $m$ large enough, so that ${\lim_m f_m(x) = 0.}$ At ${x = 0,}$ instead, ${f_m(0) = e^{2m} + 1 \to +\infty.}$ Hence, pointwise on ${(-1, 1),}$
+
+$$
+f_m(x) \xrightarrow[m \to \infty]{} \begin{cases} 0 & x \in (-1, 1) \setminus \{0\}, \\ +\infty & x = 0, \end{cases}
+$$
+
+and therefore ${f_m \to 0}$ almost everywhere on ${(-1, 1).}$
+
+(2) Study the weak convergence in ${L^1((-1, 1)).}$ We compute
+
+$$
+\begin{aligned}
+\|f_m\|_1 = \int_{-1}^{1} |f_m| \, d\lambda &= \int_{-1/(m+1)}^{1/(m+1)} (e^{2m} + 1) \, d\lambda \\
+&= (e^{2m} + 1) \, \frac{2}{m + 1} \xrightarrow[m \to \infty]{} +\infty.
+\end{aligned}
+$$
+
+Hence $(f_m)$ is not bounded in ${L^1((-1, 1)),}$ and $(f_m)$ does not converge weakly in ${L^1((-1, 1)).}$
+
+### The functions $\sin(mx)$
+
+**Example 18.5.** Let ${f_m(x) = \sin(mx)}$ for ${x \in [0, 1]}$ and every integer ${m \ge 1,}$ as in Figure 18.2. Study the weak convergence of $(f_m)$ to zero in $L^p((0, 1))$ for every ${p \in (1, \infty).}$
+
+<Sine client:visible />
+
+**Figure 18.2.** The drawing of Example 18.5: the graph of ${f_m(x) = \sin(mx)}$ on ${[0, 1],}$ between the dashed levels $1$ and ${-1,}$ for the $m$ of the slider.
+
+For the functions $f_m$ of Example 18.5, let ${p \in (1, \infty).}$ For every ${m,}$ since ${\lvert \sin(mx) \rvert^p \le 1,}$
+
+$$
+\|f_m\|_p^p = \int_0^1 \lvert \sin(mx) \rvert^p \, d\lambda \le 1.
+$$
+
+Now let ${g \in C_c^\infty((0, 1)),}$ a dense subset of ${L^{p'}((0, 1)).}$ Then
+
+$$
+\begin{aligned}
+\biggl| \int_0^1 f_m \, g \, d\lambda \biggr| &= \biggl| \int_0^1 \sin(mx) \, g(x) \, d\lambda \biggr| \\
+&= \biggl| -\int_0^1 -\frac{\cos(mx)}{m} \, g'(x) \, d\lambda \biggr| \\
+&= \frac{1}{m} \, \biggl| \int_0^1 \cos(mx) \, g'(x) \, d\lambda \biggr| \\
+&\le \frac{1}{m} \int_0^1 \lvert \cos(mx) \rvert \, |g'(x)| \, d\lambda \le \frac{\|g'\|_\infty}{m} \xrightarrow[m \to \infty]{} 0,
+\end{aligned}
+$$
+
+since ${\lvert \cos(mx) \rvert \le 1}$ and ${|g'(x)| \le \|g'\|_\infty.}$ Indeed, the second equality is the integration by parts of Corollary 9.17, applied on $[0, 1]$ to the absolutely continuous function ${-{\cos(mx)}/m,}$ whose derivative is ${\sin(mx),}$ and to ${g.}$ Hence ${f_m \to 0 \ \text{w-}L^p((0, 1))}$ by Lemma 18.2.
+
+**Remark 18.6.** Let $f_m$ be as in Example 18.5.\
+**(i)** ${f_m \nrightarrow 0}$ in $L^p((0, 1))$ for every ${p \in [1, \infty].}$\
+**(ii)** ${f_m \to 0 \ \text{w-}L^1((0, 1)),}$ with a proof similar to the solution of Example 18.5.\
+**(iii)** ${f_m \overset{*}{\to} 0 \ \text{w}^*\text{-}L^\infty((0, 1)).}$\
+**(iv)** ${f_m \nrightarrow 0 \ \text{w-}L^\infty((0, 1)).}$
+
+**Proof (sketch).** Only (i) and (iii) are proved. (i) Let ${p \in [1, \infty).}$ With the change of variables ${y = mx,}$
+
+$$
+\|f_m\|_p^p = \int_0^1 \lvert \sin(mx) \rvert^p \, dx = \int_0^m \frac{\lvert \sin(y) \rvert^p}{m} \, dy.
+$$
+
+For ${m \ge 2\pi,}$ let $k$ be the largest natural number such that ${2\pi k \le m.}$ Then ${k \ge 1}$ and ${2\pi k \le m < 2\pi(k + 1),}$ as in Figure 18.3.
+
+<Periods />
+
+**Figure 18.3.** The drawing of the proof of Remark 18.6 (i): the points ${2\pi k,}$ $m$ and $2\pi(k + 1)$ of the real line.
+
+Hence ${1/m > 1/(2\pi(k + 1)),}$ and
+
+$$
+\begin{aligned}
+\|f_m\|_p^p &\ge \frac{1}{2\pi(k + 1)} \int_0^{2\pi k} \lvert \sin(y) \rvert^p \, dy \\
+&= \frac{1}{2\pi(k + 1)} \, k \int_0^{2\pi} \lvert \sin(y) \rvert^p \, dy \\
+&\ge \frac{1}{2\pi} \, \frac{1}{2} \int_0^{2\pi} \lvert \sin(y) \rvert^p \, dy > 0,
+\end{aligned}
+$$
+
+because ${\int_0^{2\pi} \lvert \sin(y) \rvert^p \, dy > 0}$ and ${k/(k + 1) \ge 1/2}$ for every ${k \ge 1.}$ Hence ${f_m \nrightarrow 0}$ in $L^p((0, 1))$ for every ${p \in [1, \infty),}$ and also for ${p = \infty.}$ Indeed, ${\|f_m\|_1 \le \|f_m\|_\infty}$ for every ${m,}$ while $\|f_m\|_1$ does not tend to ${0.}$
+
+(iii) The goal is ${\int_0^1 f_m \, g \, d\lambda \to 0}$ for every ${g \in L^1((0, 1)).}$ By Lemma 17.10 (5), it is enough that ${\|f_m\|_\infty \le 1}$ for every $m$ and that ${\int_0^1 f_m \, g \, d\lambda \to 0}$ for every $g$ in ${C_c^\infty((0, 1)),}$ which is dense in ${L^1((0, 1)).}$ The second condition is the computation of Example 18.5. $\blacksquare$
+
+### The translates $h(x - x_m)$
+
+**Example 18.7.** Let ${h \colon \mathbb{R} \to \mathbb{R}}$ be continuous and bounded. Let ${x_0 \in \mathbb{R}}$ and let ${(x_m) \subset \mathbb{R}}$ be such that ${x_m \to x_0.}$ Let
+
+$$
+f_m(x) := h(x - x_m), \qquad f(x) := h(x - x_0).
+$$
+
+Show that ${f_m \overset{*}{\to} f \ \text{w}^*\text{-}L^\infty(\mathbb{R}),}$ that is,
+
+$$
+\int_{-\infty}^{\infty} f_m \, g \, d\lambda \to \int_{-\infty}^{\infty} f g \, d\lambda \qquad \text{for every } g \in L^1(\mathbb{R}).
+$$
+
+The first solution of Example 18.7 fixes ${g \in L^1(\mathbb{R}).}$ Let ${w_m(x) = f_m(x) \, g(x)}$ and ${w(x) = f(x) \, g(x).}$ Since $h$ is continuous, ${h(x - x_m) \to h(x - x_0)}$ as ${m \to \infty,}$ hence
+
+$$
+\lim_{m \to \infty} w_m(x) = \lim_{m \to \infty} h(x - x_m) \, g(x) = f(x) \, g(x) \qquad \text{almost everywhere}.
+$$
+
+Moreover, ${|w_m(x)| = |h(x - x_m)| \, |g(x)|,}$ where
+
+$$
+|h(x - x_m)| \le \|h(x - x_m)\|_\infty = \|h\|_\infty < +\infty,
+$$
+
+because ${h(x - x_m)}$ is a translation of $h(x)$ and $h$ is bounded. Hence ${|w_m| \le \|h\|_\infty \, |g|,}$ where ${\|h\|_\infty \, |g| \in L^1(\mathbb{R}),}$ and by the dominated convergence theorem, Theorem 6.10,
+
+$$
+\lim_{m \to \infty} \int_{-\infty}^{\infty} f_m \, g \, d\lambda = \int_{-\infty}^{\infty} f g \, d\lambda.
+$$
+
+The second solution assumes only ${h \in L^\infty(\mathbb{R}).}$ For every ${m,}$
+
+$$
+\|f_m\|_\infty = \|h(x - x_m)\|_\infty = \|h\|_\infty < +\infty.
+$$
+
+We want to show that
+
+$$
+\int_{-\infty}^{\infty} f_m \, g \, d\lambda \to \int_{-\infty}^{\infty} f g \, d\lambda \qquad \text{for every } g \in V,
+$$
+
+where $V$ is a subspace of $L^1(\mathbb{R})$ dense in ${L^1(\mathbb{R}).}$ Indeed, $(f_m)$ is bounded in ${L^\infty(\mathbb{R}),}$ so that Lemma 17.10 (5) applies. We choose as $V$ the set of the simple functions
+
+$$
+\sum_{i=1}^{k} \alpha_i \, \chi_{(a_i, b_i)}, \qquad \text{with } k \ge 1, \ \alpha_i \in \mathbb{R} \ \text{and} \ {-\infty} < a_i \le b_i < +\infty.
+$$
+
+So we want to prove that
+
+$$
+\begin{aligned}
+\int_{-\infty}^{\infty} f_m \biggl( \sum_{i=1}^{k} \alpha_i \, \chi_{(a_i, b_i)} \biggr) d\lambda &= \sum_{i=1}^{k} \alpha_i \int_{-\infty}^{\infty} f_m \, \chi_{(a_i, b_i)} \, d\lambda \\
+&\xrightarrow[m \to \infty]{} \sum_{i=1}^{k} \alpha_i \int_{-\infty}^{\infty} f \, \chi_{(a_i, b_i)} \, d\lambda \\
+&= \int_{-\infty}^{\infty} f \biggl( \sum_{i=1}^{k} \alpha_i \, \chi_{(a_i, b_i)} \biggr) d\lambda,
+\end{aligned}
+$$
+
+and it is enough to prove that
+
+$$
+\int_{-\infty}^{\infty} f_m \, \chi_{(a, b)} \, d\lambda \xrightarrow[m \to \infty]{} \int_{-\infty}^{\infty} f \, \chi_{(a, b)} \, d\lambda \qquad \text{for every } \chi_{(a, b)} \in L^1(\mathbb{R}).
+$$
+
+Let ${-\infty < a \le b < +\infty,}$ so that ${\chi_{(a, b)} \in L^1(\mathbb{R}).}$ With the change of variables ${y = x - x_m,}$
+
+$$
+\begin{aligned}
+\int_{-\infty}^{\infty} f_m \, \chi_{(a, b)} \, d\lambda &= \int_a^b h(x - x_m) \, dx = \int_{a - x_m}^{b - x_m} h(y) \, dy \\
+&= \int_{-\infty}^{\infty} h(y) \, \chi_{(a - x_m, b - x_m)}(y) \, dy.
+\end{aligned}
+$$
+
+Now, pointwise for almost every ${y \in \mathbb{R},}$
+
+$$
+h(y) \, \chi_{(a - x_m, b - x_m)}(y) \xrightarrow[m \to \infty]{} h(y) \, \chi_{(a - x_0, b - x_0)}(y).
+$$
+
+Moreover, for every $m$ large enough that ${|x_m - x_0| \le 1,}$ as in Figure 18.4, almost everywhere
+
+$$
+|h \, \chi_{(a - x_m, b - x_m)}| \le \|h\|_\infty \, \chi_{(a - x_m, b - x_m)}(y) \le \|h\|_\infty \, \chi_{(a - x_0 - 1, b - x_0 + 1)}(y),
+$$
+
+where ${\chi_{(a - x_0 - 1, b - x_0 + 1)} \in L^1(\mathbb{R}).}$
+
+<Shift />
+
+**Figure 18.4.** The drawing of the second solution of Example 18.7: the function ${\chi_{(a - x_0, b - x_0)},}$ with the points $a - x_0$ and $b - x_0$ on the axis, and, dashed, the function $\chi_{(a - x_m, b - x_m)}$ for an $m$ with $x_m$ close to ${x_0.}$ An instance.
+
+Hence, by the dominated convergence theorem, Theorem 6.10,
+
+$$
+\begin{aligned}
+\lim_{m \to \infty} \int_{-\infty}^{\infty} h \, \chi_{(a - x_m, b - x_m)} \, d\lambda &= \int_{-\infty}^{\infty} h \, \chi_{(a - x_0, b - x_0)} \, d\lambda \\
+&= \int_{-\infty}^{\infty} \underbrace{h(x - x_0)}_{f(x)} \, \chi_{(a, b)}(x) \, dx = \int_{-\infty}^{\infty} f \, \chi_{(a, b)} \, d\lambda.
+\end{aligned}
+$$
+
+### The functions $e^{-x^2/m}/\sqrt{m}$
+
+**Example 18.8.** For every integer ${m \ge 1}$ let
+
+$$
+f_m(x) = \frac{1}{\sqrt{m}} \, e^{-x^2/m} \qquad \text{for every } x \in \mathbb{R}.
+$$
+
+**(1)** Study the pointwise and almost everywhere convergence on ${\mathbb{R},}$ and prove that ${f_m \in L^1(\mathbb{R}).}$
+
+For the functions $f_m$ of Example 18.8, since ${-x^2/m \le 0}$ and hence ${e^{-x^2/m} \le 1,}$
+
+$$
+0 \le f_m(x) = \frac{1}{\sqrt{m}} \, e^{-x^2/m} \le \frac{1}{\sqrt{m}} \xrightarrow[m \to \infty]{} 0 \qquad \text{for every } x \in \mathbb{R}.
+$$
+
+Hence ${f_m \to 0}$ pointwise on ${\mathbb{R},}$ and therefore also almost everywhere on ${\mathbb{R}.}$ Moreover, ${\int_{-\infty}^{\infty} e^{-x^2/m}/\sqrt{m} \, dx < +\infty,}$ since $e^{-x^2/m}$ is integrable, so that ${f_m \in L^1(\mathbb{R}).}$
+
+(2) For every ${p \in [1, \infty],}$ study the convergence in $L^p(\mathbb{R})$ and in measure on ${\mathbb{R}.}$ Since ${\|f_m\|_\infty \le 1/\sqrt{m} \to 0,}$ we have ${f_m \to 0}$ in ${L^\infty(\mathbb{R}),}$ hence ${f_m \to 0}$ in measure on ${\mathbb{R},}$ by Theorem 7.6. For ${p \in [1, \infty),}$ with the change of variables ${y = \sqrt{p/m} \, x,}$
+
+$$
+\begin{aligned}
+\|f_m\|_p^p &= \int_{-\infty}^{\infty} \frac{1}{m^{p/2}} \, e^{-(p/m) x^2} \, dx = \frac{1}{m^{p/2}} \int_{-\infty}^{\infty} e^{-y^2} \sqrt{\frac{m}{p}} \, dy \\
+&= \frac{1}{\sqrt{p}} \, \frac{1}{m^{p/2 - 1/2}} \int_{-\infty}^{\infty} e^{-y^2} \, dy \\
+&\xrightarrow[m \to \infty]{} 0 \iff \frac{p}{2} - \frac{1}{2} > 0 \\
+&\hphantom{\xrightarrow[m \to \infty]{} 0} \iff p > 1.
+\end{aligned}
+$$
+
+Summing up, ${f_m \to 0}$ in $L^p(\mathbb{R})$ if and only if ${p \in (1, \infty].}$
+
+(3) Show that ${f_m \nrightarrow 0 \ \text{w-}L^1(\mathbb{R}).}$ By the computation of (2) with ${p = 1,}$
+
+$$
+\|f_m\|_1 = \frac{1}{m^{1/2 - 1/2}} \int_{-\infty}^{\infty} e^{-y^2} \, dy = \int_{-\infty}^{\infty} e^{-y^2} \, dy.
+$$
+
+We need to find ${g \in L^\infty(\mathbb{R})}$ such that ${\int_{-\infty}^{\infty} f_m \, g \, d\lambda \nrightarrow 0.}$ Indeed, by Remark 16.19 (i) with ${p = 1,}$ weak convergence to $0$ in $L^1(\mathbb{R})$ means that ${\int_{-\infty}^{\infty} f_m \, g \, d\lambda \to 0}$ for every ${g \in L^\infty(\mathbb{R}).}$ Take ${g = 1.}$ Then, since ${f_m \ge 0,}$
+
+$$
+\int_{-\infty}^{\infty} f_m \, g \, d\lambda = \int_{-\infty}^{\infty} f_m \, d\lambda = \|f_m\|_1 = \int_{-\infty}^{\infty} e^{-y^2} \, dy,
+$$
+
+a constant larger than ${0.}$ So ${\lim_m \int_{-\infty}^{\infty} f_m \, g \, d\lambda \neq 0.}$
+
+### Weak convergence in $\ell^p$
+
+**Remark 18.9.** Recall that ${\ell^p = L^p(\mathbb{N}, \mathcal{P}(\mathbb{N}), \mu_\#),}$ as in Example 10.8 (ii). Let ${p \in [1, \infty),}$ ${(x_m) \subset \ell^p}$ and ${x \in \ell^p.}$ By Remark 16.19 (i), ${x_m \to x \ \text{w-}\ell^p}$ means that
+
+$$
+\begin{aligned}
+&\int_{\mathbb{N}} x_m \, y \, d\mu_\# \xrightarrow[m \to \infty]{} \int_{\mathbb{N}} x y \, d\mu_\# && \text{for every } y \in \ell^{p'}, \\
+\iff \quad &\sum_{k=0}^{\infty} x_m^{(k)} \, y^{(k)} \xrightarrow[m \to \infty]{} \sum_{k=0}^{\infty} x^{(k)} \, y^{(k)} && \text{for every } y \in \ell^{p'}.
+\end{aligned}
+$$
+
+**Remark 18.10 (Hölder inequality in $\ell^p$).** Let ${p \in [1, \infty],}$ with conjugate ${p',}$ and let ${x \in \ell^p}$ and ${y \in \ell^{p'}.}$ Then ${\int_{\mathbb{N}} |x y| \, d\mu_\# \le \|x\|_p \, \|y\|_{p'},}$ by Proposition 10.12. For ${p \in (1, \infty)}$ this reads
+
+$$
+\sum_{k=0}^{\infty} |x^{(k)} y^{(k)}| \le \biggl( \sum_{k=0}^{\infty} |x^{(k)}|^p \biggr)^{1/p} \biggl( \sum_{k=0}^{\infty} |y^{(k)}|^{p'} \biggr)^{1/p'},
+$$
+
+and, for all integers ${0 \le m_0 \le m_1,}$
+
+$$
+\sum_{k=m_0}^{m_1} |x^{(k)} y^{(k)}| \le \biggl( \sum_{k=m_0}^{m_1} |x^{(k)}|^p \biggr)^{1/p} \biggl( \sum_{k=m_0}^{m_1} |y^{(k)}|^{p'} \biggr)^{1/p'}.
+$$
+
+**Example 18.11.** Let ${p \in [1, \infty],}$ let $(x_m)$ be a sequence of $\ell^p$ and let ${x \in \ell^p.}$ Suppose that ${x_m \to x \ \text{w-}\ell^p.}$ Show that ${\lim_m x_m^{(k)} = x^{(k)}}$ for every ${k \in \mathbb{N}.}$
+
+For Example 18.11, fix ${k \in \mathbb{N}}$ and let ${T_k \colon \ell^p \to \mathbb{R}}$ be given by ${T_k(y) = y^{(k)}.}$ Then ${T_k \in (\ell^p)^*,}$ since, for every ${y \in \ell^p,}$
+
+$$
+|T_k(y)| = |y^{(k)}| \,
+\begin{dcases}
+\le \|y\|_\infty & \text{if } p = \infty, \\
+= \bigl( |y^{(k)}|^p \bigr)^{1/p} \le \biggl( \sum_{j=0}^{\infty} |y^{(j)}|^p \biggr)^{1/p} = \|y\|_p & \text{if } p < \infty.
+\end{dcases}
+$$
+
+Since ${x_m \to x \ \text{w-}\ell^p,}$ it follows that ${\lim_m T_k(x_m) = T_k(x),}$ that is, ${\lim_m x_m^{(k)} = x^{(k)}.}$
+
+### A sequence in $\ell^3$
+
+**Example 18.12.** Let ${(x_m) \subset \ell^3}$ be given, for every integer ${m \ge 1}$ and every ${k \in \mathbb{N},}$ by
+
+$$
+x_m^{(k)} = \begin{cases} \dfrac{1}{k^{1/3}} & m \le k \le 2m, \\[6pt] 0 & \text{otherwise}. \end{cases}
+$$
+
+**(1)** Pointwise convergence?
+
+For the sequences $x_m$ of Example 18.12,
+
+$$
+x_m = \biggl( 0, \dots, 0, \underbrace{\frac{1}{m^{1/3}}}_{m\text{-th}}, \frac{1}{(m + 1)^{1/3}}, \dots, \underbrace{\frac{1}{(2m)^{1/3}}}_{(2m)\text{-th}}, 0, \dots \biggr).
+$$
+
+Hence ${\lim_m x_m^{(k)} = 0}$ for every ${k \in \mathbb{N}.}$
+
+(2) Study the strong convergence in $\ell^p$ for every ${p \in [1, \infty).}$ We have
+
+$$
+\|x_m\|_p^p = \sum_{k=0}^{\infty} |x_m^{(k)}|^p = \sum_{k=m}^{2m} \frac{1}{k^{p/3}}.
+$$
+
+Notice that ${p/3 > 1}$ if and only if ${p > 3.}$ For ${p \in (3, \infty),}$
+
+$$
+\|x_m\|_p^p = \sum_{k=m}^{2m} \frac{1}{k^{p/3}} \le \sum_{k=m}^{\infty} \frac{1}{k^{p/3}} \xrightarrow[m \to \infty]{} 0,
+$$
+
+since, as ${p/3 > 1,}$ the last sum is the tail of a converging series. Hence ${x_m \to 0}$ in $\ell^p$ for every ${p \in (3, \infty).}$ For ${p \in [1, 3],}$
+
+$$
+\begin{aligned}
+\|x_m\|_p^p = \sum_{k=m}^{2m} \frac{1}{k^{p/3}} &\ge \sum_{k=m}^{2m} \frac{1}{(2m)^{p/3}} = \frac{1}{(2m)^{p/3}} \, (2m - m + 1) \\
+&= \frac{m + 1}{2^{p/3} \, m^{p/3}} \xrightarrow[m \to \infty]{} \begin{cases} 1/2 & \text{if } p = 3, \\ +\infty & \text{if } p \in [1, 3). \end{cases}
+\end{aligned}
+$$
+
+Hence ${x_m \nrightarrow 0}$ in $\ell^p$ for ${p \in [1, 3].}$
+
+(3) Study the weak convergence in ${\ell^3.}$ Here ${1/p' = 1 - 1/3 = 2/3,}$ that is, ${p' = 3/2.}$ Let ${y \in \ell^{3/2}.}$ By Remark 18.9, we want to show that
+
+$$
+\sum_{k=0}^{\infty} x_m^{(k)} \, y^{(k)} \xrightarrow[m \to \infty]{} 0.
+$$
+
+By the Hölder inequality, Remark 18.10, with ${p = 3,}$
+
+$$
+\begin{aligned}
+\biggl| \sum_{k=0}^{\infty} x_m^{(k)} \, y^{(k)} \biggr| &= \biggl| \sum_{k=m}^{2m} \frac{1}{k^{1/3}} \, y^{(k)} \biggr| \\
+&\le \biggl( \sum_{k=m}^{2m} \frac{1}{k} \biggr)^{1/3} \biggl( \sum_{k=m}^{2m} |y^{(k)}|^{3/2} \biggr)^{2/3}.
+\end{aligned}
+\tag{18.1}
+$$
+
+In the right-hand side of (18.1),
+
+$$
+\sum_{k=m}^{2m} \frac{1}{k} \le \sum_{k=m}^{2m} \frac{1}{m} = \frac{1}{m} \, (2m - m + 1) = \frac{m + 1}{m} \le 2 \qquad \text{for every } m \ge 1,
+$$
+
+and
+
+$$
+\sum_{k=m}^{2m} |y^{(k)}|^{3/2} \le \sum_{k=m}^{\infty} |y^{(k)}|^{3/2} \xrightarrow[m \to \infty]{} 0,
+$$
+
+since this is the tail of the series of the numbers ${|y^{(k)}|^{3/2},}$ which converges because ${y \in \ell^{3/2}.}$ Hence the right-hand side of (18.1) is at most
+
+$$
+2^{1/3} \biggl( \sum_{k=m}^{\infty} |y^{(k)}|^{3/2} \biggr)^{2/3} \xrightarrow[m \to \infty]{} 0,
+$$
+
+and ${x_m \to 0 \ \text{w-}\ell^3.}$
