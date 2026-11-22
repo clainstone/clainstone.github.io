@@ -1,0 +1,193 @@
+---
+title: 'Weak and weak${}^*$ convergence, the Banach–Alaoglu theorem and compact operators'
+date: 2026-11-18
+lecture: 17
+published: 2026-11-22
+summary: 'A weakly convergent sequence in a Banach space is bounded, its weak limit is unique, the norm of the limit is at most the lower limit of the norms, and for a bounded sequence it is enough to test weak convergence on a dense subspace of the dual. In a dual space weak convergence implies weak${}^*$ convergence; by the Banach–Alaoglu theorem bounded sequences have weakly convergent subsequences in reflexive spaces and weakly${}^*$ convergent subsequences in duals of separable Banach spaces, and the compact operators between Banach spaces form a closed subspace of $\mathcal{L}(X, Y)$ that contains the operators of finite rank.'
+index:
+  Example 17.2: 'In $L^2$ the indicators of $[m, m+1]$ have norm $1$ and converge weakly, not strongly, to $0$'
+  Lemma 17.4: 'If $x_m \to x$ weakly and $T_m \to T$ strongly, or conversely, then $T_m x_m \to T x$'
+  Lemma 17.5: 'A bounded $(x_m)$ with $T x_m \to T x$ for all $T$ in a dense subspace of $X^*$ converges weakly'
+  Remark 17.8: 'In $X^*$ weak${}^*$ convergence tests fewer elements than weak convergence, which implies it'
+  Remark 17.9: 'Strong implies weak implies weak${}^*$ convergence in $X^*$; weak and weak${}^*$ agree for reflexive $X$'
+  Remark 17.12: 'Bounded sequences have weakly convergent subsequences in $L^p$, $1 < p < \infty$, weakly${}^*$ ones in $L^\infty$'
+  Theorem 17.15: 'The compact operators form a closed subspace $\mathcal{K}(X, Y)$ of $\mathcal{L}(X, Y)$'
+  Corollary 17.17: 'Every operator of finite rank is compact'
+  Corollary 17.18: 'A limit in $\mathcal{L}(X, Y)$ of operators of finite rank is compact'
+  Corollary 17.19: 'Compact $T$ gives $T x_m \to T x$ when $x_m \to x$ weakly, and conversely for reflexive $X$'
+---
+
+Recall the definition of weak convergence, Definition 16.16.
+
+## Weak convergence (part 2)
+
+**Definition 17.1 (Weak convergence).** Let ${(X, \|\cdot\|_X)}$ be a Banach space, let ${(x_m) \subset X}$ and let ${x \in X.}$ We say that $(x_m)$ *weakly converges* to $x$ if
+
+$$
+\lim_{m \to \infty} T x_m = T x \qquad \text{for every } T \in X^*.
+$$
+
+**Notation.** If $(x_m)$ weakly converges to ${x,}$ we write ${x_m \to x \ \text{w-}X.}$
+
+**Example 17.2.** Let ${f_m = \chi_{[m, m+1]} \in L^2((0, \infty))}$ for every ${m \in \mathbb{N},}$ as in Example 16.18. Then ${f_m \nrightarrow 0}$ in ${L^2((0, \infty))}$ and ${f_m \to 0 \ \text{w-}L^2((0, \infty)).}$ Moreover, ${\|f_m\|_2 = 1}$ for every ${m,}$ so that $(f_m)$ is contained in the closed unit ball $\overline{B}_1(0)$ of ${L^2,}$ and ${\varliminf_m \|f_m\|_2 = 1 > \|0\|_2 = 0.}$
+
+**Lemma 17.3 (Basic properties).** Let ${(X, \|\cdot\|_X)}$ be a Banach space, let ${(x_m), (y_m) \subset X,}$ let ${x, y \in X}$ and let ${\alpha, \beta \in \mathbb{R}.}$\
+**(1)** If ${\dim X < +\infty,}$ then ${x_m \to x}$ in $X$ if and only if ${x_m \to x \ \text{w-}X.}$\
+**(2)** If ${x_m \to x \ \text{w-}X}$ and ${y_m \to y \ \text{w-}X,}$ then ${\alpha x_m + \beta y_m \to \alpha x + \beta y \ \text{w-}X.}$\
+**(3)** The weak limit is unique: if ${x_m \to x \ \text{w-}X}$ and ${x_m \to y \ \text{w-}X,}$ then ${x = y.}$\
+**(4)** If ${x_m \to x \ \text{w-}X,}$ then $(x_m)$ is bounded and ${\varliminf_m \|x_m\|_X \ge \|x\|_X.}$
+
+**Proof (sketch).** Only (3) and (4) are proved. (3) By assumption, ${\lim_m T x_m = T x}$ and ${\lim_m T x_m = T y}$ for every ${T \in X^*.}$ Hence ${T x = T y}$ for every ${T \in X^*,}$ and therefore ${x = y.}$ In fact, if ${x \neq y,}$ then Corollary 16.5, a corollary of the Hahn–Banach theorem, gives ${T_0 \in X^*}$ such that ${T_0 x \neq T_0 y.}$
+
+(4) Let ${\tau \colon X \to X^{**}}$ be the canonical map of Definition 16.8, and consider the sequence ${(\tau(x_m)) \subset X^{**}.}$ The assumption ${x_m \to x \ \text{w-}X}$ means that, for every ${T \in X^*,}$
+
+$$
+\begin{aligned}
+&T x_m \to T x, \\
+\text{that is,} \quad &{}_*\langle T, x_m \rangle \to {}_*\langle T, x \rangle, \\
+\text{that is,} \quad &{}_{**}\langle \tau(x_m), T \rangle_* \to {}_{**}\langle \tau(x), T \rangle_*.
+\end{aligned}
+$$
+
+Hence, for every ${T \in X^*,}$ there exists ${M_T > 0}$ such that ${\bigl| {}_{**}\langle \tau(x_m), T \rangle_* \bigr| \le M_T}$ for every ${m.}$ We apply the Banach–Steinhaus theorem, Theorem 15.2, to ${\mathcal{F} = \{ \tau(x_m) : m \in \mathbb{N} \} \subset \mathcal{L}(X^*, \mathbb{R}) = X^{**},}$ which gives ${M > 0}$ such that
+
+$$
+\|\tau(x_m)\|_{X^{**}} \le M \qquad \text{for every } m,
+$$
+
+where ${\|\tau(x_m)\|_{X^{**}} = \|x_m\|_X}$ because $\tau$ is an isometry, Theorem 16.9 (ii). Hence $(x_m)$ is bounded.
+
+By Corollary 16.2, a corollary of the Hahn–Banach theorem, there exists ${\bar{T} \in X^*}$ such that ${\|\bar{T}\|_{X^*} = 1}$ and ${\bar{T}(x) = \|x\|_X.}$ In detail, Corollary 16.2 needs ${x \neq 0,}$ and for ${x = 0}$ the inequality holds because ${\|x_m\|_X \ge 0}$ for every ${m.}$ Now, since ${x_m \to x \ \text{w-}X,}$ we have ${\|x\|_X = \bar{T}(x) = \lim_m \bar{T}(x_m),}$ where ${\bar{T}(x_m) \le \|\bar{T}\|_{X^*} \, \|x_m\|_X = \|x_m\|_X}$ for every ${m.}$ Hence ${\|x\|_X \le \varliminf_m \|x_m\|_X.}$ $\blacksquare$
+
+**Lemma 17.4.** Let ${(X, \|\cdot\|_X)}$ be a Banach space, and let ${(x_m) \subset X}$ and ${x \in X.}$ Let ${(T_m) \subset X^*}$ and ${T \in X^*.}$ Then ${\lim_m T_m(x_m) = T x}$ in each of the following cases:\
+**(1)** ${x_m \to x \ \text{w-}X}$ and ${T_m \to T}$ in ${X^*;}$\
+**(2)** ${x_m \to x}$ in $X$ and ${T_m \to T \ \text{w-}X^*.}$
+
+**Proof (sketch).** Only case (1) is proved. By Lemma 17.3 (4) there exists ${M > 0}$ such that ${\|x_m\|_X \le M}$ for every ${m.}$ Adding and subtracting ${T x_m,}$
+
+$$
+\begin{aligned}
+|T_m x_m - T x| &\le |T_m x_m - T x_m| + |T x_m - T x| \\
+&= |(T_m - T)(x_m)| + |T x_m - T x| \\
+&\le \|T_m - T\|_{X^*} \, \|x_m\|_X + |T x_m - T x|.
+\end{aligned}
+$$
+
+Here ${\|T_m - T\|_{X^*} \to 0,}$ since ${T_m \to T}$ in ${X^*.}$ Moreover, ${|T x_m - T x| \to 0,}$ since ${x_m \to x \ \text{w-}X.}$ Hence ${T_m(x_m) \to T x.}$ $\blacksquare$
+
+**Lemma 17.5.** Let ${(X, \|\cdot\|_X)}$ be a Banach space, let ${(x_m) \subset X}$ and let ${x \in X.}$ Suppose that ${V \subset X^*}$ is a dense subspace such that ${T x_m \to T x}$ for every ${T \in V,}$ and that $(x_m)$ is bounded. Then ${x_m \to x \ \text{w-}X.}$
+
+**Proof (complete).** Let ${T \in X^*;}$ the goal is ${T x_m \to T x.}$ By the density of ${V,}$ for every ${\varepsilon > 0}$ there exists ${L \in V}$ such that ${\|T - L\|_{X^*} < \varepsilon.}$ We know that ${L x_m \to L x.}$ Since $(x_m)$ is bounded, there exists ${M > 0}$ such that ${\|x_m\|_X \le M}$ for every ${m.}$ Now, adding and subtracting $L x_m$ and ${L x,}$
+
+$$
+\begin{aligned}
+|T x_m - T x| &\le |T x_m - L x_m| + |L x_m - L x| \\
+&\quad + |L x - T x| \\
+&\le \|T - L\|_{X^*} \, \|x_m\|_X + |L x_m - L x| \\
+&\quad + \|L - T\|_{X^*} \, \|x\|_X \\
+&\le \varepsilon M + \varepsilon \|x\|_X + |L x_m - L x|.
+\end{aligned}
+$$
+
+Taking the upper limit, since ${L x_m \to L x,}$ we get ${\varlimsup_m |T x_m - T x| \le \varepsilon M + \varepsilon \|x\|_X}$ for every positive ${\varepsilon.}$ Now we let ${\varepsilon \to 0,}$ which gives ${\lim_m T x_m = T x.}$ $\blacksquare$
+
+### Weak convergence in $L^p((a, b))$
+
+**Remark 17.6 (Weak convergence in $L^p((a, b))$).** Let ${(a, b)}$ be an open interval of $\mathbb{R}$ with the Lebesgue measure ${\lambda,}$ let ${p \in [1, \infty),}$ let ${(f_m) \subset L^p((a, b))}$ and let ${f \in L^p((a, b)).}$\
+**(i)** By Remark 16.19 (i), ${f_m \to f \ \text{w-}L^p}$ if and only if ${\int_a^b f_m \, g \, d\lambda \to \int_a^b f g \, d\lambda}$ for every ${g \in L^{p'}((a, b)).}$
+
+**(ii)** Let ${p \in (1, \infty),}$ and let $D$ be a dense subspace of ${L^{p'}((a, b)).}$ If $(f_m)$ is bounded in $L^p$ and
+
+$$
+\int_a^b f_m \, g \, d\lambda \to \int_a^b f g \, d\lambda \qquad \text{for every } g \in D,
+$$
+
+then ${f_m \to f \ \text{w-}L^p,}$ by Lemma 17.5. Indeed, by Theorem 16.13 (1) the isometry ${F \colon L^{p'} \to (L^p)^*,}$ ${g \mapsto T_g,}$ of Remark 16.12 (ii) is surjective, so that $F(D)$ is a dense subspace of ${(L^p)^*.}$ For example, $D$ can be ${C_c^\infty(a, b),}$ $C_c((a, b))$ or the set of the simple functions that belong to ${L^{p'}((a, b)),}$ by Remark 12.15 (2).
+
+## Weak${}^*$ convergence
+
+**Definition 17.7 (Weak${}^*$ convergence).** Let ${(X, \|\cdot\|_X)}$ be a Banach space, let ${(T_m) \subset X^*}$ and let ${T \in X^*.}$ We say that $(T_m)$ *weakly${}^*$ converges* to $T$ if
+
+$$
+\lim_{m \to \infty} T_m x = T x \qquad \text{for every } x \in X.
+$$
+
+**Notation.** If $(T_m)$ weakly${}^*$ converges to ${T,}$ we write ${T_m \overset{*}{\to} T}$ or ${T_m \overset{*}{\to} T \ \text{w}^*\text{-}X^*.}$
+
+**Remark 17.8.** Let ${(X, \|\cdot\|_X)}$ be a Banach space, let ${(T_m) \subset X^*}$ and let ${T \in X^*.}$\
+**(i)** Weak${}^*$ convergence is about sequences in dual spaces.\
+**(ii)** Weak${}^*$ convergence is not weak convergence: (1) ${T_m \overset{*}{\to} T \ \text{w}^*\text{-}X^*}$ means that $T_m x$ tends to $T x$ for every $x$ in ${X,}$ while (2) ${T_m \to T \ \text{w-}X^*}$ means that $\phi T_m$ tends to $\phi T$ for every $\phi$ in ${X^{**}.}$ In (1) there are fewer elements to test the convergence with. If ${T_m \to T \ \text{w-}X^*,}$ then ${T_m \overset{*}{\to} T \ \text{w}^*\text{-}X^*,}$ that is, weak convergence implies weak${}^*$ convergence. Indeed, ${{}_{**}\langle \tau(x), S \rangle_* = S x}$ for every ${x \in X}$ and every ${S \in X^*,}$ where $\tau$ is the canonical map of Definition 16.8.
+
+**Remark 17.9.** Let ${(X, \|\cdot\|_X)}$ be a Banach space, let ${(T_m) \subset X^*}$ and let ${T \in X^*.}$\
+**(i)** If ${T_m \to T}$ strongly, then ${T_m \to T \ \text{w-}X^*,}$ and hence ${T_m \overset{*}{\to} T \ \text{w}^*\text{-}X^*.}$\
+**(ii)** If $X$ is reflexive, that is, ${R(\tau) = X^{**}}$ for the canonical map ${\tau,}$ then ${T_m \to T \ \text{w-}X^*}$ if and only if ${T_m \overset{*}{\to} T \ \text{w}^*\text{-}X^*.}$\
+**(iii)** Let ${\dim X < +\infty.}$ Then ${T_m \to T}$ strongly if and only if ${T_m \to T \ \text{w-}X^*,}$ if and only if ${T_m \overset{*}{\to} T \ \text{w}^*\text{-}X^*.}$
+
+**Lemma 17.10 (Basic properties).** Let ${(X, \|\cdot\|_X)}$ be a Banach space, let ${(T_m), (S_m) \subset X^*}$ and let ${T, S \in X^*.}$ Let ${(x_m) \subset X,}$ ${x \in X}$ and ${\alpha, \beta \in \mathbb{R}.}$\
+**(1)** If ${T_m \overset{*}{\to} T}$ and ${S_m \overset{*}{\to} S,}$ then ${\alpha T_m + \beta S_m \overset{*}{\to} \alpha T + \beta S.}$\
+**(2)** If ${T_m \overset{*}{\to} T}$ and ${T_m \overset{*}{\to} S,}$ then ${T = S.}$\
+**(3)** If ${T_m \overset{*}{\to} T,}$ then $(T_m)$ is bounded and ${\|T\|_{X^*} \le \varliminf_m \|T_m\|_{X^*}.}$\
+**(4)** If ${T_m \overset{*}{\to} T}$ and ${x_m \to x}$ in ${X,}$ then ${\lim_m T_m(x_m) = T x.}$\
+**(5)** If $(T_m)$ is bounded and ${T_m x \to T x}$ for every $x$ in a dense subspace $V$ of ${X,}$ then ${T_m \overset{*}{\to} T.}$
+
+**Theorem 17.11 (Banach–Alaoglu).** Let ${(X, \|\cdot\|_X)}$ be a Banach space.\
+**(1)** If $X$ is reflexive and ${(x_m) \subset X}$ is bounded, then there exist a subsequence $(x_{m_k})$ and ${x \in X}$ such that ${x_{m_k} \to x \ \text{w-}X.}$\
+**(2)** If $X$ is separable and ${(T_m) \subset X^*}$ is bounded, then there exist a subsequence $(T_{m_k})$ and ${T \in X^*}$ such that ${T_{m_k} \overset{*}{\to} T \ \text{w}^*\text{-}X^*.}$
+
+**Remark 17.12.** Let ${(a, b)}$ be an open interval of $\mathbb{R}$ with the Lebesgue measure.\
+**(i)** Let ${X = L^p((a, b))}$ with ${p \in (1, \infty).}$ Then Theorem 17.11 (1) applies: if ${(f_m) \subset L^p}$ is bounded, then there exist a subsequence $(f_{m_k})$ and ${f \in L^p}$ such that ${f_{m_k} \to f \ \text{w-}L^p.}$\
+**(ii)** Let ${X = L^1((a, b)).}$ Then Theorem 17.11 (2) applies: if ${(f_m) \subset L^\infty((a, b))}$ is bounded, then there exist a subsequence $(f_{m_k})$ and ${f \in L^\infty}$ such that ${f_{m_k} \overset{*}{\to} f \ \text{w}^*\text{-}L^\infty.}$ Indeed, $L^1((a, b))$ is separable by Theorem 13.4 (2), and its dual is identified with $L^\infty((a, b))$ by Theorem 16.13 (2).
+
+## Compact operators
+
+**Definition 17.13 (Compact operator).** Let ${(X, \|\cdot\|_X)}$ and ${(Y, \|\cdot\|_Y)}$ be Banach spaces, and let ${\overline{B}_1^X(0) = \{ x \in X : \|x\|_X \le 1 \}.}$ A linear map ${T \colon X \to Y}$ is said to be *compact* if the set ${T(\overline{B}_1^X(0)) = \{ Tx : x \in \overline{B}_1^X(0) \}}$ is precompact in ${Y,}$ that is, if $\overline{T(\overline{B}_1^X(0))}$ is compact in ${Y,}$ as in Definition 1.14. Equivalently, every sequence ${(y_m) \subset T(\overline{B}_1^X(0))}$ has a subsequence $(y_{m_k})$ that converges in ${Y.}$
+
+### Properties of compact operators
+
+**Remark 17.14 (Basic properties).** Let ${(X, \|\cdot\|_X)}$ and ${(Y, \|\cdot\|_Y)}$ be Banach spaces.\
+**(1)** The set ${\mathcal{K}(X, Y)}$ of the compact operators from $X$ to $Y$ is a subspace of the linear operators from $X$ to ${Y.}$
+
+**(2)** If ${T \in \mathcal{K}(X, Y),}$ then $T$ is continuous. In particular,
+
+$$
+\mathcal{K}(X, Y) \subset \mathcal{L}(X, Y).
+$$
+
+**(3)** A linear map ${T \colon X \to Y}$ belongs to $\mathcal{K}(X, Y)$ if and only if $\overline{T(E)}$ is compact in $Y$ for every bounded set ${E \subset X.}$\
+**(4)** A linear map ${T \colon X \to Y}$ belongs to $\mathcal{K}(X, Y)$ if and only if, for every bounded sequence ${(x_m) \subset X,}$ the sequence ${(T x_m) \subset Y}$ has a converging subsequence.\
+**(5)** If ${T \in \mathcal{K}(X, Y)}$ and ${\dim Y = +\infty,}$ then $T$ is not surjective.\
+**(6)** Let ${(Z, \|\cdot\|_Z)}$ be a Banach space, let ${T \in \mathcal{L}(X, Y)}$ and let ${S \in \mathcal{L}(Y, Z).}$ If $T$ is compact or $S$ is compact, then ${S \circ T}$ is compact, that is, ${S \circ T \in \mathcal{K}(X, Z).}$
+
+**Proof (sketch).** Only (2) and (5) are proved. (2) Let ${T \in \mathcal{K}(X, Y).}$ The set $T(\overline{B}_1^X(0))$ is bounded in ${Y,}$ that is, there exists ${M > 0}$ such that ${\|y\|_Y \le M}$ for every ${y \in T(\overline{B}_1^X(0)).}$ Indeed, it is contained in its closure, which is compact by Definition 17.13, and compact sets are bounded. In particular, for every $x$ in $X$ of norm ${1,}$ ${Tx \in T(\overline{B}_1^X(0))}$ and therefore ${\|Tx\|_Y \le M.}$ Hence ${\sup_{\|x\|_X = 1} \|Tx\|_Y \le M,}$ and ${T \in \mathcal{L}(X, Y).}$
+
+(5) Let ${T \in \mathcal{K}(X, Y)}$ with ${\dim Y = +\infty,}$ and suppose, by contradiction, that $T$ is surjective. Then $T$ is open. Indeed, $T$ is continuous by (2), so that the open mapping theorem, Theorem 15.5, applies. Therefore, for some ${r > 0,}$
+
+$$
+T(\overline{B}_1^X(0)) \supset T(B_1^X(0)) \supset B_r^Y(0),
+$$
+
+where $B_1^X(0)$ is the open ball of radius $1$ centred at $0$ in $X$ and $B_r^Y(0)$ the open ball of radius $r$ centred at $0$ in ${Y.}$ Indeed, the set $T(B_1^X(0))$ is open and contains ${T0 = 0.}$ Taking closures,
+
+$$
+\overline{T(\overline{B}_1^X(0))} \supset \overline{B}_r^Y(0),
+$$
+
+where the left-hand side is compact by Definition 17.13 and the right-hand side is closed. Hence $\overline{B}_r^Y(0),$ a closed subset of a compact set, is compact, and therefore ${\dim Y < +\infty,}$ which contradicts ${\dim Y = +\infty.}$ Indeed, $\overline{B}_1^Y(0)$ is the image of $\overline{B}_r^Y(0)$ under the continuous map ${y \mapsto y/r,}$ hence it is compact, and the Riesz theorem, Theorem 12.18, applies. $\blacksquare$
+
+**Theorem 17.15.** Let ${(X, \|\cdot\|_X)}$ and ${(Y, \|\cdot\|_Y)}$ be Banach spaces. Then $\mathcal{K}(X, Y)$ is a closed subspace of ${\mathcal{L}(X, Y).}$ In particular, if ${(T_m) \subset \mathcal{K}(X, Y)}$ converges to $T$ in ${\mathcal{L}(X, Y),}$ that is, ${\|T - T_m\|_{\mathcal{L}} \to 0,}$ then ${T \in \mathcal{K}(X, Y).}$
+
+**Definition 17.16 (Finite rank).** Let ${(X, \|\cdot\|_X)}$ and ${(Y, \|\cdot\|_Y)}$ be Banach spaces. A linear continuous map ${T \colon X \to Y}$ is said to be *of finite rank* if its range $R(T)$ has finite dimension.
+
+**Corollary 17.17.** Let ${(X, \|\cdot\|_X)}$ and ${(Y, \|\cdot\|_Y)}$ be Banach spaces and let ${T \colon X \to Y}$ be of finite rank. Then ${T \in \mathcal{K}(X, Y).}$
+
+**Proof (complete).** The set $T(\overline{B}_1^X(0))$ is contained in ${R(T),}$ and it is bounded. So it is a bounded set in the finite-dimensional space ${R(T),}$ and therefore it is precompact. Indeed, $R(T)$ is closed in $Y$ by Remark 12.14 (1), so that the closure of $T(\overline{B}_1^X(0))$ is a closed and bounded subset of ${R(T),}$ compact by Corollary 12.7. $\blacksquare$
+
+**Corollary 17.18.** Let ${(X, \|\cdot\|_X)}$ and ${(Y, \|\cdot\|_Y)}$ be Banach spaces, and let $(T_m)$ be a sequence of operators of finite rank from $X$ to $Y$ such that ${T_m \to T}$ in ${\mathcal{L}(X, Y).}$ Then ${T \in \mathcal{K}(X, Y).}$
+
+**Proof (complete).** By Corollary 17.17, ${T_m \in \mathcal{K}(X, Y)}$ for every ${m.}$ Hence ${T \in \mathcal{K}(X, Y)}$ by Theorem 17.15. $\blacksquare$
+
+**Corollary 17.19.** Let ${(X, \|\cdot\|_X)}$ and ${(Y, \|\cdot\|_Y)}$ be Banach spaces.\
+**(1)** Let ${T \in \mathcal{K}(X, Y).}$ If a sequence $(x_m)$ of $X$ and a point $x$ of $X$ satisfy ${x_m \to x \ \text{w-}X,}$ then ${T x_m \to T x}$ in ${Y.}$\
+**(2)** Let $X$ be reflexive and let ${T \in \mathcal{L}(X, Y).}$ Then ${T \in \mathcal{K}(X, Y)}$ if and only if, for every sequence $(x_m)$ of $X$ and every point $x$ of $X$ such that ${x_m \to x \ \text{w-}X,}$ we have ${T x_m \to T x}$ in ${Y.}$
+
+**Proof (sketch).** Only the idea of (1) is given. The sequence $(x_m)$ is bounded, by Lemma 17.3 (4). Hence, by Remark 17.14 (4), there exist a subsequence $(x_{m_k})$ and ${y \in Y}$ such that ${T x_{m_k} \to y}$ in ${Y.}$ Now one proves that ${T x_m \to y}$ in $Y$ and that ${y = T x.}$ $\blacksquare$
