@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Slow Tide</title>
+<style>
+  html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #03060d; }
+  canvas { display: block; width: 100vw; height: 100vh; touch-action: none; }
+</style>
+</head>
+<body>
+<canvas id="art"></canvas>
+<script>
+'use strict';
+/* ─────────────────────────────────────────────────────────
+   SLOW TIDE — a living painting
+   a moonlit sea remembered by the aurora:
+   big pale disc, teal/violet ribbons overhead,
+   a glittering column, plankton sparks, gulls, far light
+   ───────────────────────────────────────────────────────── */
+let ridge = [], island = [];
+const canvas = document.getElementById('art');
+const ctx = canvas.getContext('2d');
+const DPR = Math.min(window.devicePixelRatio || 1, 2);
+let W = 0, H = 0, horizon = 0, mx = 0, my = 0, mr = 0;
+
+/* deterministic rng so the painting is identical every load */
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+const hash = n => { const s = Math.sin(n * 127.1 + 311.7) * 43758.5453; return s - Math.floor(s); };
+
+/* ── seeded static scenery (fractions make resize trivial) ── */
+let stars = [], sparks = [], birds = [];
+(function build() {
+  const r = mulberry32(11);
+  for (let i = 0; i < 260; i++) {
+    stars.push({ fx: r(), fy: r() * 0.58, rad: 0.35 + r() * 1.35, ph: r() * 6.28, sp: 0.5 + r() * 1.5 });
+  }
+  for (let i = 0; i < 150; i++) {
+    sparks.push({ fx: r(), fy: 0.685 + r() * 0.30, rad: 0.6 + r() * 1.9, ph: r() * 6.28, rise: 0.02 + r() * 0.05, tint: r() });
+  }
+  for (let i = 0; i < 3; i++) {
+    birds.push({ fx: 0.12 + r() * 0.5, speed: 0.006 + r() * 0.009, ph: r() * 6.28, ys: 0.50 + r() * 0.06, w: 9 + r() * 5, spin: r() * 6.28 });
+  }
+})();
+function resize() {
+  W = window.innerWidth; H = window.innerHeight;
+  canvas.width = Math.round(W * DPR); canvas.height = Math.round(H * DPR);
+  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  horizon = H * 0.66;
+  mx = W * 0.5; my = H * 0.27;
+  mr = Math.min(W, H) * 0.135;
+  buildRidge();
+}
+
+function buildRidge() {
+  ridge.length = 0; island.length = 0;
+  const r = mulberry32(99);
+  let x = -40;
+  while (x < W * 0.62 + 40) { ridge.push({ x, h: H * (0.015 + r() * 0.055) }); x += H * (0.03 + r() * 0.075); }
+  const r2 = mulberry32(7);
+  let x2 = W * 0.74;
+  while (x2 < W * 0.94) { island.push({ x: x2, h: H * (0.010 + r2() * 0.028) }); x2 += H * (0.022 + r2() * 0.04); }
+}
+
+/* aurora palette — mint, violet, teal */
+const AURORA = [
+  { y: 0.155, amp: 0.058, thick: 44, wave: 2.6, speed: 0.55, hue: '72, 244, 178', ph: 0.0, alpha: 0.40, born: 0.0 },
+  { y: 0.235, amp: 0.080, thick: 64, wave: 3.4, speed: 0.37, hue: '147, 128, 255', ph: 2.1, alpha: 0.34, born: 1.3 },
+  { y: 0.105, amp: 0.030, thick: 27, wave: 4.8, speed: 0.82, hue: '42, 216, 196', ph: 4.4, alpha: 0.46, born: 2.6 }
+];
+
+function ribbonEdges(t, rb, N) {
+  const top = [], bot = [];
+  const baseY = H * rb.y;
+  for (let i = 0; i <= N; i++) {
+    const u = i / N;
+    const x = u * W;
+    const wave = Math.sin(u * Math.PI * rb.wave + t * rb.speed + rb.ph) * H * rb.amp
+               + Math.sin(u * Math.PI * rb.wave * 2.7 + t * rb.speed * 1.55 + rb.ph * 1.3) * H * rb.amp * 0.34;
+    const th = rb.thick * (0.72 + 0.38 * Math.sin(u * Math.PI * 3.1 + t * 0.8 + rb.ph * 1.9));
+    top.push([x, baseY + wave - th * 0.34]);
+    bot.push([x, baseY + wave + th * 0.72]);
+  }
+  return { top, bot };
+}
+
+function drawAuroraWash(t) {
+  const N = 30;
+  const pulse = 0.86 + 0.14 * Math.sin(t * 0.55 + 1.2);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  for (const rb of AURORA) {
+    if (t < rb.born) continue;
+    const k = Math.min(1, (t - rb.born) / 1.5) * pulse;
+    const bottom = H * 0.335;
+    ctx.beginPath();
+    ctx.moveTo(-20, bottom);
+    for (let i = N; i >= 0; i--) {
+      const u = i / N, x = u * W;
+      const wave = Math.sin(u * Math.PI * rb.wave + t * rb.speed + rb.ph) * H * rb.amp * 0.9;
+      ctx.lineTo(x, horizon + H * 0.035 + wave * 0.8);
+    }
+    ctx.lineTo(W + 20, bottom);
+    ctx.closePath();
+    const gW = ctx.createLinearGradient(0, horizon, 0, bottom);
+    gW.addColorStop(0, 'rgba(' + rb.hue + ',' + (0.24 * k) + ')');
+    gW.addColorStop(0.55, 'rgba(' + rb.hue + ',' + (0.072 * k) + ')');
+    gW.addColorStop(1, 'rgba(' + rb.hue + ',0)');
+    ctx.fillStyle = gW;
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+function drawAurora(t) {
+  const N = 30;
+  const pulse = 0.86 + 0.14 * Math.sin(t * 0.55 + 1.2);
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+
+  for (const rb of AURORA) {
+    if (t < rb.born) continue;
+    const k = Math.min(1, (t - rb.born) / 1.6) * pulse;
+    const { top, bot } = ribbonEdges(t, rb, N);
+    const cxS = horizon;
+    const topY = top[0][1], botY = bot[N][1];
+    /* outer glow band */
+    ctx.beginPath();
+    ctx.moveTo(top[0][0], top[0][1]);
+    for (const p of top) ctx.lineTo(p[0], p[1]);
+    for (let i = bot.length - 1; i >= 0; i--) ctx.lineTo(bot[i][0], bot[i][1]);
+    ctx.closePath();
+    const g = ctx.createLinearGradient(0, topY - rb.thick, 0, botY + rb.thick);
+    g.addColorStop(0, 'rgba(' + rb.hue + ',0)');
+    g.addColorStop(0.42, 'rgba(' + rb.hue + ',' + (rb.alpha * k) + ')');
+    g.addColorStop(0.62, 'rgba(' + rb.hue + ',' + (rb.alpha * k * 0.85) + ')');
+    g.addColorStop(1, 'rgba(' + rb.hue + ',0)');
+    ctx.fillStyle = g;
+    ctx.fill();
+    /* bright core ribbon — two wide soft strokes along the centreline */
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    const trace = () => { ctx.beginPath(); for (let i = 0; i <= N; i++) { const u = i / N; const x = u * W; const wave = Math.sin(u * Math.PI * rb.wave + t * rb.speed + rb.ph) * H * rb.amp + Math.sin(u * Math.PI * rb.wave * 2.7 + t * rb.speed * 1.55 + rb.ph * 1.3) * H * rb.amp * 0.34; const y = cy0 + wave; if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y); } };
+    trace(); ctx.strokeStyle = 'rgba(' + rb.hue + ',' + (0.34 * k) + ')'; ctx.lineWidth = rb.thick * 0.5; ctx.stroke();
+    trace(); ctx.strokeStyle = 'rgba(' + rb.hue + ',' + (0.55 * k) + ')'; ctx.lineWidth = rb.thick * 0.2; ctx.stroke();
+    /* tight bright heart of the ribbon */
+    trace(); ctx.strokeStyle = 'rgba(238,255,248,' + (0.55 * k) + ')'; ctx.lineWidth = 3.2; ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function drawMoon(t) {
+  ctx.save();
+  /* halo */
+  const halo = ctx.createRadialGradient(mx, my, mr * 0.4, mx, my, mr * 5.2);
+  halo.addColorStop(0, 'rgba(244,240,214,0.42)');
+  halo.addColorStop(0.18, 'rgba(222,220,196,0.16)');
+  halo.addColorStop(0.55, 'rgba(190,190,210,0.045)');
+  halo.addColorStop(1, 'rgba(190,190,210,0)');
+  ctx.fillStyle = halo;
+  ctx.fillRect(mx - mr * 5.2, my - mr * 5.2, mr * 10.4, mr * 10.4);
+  /* disc */
+  const mg = ctx.createRadialGradient(mx - mr * 0.35, my - mr * 0.35, mr * 0.1, mx, my, mr);
+  mg.addColorStop(0, '#fbf8e9');
+  mg.addColorStop(0.55, '#e9e4c9');
+  mg.addColorStop(0.85, '#cfc9ac');
+  mg.addColorStop(1, '#a9a387');
+  ctx.beginPath(); ctx.arc(mx, my, mr, 0, Math.PI * 2);
+  ctx.fillStyle = mg; ctx.fill();
+  /* craters — subtle */
+  const rndC = mulberry32(5);
+  ctx.fillStyle = 'rgba(140,138,112,0.35)';
+  for (let i = 0; i < 9; i++) {
+    const a = rndC() * Math.PI * 2, d = rndC() * mr * 0.68;
+    const rr = mr * (0.045 + rndC() * 0.085);
+    ctx.beginPath();
+    ctx.arc(mx + Math.cos(a) * d, my + Math.sin(a) * d, rr, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+function drawRidges(t) {
+  ctx.save();
+  /* left main ridge */
+  ctx.beginPath();
+  ctx.moveTo(-40, H);
+  for (const p of ridge) ctx.lineTo(p.x, horizon - p.h);
+  ctx.lineTo(W * 0.62 + 40, horizon);
+  ctx.lineTo(-40, H);
+  ctx.closePath();
+  ctx.fillStyle = '#060a13';
+  ctx.fill();
+  /* sparse ridge texture — a slightly lighter second layer line */
+  ctx.beginPath();
+  let started = false;
+  for (const p of ridge) {
+    const y = horizon - p.h * 0.42;
+    if (!started) { ctx.moveTo(p.x - 8, y); started = true; } else ctx.lineTo(p.x, y);
+  }
+  ctx.strokeStyle = 'rgba(120,150,190,0.10)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  /* right island with jagged profile */
+  if (island.length) {
+    ctx.beginPath();
+    ctx.moveTo(W * 0.74 - 30, horizon + 2);
+    for (const p of island) ctx.lineTo(p.x, horizon - p.h);
+    ctx.lineTo(W * 0.94 + 30, horizon + 2);
+    ctx.closePath();
+    ctx.fillStyle = '#070c16';
+    ctx.fill();
+    /* tiny beacon on island */
+    const blink = Math.pow(Math.max(0, Math.sin((t % 4.2) / 4.2 * Math.PI * 2 - Math.PI / 2)), 6);
+    const bx = W * 0.845, by = horizon - 0.40 * H * 0.034 - 3;
+    const bg = ctx.createRadialGradient(bx, by, 0, bx, by, 26 + blink * 34);
+    bg.addColorStop(0, 'rgba(255, 206, 130,' + (0.85 * (0.25 + 0.75 * blink)) + ')');
+    bg.addColorStop(1, 'rgba(255, 170, 80, 0)');
+    ctx.fillStyle = bg;
+    ctx.fillRect(bx - 70, by - 70, 140, 140);
+  }
+  ctx.restore();
+}
+
+function drawWaterBase(t) {
+  const g = ctx.createLinearGradient(0, horizon, 0, H);
+  g.addColorStop(0, '#0a1a2c');
+  g.addColorStop(0.18, '#081428');
+  g.addColorStop(0.6, '#040b1a');
+  g.addColorStop(1, '#020510');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, horizon, W, H - horizon);
+  /* warm ember kiss on the horizon where the moon pays off */
+  const hg = ctx.createRadialGradient(mx, horizon, 0, mx, horizon, W * 0.52);
+  hg.addColorStop(0, 'rgba(255, 156, 74, 0.20)');
+  hg.addColorStop(0.45, 'rgba(214, 106, 60, 0.07)');
+  hg.addColorStop(1, 'rgba(214,106,60,0)');
+  ctx.fillStyle = hg;
+  ctx.fillRect(0, horizon, W, H - horizon);
+  /* thin glimmer line at the horizon */
+  ctx.fillStyle = 'rgba(205,225,255,0.14)';
+  ctx.fillRect(0, horizon, W, 1.2);
+  ctx.fillStyle = 'rgba(205,225,255,0.05)';
+  ctx.fillRect(0, horizon + 1.6, W, 1.2);
+}
+
+function drawMoonColumn(t) {
+  /* broad glow column */
+  const col = ctx.createLinearGradient(0, horizon, 0, H);
+  col.addColorStop(0, 'rgba(240,235,205,0.20)');
+  col.addColorStop(0.35, 'rgba(225,222,200,0.085)');
+  col.addColorStop(1, 'rgba(225,222,200,0)');
+  ctx.fillStyle = col;
+  ctx.fillRect(mx - mr * 1.15, horizon, mr * 2.3, H - horizon);
+  /* animated shimmer dashes */
+  const rows = 44;
+  for (let i = 0; i < rows; i++) {
+    const base = Math.pow(i / rows, 1.35);
+    const y = horizon + 7 + i * ((H - horizon) / rows) + Math.sin(i * 12.9) * 2.2;
+    const spread = mr * (0.35 + base * 1.35);
+    const wob = Math.sin(t * 1.35 + i * 1.9) * 26 + Math.sin(t * 0.7 + i * 4.3) * 12;
+    const half = spread * (0.35 + 0.65 * (0.5 + 0.5 * Math.sin(i * 7.3 + t * 0.6))) * (0.45 + 0.55 * hash(i * 3 + 1));
+    const cxD = mx + wob * (1 - base * 0.65) + Math.sin(t * 2.2 + i * 3.7) * 5;
+    const flick = 0.5 + 0.5 * Math.sin(t * (2.1 + hash(i) * 1.6) + i * 2.13 + t * 0.3);
+    const a = (0.06 + 0.42 * Math.pow(flick, 2.1)) * (1.15 - base * 0.55) * (1 - base * 0.35);
+    if (a <= 0.015) continue;
+    ctx.fillStyle = 'rgba(246, 240, 205,' + a.toFixed(3) + ')';
+    ctx.fillRect(cxD - half, y, half * 2, 1.5 + base * 1.7);
+  }
+}
+
+function drawSparks(t) {
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  for (const s of sparks) {
+    const x = ((s.fx + Math.sin(t * s.rise + s.ph) * 0.012 + t * 0.008) % 1) * W;
+    const yBase = s.fy * H;
+    const drift = Math.sin(t * 0.4 + s.ph * 2.0) * H * 0.012;
+    const y = yBase + drift;
+    const tw = 0.5 + 0.5 * Math.sin(t * 1.6 + s.ph * 3.0);
+    const a = 0.16 + 0.6 * Math.pow(tw, 2.4);
+    const rad = s.rad * (1 + tw * 0.8);
+    const warm = s.tint > 0.72;
+    const g = ctx.createRadialGradient(x, y, 0, x, y, rad * 3.4);
+    if (warm) {
+      g.addColorStop(0, 'rgba(255, 214, 150,' + a + ')');
+      g.addColorStop(0.4, 'rgba(255, 165, 90,' + (a * 0.4) + ')');
+      g.addColorStop(1, 'rgba(255,165,90,0)');
+    } else {
+      g.addColorStop(0, 'rgba(150, 255, 214,' + a + ')');
+      g.addColorStop(0.4, 'rgba(45, 224, 190,' + (a * 0.42) + ')');
+      g.addColorStop(1, 'rgba(45,224,190,0)');
+    }
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(x, y, rad * 3.4, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.restore();
+}
+
+function drawBirds(t) {
+  ctx.save();
+  ctx.strokeStyle = 'rgba(4, 8, 16, 0.9)';
+  ctx.lineWidth = 1.7;
+  ctx.lineCap = 'round';
+  for (const b of birds) {
+    const u = ((t * b.speed + b.fx) % 1.25) - 0.13;
+    if (u < -0.05 || u > 1.05) continue;
+    const x = u * W;
+    const y = b.ys * H + Math.sin(t * 0.5 + b.ph) * H * 0.014;
+    const flap = Math.sin(t * 4.6 + b.ph) * b.w * 0.42;
+    const s = b.w * 0.32;
+    ctx.beginPath();
+    ctx.moveTo(x - s * 1.9, y + flap * 0.55);
+    ctx.quadraticCurveTo(x - s * 0.95, y - s * 0.75 - flap * 0.5, x, y + flap * 0.08);
+    ctx.quadraticCurveTo(x + s * 0.95, y - s * 0.75 + flap * 0.5, x + s * 1.9, y + flap * 0.55);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function drawVignetteAndGrain(t) {
+  const v = ctx.createRadialGradient(W / 2, H * 0.42, Math.min(W, H) * 0.42, W / 2, H * 0.42, Math.max(W, H) * 0.78);
+  v.addColorStop(0, 'rgba(2,4,12,0)');
+  v.addColorStop(1, 'rgba(2,4,12,0.62)');
+  ctx.fillStyle = v;
+  ctx.fillRect(0, 0, W, H);
+  /* film grain */
+  ctx.save();
+  ctx.globalAlpha = 0.05;
+  for (let i = 0; i < 110; i++) {
+    const gx = hash(i * 3.1 + Math.floor(t * 9) * 0.913) * W;
+    const gy = hash(i * 7.7 + Math.floor(t * 9) * 1.71) * H;
+    ctx.fillStyle = i % 2 ? '#e8f4ff' : '#0a1430';
+    ctx.fillRect(gx, gy, Math.max(1, hash(i * 13.3) * 2.2), Math.max(1, hash(i * 5.9) * 2.2));
+  }
+  ctx.restore();
+}
+
+/* ─────────────────── main loop ─────────────────── */
+let tGlobal = 0, last = performance.now();
+function frame(now) {
+  const dt = Math.min(0.05, (now - last) / 1000);
+  last = now;
+  tGlobal += dt;
+  const t = tGlobal;
+  ctx.fillStyle = '#02040c';
+  ctx.fillRect(0, 0, W, H);
+
+  drawAurora(t);
+
+  /* sky */
+  const sky = ctx.createLinearGradient(0, 0, 0, horizon);
+  sky.addColorStop(0, '#02050e');
+  sky.addColorStop(0.34, '#060f22');
+  sky.addColorStop(0.68, '#0d1f33');
+  sky.addColorStop(0.88, '#1b2c42');
+  sky.addColorStop(1, '#31404f');
+  ctx.fillStyle = sky;
+  ctx.fillRect(0, 0, W, horizon + 1);
+
+  /* horizon ember glow behind the moon */
+  const ember = ctx.createRadialGradient(mx, horizon, 0, mx, horizon, W * 0.6);
+  ember.addColorStop(0, 'rgba(255,146,64,0.30)');
+  ember.addColorStop(0.4, 'rgba(226,102,44,0.10)');
+  ember.addColorStop(1, 'rgba(226,102,44,0)');
+  ctx.fillStyle = ember;
+  ctx.fillRect(0, 0, W, horizon + 1);
+
+  /* stars */
+  for (const st of stars) {
+    const a = 0.28 + 0.72 * Math.pow(0.5 + 0.5 * Math.sin(t * st.sp + st.ph), 1.6);
+    ctx.fillStyle = 'rgba(226,236,255,' + a.toFixed(3) + ')';
+    ctx.beginPath();
+    ctx.arc(st.fx * W, st.fy * H, st.rad, 0, Math.PI * 2);
+    ctx.fill();
+    if (st.rad > 1.15 && a > 0.75) {
+      ctx.fillStyle = 'rgba(226,236,255,' + ((a - 0.6) * 0.9).toFixed(3) + ')';
+      ctx.fillRect(st.fx * W - st.rad * 3.4, st.fy * H - 0.4, st.rad * 6.8, 0.8);
+      ctx.fillRect(st.fx * W - 0.4, st.fy * H - st.rad * 3.4, 0.8, st.rad * 6.8);
+    }
+  }
+
+  drawMoon(t);
+  drawRidges(t);
+  drawWaterBase(t);
+  drawAuroraWash(t);
+  drawMoonColumn(t);
+  drawSparks(t);
+  drawBirds(t);
+  drawVignetteAndGrain(t);
+
+  requestAnimationFrame(frame);
+}
+resize();
+window.addEventListener('resize', resize);
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

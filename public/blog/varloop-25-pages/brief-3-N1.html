@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Amber Tide — a slow water of light</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; overflow: hidden; background: #05010d; }
+  #stage { position: fixed; inset: 0; display: block; width: 100vw; height: 100vh; }
+  .vignette {
+    position: fixed; inset: 0; pointer-events: none;
+    background: radial-gradient(130% 100% at 50% 36%, rgba(0,0,0,0) 40%, rgba(3,0,12,.42) 78%, rgba(1,0,6,.9) 100%);
+  }
+</style>
+</head>
+<body>
+<canvas id="stage"></canvas>
+<div class="vignette"></div>
+<script>
+(() => {
+'use strict';
+const canvas = document.getElementById('stage');
+const ctx = canvas.getContext('2d');
+const TAU = Math.PI * 2;
+let W = innerWidth, H = innerHeight, minD = Math.min(W, H);
+
+function resize() {
+  const dpr = Math.min(devicePixelRatio || 1, 1.5);
+  W = innerWidth; H = innerHeight; minD = Math.min(W, H);
+  canvas.width = Math.floor(W * dpr);
+  canvas.height = Math.floor(H * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+resize();
+addEventListener('resize', resize);
+
+/* ---------- helpers ---------- */
+function hexToRgb(hex) {
+  const n = parseInt(hex.slice(1), 16);
+  return [n >> 16 & 255, n >> 8 & 255, n & 255];
+}
+function mixWhite(hex, f) {                       // lighten a hex color toward white
+  const [r, g, b] = hexToRgb(hex);
+  const m = v => Math.round(v + (255 - v) * f);
+  return 'rgb(' + m(r) + ',' + m(g) + ',' + m(b) + ')';
+}
+function makeGlow(r, g, b) {
+  const s = document.createElement('canvas');
+  s.width = s.height = 64;
+  const c = s.getContext('2d');
+  const gr = c.createRadialGradient(32, 32, 0, 32, 32, 32);
+  gr.addColorStop(0, 'rgba(' + r + ',' + g + ',' + b + ',1)');
+  gr.addColorStop(.35, 'rgba(' + r + ',' + g + ',' + b + ',.55)');
+  gr.addColorStop(1, 'rgba(' + r + ',' + g + ',' + b + ',0)');
+  c.fillStyle = gr; c.fillRect(0, 0, 64, 64);
+  return s;
+}
+const warm = makeGlow(255, 176, 92), rose = makeGlow(255, 90, 110), gold = makeGlow(255, 240, 180);
+
+/* ---------- stars (upper sky, twinkling) ---------- */
+const stars = [];
+for (let i = 0; i < 140; i++) {
+  stars.push({
+    x: Math.random(), y: Math.random() * 0.34,
+    r: Math.random() * 1.3 + 0.35,
+    tw: Math.random() * TAU,
+    sp: .6 + Math.random() * 1.7
+  });
+}
+
+/* ---------- flowing ribbons of light ---------- */
+const palette = ['#ff8f3c', '#ff5d8f', '#c86bff', '#39e0d8', '#ff4d2e', '#ffd166', '#ff7ad9', '#5f6cff'];
+const NH = 16;
+const ribbons = [];
+for (let i = 0; i < NH; i++) {
+  const r = i / (NH - 1);
+  ribbons.push({
+    color: palette[Math.round(r * 7.2) % palette.length], // uneven sweep across hues
+    base: 0.23 + r * 0.68,     // fraction of H
+    depth: .45 + r * .9,       // parallax strength
+    amp1: .055 + .05 * (((i * 13) % 7) / 7), // big slow swell (fraction of H)
+    f1: .0034 + .0021 * (((i * 7) % 5) / 4), // slow frequency
+    s1: .30 + .17 * ((i * 3) % 4),
+    p1: i * 1.73,
+    amp2: .020 + .014 * (((i * 5) % 4) / 3),
+    f2: .0092, s2: .9, p2: i * 2.31,
+    amp3: .010 + .008 * (((i * 11) % 3) / 2),
+    f3: .021, s3: 1.35, p3: i * 4.02 + 2.0,
+    w: .022 + .012 * (((i * 29) % 5) / 4)       // stroke width as fraction of minD
+  });
+}
+
+/* ---------- drifting embers ---------- */
+const embers = [];
+const EN = 130;
+function newEmber(any) {
+  return {
+    x: Math.random() * innerWidth,
+    y: any ? Math.random() * innerHeight : innerHeight + 24,
+    r: .8 + Math.random() * 2.5,
+    vy: 13 + Math.random() * 30,
+    sway: Math.random() * TAU,
+    sw: .45 + Math.random() * .95,
+    ph: Math.random() * TAU,
+    gold: Math.random() < .3,
+    size: 9 + Math.random() * 21
+  };
+}
+for (let i = 0; i < EN; i++) embers.push(newEmber(true));
+
+/* ---------- expanding shock rings from the sun ---------- */
+const rings = [];
+let ringTimer = 0;
+
+/* ---------- parallax (subtle, auto) ---------- */
+const px = { x: 0, y: 0, tx: 0, ty: 0 };
+addEventListener('pointermove', e => {
+  px.tx = (e.clientX / W - .5) * 2;
+  px.ty = (e.clientY / H - .5) * 2;
+});
+addEventListener('pointerleave', () => { px.tx = 0; px.ty = 0; });
+
+/* ---------- frame loop ---------- */
+let last = performance.now(), t = 0;
+
+function strokePts(pts) {
+  ctx.beginPath();
+  ctx.moveTo(pts[0][0], pts[0][1]);
+  for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+  ctx.stroke();
+}
+
+function frame(now) {
+  const dt = Math.min(.05, (now - last) / 1000);
+  last = now; t += dt;
+  px.x += (px.tx - px.x) * .045;
+  px.y += (px.ty - px.y) * .045;
+  const L = minD;
+
+  // phosphor-decay fill for painterly smear
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = 'rgba(6,2,15,.24)';
+  ctx.fillRect(0, 0, W, H);
+
+  const horizon = H * (.345 + .035 * Math.sin(t * .4));
+
+  ctx.globalCompositeOperation = 'lighter';
+
+  /* stars */
+  for (let i = 0; i < stars.length; i++) {
+    const s = stars[i];
+    const a = .18 + .5 * (.5 + .5 * Math.sin(t * s.sp * 1.7 + s.tw));
+    const fade = Math.max(0, 1 - s.y * 2.6);
+    ctx.globalAlpha = a * fade;
+    ctx.fillStyle = '#cfe6ff';
+    const sx = s.x * W + px.x * L * .012;
+    const sy = s.y * H + px.y * L * .012;
+    ctx.fillRect(sx, sy, s.r, s.r);
+  }
+
+  /* horizon glow band */
+  const hg = ctx.createLinearGradient(0, horizon - H * .055, 0, horizon + H * .055);
+  hg.addColorStop(0, 'rgba(255,120,60,0)');
+  hg.addColorStop(.5, 'rgba(255,170,90,.34)');
+  hg.addColorStop(1, 'rgba(255,120,60,0)');
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = hg;
+  ctx.fillRect(0, horizon - H * .055, W, H * .11);
+
+  /* sun disc */
+  const sunX = W * .5 + px.x * L * .035;
+  const pulse = 1 + .08 * Math.sin(t * .8) + .045 * Math.sin(t * 1.9 + 1.3);
+  const R = L * .34 * pulse;
+  const sg = ctx.createRadialGradient(sunX, horizon - L * .02, 0, sunX, horizon - L * .02, R);
+  sg.addColorStop(0, 'rgba(255,250,225,1)');
+  sg.addColorStop(.18, 'rgba(255,214,140,.95)');
+  sg.addColorStop(.42, 'rgba(255,140,60,.5)');
+  sg.addColorStop(.78, 'rgba(255,80,45,.14)');
+  sg.addColorStop(1, 'rgba(255,60,40,0)');
+  ctx.fillStyle = sg;
+  ctx.fillRect(0, 0, W, H);
+  ctx.beginPath();
+  ctx.arc(sunX, horizon - L * .02, L * .052 * pulse, 0, TAU);
+  ctx.fillStyle = 'rgba(255,252,238,1)';
+  ctx.fill();
+
+  /* shock rings */
+  ringTimer += dt;
+  if (ringTimer > 5.1) { ringTimer = 0; rings.push({ r: L * .05, alpha: .65 }); }
+  for (let i = rings.length - 1; i >= 0; i--) {
+    const rg = rings[i];
+    rg.r += dt * L * .085;
+    rg.alpha *= Math.pow(.14, dt * .9);
+    if (rg.alpha < .02) { rings.splice(i, 1); continue; }
+    ctx.lineWidth = 2 + rg.r * .008;
+    ctx.strokeStyle = 'rgba(255,196,140,' + rg.alpha + ')';
+    ctx.beginPath();
+    ctx.arc(sunX, horizon - L * .02, rg.r, 0, TAU);
+    ctx.stroke();
+  }
+
+  /* ribbons of light */
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  for (let bi = 0; bi < ribbons.length; bi++) {
+    const b = ribbons[bi];
+    const baseY = b.base * H + Math.sin(t * .3 + b.p1) * H * .008;
+    const step = Math.max(22, Math.floor((W + 140) / 85));
+    const off = px.x * L * b.depth * .055;
+    const len = W + 140;
+    const pts = [];
+    const cnt = Math.floor(len / step);
+    for (let i = 0; i <= cnt; i++) {
+      const x = -70 + i * (len / cnt) + off;
+      const y = baseY
+        + Math.sin(x * b.f1 + t * b.s1 + b.p1) * b.amp1 * H
+        + Math.sin(x * b.f2 - t * b.s2 + b.p2) * b.amp2 * H
+        + Math.sin(x * b.f3 + t * b.s3 + b.p3) * b.amp3 * H;
+      pts.push([x, y]);
+    }
+    const lw = b.w * L;
+    // soft halo pass
+    ctx.globalAlpha = .10; ctx.strokeStyle = b.color; ctx.lineWidth = lw * 3.6;
+    strokePts(pts);
+    // body pass
+    ctx.globalAlpha = .5; ctx.strokeStyle = b.color; ctx.lineWidth = lw * 1.25;
+    strokePts(pts);
+    // scorching core pass
+    ctx.globalAlpha = .9; ctx.strokeStyle = mixWhite(b.color, .78); ctx.lineWidth = lw * .34;
+    strokePts(pts);
+  }
+
+  /* embers */
+  for (let i = 0; i < embers.length; i++) {
+    const e = embers[i];
+    e.y -= e.vy * dt;
+    e.sway += dt * e.sw;
+    const flick = .5 + .5 * Math.sin(t * 2.3 + e.ph * 3.1);
+    const sx = e.x + Math.sin(e.sway + e.ph) * L * .028;
+    const size = e.size * (0.75 + flick * .6);
+    ctx.globalAlpha = .3 + .55 * flick;
+    ctx.drawImage(e.gold ? gold : (Math.random() < .45 ? rose : warm), sx - size / 2, e.y - size / 2, size, size);
+    if (e.y < -40) embers[i] = newEmber(false);
+  }
+
+  /* reset composite/alpha */
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.globalAlpha = 1;
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

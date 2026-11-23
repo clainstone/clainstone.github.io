@@ -1,0 +1,9 @@
+Make one web page that is a piece of moving visual art.
+
+The subject, the mood, the colours and the technique are all yours. Pick something you would really like to look at, not the first thing that comes to mind. People will see it on a phone while scrolling fast, so the first two seconds must already make them stop: large forms, strong contrast, motion from the very first frame. Nothing to read and nothing to explain. Put a title you like in the <title> tag only.
+
+Rules:
+- Deliver exactly one file, index.html, in the current folder. All HTML, CSS and JavaScript go inside it. No libraries, no CDN links, no external images, fonts or files: it must work with no internet.
+- Double-clicking it in Chrome must be enough: it fills the whole window and starts moving by itself, with no click.
+- Every decision is yours. Do not ask me anything.
+- Keep the code compact, under about 500 lines, and write the whole file in one go.

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Vermilion Falls</title>
+<style>
+  html,body{margin:0;padding:0;height:100%;overflow:hidden;background:#0b0620;}
+  canvas{display:block;width:100vw;height:100vh;touch-action:none;}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+"use strict";
+const cv=document.getElementById('c'),cx=cv.getContext('2d');
+let W=0,H=0,DPR=1;
+function resize(){DPR=Math.min(2,window.devicePixelRatio||1);W=innerWidth;H=innerHeight;cv.width=W*DPR;cv.height=H*DPR;cv.style.width=W+'px';cv.style.height=H+'px';cx.setTransform(DPR,0,0,DPR,0,0);}
+addEventListener('resize',resize);resize();
+
+const TAU=Math.PI*2;
+const rnd=(n)=>{const x=Math.sin(n*127.1+311.7)*43758.5453;return x-Math.floor(x);};
+
+// ---------- helpers ----------
+function ridgeY(x,seed,amp){ // jagged silhouette via layered sines/hashes
+  let y=0;
+  y+=Math.sin(x*0.011+seed)*amp*0.42;
+  y+=Math.sin(x*0.023+seed*1.7+2.1)*amp*0.24;
+  y+=Math.sin(x*0.047+seed*3.3+4.2)*amp*0.14;
+  y+=(rnd(Math.floor(x*0.09)+seed*10)-0.5)*amp*0.30;
+  return y;
+}
+// ---------- star field ----------
+const stars=[];for(let i=0;i<170;i++)stars.push({x:Math.random(),y:Math.random()*0.62,r:Math.random()*1.5+0.3,ph:Math.random()*TAU,sp:1.5+Math.random()*2.5});
+
+// ---------- birds ----------
+const birds=[];for(let i=0;i<5;i++)birds.push({x:Math.random(),y:0.16+Math.random()*0.18,vx:(Math.random()*0.008+0.004)*(Math.random()<0.5?1:-1),sz:3+Math.random()*4,ph:Math.random()*TAU});
+
+// precompute jagged mountains (three ridges, sampled across full width + margin)
+const MOUNTS=[];
+for(let L=0;L<3;L++){
+  const pts=[];const step=0.012;
+  for(let x=-0.05;x<=1.05;x+=step){
+    const seed=L*17.3+3.7;
+    pts.push([x, ridgeY(x*9,seed,1)]);
+  }
+  MOUNTS.push(pts);
+}
+
+let t=0,last=performance.now();
+
+function draw(now){
+  const dt=Math.min(0.05,(now-last)/1000);last=now;t+=dt;
+  const W2=W,H2=H;
+  const horizonY = H2*0.66;      // where waterfall meets lake
+  const fallX = W2*0.47;         // waterfall center
+  const lakeY = horizonY + H2*0.015;
+
+  // ===== SKY =====
+  const sky=cx.createLinearGradient(0,0,0,lakeY*1.15);
+  sky.addColorStop(0.00,'#080417');
+  sky.addColorStop(0.38,'#26103f');
+  sky.addColorStop(0.62,'#59224a');
+  sky.addColorStop(0.78,'#93362f');
+  sky.addColorStop(0.90,'#d8551f');
+  sky.addColorStop(0.97,'#f58a2b');
+  sky.addColorStop(1.00,'#ffc46b');
+  cx.fillStyle=sky;cx.fillRect(0,0,W2,H2*1.16);
+
+  // ===== SUN glow low on horizon =====
+  const sunY=horizonY-H2*0.015;
+  const pulse=0.9+0.10*Math.sin(t*0.7)+0.05*Math.sin(t*2.3+1.7);
+  cx.globalCompositeOperation='lighter';
+  let g=cx.createRadialGradient(fallX,sunY,0,fallX,sunY,H2*0.55*pulse);
+  g.addColorStop(0,'rgba(255,214,130,0.85)');
+  g.addColorStop(0.25,'rgba(255,150,60,0.38)');
+  g.addColorStop(0.6,'rgba(200,60,30,0.16)');
+  g.addColorStop(1,'rgba(120,20,20,0)');
+  cx.fillStyle=g;cx.fillRect(0,0,W2,horizonY*1.3);
+  cx.globalCompositeOperation='source-over';
+
+  // crisp dim sun disc partially hidden by ridge line
+  const sunG=cx.createRadialGradient(fallX,sunY,0,fallX,sunY,H2*0.085*pulse);
+  sunG.addColorStop(0,'#fff3c4');
+  sunG.addColorStop(0.45,'#ffd267');
+  sunG.addColorStop(1,'rgba(255,160,60,0)');
+  cx.fillStyle=sunG;cx.beginPath();cx.arc(fallX,sunY,H2*0.085*pulse,0,TAU);cx.fill();
+
+  // ===== STARS =====
+  for(const s of stars){
+    const tw=0.35+0.65*(0.5+0.5*Math.sin(t*s.sp+s.ph));
+    cx.globalAlpha=tw*(1-s.y*0.7);
+    cx.fillStyle='#dfe6ff';
+    cx.beginPath();cx.arc(s.x*W2,s.y*H2*0.78,s.r,0,TAU);cx.fill();
+  }
+  cx.globalAlpha=1;
+
+  // ===== BIRDS =====
+  cx.strokeStyle='rgba(10,6,18,0.85)';cx.lineWidth=1.6;cx.lineCap='round';
+  for(const b of birds){
+    b.x+=b.vx*dt*10;
+    if(b.x>1.15)b.x=-0.15,b.y=0.12+Math.random()*0.22;
+    if(b.x<-0.15)b.x=1.15;
+    const bx=b.x*W2,by=(b.y+0.02*Math.sin(t*0.9+b.ph))*H2,s=b.sz;
+    const flap=Math.sin(t*6+b.ph)*0.9;
+    cx.beginPath();
+    cx.moveTo(bx-s,by);cx.quadraticCurveTo(bx-s*0.4,by-s*0.7*(0.6+flap*0.4),bx,by);
+    cx.quadraticCurveTo(bx+s*0.4,by-s*0.7*(0.6-flap*0.4),bx+s,by);
+    cx.stroke();
+  }
+
+  // ===== MOUNTAINS (far to near, parallax slow drift) =====
+  const ridgeFill=['#241033','#1a0b28','#100722'];
+  const drift=[0.010,0.02,0.035];
+  const ridgeBase=[0.60,0.625,0.655];
+  for(let L=0;L<3;L++){
+    const pts=MOUNTS[L];
+    const d=t*drift[L]*0.35;
+    cx.fillStyle=ridgeFill[L];
+    cx.beginPath();cx.moveTo(-60,H2+2);
+    for(const [x,y] of pts){
+      const px=(x+d)*W2;
+      const py=(ridgeBase[L]+y*0.055)*H2;
+      cx.lineTo(px,py);
+    }
+    cx.lineTo(W2+60,H2+2);cx.closePath();cx.fill();
+  }
+
+  // ===== LAKE =====
+  const lk=cx.createLinearGradient(0,lakeY,0,H2);
+  lk.addColorStop(0,'#3a1030');
+  lk.addColorStop(0.18,'#57203a');
+  lk.addColorStop(0.55,'#160a26');
+  lk.addColorStop(1,'#05030e');
+  cx.fillStyle=lk;cx.fillRect(0,lakeY,W2,H2-lakeY);
+
+  // sunset reflection on lake under horizon line
+  let rg=cx.createLinearGradient(0,lakeY,0,H2*0.92);
+  rg.addColorStop(0,'rgba(255,170,80,0.55)');
+  rg.addColorStop(0.4,'rgba(200,80,40,0.22)');
+  rg.addColorStop(1,'rgba(90,30,60,0)');
+  cx.fillStyle=rg;cx.fillRect(0,lakeY,W2,H2*0.35);
+
+  // ===== WATERFALL =====
+  cx.globalCompositeOperation='lighter';
+  const fallTop=horizonY-H2*0.20, fallBot=lakeY+H2*0.16;
+  for(let i=0;i<150;i++){
+    const rx=rnd(i*3.7), rx2=rnd(i*7.9+5.1);
+    const lane=(rx-0.5);
+    const sway=Math.sin(t*1.3+i*0.9)*(6+i%5*2)+(rx2-0.5)*26;
+    const x=fallX+lane*W2*0.15+sway;
+    const len=(0.25+((i*0.618)%1)*0.75)*(fallBot-fallTop)*0.9;
+    const yStart=fallTop+((i*0.754)%1)*(fallBot-fallTop)*0.5 - ((t*260+i*37)%90);
+    // stretch wrapped fall streaks
+    const yy=fallTop + ((yStart+ i*97 + t*230) % (fallBot-fallTop+140)) - 70;
+    let a=0.10+0.35*Math.abs(Math.sin(i*12.9898));
+    a*=0.55+0.45*Math.sin(t*2+i*1.7);
+    const warm = i%4===0, cool = i%7===0;
+    cx.strokeStyle= warm?`rgba(255,214,140,${a})`: cool?`rgba(140,255,220,${a*0.7})`:`rgba(255,${140+Math.floor(rnd(i*3.3)*80)},60,${a})`;
+    cx.lineWidth=1.5+(i%5)*0.9;
+    cx.beginPath();
+    const midY=(yy+yy+len)*0.5;
+    cx.moveTo(x,yy);
+    cx.quadraticCurveTo(x+Math.sin(t*1.5+i)*7, midY, x+Math.sin(t+i*2)*9, Math.min(yy+len,fallBot+60));
+    cx.stroke();
+  }
+  // broad glowing shaft
+  let sg=cx.createLinearGradient(0,fallTop,0,fallBot+H2*0.06);
+  sg.addColorStop(0,'rgba(255,190,110,0.34)');
+  sg.addColorStop(0.5,'rgba(255,120,45,0.26)');
+  sg.addColorStop(1,'rgba(255,80,30,0)');
+  cx.fillStyle=sg;
+  cx.beginPath();
+  cx.moveTo(fallX-W2*0.035,fallTop);
+  cx.lineTo(fallX+W2*0.035,fallTop);
+  cx.lineTo(fallX+W2*0.062,fallBot+H2*0.05);
+  cx.lineTo(fallX-W2*0.062,fallBot+H2*0.05);
+  cx.closePath();cx.fill();
+
+  // fog at the falls base
+  const fog=cx.createRadialGradient(fallX,lakeY+H2*0.012,0,fallX,lakeY+H2*0.012,W2*0.10);
+  fog.addColorStop(0,'rgba(255,200,140,0.5)');fog.addColorStop(0.5,'rgba(255,140,70,0.16)');fog.addColorStop(1,'rgba(255,120,60,0)');
+  cx.fillStyle=fog;cx.fillRect(fallX-W2*0.12,lakeY-H2*0.05,W2*0.24,H2*0.12);
+  cx.globalCompositeOperation='source-over';
+
+  // ===== RIPPLES on the lake =====
+  const ripN=4;
+  for(let i=0;i<ripN;i++){
+    const phase=((t*0.42+i/ripN)%1);
+    const r=60+phase*H2*0.30, a=(1-phase)*0.4;
+    cx.strokeStyle=`rgba(255,${180+Math.floor(60*(1-phase))},110,${a*0.75})`;
+    cx.lineWidth=2.2;
+    cx.beginPath();cx.ellipse(fallX,lakeY+H2*0.035, r*1.15, r*0.22, 0,0, TAU);cx.stroke();
+  }
+  // faint top ripples across the water
+  cx.strokeStyle='rgba(255,180,120,0.16)';cx.lineWidth=1.1;
+  for(let i=0;i<9;i++){
+    const yy=lakeY+H2*0.05+i*H2*0.032;
+    const off=Math.sin(t*0.9+i*1.7)*8;
+    cx.beginPath();cx.moveTo(0,yy+off);
+    for(let x=0;x<=W2;x+=26){cx.lineTo(x,yy+Math.sin(x*0.02+t*0.8+i)*2.2+Math.sin(x*0.006-t*0.5)*3);}
+    cx.stroke();
+  }
+
+  // ===== REFLECTION OF FALLS (vertical smear on water) =====
+  cx.globalCompositeOperation='lighter';
+  const refl=cx.createLinearGradient(0,lakeY,0,H2);
+  refl.addColorStop(0,'rgba(255,170,80,0.5)');
+  refl.addColorStop(0.45,'rgba(210,70,40,0.28)');
+  refl.addColorStop(1,'rgba(80,15,40,0)');
+  cx.fillStyle=refl;
+  cx.beginPath();
+  cx.moveTo(fallX-W2*0.045,lakeY);cx.lineTo(fallX+W2*0.045,lakeY);
+  cx.lineTo(fallX+W2*0.085,H2);cx.lineTo(fallX-W2*0.085,H2);
+  cx.closePath();cx.fill();
+
+  // sparkle glints on reflection streaks
+  for(let i=0;i<40;i++){
+    const sx=fallX+(rnd(i*13.7)-0.5)*W2*0.13;
+    const depth=rnd(i*7.3+2);
+    const yy=lakeY+depth*H2*0.9;
+    const tw=Math.sin(t*2.4+i*2.4);
+    if(tw<0.35)continue;
+    cx.globalAlpha=0.25+0.6*tw;
+    cx.fillStyle='#ffe9a8';
+    cx.fillRect(sx,yy,2.2,2.2);
+  }
+  cx.globalAlpha=1;
+  cx.globalCompositeOperation='source-over';
+
+  // ===== RAINFALL-ish gold dust rising near falls (particles) =====
+  for(let i=0;i<46;i++){
+    const sp=(rnd(i*29.1)*0.5+0.34);
+    const px=fallX+(rnd(i*7.7)-0.5)*W2*0.16;
+    const iy=(t*38+i*53)%(H2*0.34);
+    const py=H2*0.20+iy;
+    const a=Math.max(0,0.5-iy/(H2*0.34))*0.75;
+    cx.fillStyle=`rgba(255,205,130,${a})`;
+    cx.fillRect(px,py,1.7,5.2);
+  }
+
+  // ===== VIGNETTE =====
+  const vg=cx.createRadialGradient(W2/2,H2*0.42,H2*0.32,W2/2,H2*0.5,H2*0.95);
+  vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(2,0,10,0.52)');
+  cx.fillStyle=vg;cx.fillRect(0,0,W2,H2);
+
+  requestAnimationFrame(draw);
+}
+requestAnimationFrame(draw);
+</script>
+</body>
+</html>

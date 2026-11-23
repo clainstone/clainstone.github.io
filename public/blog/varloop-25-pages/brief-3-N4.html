@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#070318">
+<title>The Ember Horizon</title>
+<style>
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #05021a; }
+  canvas { display: block; width: 100vw; height: 100vh; }
+  .vignette {
+    position: fixed; inset: 0; pointer-events: none;
+    background: radial-gradient(130% 95% at 50% 42%, transparent 52%, rgba(2, 1, 14, 0.62) 100%);
+  }
+  .scanlines {
+    position: fixed; inset: 0; pointer-events: none; opacity: 0.6;
+    background: repeating-linear-gradient(to bottom, rgba(255,255,255,0.028) 0 1px, transparent 1px 4px);
+  }
+  .band {
+    position: fixed; left: 0; right: 0; height: 110px; pointer-events: none;
+    background: linear-gradient(to bottom, transparent, rgba(170, 225, 255, 0.055), transparent);
+    animation: scan 9s linear infinite;
+  }
+  @keyframes scan { from { top: -140px; } to { top: 115vh; } }
+</style>
+</head>
+<body>
+<canvas id="sky"></canvas>
+<div class="vignette"></div>
+<div class="scanlines"></div>
+<div class="band"></div>
+<script>
+'use strict';
+const canvas = document.getElementById('sky');
+const ctx = canvas.getContext('2d');
+
+// ---------- deterministic random ----------
+function mulberry32(seed) {
+  return function () {
+    seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+// ---------- palette ----------
+const SKY_STOPS = [ // t: 0 top -> 1 horizon
+  [0.00, [3, 5, 28]],
+  [0.30, [13, 19, 56]],
+  [0.55, [43, 23, 72]],
+  [0.74, [84, 33, 90]],
+  [0.88, [143, 47, 96]],
+  [0.96, [212, 80, 106]],
+  [1.00, [255, 143, 94]]
+];
+function skyColorAt(t) {
+  t = Math.min(1, Math.max(0, t));
+  for (let i = 0; i < SKY_STOPS.length - 1; i++) {
+    const a = SKY_STOPS[i], b = SKY_STOPS[i + 1];
+    if (t <= b[0]) {
+      const k = (t - a[0]) / (b[0] - a[0] || 1);
+      const c = a[1].map((v, j) => Math.round(v + (b[1][j] - v) * k));
+      return `rgb(${c[0]},${c[1]},${c[2]})`;
+    }
+  }
+  const c = SKY_STOPS[SKY_STOPS.length - 1][1];
+  return `rgb(${c[0]},${c[1]},${c[2]})`;
+}
+const lerp = (a, b, k) => a + (b - a) * k;
+const lerpC = (c1, c2, k) => c1.map((v, i) => Math.round(lerp(v, c2[i], k)));
+const WARM_TOP = [255, 214, 140], WARM_DEEP = [255, 84, 128]; // streak color by depth
+
+// ---------- layout state ----------
+let W = 0, H = 0, DPR = 1;
+let horizonY = 0, sunX = 0, sunY = 0, R = 100;
+let skyGrad, seaGrad, sunGrad, sunGlowGrad, seaGlowGrad;
+let stars = [], glints = [], streaks = [], embers = [], clouds = [], birds = [];
+let shooting = { active: false, x: 0, y: 0, vx: 0, vy: 0, life: 0, next: 2.0 };
+
+function ridgeY(x, base, amp, rough, seed) {
+  const n =
+    0.58 * Math.sin(x * 0.011 + seed) +
+    0.30 * Math.sin(x * 0.027 + seed * 1.7 + 1.3) +
+    0.16 * Math.sin(x * 0.053 + seed * 2.3 + 4.1);
+  const h = clamp(0.52 + n * 0.42, 0.16, 1.15);
+  return base - h * amp;
+}
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+
+function makeRidgePoints(base, amp, rough, seed) {
+  const pts = [];
+  for (let x = -60; x <= W + 60; x += 9) pts.push([x, ridgeY(x, base, amp, rough, seed)]);
+  return pts;
+}
+let ridgeFar = [], ridgeNear = [];
+
+function resize() {
+  DPR = Math.min(2, window.devicePixelRatio || 1);
+  W = window.innerWidth; H = window.innerHeight;
+  canvas.width = Math.round(W * DPR);
+  canvas.height = Math.round(H * DPR);
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+
+  horizonY = Math.round(H * 0.66);
+  R = Math.min(W, H) * 0.30;
+  sunX = W * 0.5;
+  sunY = horizonY - R * 0.30;
+
+  // cached gradients
+  skyGrad = ctx.createLinearGradient(0, 0, 0, horizonY);
+  for (const [t, rgb] of SKY_STOPS) skyGrad.addColorStop(t, `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`);
+  seaGrad = ctx.createLinearGradient(0, horizonY, 0, H);
+  seaGrad.addColorStop(0, '#3c1638');
+  seaGrad.addColorStop(0.22, '#251031');
+  seaGrad.addColorStop(0.65, '#130a22');
+  seaGrad.addColorStop(1, '#070312');
+  sunGrad = ctx.createLinearGradient(0, sunY - R, 0, sunY + R);
+  sunGrad.addColorStop(0, '#fff8c4');
+  sunGrad.addColorStop(0.24, '#ffe06a');
+  sunGrad.addColorStop(0.46, '#ffb347');
+  sunGrad.addColorStop(0.66, '#ff7e3d');
+  sunGrad.addColorStop(0.82, '#ff3f62');
+  sunGrad.addColorStop(1, '#c2167c');
+  sunGlowGrad = ctx.createRadialGradient(sunX, sunY, R * 0.1, sunX, sunY, R * 2.6);
+  sunGlowGrad.addColorStop(0, 'rgba(255, 178, 96, 0.85)');
+  sunGlowGrad.addColorStop(0.35, 'rgba(255, 128, 96, 0.34)');
+  sunGlowGrad.addColorStop(1, 'rgba(255, 128, 96, 0)');
+  seaGlowGrad = ctx.createRadialGradient(sunX, horizonY, 2, sunX, horizonY, R * 2.1);
+  seaGlowGrad.addColorStop(0, 'rgba(255, 158, 96, 0.62)');
+  seaGlowGrad.addColorStop(0.5, 'rgba(230, 84, 110, 0.22)');
+  seaGlowGrad.addColorStop(1, 'rgba(230, 84, 110, 0)');
+
+  // deterministic scene
+  const rand = mulberry32(20240517);
+  stars = [];
+  const starCount = Math.floor(W * H / 6500);
+  for (let i = 0; i < starCount; i++) {
+    const yMax = horizonY * 0.60;
+    const y = Math.pow(rand(), 1.35) * yMax;
+    stars.push({
+      x: rand() * W, y, r: rand() < 0.16 ? 1.5 + rand() * 1.3 : 0.5 + rand() * 1.1,
+      phase: rand() * Math.PI * 2, speed: 1.1 + rand() * 2.2,
+      tint: rand() < 0.18 ? 'rgba(150, 230, 255,' : 'rgba(255, 244, 220,'
+    });
+  }
+  glints = [];
+  for (let i = 0; i < 26; i++) {
+    const f = Math.pow(rand(), 1.55);
+    glints.push({
+      f, x: sunX + (rand() - 0.5) * R * (2.1 + f * 6.4),
+      len: (3 + rand() * 15) * (0.4 + f * 1.4),
+      phase: rand() * Math.PI * 2, speed: 2.2 + rand() * 3.4,
+      cyan: rand() < 0.22
+    });
+  }
+  streaks = [];
+  const rowCount = clamp(Math.floor((H - horizonY) / 6.4), 14, 34);
+  for (let i = 0; i < rowCount; i++) {
+    const f = (i + 0.4 + rand() * 0.5) / rowCount;
+    const col = lerpC(WARM_TOP, WARM_DEEP, f);
+    streaks.push({
+      f, y: horizonY + f * (H - horizonY) + 2,
+      width: lerp(R * 0.34, R * 1.9, f) * (0.5 + rand() * 0.95),
+      h: 1.4 + f * 2.6,
+      color: `rgba(${col[0]},${col[1]},${col[2]},`,
+      phase: rand() * Math.PI * 2,
+      alpha: (1 - f * 0.38) * (0.30 + rand() * 0.48)
+    });
+  }
+  embers = [];
+  const emberCount = clamp(Math.round(W * 0.24), 46, 92);
+  const emberCols = ['255, 209, 102', '255, 158, 79', '255, 93, 115', '255, 138, 176'];
+  for (let i = 0; i < emberCount; i++) embers.push(newEmber(rand, mulberry32(987654 + i * 131), true));
+  clouds = [];
+  for (let i = 0; i < 5; i++) {
+    clouds.push({
+      x: rand() * (W + 300) - 150,
+      yFrac: 0.08 + rand() * 0.30,
+      w: W * (0.5 + rand() * 0.55),
+      h: H * (0.020 + rand() * 0.026),
+      speed: (4 + rand() * 7) * (rand() < 0.5 ? 1 : -1),
+      warm: rand() < 0.38,
+      alpha: 0.24 + rand() * 0.22
+    });
+  }
+  birds = [];
+  for (let i = 0; i < 4; i++) {
+    birds.push({
+      x: rand() * W,
+      yFrac: 0.16 + rand() * 0.26,
+      size: 4.5 + rand() * 5,
+      speed: 14 + rand() * 16,
+      phase: rand() * Math.PI * 2,
+      dir: rand() < 0.5 ? 1 : -1
+    });
+  }
+  shooting.next = 1.6;
+
+  ridgeFar = makeRidgePoints(horizonY + 3, H * 0.085, 1, 3.1);
+  ridgeNear = makeRidgePoints(horizonY + 5, H * 0.125, 1.7, 7.7);
+}
+
+function newEmber(rand, _rng, scatter) {
+  const emberCols = ['255, 209, 102', '255, 158, 79', '255, 93, 115', '255, 138, 176'];
+  const useCyan = rand() < 0.06;
+  const yStart = scatter
+    ? horizonY + Math.pow(rand(), 1.4) * (H - horizonY + 60) - 30
+    : horizonY + Math.pow(rand(), 1.6) * (H - horizonY) + 8;
+  return {
+    x: sunX + (rand() - 0.5) * R * (3.2 + rand() * 2.2),
+    y: yStart,
+    vy: 26 + rand() * 58,
+    swayAmp: 6 + rand() * 22,
+    swayFreq: 0.5 + rand() * 1.1,
+    phase: rand() * Math.PI * 2,
+    size: 0.8 + rand() * 2.6,
+    col: useCyan ? '125, 249, 255' : emberCols[Math.floor(rand() * emberCols.length)],
+    life: 0.35 + rand() * 0.65
+  };
+}
+
+// ---------- rendering ----------
+let t = 0, last = performance.now();
+const CYCLE = 1; // (kept minimal)
+
+function drawSky(time) {
+  ctx.fillStyle = skyGrad;
+  ctx.fillRect(0, 0, W, horizonY + 2);
+
+  // nebula tints
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  const nebulae = [
+    [W * 0.16, horizonY * 0.30, R * 1.5, 'rgba(168, 56, 158, 0.20)'],
+    [W * 0.84, horizonY * 0.20, R * 1.2, 'rgba(24, 148, 160, 0.16)'],
+    [W * 0.58, horizonY * 0.46, R * 1.7, 'rgba(94, 40, 160, 0.18)']
+  ];
+  for (const [nx, ny, nr, col] of nebulae) {
+    const g = ctx.createRadialGradient(nx, ny, 1, nx, ny, nr);
+    g.addColorStop(0, col);
+    g.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(nx - nr, ny - nr, nr * 2, nr * 2);
+  }
+  ctx.restore();
+
+  // stars
+  for (const s of stars) {
+    const tw = 0.5 + 0.5 * Math.sin(time * s.speed + s.phase);
+    const a = 0.28 + 0.72 * Math.pow(tw, 1.6);
+    ctx.fillStyle = `${s.tint}${a.toFixed(3)})`;
+    if (s.r > 1.6) {
+      ctx.fillRect(s.x - s.r * 0.5, s.y - s.r * 0.5, s.r, s.r);
+      ctx.strokeStyle = `${s.tint}${(a * 0.75).toFixed(3)})`;
+      ctx.lineWidth = 0.8;
+      ctx.beginPath();
+      ctx.moveTo(s.x - s.r * 3, s.y); ctx.lineTo(s.x + s.r * 3, s.y);
+      ctx.moveTo(s.x, s.y - s.r * 3); ctx.lineTo(s.x, s.y + s.r * 3);
+      ctx.stroke();
+    } else {
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  // slow drifting clouds
+  for (const c of clouds) {
+    c.x += c.speed * 0.016;
+    if (c.x - c.w > W + 80) c.x = -c.w - 40;
+    else if (c.x + c.w < -80) c.x = W + 40;
+    const cg = ctx.createRadialGradient(c.x, c.yFrac * horizonY, 1, c.x, c.yFrac * horizonY, c.w * 0.5);
+    const col = c.warm ? '150, 52, 96' : '26, 16, 56';
+    cg.addColorStop(0, `rgba(${col},${c.alpha})`);
+    cg.addColorStop(1, `rgba(${col},0)`);
+    ctx.save();
+    ctx.translate(c.x, c.yFrac * horizonY);
+    ctx.scale(1, c.h / (c.w * 0.5));
+    ctx.translate(-c.x, -c.yFrac * horizonY);
+    ctx.fillStyle = cg;
+    ctx.fillRect(c.x - c.w * 0.5, c.yFrac * horizonY - c.w * 0.5, c.w, c.w);
+    ctx.restore();
+  }
+}
+
+function drawSun(time) {
+  // glow halo
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.fillStyle = sunGlowGrad;
+  ctx.fillRect(sunX - R * 2.6, sunY - R * 2.6, R * 5.2, R * 5.2);
+  ctx.restore();
+
+  // ring of light behind/around the sun
+  ctx.save();
+  ctx.translate(sunX, sunY);
+  ctx.rotate(-0.30);
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.strokeStyle = 'rgba(120, 235, 255, 0.16)';
+  ctx.lineWidth = R * 0.16;
+  ctx.beginPath(); ctx.ellipse(0, 0, R * 1.78, R * 0.36, 0, 0, Math.PI * 2); ctx.stroke();
+  ctx.strokeStyle = 'rgba(170, 250, 255, 0.75)';
+  ctx.lineWidth = Math.max(1.6, R * 0.030);
+  ctx.beginPath(); ctx.ellipse(0, 0, R * 1.78, R * 0.36, 0, 0, Math.PI * 2); ctx.stroke();
+  ctx.strokeStyle = 'rgba(255, 170, 210, 0.55)';
+  ctx.lineWidth = 1.4;
+  ctx.setLineDash([R * 0.22, R * 0.17]);
+  ctx.lineDashOffset = -time * R * 0.55;
+  ctx.beginPath(); ctx.ellipse(0, 0, R * 2.12, R * 0.46, 0, 0, Math.PI * 2); ctx.stroke();
+  ctx.setLineDash([]);
+  // orbiting glints on the rings
+  for (const [angle, rad, col] of [[time * 0.55, 1.78, '220, 255, 255'], [-time * 0.34 + 2.1, 2.12, '255, 190, 220']]) {
+    const px = Math.cos(angle) * R * rad, py = Math.sin(angle) * R * 0.36 * (rad / 1.78);
+    ctx.fillStyle = `rgba(${col}, 0.95)`;
+    ctx.beginPath(); ctx.arc(px, py, R * 0.045, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.restore();
+
+  // sun disc, clipped, with scrolling scan gaps
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(sunX, sunY, R, 0, Math.PI * 2);
+  ctx.clip();
+  ctx.fillStyle = sunGrad;
+  ctx.fillRect(sunX - R, sunY - R, R * 2, R * 2);
+
+  const s = R * 0.155;            // band spacing
+  const y0 = sunY + R * 0.04;     // where gaps begin
+  const scroll = (time * s * 0.9) % s;
+  for (let j = -1; ; j++) {
+    const y = y0 + j * s + scroll;
+    if (y > sunY + R + 2) break;
+    if (y < sunY - R) continue;
+    const depth = clamp((y - y0) / R, 0, 1);
+    const h = 1.4 + depth * depth * R * 0.085;
+    ctx.fillStyle = skyColorAt(y / horizonY);
+    ctx.fillRect(sunX - R - 2, y, R * 2 + 4, h);
+  }
+  ctx.restore();
+}
+
+function drawMountains(time) {
+  // fog glow at ridge line
+  const fog = ctx.createLinearGradient(0, horizonY - H * 0.11, 0, horizonY + 1);
+  fog.addColorStop(0, 'rgba(255, 150, 170, 0)');
+  fog.addColorStop(0.82, 'rgba(255, 150, 165, 0.30)');
+  fog.addColorStop(1, 'rgba(255, 178, 150, 0.42)');
+
+  // far range
+  ctx.fillStyle = '#2a1547';
+  ctx.beginPath();
+  ctx.moveTo(-60, H + 40);
+  for (const [x, y] of ridgeFar) ctx.lineTo(x, y);
+  ctx.lineTo(W + 60, H + 40);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255, 150, 172, 0.40)';
+  ctx.lineWidth = 1.4;
+  ctx.beginPath();
+  ridgeFar.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y));
+  ctx.stroke();
+
+  // near range
+  ctx.fillStyle = '#150a29';
+  ctx.beginPath();
+  ctx.moveTo(-60, H + 40);
+  for (const [x, y] of ridgeNear) ctx.lineTo(x, y);
+  ctx.lineTo(W + 60, H + 40);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255, 122, 152, 0.35)';
+  ctx.lineWidth = 1.6;
+  ctx.beginPath();
+  ridgeNear.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y));
+  ctx.stroke();
+
+  // lone dead tree on the near ridge, right of center
+  const tx = W * 0.815;
+  let baseIdx = 0, best = Infinity;
+  for (let i = 0; i < ridgeNear.length; i++) {
+    const d = Math.abs(ridgeNear[i][0] - tx);
+    if (d < best) { best = d; baseIdx = i; }
+  }
+  const ty = ridgeNear[baseIdx][1];
+  ctx.strokeStyle = '#150a29';
+  ctx.lineCap = 'round';
+  ctx.lineWidth = 3.1;
+  ctx.beginPath();
+  ctx.moveTo(tx, ty + 2);
+  ctx.quadraticCurveTo(tx + 3, ty - R * 0.11, tx - 2, ty - R * 0.21);
+  ctx.stroke();
+  ctx.lineWidth = 2.1;
+  ctx.beginPath();
+  ctx.moveTo(tx - 1, ty - R * 0.135);
+  ctx.quadraticCurveTo(tx - R * 0.085, ty - R * 0.165, tx - R * 0.13, ty - R * 0.215);
+  ctx.moveTo(tx, ty - R * 0.175);
+  ctx.quadraticCurveTo(tx + R * 0.075, ty - R * 0.20, tx + R * 0.125, ty - R * 0.245);
+  ctx.moveTo(tx - 1.6, ty - R * 0.20);
+  ctx.quadraticCurveTo(tx - R * 0.045, ty - R * 0.235, tx - R * 0.055, ty - R * 0.265);
+  ctx.stroke();
+
+  // fill fog band over ridge line
+  ctx.fillStyle = fog;
+  ctx.fillRect(0, horizonY - H * 0.11, W, H * 0.11 + 1);
+}
+
+function drawSea(time) {
+  ctx.fillStyle = seaGrad;
+  ctx.fillRect(0, horizonY, W, H - horizonY);
+
+  // horizon light line
+  const horizonGlow = ctx.createLinearGradient(0, horizonY - 1, 0, horizonY + 2);
+  horizonGlow.addColorStop(0, 'rgba(255, 200, 150, 0)');
+  horizonGlow.addColorStop(0.5, 'rgba(255, 208, 150, 0.75)');
+  horizonGlow.addColorStop(1, 'rgba(255, 170, 140, 0)');
+  ctx.fillStyle = horizonGlow;
+  ctx.fillRect(0, horizonY - 1, W, 3);
+
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+
+  // sun glow pool on the water
+  ctx.fillStyle = seaGlowGrad;
+  ctx.fillRect(sunX - R * 2.1, horizonY, R * 4.2, (H - horizonY));
+
+  // reflected streaks, fanning wider with depth
+  for (const s of streaks) {
+    const jitter = Math.sin(time * 0.72 + s.y * 0.045) * (2 + s.f * 12);
+    const shimmer = 0.55 + 0.45 * Math.sin(time * 2.15 + s.phase);
+    ctx.fillStyle = `${s.color}${(s.alpha * shimmer).toFixed(3)})`;
+    const w = s.width * (0.75 + 0.25 * Math.sin(time * 1.3 + s.phase * 1.7));
+    ctx.fillRect(sunX + jitter - w / 2, s.y, w, s.h);
+  }
+
+  // sparkling glints, warmer near the sun lane
+  for (const g of glints) {
+    const y = horizonY + 4 + g.f * (H - horizonY - 12);
+    const tw = Math.pow(0.5 + 0.5 * Math.sin(time * g.speed + g.phase), 3);
+    if (tw < 0.12) continue;
+    ctx.strokeStyle = g.cyan ? `rgba(150, 245, 255, ${(tw * 0.9).toFixed(3)})` : `rgba(255, 236, 205, ${(tw * 0.95).toFixed(3)})`;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(g.x - g.len / 2, y);
+    ctx.lineTo(g.x + g.len / 2, y);
+    ctx.stroke();
+  }
+
+  ctx.restore();
+}
+
+function drawEmbers(time, dt) {
+  const dtSec = dt / 1000;
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  for (let i = 0; i < embers.length; i++) {
+    const e = embers[i];
+    e.y -= e.vy * dtSec;
+    e.x += Math.sin(time * e.swayFreq + e.phase) * e.swayAmp * dtSec;
+    e.life -= dtSec * 0.10;
+    if (e.y < -20 || e.life <= 0) {
+      embers[i] = newEmber(Math.random, null, false);
+      continue;
+    }
+    const fade = clamp(e.life, 0, 1) * clamp((e.y - (-20)) / 60 + 0.4, 0, 1);
+    const flicker = 0.72 + 0.28 * Math.sin(time * 6 + e.phase * 3);
+    const r = e.size * (0.8 + 0.5 * flicker);
+    ctx.fillStyle = `rgba(${e.col},${(0.85 * fade * flicker).toFixed(3)})`;
+    ctx.beginPath();
+    ctx.arc(e.x, e.y, r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = `rgba(${e.col},${(0.18 * fade).toFixed(3)})`;
+    ctx.beginPath();
+    ctx.arc(e.x, e.y, r * 3.1, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+function drawBirds(time, dtSec) {
+  ctx.strokeStyle = '#0b0618';
+  ctx.lineCap = 'round';
+  for (const b of birds) {
+    b.x += b.speed * b.dir * dtSec;
+    if (b.x > W + 40) b.x = -40;
+    if (b.x < -40) b.x = W + 40;
+    const y = b.yFrac * H + Math.sin(time * 0.8 + b.phase) * 5;
+    const flap = Math.sin(time * 5.4 + b.phase) * b.size * 0.55;
+    const s = b.size;
+    ctx.lineWidth = Math.max(1.4, s * 0.26);
+    ctx.beginPath();
+    ctx.moveTo(b.x - s, y - flap);
+    ctx.quadraticCurveTo(b.x - s * 0.38, y + s * 0.32 - flap * 0.4, b.x, y);
+    ctx.quadraticCurveTo(b.x + s * 0.38, y + s * 0.32 - flap * 0.4, b.x + s, y - flap);
+    ctx.stroke();
+  }
+}
+
+function drawShooting(dt, time) {
+  if (!shooting.active) {
+    shooting.next -= dt / 1000;
+    if (shooting.next <= 0) {
+      const dir = Math.random() < 0.5 ? -1 : 1;
+      shooting = {
+        active: true,
+        x: W * (0.2 + Math.random() * 0.6),
+        y: H * (0.07 + Math.random() * 0.16),
+        vx: dir * (260 + Math.random() * 240),
+        vy: 120 + Math.random() * 130,
+        life: 1.15,
+        next: 3.5 + Math.random() * 5.5
+      };
+    }
+    return;
+  }
+  shooting.life -= dt / 1000;
+  shooting.x += shooting.vx * dt / 1000;
+  shooting.y += shooting.vy * dt / 1000;
+  if (shooting.life <= 0) { shooting.active = false; return; }
+  const tailX = shooting.x - shooting.vx * 0.20, tailY = shooting.y - shooting.vy * 0.20;
+  const a = clamp(shooting.life, 0, 1);
+  const g = ctx.createLinearGradient(shooting.x, shooting.y, tailX, tailY);
+  g.addColorStop(0, `rgba(255, 255, 255, ${0.95 * a})`);
+  g.addColorStop(0.25, `rgba(190, 235, 255, ${0.65 * a})`);
+  g.addColorStop(1, 'rgba(190, 235, 255, 0)');
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.strokeStyle = g;
+  ctx.lineWidth = 2.2;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(shooting.x, shooting.y);
+  ctx.lineTo(tailX, tailY);
+  ctx.stroke();
+  ctx.fillStyle = `rgba(255,255,255,${a})`;
+  ctx.beginPath(); ctx.arc(shooting.x, shooting.y, 1.8, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+}
+
+function frame(now) {
+  let dt = now - last;
+  last = now;
+  if (dt > 66) dt = 66;
+  t += dt / 1000;
+  const time = t;
+  const dtSec = dt / 1000;
+
+  drawSky(time);
+  drawSun(time);
+  drawMountains(time);
+  drawSea(time);
+  drawEmbers(time, dt);
+  drawBirds(time, dtSec);
+  drawShooting(dt, time);
+
+  requestAnimationFrame(frame);
+}
+
+window.addEventListener('resize', resize);
+resize();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

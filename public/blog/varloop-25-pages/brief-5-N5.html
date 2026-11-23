@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Emberheart — a drifting heart of light</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6.2' fill='%23ff8a3c'/%3E%3Ccircle cx='8' cy='8' r='2.2' fill='%23ffe9a8'/%3E%3C/svg%3E">
+<style>
+  html, body {
+    margin: 0; padding: 0; height: 100%;
+    overflow: hidden; background: #010004;
+  }
+  canvas { display: block; width: 100vw; height: 100vh; cursor: default; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+'use strict';
+/* EMBERHEART — a single living ember in a dark velvet void.
+   All animation is generated at runtime: swirling ember-light,
+   breathing petals, a heartbeat, ribbons of plasma light. */
+
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const TAU = Math.PI * 2;
+
+let W = 0, H = 0, S = 0, DPR = 1;
+let bgGrad = null, vigGrad = null;
+let stars = [], nebulae = [], sparks = [], embers = [];
+let noiseCanvas = null, noisePattern = null;
+let grainOff = [0, 0];
+
+const pointer = { x: 0.5, y: 0.5 };
+const par = { x: 0, y: 0 };
+
+function hsla(h, s, l, a) {
+  h = ((h % 360) + 360) % 360;
+  return 'hsla(' + h + ',' + s + '%,' + l + '%,' + a + ')';
+}
+
+function buildNoise() {
+  noiseCanvas = document.createElement('canvas');
+  noiseCanvas.width = noiseCanvas.height = 128;
+  const nctx = noiseCanvas.getContext('2d');
+  const img = nctx.createImageData(128, 128);
+  for (let i = 0; i < img.data.length; i += 4) {
+    const v = Math.floor(Math.random() * 255);
+    img.data[i] = img.data[i + 1] = img.data[i + 2] = v;
+    img.data[i + 3] = 255;
+  }
+  nctx.putImageData(img, 0, 0);
+  noisePattern = ctx.createPattern(noiseCanvas, 'repeat');
+}
+
+function buildGradients() {
+  bgGrad = ctx.createRadialGradient(W * 0.5, H * 0.44, S * 0.05, W * 0.5, H * 0.46, S * 1.05);
+  bgGrad.addColorStop(0, '#160b35');
+  bgGrad.addColorStop(0.42, '#0c0322');
+  bgGrad.addColorStop(1, '#010004');
+  vigGrad = ctx.createRadialGradient(W * 0.5, H * 0.44, S * 0.28, W * 0.5, H * 0.46, S * 1.0);
+  vigGrad.addColorStop(0, 'rgba(2,0,14,0)');
+  vigGrad.addColorStop(0.62, 'rgba(3,0,18,0.22)');
+  vigGrad.addColorStop(1, 'rgba(1,0,9,0.88)');
+}
+
+function buildStars() {
+  stars = [];
+  const n = Math.min(240, Math.floor((W * H) / 6200) + 80);
+  for (let i = 0; i < n; i++) {
+    stars.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: 0.35 + Math.pow(Math.random(), 2.2) * 1.5,
+      base: 0.35 + Math.random() * 0.65,
+      tw: Math.random() * TAU,
+      ts: 0.6 + Math.random() * 1.9,
+      warm: Math.random() < 0.2
+    });
+  }
+  // a few brighter stars with halo
+  for (let i = 0; i < 12; i++) {
+    stars.push({
+      x: Math.random() * W, y: Math.random() * H * 0.85,
+      r: 1.35 + Math.random() * 0.9, base: 1,
+      tw: Math.random() * TAU, ts: 0.4 + Math.random() * 0.8,
+      warm: Math.random() < 0.5, bright: true
+    });
+  }
+}
+
+function buildNebulae() {
+  const defs = [
+    { fx: 0.20, fy: 0.26, r: 0.46, h: 262, s: 72, l: 17, a: 0.55 },
+    { fx: 0.84, fy: 0.66, r: 0.50, h: 322, s: 78, l: 15, a: 0.50 },
+    { fx: 0.70, fy: 0.14, r: 0.32, h: 16,  s: 88, l: 15, a: 0.42 },
+    { fx: 0.30, fy: 0.82, r: 0.38, h: 212, s: 68, l: 13, a: 0.40 },
+    { fx: 0.55, fy: -0.06,r: 0.42, h: 285, s: 70, l: 14, a: 0.36 }
+  ];
+  nebulae = defs.map(d => ({
+    fx: d.fx + (Math.random() - 0.5) * 0.05,
+    fy: d.fy + (Math.random() - 0.5) * 0.05,
+    r: d.r * S, h: d.h, s: d.s, l: d.l, a: d.a,
+    ph: Math.random() * TAU, drift: 0.04 + Math.random() * 0.05
+  }));
+}
+
+function buildSpiral() {
+  sparks = [];
+  const count = Math.min(440, Math.floor(S * 1.08));
+  const ARMS = 3;
+  for (let i = 0; i < count; i++) {
+    sparks.push({
+      arm: i % ARMS,
+      r: Math.pow(Math.random(), 1.9),      // denser toward the heart
+      size: Math.random() * 1.6 + 0.4,
+      ph: Math.random() * TAU,
+      tw: 1.2 + Math.random() * 2.2
+    });
+  }
+}
+
+function respawnEmber(e, anywhere) {
+  const life = 5.5 + Math.random() * 8;
+  e.x = Math.random() * W;
+  e.y = anywhere ? Math.random() * H : H + 24 + Math.random() * 60;
+  e.vx = (Math.random() - 0.5) * 10;
+  e.vy = -(9 + Math.random() * 30);
+  e.r = 0.8 + Math.pow(Math.random(), 1.7) * 2.5;
+  e.hue = 16 + Math.random() * 42;
+  e.ph = Math.random() * TAU;
+  e.drift = Math.random() * TAU;
+  e.age = anywhere ? Math.random() * life : 0;
+  e.life = life;
+}
+
+function buildEmbers() {
+  const n = Math.min(150, Math.floor((W * H) / 16000) + 48);
+  embers = [];
+  for (let i = 0; i < n; i++) {
+    const e = {};
+    respawnEmber(e, true);
+    embers.push(e);
+  }
+}
+
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  W = window.innerWidth; H = window.innerHeight;
+  canvas.width = Math.max(1, Math.floor(W * DPR));
+  canvas.height = Math.max(1, Math.floor(H * DPR));
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  S = Math.min(W, H);
+  buildGradients();
+  buildStars();
+  buildNebulae();
+  buildSpiral();
+  buildEmbers();
+}
+
+function heartbeat(t) {
+  const T = 1.18;
+  const p = ((t % T) + T) % T;
+  const d1 = (p - 0.10) / 0.085;   // lub
+  const d2 = (p - 0.42) / 0.11;    // dub
+  return Math.min(1.15, Math.exp(-d1 * d1 * 3.4) + 0.62 * Math.exp(-d2 * d2 * 3.2));
+}
+
+function smoothPath(pts) {
+  ctx.beginPath();
+  ctx.moveTo(pts[0][0], pts[0][1]);
+  for (let i = 1; i < pts.length - 1; i++) {
+    const xc = (pts[i][0] + pts[i + 1][0]) / 2;
+    const yc = (pts[i][1] + pts[i + 1][1]) / 2;
+    ctx.quadraticCurveTo(pts[i][0], pts[i][1], xc, yc);
+  }
+  const last = pts[pts.length - 1];
+  ctx.lineTo(last[0], last[1]);
+}
+
+function drawRibbon(t, opts) {
+  const { yBase, amp, freq, speed, phase, hue0, width, alpha } = opts;
+  const pts = [];
+  const step = Math.max(18, S * 0.045);
+  for (let x = -60; x <= W + 60; x += step) {
+    const y =
+      yBase +
+      Math.sin(x * freq + t * speed + phase) * amp +
+      Math.sin(x * freq * 2.71 - t * speed * 1.6 + phase * 2.3) * amp * 0.42 +
+      Math.sin(x * 0.0021 + t * 0.24 + 1.7) * amp * 0.85;
+    pts.push([x, y]);
+  }
+  if (pts.length < 3) return;
+  const hue = hue0 + Math.sin(t * 0.3 + phase) * 42;
+  const grad = ctx.createLinearGradient(0, 0, W, 0);
+  grad.addColorStop(0, hsla(hue, 85, 60, 0));
+  grad.addColorStop(0.16, hsla(hue, 92, 62, alpha));
+  grad.addColorStop(0.5, hsla(hue + 42, 92, 68, alpha * 1.2));
+  grad.addColorStop(0.84, hsla(hue + 72, 88, 60, alpha));
+  grad.addColorStop(1, hsla(hue + 80, 80, 55, 0));
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.strokeStyle = grad;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  const passes = [
+    [width * 3.6, 0.14],
+    [width * 1.8, 0.32],
+    [width * 0.6, 0.85]
+  ];
+  for (const [wLine, aMul] of passes) {
+    ctx.lineWidth = wLine;
+    ctx.globalAlpha = aMul;
+    smoothPath(pts);
+    ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+  ctx.globalCompositeOperation = 'source-over';
+}
+
+function drawPetalLayer(t, cx, cy, R, cfg) {
+  const { count, lenBase, lenVar, widthAbs, rotSpeed, alpha, hueBase, seed, freq } = cfg;
+  for (let i = 0; i < count; i++) {
+    const sway = Math.sin(t * 0.34 + i * 2.3 + seed * 9) * 0.07;
+    const ang = t * rotSpeed + (i * TAU) / count + Math.sin(seed + i) * 0.05 + sway;
+    const pulse = Math.sin(t * freq + i * 1.93 + seed * 10);
+    const len = Math.max(S * 0.045, R * (0.35 + lenBase + lenVar * pulse));
+    const w = widthAbs * (1 + 0.22 * Math.sin(t * 1.6 + i * 1.4));
+    const hue = hueBase + ((i % 3) * 16) + ((i % 2) ? -16 : 10);
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(ang);
+    ctx.globalCompositeOperation = 'lighter';
+    const g = ctx.createLinearGradient(0, -R * 0.55, 0, -R - len);
+    g.addColorStop(0, hsla(hue, 92, 62, alpha));
+    g.addColorStop(0.55, hsla(hue + 26, 90, 56, alpha * 0.45));
+    g.addColorStop(1, hsla(hue + 48, 92, 55, 0));
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.moveTo(0, -R * 0.55);
+    ctx.quadraticCurveTo(w, -R - len * 0.42, 0, -R - len);
+    ctx.quadraticCurveTo(-w, -R - len * 0.42, 0, -R * 0.55);
+    ctx.fill();
+    ctx.restore();
+  }
+  ctx.globalCompositeOperation = 'source-over';
+}
+
+function glowDot(x, y, r, hue, a) {
+  ctx.globalCompositeOperation = 'lighter';
+  const g = ctx.createRadialGradient(x, y, 0, x, y, r * 5);
+  g.addColorStop(0, hsla(hue, 92, 72, a));
+  g.addColorStop(1, hsla(hue, 92, 60, 0));
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.arc(x, y, r * 5, 0, TAU);
+  ctx.fill();
+  ctx.fillStyle = hsla(hue, 90, 90, Math.min(1, a + 0.15));
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, TAU);
+  ctx.fill();
+  ctx.globalCompositeOperation = 'source-over';
+}
+
+function ellipsePoint(a, rx, ry, rot, cx, cy) {
+  const x = Math.cos(a) * rx, y = Math.sin(a) * ry;
+  const c = Math.cos(rot), s = Math.sin(rot);
+  return [cx + x * c - y * s, cy + x * s + y * c];
+}
+
+const START = performance.now() - 95; // clock opens just before the heart “lub”
+let last = 0;
+let frameNo = 0;
+
+function frame(now) {
+  requestAnimationFrame(frame);
+  if (!last) last = now;
+  let dt = (now - last) / 1000;
+  last = now;
+  if (!(dt > 0) || dt > 0.05) dt = 0.016;
+  frameNo++;
+
+  if (frameNo % 2 === 0) grainOff = [Math.random() * 128, Math.random() * 128];
+
+  const t = (now - START) / 1000;
+  const beat = heartbeat(t);
+
+  par.x += (pointer.x - 0.5 - par.x) * 0.045;
+  par.y += (pointer.y - 0.5 - par.y) * 0.045;
+  const cx = W * 0.5 + par.x * S * 0.035;
+  const cy = H * 0.445 + par.y * S * 0.035 + Math.sin(t * 0.5) * S * 0.006;
+  const R = S * 0.125 * (1 + 0.105 * beat);
+
+  // ---------- deep space ----------
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, W, H);
+
+  // nebula blooms
+  ctx.globalCompositeOperation = 'lighter';
+  for (const b of nebulae) {
+    const bx = b.fx * W + Math.sin(t * b.drift + b.ph) * S * 0.025;
+    const by = b.fy * H + Math.cos(t * b.drift * 1.3 + b.ph * 1.7) * S * 0.025;
+    const g = ctx.createRadialGradient(bx, by, 0, bx, by, b.r);
+    g.addColorStop(0, hsla(b.h, b.s, b.l, b.a));
+    g.addColorStop(1, hsla(b.h, b.s, b.l * 0.4, 0));
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(bx, by, b.r, 0, TAU);
+    ctx.fill();
+  }
+
+  // stars
+  for (const st of stars) {
+    const tw = 0.5 + 0.5 * Math.sin(t * st.ts + st.tw);
+    const a = st.base * (0.3 + 0.7 * tw);
+    if (st.bright) {
+      glowDot(st.x, st.y, st.r * 0.9, st.warm ? 36 : 218, a * 0.75);
+      continue;
+    }
+    ctx.fillStyle = st.warm
+      ? 'rgba(255,216,172,' + a + ')'
+      : 'rgba(206,222,255,' + a + ')';
+    ctx.beginPath();
+    ctx.arc(st.x, st.y, st.r, 0, TAU);
+    ctx.fill();
+  }
+  ctx.globalCompositeOperation = 'source-over';
+
+  // ---------- plasma ribbons (behind the core) ----------
+  drawRibbon(t, { yBase: H * 0.235, amp: S * 0.045, freq: 0.0062, speed: 0.72, phase: 1.3, hue0: 20, width: S * 0.017, alpha: 0.5 });
+  drawRibbon(t, { yBase: H * 0.76, amp: S * 0.062, freq: 0.0046, speed: -0.52, phase: 4.3, hue0: 318, width: S * 0.02, alpha: 0.42 });
+  drawRibbon(t, { yBase: H * 0.50, amp: S * 0.035, freq: 0.0085, speed: 1.05, phase: 2.6, hue0: 268, width: S * 0.011, alpha: 0.28 });
+
+  // ---------- swirling ember sparks ----------
+  ctx.globalCompositeOperation = 'lighter';
+  const twist = 2.9, ARMS = 3, maxR = S * 0.335;
+  for (const p of sparks) {
+    const rad = 6 + Math.pow(p.r, 1.35) * maxR;
+    const ang = p.arm * (TAU / ARMS) + p.r * twist - t * 0.52 + Math.sin(p.ph + t * 0.55) * 0.1;
+    const x = cx + Math.cos(ang) * rad;
+    const y = cy + Math.sin(ang) * rad * 0.94;
+    const lt = Math.pow(1 - p.r, 1.4);
+    const tw = 0.5 + 0.5 * Math.sin(t * p.tw + p.ph * 3.1);
+    const a = lt * (0.22 + 0.55 * tw) * (0.75 + 0.45 * beat * (1 - p.r));
+    const hue = 46 - p.r * 78; // gold -> ember-orange -> rose -> violet
+    const size = (0.55 + lt * 2.1 + p.size * 0.5) * (1 + 0.4 * beat * (1 - p.r));
+    ctx.fillStyle = hsla(hue, 96, 62, a);
+    ctx.beginPath();
+    ctx.arc(x, y, size, 0, TAU);
+    ctx.fill();
+    if (lt > 0.52) {
+      ctx.fillStyle = hsla(hue, 94, 60, a * 0.2);
+      ctx.beginPath();
+      ctx.arc(x, y, size * 3.6, 0, TAU);
+      ctx.fill();
+    }
+  }
+  ctx.globalCompositeOperation = 'source-over';
+
+  // ---------- petal corona ----------
+  drawPetalLayer(t, cx, cy, R, { count: 9, lenBase: 1.55, lenVar: 0.42, widthAbs: S * 0.072, rotSpeed: 0.24, alpha: 0.14, hueBase: 338, seed: 0.33, freq: 0.8 });
+  drawPetalLayer(t, cx, cy, R, { count: 13, lenBase: 0.95, lenVar: 0.34, widthAbs: S * 0.047, rotSpeed: -0.3, alpha: 0.4, hueBase: 28, seed: 0.71, freq: 1.18 });
+
+  // ---------- orbit ring ----------
+  const ringRot = -0.24;
+  const rx = R * 2.45, ry = R * 0.72;
+  ctx.globalCompositeOperation = 'lighter';
+  // far arc
+  ctx.strokeStyle = hsla(32, 92, 70, 0.32 + 0.14 * beat);
+  ctx.lineWidth = S * 0.0024;
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, rx, ry, ringRot, Math.PI, TAU);
+  ctx.stroke();
+  // dashed far track
+  ctx.setLineDash([S * 0.006, S * 0.011]);
+  ctx.lineDashOffset = t * S * 0.055;
+  ctx.strokeStyle = hsla(46, 94, 74, 0.34);
+  ctx.lineWidth = S * 0.0042;
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, rx, ry, ringRot, Math.PI, TAU);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // satellites (split by front/back)
+  const a1 = t * 0.62 + 0.9;
+  const sats = [
+    { a: a1, r: Math.max(2.1, S * 0.0052), hue: 38, front: Math.sin(a1) > 0 },
+    { a: a1 + Math.PI, r: Math.max(1.4, S * 0.0036), hue: 316, front: Math.sin(a1 + Math.PI) > 0 }
+  ];
+  for (const s of sats) {
+    if (s.front) continue;
+    const [sx, sy] = ellipsePoint(s.a, rx, ry, ringRot, cx, cy);
+    glowDot(sx, sy, s.r, s.hue, 0.4);
+  }
+  ctx.globalCompositeOperation = 'source-over';
+
+  // ---------- the ember itself ----------
+  // halo
+  ctx.globalCompositeOperation = 'lighter';
+  let halo = ctx.createRadialGradient(cx, cy, R * 0.3, cx, cy, R * 4.7);
+  halo.addColorStop(0, hsla(33, 100, 72, 0.5 + 0.3 * beat));
+  halo.addColorStop(0.22, hsla(20, 96, 60, 0.3));
+  halo.addColorStop(0.55, hsla(330, 82, 46, 0.16));
+  halo.addColorStop(1, 'rgba(24,0,44,0)');
+  ctx.fillStyle = halo;
+  ctx.beginPath();
+  ctx.arc(cx, cy, R * 4.7, 0, TAU);
+  ctx.fill();
+
+  // anamorphic streak
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(ringRot * 0.6 + Math.sin(t * 0.2) * 0.06);
+  ctx.scale(1, 0.05 + beat * 0.02);
+  let streak = ctx.createRadialGradient(0, 0, 0, 0, 0, R * 4.5);
+  streak.addColorStop(0, hsla(37, 100, 76, 0.6));
+  streak.addColorStop(0.45, hsla(22, 92, 60, 0.2));
+  streak.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = streak;
+  ctx.beginPath();
+  ctx.arc(0, 0, R * 4.5, 0, TAU);
+  ctx.fill();
+  ctx.restore();
+  ctx.globalCompositeOperation = 'source-over';
+
+  // body — molten gradient sphere
+  let body = ctx.createRadialGradient(cx - R * 0.22, cy - R * 0.24, R * 0.08, cx, cy, R);
+  body.addColorStop(0, '#fffdf0');
+  body.addColorStop(0.16, '#ffeba4');
+  body.addColorStop(0.4, '#ffc55e');
+  body.addColorStop(0.62, '#ff8033');
+  body.addColorStop(0.8, '#e83a72');
+  body.addColorStop(0.92, '#8a2168');
+  body.addColorStop(1, '#2a0227');
+  ctx.fillStyle = body;
+  ctx.beginPath();
+  ctx.arc(cx, cy, R, 0, TAU);
+  ctx.fill();
+
+  // churning plasma inside the core
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(cx, cy, R, 0, TAU);
+  ctx.clip();
+  ctx.globalCompositeOperation = 'lighter';
+  for (let k = 0; k < 3; k++) {
+    const rr = R * (0.3 + 0.17 * k);
+    const a0 = t * (0.55 + 0.22 * k) + k * 2.1;
+    ctx.strokeStyle = hsla(30 - k * 17, 100, 66 + k * 7, 0.5 - 0.14 * k);
+    ctx.lineWidth = R * (0.17 - 0.035 * k);
+    ctx.beginPath();
+    ctx.arc(cx + Math.sin(t * 0.5 + k) * R * 0.07, cy + Math.cos(t * 0.45 + k * 1.7) * R * 0.07,
+      rr, a0, a0 + Math.PI * (0.7 + 0.25 * Math.sin(t * 0.8 + k)));
+    ctx.stroke();
+  }
+  ctx.globalCompositeOperation = 'source-over';
+  for (let k = 0; k < 2; k++) {
+    const a0 = -t * 0.5 + k * 2.6;
+    const dx = Math.cos(a0) * R * 0.42, dy = Math.sin(a0 * 1.23 + k) * R * 0.34;
+    const dg = ctx.createRadialGradient(cx + dx, cy + dy, 0, cx + dx, cy + dy, R * 0.46);
+    dg.addColorStop(0, 'rgba(74,4,44,0.6)');
+    dg.addColorStop(1, 'rgba(74,4,44,0)');
+    ctx.fillStyle = dg;
+    ctx.beginPath();
+    ctx.arc(cx + dx, cy + dy, R * 0.46, 0, TAU);
+    ctx.fill();
+  }
+  // limb shadow lower-right
+  let limb = ctx.createRadialGradient(cx + R * 0.75, cy + R * 0.7, R * 0.15, cx + R * 0.75, cy + R * 0.7, R * 1.45);
+  limb.addColorStop(0, 'rgba(10,0,26,0.66)');
+  limb.addColorStop(1, 'rgba(10,0,26,0)');
+  ctx.fillStyle = limb;
+  ctx.fillRect(cx - R, cy - R, R * 2, R * 2);
+  ctx.restore();
+  ctx.globalCompositeOperation = 'source-over';
+
+  // hot rim
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.strokeStyle = hsla(18, 98, 66, 0.5 + 0.3 * beat);
+  ctx.lineWidth = S * 0.006;
+  ctx.beginPath();
+  ctx.arc(cx, cy, R * 0.985, 0, TAU);
+  ctx.stroke();
+  ctx.globalCompositeOperation = 'source-over';
+
+  // ---------- front of ring passes over the ember ----------
+  ctx.globalCompositeOperation = 'lighter';
+  ctx.strokeStyle = hsla(40, 96, 72, 0.55 + 0.3 * beat);
+  ctx.lineWidth = S * 0.004;
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, rx, ry, ringRot, 0, Math.PI);
+  ctx.stroke();
+  ctx.setLineDash([S * 0.009, S * 0.014]);
+  ctx.lineDashOffset = -t * S * 0.075;
+  ctx.strokeStyle = hsla(52, 95, 78, 0.4);
+  ctx.lineWidth = S * 0.006;
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, rx, ry, ringRot, 0, Math.PI);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.globalCompositeOperation = 'source-over';
+  for (const s of sats) {
+    if (!s.front) continue;
+    const [sx, sy] = ellipsePoint(s.a, rx, ry, ringRot, cx, cy);
+    glowDot(sx, sy, s.r * 1.15, s.hue, 0.95);
+  }
+
+  // ---------- embers rising ----------
+  for (const e of embers) {
+    e.age += dt;
+    if (e.age >= e.life || e.y < -40) {
+      respawnEmber(e, false);
+      continue;
+    }
+    e.y += e.vy * dt;
+    e.x += (e.vx + Math.sin(t * 0.9 + e.drift) * 13) * dt;
+    const lifePh = e.age / e.life;
+    const fade = Math.sin(Math.PI * Math.min(1, lifePh));
+    const tw = 0.45 + 0.55 * (0.5 + 0.5 * Math.sin(t * 2.6 + e.ph));
+    const a = fade * tw * 0.9;
+    if (a < 0.02) continue;
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.fillStyle = hsla(e.hue, 95, 62, a * 0.22);
+    ctx.beginPath();
+    ctx.arc(e.x, e.y, e.r * 4.4, 0, TAU);
+    ctx.fill();
+    ctx.fillStyle = hsla(e.hue, 96, 68, a);
+    ctx.beginPath();
+    ctx.arc(e.x, e.y, e.r, 0, TAU);
+    ctx.fill();
+    ctx.globalCompositeOperation = 'source-over';
+  }
+
+  // ---------- film grain ----------
+  if (noisePattern) {
+    ctx.save();
+    ctx.globalAlpha = 0.05;
+    ctx.translate(-grainOff[0], -grainOff[1]);
+    ctx.fillStyle = noisePattern;
+    ctx.fillRect(0, 0, W + 128, H + 128);
+    ctx.restore();
+  }
+
+  // ---------- vignette ----------
+  ctx.fillStyle = vigGrad;
+  ctx.fillRect(0, 0, W, H);
+}
+
+window.addEventListener('resize', resize);
+window.addEventListener('pointermove', (e) => {
+  pointer.x = e.clientX / Math.max(1, W);
+  pointer.y = e.clientY / Math.max(1, H);
+}, { passive: true });
+window.addEventListener('pointerdown', (e) => {
+  pointer.x = e.clientX / Math.max(1, W);
+  pointer.y = e.clientY / Math.max(1, H);
+}, { passive: true });
+
+resize();
+buildNoise();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

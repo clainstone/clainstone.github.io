@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ember Lotus — A Moving Visual</title>
+<style>
+  html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #05040e;
+  }
+  canvas {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    cursor: none;
+  }
+</style>
+</head>
+<body>
+<canvas id="art" aria-label="A luminous bloom in deep space"></canvas>
+<script>
+'use strict';
+const canvas = document.getElementById('art');
+const ctx = canvas.getContext('2d');
+const TAU = Math.PI * 2;
+let W = 0, H = 0, DPR = 1, cx = 0, cy = 0, S = 0;
+const start = performance.now();
+
+const fract = n => n - Math.floor(n);
+const hash = n => fract(Math.sin(n * 127.1 + 311.7) * 43758.5453123);
+const smooth = n => n * n * (3 - 2 * n);
+
+function valueNoise(x, y) {
+  const xi = Math.floor(x), yi = Math.floor(y);
+  const xf = x - xi, yf = y - yi;
+  const a = hash(xi * 0.731 + yi * 1.913);
+  const b = hash((xi + 1) * 0.731 + yi * 1.913);
+  const c = hash(xi * 0.731 + (yi + 1) * 1.913);
+  const d = hash((xi + 1) * 0.731 + (yi + 1) * 1.913);
+  const u = smooth(xf), v = smooth(yf);
+  return (a + (b - a) * u) * (1 - v) + (c + (d - c) * u) * v;
+}
+
+function fbm(x, y, octaves = 4) {
+  let sum = 0, amp = 0.5, freq = 1;
+  for (let i = 0; i < octaves; i++) {
+    sum += valueNoise(x * freq, y * freq) * amp;
+    freq *= 2.03;
+    amp *= 0.5;
+  }
+  return sum;
+}
+
+function resize() {
+  DPR = Math.min(window.devicePixelRatio || 1, 1.75);
+  W = window.innerWidth;
+  H = window.innerHeight;
+  canvas.width = Math.floor(W * DPR);
+  canvas.height = Math.floor(H * DPR);
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  cx = W * 0.5;
+  cy = H * 0.54;
+  S = Math.min(W, H);
+}
+window.addEventListener('resize', resize, { passive: true });
+resize();
+
+const grainCanvas = document.createElement('canvas');
+grainCanvas.width = 160;
+grainCanvas.height = 160;
+const gctx = grainCanvas.getContext('2d');
+const grainImage = gctx.createImageData(160, 160);
+for (let i = 0; i < grainImage.data.length; i += 4) {
+  const v = Math.random() * 255;
+  grainImage.data[i] = v;
+  grainImage.data[i + 1] = v;
+  grainImage.data[i + 2] = v;
+  grainImage.data[i + 3] = 28;
+}
+gctx.putImageData(grainImage, 0, 0);
+const grain = ctx.createPattern(grainCanvas, 'repeat');
+
+const shards = Array.from({ length: 30 }, (_, i) => ({
+  a: hash(i + 11) * TAU,
+  r: 0.70 + hash(i + 31) * 0.38,
+  size: 2.5 + hash(i + 71) * 7.5,
+  speed: (hash(i + 91) < 0.5 ? -1 : 1) * (0.035 + hash(i + 101) * 0.09),
+  phase: hash(i + 113) * TAU,
+  warm: hash(i + 131) > 0.55,
+  spin: (hash(i + 151) - 0.5) * 1.8
+}));
+
+const sparks = Array.from({ length: 150 }, (_, i) => ({
+  a: hash(i + 211) * TAU,
+  r: 0.28 + hash(i + 231) * 0.82,
+  speed: (hash(i + 251) - 0.5) * 0.42,
+  vertical: 0.68 + hash(i + 271) * 0.18,
+  size: 0.7 + hash(i + 291) * (hash(i + 311) > 0.9 ? 3.2 : 1.8),
+  hue: hash(i + 331) > 0.42 ? 32 + hash(i + 341) * 26 : 184 + hash(i + 351) * 24,
+  phase: hash(i + 361) * TAU
+}));
+
+function glow(x, y, radius, inner, outer) {
+  const g = ctx.createRadialGradient(x, y, 0, x, y, radius);
+  g.addColorStop(0, inner);
+  g.addColorStop(1, outer);
+  ctx.fillStyle = g;
+  ctx.fillRect(x - radius, y - radius, radius * 2, radius * 2);
+}
+
+function petal(angle, length, width, alpha, hue, saturation, lightness, veinAlpha) {
+  const root = S * 0.024;
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(angle);
+  const gradient = ctx.createLinearGradient(root, 0, length, 0);
+  gradient.addColorStop(0, `hsla(${hue}, ${saturation}%, ${Math.min(lightness + 42, 82)}%, ${alpha})`);
+  gradient.addColorStop(0.36, `hsla(${hue}, ${saturation}%, ${lightness}%, ${alpha * 0.92})`);
+  gradient.addColorStop(1, `hsla(${hue + 16}, ${saturation}%, ${lightness - 22}%, 0)`);
+  ctx.beginPath();
+  ctx.moveTo(root, 0);
+  ctx.bezierCurveTo(length * 0.35, -width, length * 0.72, -width * 0.72, length, 0);
+  ctx.bezierCurveTo(length * 0.72, width * 0.72, length * 0.35, width, root, 0);
+  ctx.fillStyle = gradient;
+  ctx.fill();
+  ctx.strokeStyle = `hsla(${hue}, 92%, 78%, ${veinAlpha})`;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(root * 1.15, 0);
+  ctx.lineTo(length * 0.88, 0);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function ring(coreRadius, color, alpha, width) {
+  ctx.save();
+  ctx.strokeStyle = `hsla(${color}, 92%, 70%, ${alpha})`;
+  ctx.lineWidth = width;
+  ctx.beginPath();
+  const steps = 150;
+  for (let i = 0; i <= steps; i++) {
+    const a = (i / steps) * TAU;
+    const ca = Math.cos(a), sa = Math.sin(a);
+    const wobble = (fbm(ca * 1.7 + 3.1, sa * 1.7 - 1.4 + W * 0.00001, 4) - 0.5) * S * 0.13;
+    const rr = coreRadius + wobble;
+    const amp = 0.86 + Math.sin(a * 3 + 1.8) * 0.08;
+    const x = cx + ca * rr;
+    const y = cy + sa * rr * amp;
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawLoop(now) {
+  const t = (now - start) / 1000;
+  const w = W, h = H;
+
+  const background = ctx.createLinearGradient(0, 0, 0, h);
+  background.addColorStop(0, '#0a0622');
+  background.addColorStop(0.42, '#11102c');
+  background.addColorStop(1, '#03020c');
+  ctx.fillStyle = background;
+  ctx.fillRect(0, 0, w, h);
+
+  ctx.save();
+  ctx.globalCompositeOperation = 'screen';
+  glow(w * 0.18 + Math.sin(t * 0.071) * w * 0.035, h * 0.17, S * 0.78, 'rgba(78, 21, 143, 0.55)', 'rgba(78,21,143,0)');
+  glow(w * (0.84 + Math.cos(t * 0.053) * 0.025), h * 0.32, S * 0.58, 'rgba(0, 126, 153, 0.35)', 'rgba(0,126,153,0)');
+  glow(cx + Math.sin(t * 0.18) * S * 0.025, cy - S * 0.02, S * 0.65, 'rgba(109, 19, 116, 0.28)', 'rgba(109,19,116,0)');
+  ctx.restore();
+
+  const moonX = w * (w > h ? 0.78 : 0.77);
+  const moonY = h * (w > h ? 0.18 : 0.15);
+  const moonR = S * (w > h ? 0.135 : 0.125);
+  glow(moonX, moonY, moonR * 2.8, 'rgba(194, 244, 255, 0.34)', 'rgba(194,244,255,0)');
+  const moon = ctx.createRadialGradient(moonX - moonR * 0.25, moonY - moonR * 0.28, moonR * 0.12, moonX, moonY, moonR);
+  moon.addColorStop(0, '#f4ffff');
+  moon.addColorStop(0.55, '#b8d9de');
+  moon.addColorStop(1, '#385368');
+  ctx.fillStyle = moon;
+  ctx.beginPath();
+  ctx.arc(moonX, moonY, moonR, 0, TAU);
+  ctx.fill();
+  ctx.fillStyle = 'rgba(44, 68, 82, 0.35)';
+  [[-0.3, -0.12, 0.18], [0.25, 0.18, 0.11], [0.08, -0.35, 0.075]].forEach(([dx, dy, r]) => {
+    ctx.beginPath();
+    ctx.arc(moonX + dx * moonR, moonY + dy * moonR, r * moonR, 0, TAU);
+    ctx.fill();
+  });
+
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.scale(1, 0.74);
+  const orbitAngles = [t * 0.055, -t * 0.038, t * 0.071];
+  [0.50, 0.66, 0.82].forEach((radiusFactor, index) => {
+    ctx.save();
+    ctx.rotate(orbitAngles[index]);
+    ctx.strokeStyle = index % 2 ? 'rgba(91, 235, 255, 0.27)' : 'rgba(255, 109, 166, 0.24)';
+    ctx.lineWidth = index === 1 ? 1.4 : 1;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, S * radiusFactor, S * radiusFactor * 0.63, 0, 0, TAU);
+    ctx.stroke();
+    ctx.restore();
+  });
+  ctx.restore();
+
+  glow(cx, cy, S * 0.53, 'rgba(96, 21, 111, 0.78)', 'rgba(96,21,111,0)');
+  ring(S * 0.235, 315, 0.34, 1.15);
+  ring(S * 0.325, 187, 0.24, 1);
+  ring(S * 0.405, 320, 0.15, 0.9);
+
+  const pulse = 0.5 + 0.5 * Math.sin(t * 1.35);
+  const breathing = 0.5 + 0.5 * Math.sin(t * 0.52 + 1.2);
+  const coreRadius = S * (0.103 + pulse * 0.012 + breathing * 0.007);
+
+  ctx.save();
+  ctx.globalCompositeOperation = 'screen';
+  glow(cx, cy, coreRadius * 4.6, `rgba(255, 88, 25, ${0.37 + pulse * 0.08})`, 'rgba(255,88,25,0)');
+  glow(cx, cy, coreRadius * 2.1, 'rgba(255, 205, 93, 0.72)', 'rgba(255,205,93,0)');
+  ctx.restore();
+
+  for (let ray = 0; ray < 11; ray++) {
+    const ra = t * 0.045 + (ray / 11) * TAU + Math.sin(t * 0.67 + ray) * 0.08;
+    const rayLength = S * (0.43 + 0.08 * Math.sin(t * 0.8 + ray * 2.1));
+    const rayWidth = S * (0.025 + 0.01 * Math.sin(t * 1.1 + ray));
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(ra);
+    const rayGradient = ctx.createLinearGradient(0, 0, rayLength, 0);
+    rayGradient.addColorStop(0, 'rgba(255, 141, 55, 0.38)');
+    rayGradient.addColorStop(1, 'rgba(255, 141, 55, 0)');
+    ctx.beginPath();
+    ctx.moveTo(coreRadius * 0.2, 0);
+    ctx.lineTo(rayLength, -rayWidth);
+    ctx.lineTo(rayLength, rayWidth);
+    ctx.closePath();
+    ctx.fillStyle = rayGradient;
+    ctx.fill();
+    ctx.restore();
+  }
+
+  const layers = [
+    { count: 10, length: 0.375, width: 0.105, hue: 284, saturation: 82, lightness: 48, alpha: 0.56, angle: -t * 0.071, wobble: 0.16, lift: -0.03 },
+    { count: 14, length: 0.295, width: 0.083, hue: 330, saturation: 91, lightness: 54, alpha: 0.72, angle: t * 0.092 + 0.22, wobble: 0.12, lift: 0.025 },
+    { count: 18, length: 0.225, width: 0.064, hue: 17, saturation: 96, lightness: 57, alpha: 0.88, angle: -t * 0.128 + 0.6, wobble: 0.09, lift: 0 }
+  ];
+  layers.forEach((layer, layerIndex) => {
+    for (let i = 0; i < layer.count; i++) {
+      const jitter = (hash(i * 3.17 + layerIndex * 19.7) - 0.5) * layer.wobble;
+      const phase = Math.sin(t * 0.72 + i * 1.93 + layerIndex * 2.4);
+      const length = S * layer.length * (1 + 0.09 * Math.sin(t * 1.28 + i * 1.71 + layerIndex) + jitter * 0.36);
+      const angle = layer.angle + (i / layer.count) * TAU + phase * 0.018;
+      const width = S * layer.width * (1 + 0.12 * Math.cos(t * 0.93 + i * 2.11 + layerIndex));
+      if (layerIndex === 2) {
+        petal(angle + layer.lift, length, width, layer.alpha * (0.75 + 0.25 * pulse), layer.hue, layer.saturation, layer.lightness, 0.3);
+      } else {
+        petal(angle + layer.lift, length, width, layer.alpha, layer.hue, layer.saturation, layer.lightness, 0.18);
+      }
+    }
+  });
+
+  ctx.save();
+  ctx.globalCompositeOperation = 'screen';
+  const coreGradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreRadius);
+  coreGradient.addColorStop(0, '#fffbef');
+  coreGradient.addColorStop(0.24, '#ffe57a');
+  coreGradient.addColorStop(0.57, '#ff7735');
+  coreGradient.addColorStop(0.84, '#c92d42');
+  coreGradient.addColorStop(1, 'rgba(82, 11, 63, 0)');
+  ctx.fillStyle = coreGradient;
+  ctx.beginPath();
+  ctx.arc(cx, cy, coreRadius * 1.18, 0, TAU);
+  ctx.fill();
+  ctx.restore();
+
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.scale(1, 0.74);
+  shards.forEach(shard => {
+    const a = shard.a + t * shard.speed;
+    const radius = S * shard.r * (1 + 0.055 * Math.sin(t * 0.68 + shard.phase));
+    const x = Math.cos(a) * radius;
+    const y = Math.sin(a) * radius;
+    const rot = a + shard.spin + Math.sin(t + shard.phase) * 0.35;
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(rot);
+    ctx.scale(1, 0.74);
+    ctx.beginPath();
+    ctx.moveTo(shard.size * 1.45, 0);
+    ctx.lineTo(-shard.size * 0.8, shard.size * 0.78);
+    ctx.lineTo(-shard.size * 0.35, -shard.size * 0.9);
+    ctx.closePath();
+    ctx.fillStyle = shard.warm ? 'rgba(255, 174, 78, 0.82)' : 'rgba(83, 236, 255, 0.68)';
+    ctx.shadowColor = shard.warm ? 'rgba(255, 119, 48, 0.9)' : 'rgba(37, 218, 255, 0.9)';
+    ctx.shadowBlur = 12;
+    ctx.fill();
+    ctx.restore();
+  });
+  sparks.forEach(spark => {
+    const a = spark.a + t * spark.speed + Math.sin(t * 0.45 + spark.phase) * 0.04;
+    const radius = S * spark.r * (1 - 0.12 * pulse);
+    const y = Math.sin(a) * radius * spark.vertical;
+    const x = Math.cos(a) * radius;
+    const shimmer = 0.45 + 0.55 * (0.5 + 0.5 * Math.sin(t * 2.7 + spark.phase * 3));
+    ctx.globalAlpha = shimmer;
+    ctx.fillStyle = `hsl(${spark.hue}, 92%, 68%)`;
+    ctx.shadowColor = ctx.fillStyle;
+    ctx.shadowBlur = spark.size > 2 ? 9 : 4;
+    ctx.beginPath();
+    ctx.arc(x, y, spark.size, 0, TAU);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.shadowBlur = 0;
+  });
+  ctx.restore();
+
+  ctx.save();
+  ctx.translate(0, -(t * 9 % 160));
+  ctx.globalAlpha = 0.045;
+  ctx.fillStyle = grain;
+  ctx.fillRect(-20, -20, W + 40, H + 200);
+  ctx.restore();
+
+  const vignette = ctx.createRadialGradient(cx, cy, S * 0.22, cx, cy, Math.max(W, H) * 0.78);
+  vignette.addColorStop(0, 'rgba(0,0,0,0)');
+  vignette.addColorStop(1, 'rgba(0,0,6,0.72)');
+  ctx.fillStyle = vignette;
+  ctx.fillRect(0, 0, W, H);
+
+  requestAnimationFrame(drawLoop);
+}
+requestAnimationFrame(drawLoop);
+</script>
+</body>
+</html>

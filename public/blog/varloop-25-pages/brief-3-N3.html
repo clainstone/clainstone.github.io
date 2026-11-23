@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Chromatic Vortex — a living nebula</title>
+<style>
+  html, body {
+    margin: 0; padding: 0; width: 100%; height: 100%;
+    overflow: hidden; background: #02061c;
+    overscroll-behavior: none;
+  }
+  canvas {
+    display: block;
+    width: 100vw; height: 100vh;
+    width: 100dvw; height: 100dvh;
+    cursor: default;
+  }
+  /* gentle cinematic vignette so frame edges melt into black */
+  .vignette {
+    position: fixed; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse 75% 68% at 50% 46%,
+      rgba(0,0,0,0) 55%, rgba(2,2,12,.38) 82%, rgba(0,0,6,.78) 100%);
+  }
+</style>
+</head>
+<body>
+<canvas id="stage" aria-hidden="true"></canvas>
+<div class="vignette"></div>
+<script>
+"use strict";
+/* ============================================================
+   CHROMATIC VORTEX — a painted, rotating spiral nebula.
+   Pure geometric fields: warped spiral phase, ridged
+   filaments, a teal-magenta-amber luminous palette.
+   ============================================================ */
+const canvas = document.getElementById('stage');
+const ctx = canvas.getContext('2d', { alpha: false });
+
+/* low-resolution computation buffer, upscaled with smoothing */
+const fb = document.createElement('canvas');
+const fctx = fb.getContext('2d', { alpha: false });
+let bw = 0, bh = 0;
+
+/* pointer parallax (desktop nicety, inert on touch screens) */
+const ptr = { x: 0, y: 0, tx: 0, ty: 0 };
+window.addEventListener('pointermove', e => {
+  ptr.tx = (e.clientX / Math.max(1, window.innerWidth) - 0.5) * 2;
+  ptr.ty = (e.clientY / Math.max(1, window.innerHeight) - 0.5) * 2;
+}, { passive: true });
+
+function resize() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = Math.floor(window.innerWidth * dpr);
+  canvas.height = Math.floor(window.innerHeight * dpr);
+  canvas.style.width = window.innerWidth + 'px';
+  canvas.style.height = window.innerHeight + 'px';
+  ctx.imageSmoothingQuality = 'high';
+  /* buffer area capped so phones stay at 60fps, tall screens shrink width */
+  let w = 216, h = Math.round(216 * (window.innerHeight / Math.max(1, window.innerWidth)));
+  const maxPx = 46000;
+  if (w * h > maxPx) {
+    const s = Math.sqrt(maxPx / (w * h));
+    w = Math.floor(w * s); h = Math.floor(h * s);
+  }
+  bw = Math.max(120, w);
+  bh = Math.max(80, h);
+  fb.width = bw; fb.height = bh;
+}
+window.addEventListener('resize', resize);
+resize();
+
+/* ---------------- palette: deep navy -> teal -> magenta -> coral -> amber ---------------- */
+const stops = [
+  [2,   5, 33 ],   // ink navy
+  [46, 16, 88 ],   // deep violet
+  [122, 32, 122],  // purple magenta
+  [199, 46, 114],  // magenta
+  [240, 90, 84 ],  // coral
+  [255, 198,112 ]  // amber
+];
+const PAL = new Uint8ClampedArray(256 * 3);
+(function buildPalette() {
+  for (let i = 0; i < 256; i++) {
+    const t = i / 255 * (stops.length - 1);
+    const j = Math.min(stops.length - 2, Math.floor(t));
+    const f = t - j;
+    const a = stops[j], b = stops[j + 1];
+    PAL[i*3]     = a[0] + (b[0]-a[0]) * f;
+    PAL[i*3 + 1] = a[1] + (b[1]-a[1]) * f;
+    PAL[i*3 + 2] = a[2] + (b[2]-a[2]) * f;
+  }
+})();
+
+/* cheap integer hash for grain */
+function hash(x, y, s) {
+  let h = (x * 374761393 + y * 668265263 + s * 974634721) | 0;
+  h = (h ^ (h >>> 13)) * 1274126177;
+  return (((h ^ (h >>> 16)) >>> 0) % 1000) / 1000;
+}
+
+function smoothstep(e0, e1, x) {
+  const t = Math.max(0, Math.min(1, (x - e0) / (e1 - e0)));
+  return t * t * (3 - 2 * t);
+}
+
+/* shader core — drawn once per pixel per frame */
+function render(t, frame) {
+  const img = fctx.createImageData(bw, bh);
+  const d = img.data;
+  const invH = 1 / bh;
+  /* slow drift of the vortex's anchor + pointer parallax */
+  const ax = Math.sin(t * 0.31) * 0.16 + ptr.x * 0.10;
+  const ay = Math.cos(t * 0.24 + 1.7) * 0.13 + ptr.y * 0.09;
+  /* continuous gentle spiral spin, plus a breathing wobble */
+  const rot = t * 0.16 + Math.sin(t * 0.52) * 0.28;
+  const crn = Math.cos(rot), srn = Math.sin(rot);
+  /* warp uses a traveling phase so the bands twist in place */
+  const drift = t * 1.05;
+
+  for (let y = 0; y < bh; y++) {
+    const cy0 = (y + 0.5 - bh * 0.5) * invH * 2;          /* -1 .. 1 */
+    for (let x = 0; x < bw; x++) {
+      const cx0 = ((x + 0.5) * (bh / bw) - bh * 0.5) * invH * 2; /* same unit: circular r */
+      let px = cx0 - ax, py = cy0 - ay;
+      const rx = px * crn - py * srn;
+      const ry = px * srn + py * crn;
+      const r = Math.sqrt(rx * rx + ry * ry);
+      const ang = Math.atan2(ry, rx);
+
+      /* ---- turbulent warps of the spiral phase ---- */
+      const w1 = Math.sin(r * 3.6 - drift * 1.5 + Math.sin(ang * 3.0 + t * 0.7) * 0.9);
+      const w2 = Math.sin(ang * 3.0 + r * 2.35 + t * 0.85);
+      const warp = w1 * 0.30 + w2 * 0.22;
+      /* fine angular filament structure */
+      const fil = 0.5 + 0.5 * Math.sin(ang * 6.5 + r * 4.0 - t * 0.8);
+
+      /* ---- spiral phase: 3 tightening arms, drifting outward ---- */
+      const phase = ang * 1.65 + r * 3.6 - r * r * 1.35 - drift + warp * 2.7;
+      const wave = Math.sin(phase + Math.sin(r * 7.5 + t * 1.6) * 0.35);
+
+      /* fine turbulence mottling on top */
+      const mottle = 0.5 + 0.5 * Math.sin(r * 9.0 - phase * 1.7 + ang * 2.0 + t * 1.15);
+      const mottle2 = 0.5 + 0.5 * Math.sin(r * 15.0 + ang * 5.0 - t * 1.7);
+
+      /* colour field: interleaved waves, angled fine structure, pushed contrast */
+      let tf = 0.5 + 0.5 * Math.sin(phase * 0.62 + r * 1.5 + mottle * 0.85 + ay * 1.4);
+      tf = tf * 0.66 + mottle * 0.22 + mottle2 * 0.12;
+      tf += fil * 0.30 - 0.15;
+      tf *= 1.14;
+      tf -= 0.055;
+      tf += smoothstep(0.5, 1.15, r) * 0.16;           /* rim drifts warmer/lost */
+      tf = Math.min(1, Math.max(0, tf));
+
+      /* ---- glow structure ---- */
+      /* thin bright ridge riding the zero-crossings of wave */
+      const ridge = Math.pow(Math.exp(-wave * wave * 15.0), 1.35);
+      /* warm core at the throat */
+      const core = Math.exp(-r * 2.35);
+      /* expanding shock rings: shimmer pulses travelling outward */
+      const rr = (t * 0.145 + 0.35) % 1.0;
+      const ringR = 0.22 + rr * 1.5;
+      const ring = Math.exp(-Math.pow(r - ringR, 2.0) * 30.0) * (1.0 - rr) * 0.55;
+      /* outer halo so the rim melts, not cuts off */
+      const halo = Math.exp(-Math.pow(Math.max(0, r - 0.6), 2.0) * 2.4) * 0.38 * (0.4 + 0.6 * mottle2);
+
+      let intensity = 0.11
+        + core * 1.3
+        + ridge * 1.05
+        + ring
+        + halo;
+
+      /* hue rotation: coral-amber shift toward the core, teal at the rim */
+      let tj = tf * 0.82 + Math.exp(-r * 2.0) * 0.42 + (1 - Math.min(1, r)) * 0.06;
+      if (tj > 1) tj = 1;
+      const li = (tj * 255) | 0;
+      let R = PAL[li * 3], G = PAL[li * 3 + 1], B = PAL[li * 3 + 2];
+
+      /* teal rim light against the warm core: complementary accent */
+      const tealBand = Math.exp(-Math.pow(r - 0.86, 2.0) * 3.0) * (0.3 + 0.7 * mottle2);
+      R -= tealBand * 16; G += tealBand * 22; B += tealBand * 30;
+
+      R *= intensity; G *= intensity; B *= intensity;
+
+      /* subtle anamorphic horizontal flare through the core */
+      const flare = Math.exp(-cy0 * cy0 * 26.0) * Math.exp(-Math.abs(cx0 - ax) * 2.1) * 0.34 * (0.6 + 0.4 * Math.sin(t * 0.9));
+      R += flare * 255; G += flare * 176; B += flare * 96;
+
+      /* gentle filament shimmer: tiny global hue-flick breath */
+      const breath = 1 + Math.sin(t * 1.35) * 0.055;
+      R *= breath; G *= breath; B *= breath;
+
+      /* vignette inside shader (CSS handles the last mile) */
+      const dv = Math.sqrt(cx0 * cx0 + (cy0 * 1.12) * (cy0 * 1.12));
+      const vig = 1 - 0.52 * smoothstep(0.55, 1.38, dv);
+      R *= vig; G *= vig; B *= vig;
+
+      /* film grain */
+      const g = (hash(x, y, frame) - 0.5) * 13;
+      R = R + g; G = G + g; B = B + g;
+
+      const o = (y * bw + x) * 4;
+      d[o]     = R < 0 ? 0 : (R > 255 ? 255 : R);
+      d[o + 1] = G < 0 ? 0 : (G > 255 ? 255 : G);
+      d[o + 2] = B < 0 ? 0 : (B > 255 ? 255 : B);
+      d[o + 3] = 255;
+    }
+  }
+  fctx.putImageData(img, 0, 0);
+  ctx.drawImage(fb, 0, 0, canvas.width, canvas.height);
+}
+
+let start = -1, frame = 0;
+let last = 0;
+let ptrX = 0, ptrY = 0;
+
+function frameLoop(ts) {
+  if (start < 0) start = ts;
+  const t = (ts - start) / 1000;
+  /* frame-rate independent pointer easing */
+  const dt = Math.min(0.05, (ts - last) / 1000 || 0.016);
+  last = ts;
+  ptrX += (ptr.tx - ptrX) * Math.min(1, dt * 3.2);
+  ptrY += (ptr.ty - ptrY) * Math.min(1, dt * 3.2);
+  ptr.x = ptrX; ptr.y = ptrY;
+  frame++;
+  render(t, frame % 1024);
+  requestAnimationFrame(frameLoop);
+}
+requestAnimationFrame(frameLoop);
+</script>
+</body>
+</html>

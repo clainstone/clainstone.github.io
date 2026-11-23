@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lumen Deep</title>
+<style>
+  html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #020815; }
+  canvas { display: block; width: 100vw; height: 100vh; }
+  .vignette {
+    position: fixed; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse at 50% 42%, transparent 42%, rgba(0, 2, 12, .48) 100%);
+  }
+</style>
+</head>
+<body>
+<canvas id="scene"></canvas>
+<div class="vignette"></div>
+<script>
+(() => {
+  const canvas = document.getElementById('scene');
+  const ctx = canvas.getContext('2d');
+  let W = 0, H = 0, minDim = 0, dpr = 1;
+
+  const resize = () => {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth; H = window.innerHeight; minDim = Math.min(W, H);
+    canvas.width = Math.floor(W * dpr); canvas.height = Math.floor(H * dpr);
+    canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    buildField();
+  };
+
+  const rand = (a, b) => a + Math.random() * (b - a);
+  const palette = ['#00e5ff', '#ff2e88', '#ffd166', '#8a5cff', '#42f7c4'];
+  let motes = [], jellies = [], ridge = [];
+
+  function buildField() {
+    const count = Math.max(70, Math.min(150, Math.floor(W * H / 9500)));
+    motes = Array.from({ length: count }, () => ({
+      x: Math.random(), y: Math.random(), r: rand(.7, 2.5),
+      speed: rand(.008, .032), drift: rand(-.025, .025),
+      phase: rand(0, Math.PI * 2), hue: palette[(Math.random() * palette.length) | 0]
+    }));
+    jellies = [
+      { x: .18, y: .34, size: .165, hue: '#ff2e88', core: '#ffb3d1', phase: 0.4, beat: .62, bob: 1.0, tentacles: 6, len: .28 },
+      { x: .73, y: .52, size: .235, hue: '#00e5ff', core: '#bffcff', phase: 2.7, beat: .48, bob: .82, tentacles: 7, len: .34 },
+      { x: .48, y: .74, size: .105, hue: '#8a5cff', core: '#dcc6ff', phase: 4.6, beat: .78, bob: 1.28, tentacles: 5, len: .24 }
+    ];
+    ridge = Array.from({ length: 17 }, (_, i) => ({
+      x: i / 16,
+      y: .90 - Math.abs(Math.sin(i * 1.73 + .8)) * .075 - Math.sin(i * .9) * .018
+    }));
+  }
+
+  function hexToRgba(hex, alpha) {
+    const n = parseInt(hex.slice(1), 16);
+    return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${alpha})`;
+  }
+
+  function ray(cx, topY, spread, height, alpha) {
+    const g = ctx.createLinearGradient(0, topY, 0, topY + height);
+    g.addColorStop(0, `rgba(190, 244, 255, ${alpha})`);
+    g.addColorStop(.62, 'rgba(120, 214, 255, .025)');
+    g.addColorStop(1, 'rgba(120, 214, 255, 0)');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.moveTo(cx, topY);
+    ctx.lineTo(cx - spread, topY + height);
+    ctx.lineTo(cx + spread, topY + height);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  function ribbon(t, opts) {
+    const pts = [];
+    const segments = 72;
+    for (let i = 0; i <= segments; i++) {
+      const u = i / segments;
+      const x = u * W;
+      const y = H * opts.base
+        + Math.sin(u * opts.f1 + t * opts.s1 + opts.p) * H * opts.a1
+        + Math.sin(u * opts.f2 - t * opts.s2 + opts.p * 1.7) * H * opts.a2
+        + Math.sin(u * 17 - t * .55) * 5;
+      pts.push([x, y]);
+    }
+    for (const [width, alpha] of [[opts.width * 2.6, .12], [opts.width, .38], [Math.max(2, opts.width * .22), .8]]) {
+      const g = ctx.createLinearGradient(0, 0, W, 0);
+      g.addColorStop(0, hexToRgba(opts.color, 0));
+      g.addColorStop(.18, hexToRgba(opts.color, alpha));
+      g.addColorStop(.50, hexToRgba(opts.color, alpha * .72));
+      g.addColorStop(.82, hexToRgba(opts.color, alpha));
+      g.addColorStop(1, hexToRgba(opts.color, 0));
+      ctx.strokeStyle = g;
+      ctx.lineWidth = width;
+      ctx.lineJoin = 'round';
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      pts.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y));
+      ctx.stroke();
+    }
+  }
+
+  function jelly(t, j) {
+    const pulse = 1 + Math.sin(t * Math.PI * j.beat * 2 + j.phase) * .10;
+    const x = j.x * W + Math.sin(t * .34 + j.phase * 1.7) * W * .012;
+    const y = j.y * H + Math.sin(t * .58 * j.bob + j.phase) * H * .028;
+    const R = j.size * minDim * pulse;
+    const domeH = R * .78;
+
+    ctx.save();
+    const halo = ctx.createRadialGradient(x, y, R * .15, x, y, R * 2.15);
+    halo.addColorStop(0, hexToRgba(j.hue, .28));
+    halo.addColorStop(.55, hexToRgba(j.hue, .065));
+    halo.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = halo;
+    ctx.beginPath(); ctx.arc(x, y, R * 2.15, 0, Math.PI * 2); ctx.fill();
+
+    ctx.shadowColor = j.hue;
+    ctx.shadowBlur = R * .55;
+    const dome = ctx.createRadialGradient(x, y - domeH * .62, R * .08, x, y - domeH * .1, R * 1.25);
+    dome.addColorStop(0, j.core);
+    dome.addColorStop(.28, hexToRgba(j.hue, .9));
+    dome.addColorStop(.78, hexToRgba(j.hue, .16));
+    dome.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = dome;
+    ctx.beginPath();
+    ctx.moveTo(x - R, y);
+    ctx.quadraticCurveTo(x - R * 1.02, y - domeH * 1.18, x, y - domeH);
+    ctx.quadraticCurveTo(x + R * 1.02, y - domeH * 1.18, x + R, y);
+    for (let i = 0; i < 5; i++) {
+      const bx = x + R - (i + .5) * (2 * R / 5);
+      ctx.arc(bx, y, R / 4.8, 0, Math.PI, false);
+    }
+    ctx.closePath(); ctx.fill();
+    ctx.shadowBlur = 0;
+
+    ctx.strokeStyle = hexToRgba(j.core, .5);
+    ctx.lineWidth = Math.max(1, R * .018);
+    ctx.beginPath();
+    ctx.moveTo(x - R * .72, y - domeH * .28);
+    ctx.quadraticCurveTo(x, y - domeH * .55, x + R * .72, y - domeH * .28);
+    ctx.stroke();
+
+    for (let i = 0; i < j.tentacles; i++) {
+      const u = j.tentacles === 1 ? .5 : i / (j.tentacles - 1);
+      const sx = x + (u - .5) * R * 1.62;
+      const len = j.len * minDim * (.78 + Math.sin(i * 2.7) * .18);
+      ctx.strokeStyle = hexToRgba(i % 2 ? j.hue : j.core, .58);
+      ctx.lineWidth = Math.max(1.1, R * .023);
+      ctx.beginPath();
+      ctx.moveTo(sx, y + R * .08);
+      for (let s = 1; s <= 14; s++) {
+        const v = s / 14;
+        const px = sx + Math.sin(t * 1.35 + j.phase + i * .86 + v * 5.2) * R * (.12 + v * .34) + v * Math.sin(j.phase + i) * R * .1;
+        const py = y + R * .08 + v * len;
+        ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  let last = performance.now();
+  function frame(now) {
+    const dt = Math.min(.05, (now - last) / 1000 || .016); last = now;
+    const t = now / 1000;
+
+    const sea = ctx.createLinearGradient(0, 0, 0, H);
+    sea.addColorStop(0, '#071a2b');
+    sea.addColorStop(.34, '#031527');
+    sea.addColorStop(.78, '#010817');
+    sea.addColorStop(1, '#00030c');
+    ctx.fillStyle = sea;
+    ctx.fillRect(0, 0, W, H);
+
+    ctx.globalCompositeOperation = 'lighter';
+    ray(W * .68, -H * .08, W * .075, H * .82, .16);
+    ray(W * .5, -H * .10, W * .055, H * .70, .10);
+    ray(W * .88, -H * .05, W * .042, H * .62, .09);
+
+    const moonX = W * .71, moonY = H * .205, moonR = minDim * (.135 + Math.sin(t * .8) * .006);
+    const glow = ctx.createRadialGradient(moonX, moonY, moonR * .1, moonX, moonY, moonR * 3.6);
+    glow.addColorStop(0, 'rgba(255, 216, 128, .78)');
+    glow.addColorStop(.22, 'rgba(255, 166, 82, .24)');
+    glow.addColorStop(.72, 'rgba(255, 70, 145, .075)');
+    glow.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = glow;
+    ctx.beginPath(); ctx.arc(moonX, moonY, moonR * 3.6, 0, Math.PI * 2); ctx.fill();
+    const moon = ctx.createRadialGradient(moonX - moonR * .25, moonY - moonR * .3, moonR * .08, moonX, moonY, moonR);
+    moon.addColorStop(0, '#fff7dd');
+    moon.addColorStop(.52, '#ffd166');
+    moon.addColorStop(.9, '#ff7a45');
+    moon.addColorStop(1, '#b33a63');
+    ctx.fillStyle = moon;
+    ctx.beginPath(); ctx.arc(moonX, moonY, moonR, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = 'rgba(3, 18, 34, .42)';
+    ctx.beginPath(); ctx.arc(moonX + moonR * .36, moonY - moonR * .12, moonR * .88, 0, Math.PI * 2); ctx.fill();
+
+    ribbon(t, { base: .42, f1: 4.1, f2: 9.0, s1: .52, s2: .78, a1: .085, a2: .024, p: 1.2, width: minDim * .030, color: '#00e5ff' });
+    ribbon(t, { base: .58, f1: 5.3, f2: 11.0, s1: .39, s2: .64, a1: .105, a2: .030, p: 4.0, width: minDim * .027, color: '#ff2e88' });
+    ribbon(t, { base: .70, f1: 3.2, f2: 8.2, s1: .61, s2: .47, a1: .070, a2: .022, p: 5.3, width: minDim * .020, color: '#ffd166' });
+    ribbon(t, { base: .30, f1: 6.4, f2: 13.0, s1: .70, s2: .91, a1: .062, a2: .020, p: 2.6, width: minDim * .014, color: '#8a5cff' });
+
+    jellies.forEach(j => jelly(t, j));
+
+    for (const m of motes) {
+      m.y -= m.speed * dt * 2.4;
+      m.x += m.drift * dt * .28 + Math.sin(t * .9 + m.phase) * .00012;
+      if (m.y < -.02) { m.y = 1.02; m.x = Math.random(); }
+      if (m.x < -.02) m.x = 1.02; else if (m.x > 1.02) m.x = -.02;
+      const tw = .48 + .52 * (.5 + .5 * Math.sin(t * (1.1 + m.phase * .12) + m.phase * 3.1));
+      ctx.globalAlpha = tw * .95;
+      ctx.fillStyle = m.hue;
+      ctx.shadowColor = m.hue;
+      ctx.shadowBlur = 9 * tw;
+      ctx.beginPath(); ctx.arc(m.x * W, m.y * H, m.r * (.75 + tw * .65), 0, Math.PI * 2); ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = 'source-over';
+
+    ctx.fillStyle = '#01050d';
+    ctx.beginPath(); ctx.moveTo(0, H); ctx.lineTo(0, ridge[0].y * H);
+    ridge.forEach(p => ctx.lineTo(p.x * W, p.y * H));
+    ctx.lineTo(W, H); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = 'rgba(0, 229, 255, .16)';
+    ctx.lineWidth = 1.2;
+    ctx.beginPath(); ridge.forEach((p, i) => i ? ctx.lineTo(p.x * W, p.y * H) : ctx.moveTo(p.x * W, p.y * H)); ctx.stroke();
+
+    requestAnimationFrame(frame);
+  }
+
+  window.addEventListener('resize', resize, { passive: true });
+  resize();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
