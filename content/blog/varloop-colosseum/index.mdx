@@ -1,7 +1,7 @@
 ---
 title: "TML-d24-varloop and Inkling 2 Mini: a 3D diorama of the Colosseum square"
 date: 2026-11-24
-summary: With TML-d24-varloop-research at N from 1 to 5 and with Inkling 2 Mini, pi coding agents built a Three.js diorama of the Colosseum square in Rome. Each of the 6 pages is shown with a preview, the time its agents took, how often they ran pagecheck and how often they had to be restarted.
+summary: With TML-d24-varloop-research at LOOP_COUNT from 1 to 5 and with Inkling 2 Mini, pi coding agents built a Three.js diorama of the Colosseum square in Rome. Each of the 6 pages is shown with a preview, the time its agents took, how often they ran pagecheck and how often they had to be restarted.
 ---
 
 import Prompt from './Prompt.astro';
@@ -27,9 +27,9 @@ The prompt above merges two steps. First, an agent built each page from the orig
 
 </Note>
 
-The model is `thinkingmachines/TML-d24-varloop-research`, where N is the number of passes through its looped middle layers. I ran N = 1 to 5 and, for comparison, the official `thinkingmachines/Inkling-2-Mini`, which makes 3 fixed passes. On 24 November 2026 I served them with vLLM in tensor parallel on two RTX 5070 Ti, one server and one [pi](https://github.com/earendil-works/pi) coding agent at a time. pi edits files and runs commands on its own until it decides it is done.
+The model is `thinkingmachines/TML-d24-varloop-research`, where LOOP_COUNT is the number of passes through its looped middle layers (`loop_num_passes` in the model config). I ran LOOP_COUNT = 1 to 5 and, for comparison, the official `thinkingmachines/Inkling-2-Mini`, which makes 3 fixed passes. On 24 November 2026 I served them with vLLM in tensor parallel on two RTX 5070 Ti, one server and one [pi](https://github.com/earendil-works/pi) coding agent at a time. pi edits files and runs commands on its own until it decides it is done.
 
-Each server gave its agent the longest context its key-value (KV) cache could hold. The context shrinks as N grows: 736,128 tokens at N = 1, 162,688 at N = 5. For Inkling 2 Mini it was 301,056 tokens.
+Each server gave its agent the longest context its key-value (KV) cache could hold. The context shrinks as LOOP_COUNT grows: 736,128 tokens at LOOP_COUNT = 1, 162,688 at LOOP_COUNT = 5. For Inkling 2 Mini it was 301,056 tokens.
 
 Each agent ran in its own container, started and watched by a script. To test its work it could run `pagecheck`, which opens the page in headless Chromium with software WebGL, at noon and at midnight. It reports JavaScript errors, pictures that are blank, too dark or overexposed, whether the scene moves, whether lights come on at night, and whether dragging and the mouse wheel work.
 
@@ -39,20 +39,20 @@ The time each agent took, from its start to the end of the final `pagecheck` tha
 
 | | Built in (first prompt) | Colosseum made intact in (second prompt) |
 | :-- | --: | --: |
-| N = 1 | 11 min 39 s | 3 min 26 s |
-| N = 2 | 12 min 44 s | 3 min 33 s |
-| N = 3 | 31 min 20 s | 2 min 57 s |
-| N = 4 | 27 min 53 s | 2 min 36 s |
-| N = 5 | 28 min 4 s | 7 min 20 s |
+| LOOP_COUNT = 1 | 11 min 39 s | 3 min 26 s |
+| LOOP_COUNT = 2 | 12 min 44 s | 3 min 33 s |
+| LOOP_COUNT = 3 | 31 min 20 s | 2 min 57 s |
+| LOOP_COUNT = 4 | 27 min 53 s | 2 min 36 s |
+| LOOP_COUNT = 5 | 28 min 4 s | 7 min 20 s |
 | Inkling 2 Mini | 33 min 49 s | 5 min 44 s |
 
 ## The 6 pages
 
 <Pages>
-  <Page href="/blog/varloop-colosseum/n1/index.html" preview="n1" label="N = 1" alt="The first minute of the page at N = 1, from noon" first="Built in 11 min 39 s, with 7 pagecheck runs and 0 restarts" second="Colosseum made intact in 3 min 26 s, with 1 pagecheck run and 1 restart" />
-  <Page href="/blog/varloop-colosseum/n2/index.html" preview="n2" label="N = 2" alt="The first minute of the page at N = 2, from noon" first="Built in 12 min 44 s, with 4 pagecheck runs and 0 restarts" second="Colosseum made intact in 3 min 33 s, with 3 pagecheck runs and 1 restart" />
-  <Page href="/blog/varloop-colosseum/n3/index.html" preview="n3" label="N = 3" alt="The first minute of the page at N = 3, from noon" first="Built in 31 min 20 s, with 27 pagecheck runs and 3 restarts" second="Colosseum made intact in 2 min 57 s, with 1 pagecheck run and 1 restart" />
-  <Page href="/blog/varloop-colosseum/n4/index.html" preview="n4" label="N = 4" alt="The first minute of the page at N = 4, from noon" first="Built in 27 min 53 s, with 11 pagecheck runs and 5 restarts" second="Colosseum made intact in 2 min 36 s, with 1 pagecheck run and 0 restarts" />
-  <Page href="/blog/varloop-colosseum/n5/index.html" preview="n5" label="N = 5" alt="The first minute of the page at N = 5, from noon" first="Built in 28 min 4 s, with 1 pagecheck run and 1 restart" second="Colosseum made intact in 7 min 20 s, with 7 pagecheck runs and 6 restarts" />
+  <Page href="/blog/varloop-colosseum/n1/index.html" preview="n1" label="LOOP_COUNT = 1" alt="The first minute of the page at LOOP_COUNT = 1, from noon" first="Built in 11 min 39 s, with 7 pagecheck runs and 0 restarts" second="Colosseum made intact in 3 min 26 s, with 1 pagecheck run and 1 restart" />
+  <Page href="/blog/varloop-colosseum/n2/index.html" preview="n2" label="LOOP_COUNT = 2" alt="The first minute of the page at LOOP_COUNT = 2, from noon" first="Built in 12 min 44 s, with 4 pagecheck runs and 0 restarts" second="Colosseum made intact in 3 min 33 s, with 3 pagecheck runs and 1 restart" />
+  <Page href="/blog/varloop-colosseum/n3/index.html" preview="n3" label="LOOP_COUNT = 3" alt="The first minute of the page at LOOP_COUNT = 3, from noon" first="Built in 31 min 20 s, with 27 pagecheck runs and 3 restarts" second="Colosseum made intact in 2 min 57 s, with 1 pagecheck run and 1 restart" />
+  <Page href="/blog/varloop-colosseum/n4/index.html" preview="n4" label="LOOP_COUNT = 4" alt="The first minute of the page at LOOP_COUNT = 4, from noon" first="Built in 27 min 53 s, with 11 pagecheck runs and 5 restarts" second="Colosseum made intact in 2 min 36 s, with 1 pagecheck run and 0 restarts" />
+  <Page href="/blog/varloop-colosseum/n5/index.html" preview="n5" label="LOOP_COUNT = 5" alt="The first minute of the page at LOOP_COUNT = 5, from noon" first="Built in 28 min 4 s, with 1 pagecheck run and 1 restart" second="Colosseum made intact in 7 min 20 s, with 7 pagecheck runs and 6 restarts" />
   <Page href="/blog/varloop-colosseum/mini/index.html" preview="mini" label="Inkling 2 Mini" alt="The first minute of the page of Inkling 2 Mini, from noon" first="Built in 33 min 49 s, with 10 pagecheck runs and 0 restarts" second="Colosseum made intact in 5 min 44 s, with 2 pagecheck runs and 0 restarts" />
 </Pages>
