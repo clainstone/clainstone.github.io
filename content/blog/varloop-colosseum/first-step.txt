@@ -1,0 +1,31 @@
+Build a 3D isometric diorama of the Colosseum square in Rome, as one web page.
+
+The scene
+- A square tile of the city floating in the sky: paving and grass on top, a thick slab of earth and rock underneath, so it reads as a miniature cut out of the city.
+- The landmarks are the heart of the scene and must be recognisable at first glance from their defining features. Build them with care and at plausible relative proportions; you may move them closer together to fit the tile.
+  - the Colosseum: an elliptical amphitheatre in travertine, three tiers of arches framed by half-columns and a solid fourth storey with small rectangular windows; the outer ring is broken on one side, showing the inner ring and the stepped seating; inside, the arena floor with the underground corridors partly exposed.
+  - the Arch of Constantine beside it: a triple triumphal arch with a taller central opening, four free-standing columns on each face and a tall attic with an inscription panel.
+  - a corner of the Roman Forum: broken columns and fragments of temples among umbrella pines with flat crowns and dark cypresses.
+- Around them, the city at small scale: streets of dark stone cobbles with Vespas and a red open-top tourist bus going round, a souvenir cart and a small iron drinking fountain. Add people walking along the paths, trees, street lamps, benches and the small details that make a place feel lived in.
+- A day-night cycle of about 60 seconds: the sun moves and the shadows follow it, the light turns warm at sunset, at night the street lamps and the windows glow, then dawn returns. Drifting clouds and a few birds.
+- A stylised low-poly look, like a hand-made architectural model: soft shadows, a coherent palette, clean silhouettes.
+- A small title card in a corner with the name of the place and the city.
+- The camera looks down on the tile from an isometric angle. At the default zoom the whole tile, its rock underside included, fits in the window with sky around it.
+
+Interaction
+- Dragging rotates the view around the tile; on release it snaps to the nearest 90 degree view. Two buttons rotate by 90 degrees left and right, one button pauses the day-night cycle. The mouse wheel zooms within limits.
+- The page fills the window and starts animating by itself, with no click.
+
+Technical rules
+- Use Three.js r186, which is already in ./lib (do not modify it). Load it with exactly this import map:
+  <script type="importmap">{"imports":{"three":"./lib/three.module.js","three/addons/":"./lib/addons/"}}</script>
+  then import * as THREE from 'three' and, only if you need them, addons such as 'three/addons/utils/BufferGeometryUtils.js'.
+- Everything you write goes in index.html, in the current folder: HTML, CSS and JavaScript inline. No other files, no external images, models or fonts, no network requests. Build every shape from Three.js geometry (boxes, cylinders, lathes, extrusions, instanced meshes); procedural canvas textures are allowed.
+- Support a URL parameter ?time= from 0 to 1 that sets the starting time of day (0 is midnight, 0.5 is noon).
+- When the scene is built, set window.__diorama = { scene, camera, renderer }.
+- It must run smoothly on a laptop: reuse geometries and materials, and use InstancedMesh for repeated objects such as trees, people, lamps and windows.
+
+How to work
+- Put a first complete version on disk early, then improve it in steps. After every substantial change, run `pagecheck` in the terminal (no arguments: it checks ./index.html). It opens the page in a headless browser at noon and at night and reports errors, whether the picture is blank, too dark or overexposed, whether it moves, and how many objects and triangles the scene has.
+- Fix whatever pagecheck reports before adding detail. Once the page works, edit it: do not rewrite it from scratch.
+- You are done when pagecheck passes and every landmark has its defining features. Decide everything yourself and do not ask me anything.

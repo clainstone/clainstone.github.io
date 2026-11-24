@@ -1,0 +1,7 @@
+index.html in the current folder is your 3D isometric diorama of the Colosseum square in Rome. Change one thing: the Colosseum must look as it did in Roman times, intact.
+
+- Its outer ring is complete all the way round: the same three tiers of arches framed by half-columns and the solid fourth storey with small rectangular windows, uniform on every side.
+- No broken, collapsed or missing section anywhere, and no exposed inner ring from the outside.
+- Keep everything else of the page as it is: the other landmarks, the city, the people, the day-night cycle, the interaction, the title card, ./lib and the import map.
+
+Edit the file, do not rewrite it from scratch. Run `pagecheck` in the terminal (no arguments) after the change. You are done when pagecheck passes and the outer ring of the Colosseum is complete and uniform all around. Decide everything yourself and do not ask me anything.

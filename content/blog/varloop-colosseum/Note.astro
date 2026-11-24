@@ -1,0 +1,30 @@
+---
+/**
+ * A closed note under the prompt: one line in the link's colour that opens
+ * the text inside it. A plain <details>, so it needs no JavaScript; the
+ * browser's triangle is hidden, since the site draws no markers.
+ */
+interface Props { summary: string }
+const { summary } = Astro.props;
+---
+<details class="note">
+  <summary>{summary}</summary>
+  <div class="inside"><slot /></div>
+</details>
+
+<style>
+  summary {
+    display: inline;
+    list-style: none;
+    cursor: pointer;
+    color: var(--link);
+    font-size: var(--small);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+    text-underline-offset: 0.15em;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary:hover { color: var(--link-hover); text-decoration-color: currentColor; }
+  .inside { margin-top: 1em; }
+  .inside > :global(* + *) { margin-top: 1em; }
+</style>

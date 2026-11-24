@@ -1,0 +1,50 @@
+---
+/**
+ * One page of the post as a card: the preview of its day-night cycle, which
+ * links to the page as its agent wrote it, its name and its facts. Previews
+ * are looked up in ./previews, so that a misspelt name stops the build: an
+ * animated WebP (640 by 360) and, for readers who ask for reduced motion, a
+ * still of the same page.
+ */
+interface Props { href: string; preview: string; label: string; alt: string; first: string; second: string }
+const { href, preview, label, alt, first, second } = Astro.props;
+const files = import.meta.glob<string>('./previews/*.webp', { eager: true, query: '?url', import: 'default' });
+const moving = files[`./previews/${preview}.webp`];
+const still = files[`./previews/${preview}-still.webp`];
+if (!moving || !still) throw new Error(`Page: ./previews has no ${preview}.webp and ${preview}-still.webp`);
+---
+<li class="page">
+  <a href={href}>
+    <picture>
+      <source media="(prefers-reduced-motion: reduce)" srcset={still} />
+      <img src={moving} alt={alt} width="640" height="360" loading="lazy" decoding="async" />
+    </picture>
+    <span class="label">{label}</span>
+  </a>
+  <p class="facts">{first}<br />{second}</p>
+</li>
+
+<style>
+  a { display: block; color: var(--ink); text-decoration: none; }
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    border-radius: 4px;
+    outline: 1px solid var(--rule);
+    background: var(--code-bg);
+  }
+  .label {
+    display: block;
+    margin-top: 0.65rem;
+    font-weight: 600;
+  }
+  a:hover .label { color: var(--link-hover); }
+  .facts {
+    margin: 0.2rem 0 0;
+    font-size: var(--small);
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+</style>

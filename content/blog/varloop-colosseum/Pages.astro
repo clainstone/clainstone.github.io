@@ -1,0 +1,18 @@
+---
+/**
+ * The grid of the post's pages, two cards to a row on the wide track, as the
+ * works of a portfolio. Each card is a Page.
+ */
+---
+<div class="wide"><ul class="pages"><slot /></ul></div>
+
+<style>
+  /* More room around the grid than between paragraphs, so that the text
+     after it does not read as the caption of its last row. */
+  .wide { margin-top: 1.75rem; margin-bottom: 2.25rem; }
+  .pages {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2.25rem 1.5rem;
+  }
+</style>

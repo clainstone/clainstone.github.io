@@ -1,0 +1,18 @@
+---
+/**
+ * One prompt of the test, as a block of text. Each .txt beside the post is a
+ * byte copy of a prompt from the run, imported raw, so that the MDX pipeline
+ * (lists, smart quotes, dashes) never touches it; a misspelt name stops the
+ * build. Long lines wrap instead of scrolling sideways.
+ */
+interface Props { file: string }
+const { file } = Astro.props;
+const prompts = import.meta.glob<string>('./*.txt', { eager: true, query: '?raw', import: 'default' });
+const prompt = prompts[`./${file}`];
+if (prompt === undefined) throw new Error(`Prompt: there is no ${file} beside the post`);
+---
+<pre class="prompt"><code>{prompt}</code></pre>
+
+<style>
+  .prompt { white-space: pre-wrap; }
+</style>
