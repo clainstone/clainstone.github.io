@@ -1,7 +1,7 @@
 ---
 title: "TML-d24-varloop and Inkling 2 Mini: a 3D diorama of the Colosseum square"
 date: 2026-11-24
-summary: With TML-d24-varloop-research at N from 1 to 5 and with Inkling 2 Mini, pi coding agents built a Three.js diorama of the Colosseum square in Rome. Each of the 6 pages is shown with a preview and the times, pagecheck runs and resumes of its agents.
+summary: With TML-d24-varloop-research at N from 1 to 5 and with Inkling 2 Mini, pi coding agents built a Three.js diorama of the Colosseum square in Rome. Each of the 6 pages is shown with a preview, the time its agents took, how often they ran pagecheck and how often they had to be restarted.
 ---
 
 import Prompt from './Prompt.astro';
@@ -9,11 +9,11 @@ import Note from './Note.astro';
 import Pages from './Pages.astro';
 import Page from './Page.astro';
 
-The prompt of the Colosseum test, merged into one text:
+Six configurations of two looped models each built the same 3D diorama of the Colosseum square in Rome, from this prompt:
 
 <Prompt file="prompt.txt" />
 
-The pages were made in two steps: agents built each page from the original prompt, with the Colosseum's outer ring broken as in today's ruin, then new agents made it intact with a short second prompt.
+The prompt above merges two steps. First, an agent built each page from the original prompt, which asked for the Colosseum's outer ring broken as in today's ruin. Then a new agent made the Colosseum intact with a short second prompt.
 
 <Note summary="The two prompts the agents received">
 
@@ -27,33 +27,35 @@ The pages were made in two steps: agents built each page from the original promp
 
 </Note>
 
-The model is `thinkingmachines/TML-d24-varloop-research`, where N is the number of passes through its looped middle layers. I ran N = 1 to 5 and, for comparison, the official `thinkingmachines/Inkling-2-Mini`, which makes 3 fixed passes. On 24 November 2026 I served them with vLLM in tensor parallel on two RTX 5070 Ti, one server and one pi coding agent at a time.
+The model is `thinkingmachines/TML-d24-varloop-research`, where N is the number of passes through its looped middle layers. I ran N = 1 to 5 and, for comparison, the official `thinkingmachines/Inkling-2-Mini`, which makes 3 fixed passes. On 24 November 2026 I served them with vLLM in tensor parallel on two RTX 5070 Ti, one server and one [pi](https://github.com/earendil-works/pi) coding agent at a time. pi edits files and runs commands on its own until it decides it is done.
 
-The context window of each server was sized to fit its key-value (KV) cache. It was 736,128 tokens at N = 1 and fell with each added pass to 162,688 at N = 5. For Inkling 2 Mini it was 301,056 tokens.
+Each server gave its agent the longest context its key-value (KV) cache could hold. The context shrinks as N grows: 736,128 tokens at N = 1, 162,688 at N = 5. For Inkling 2 Mini it was 301,056 tokens.
 
-Each agent ran in its own container, started and checked by a harness script. The `pagecheck` command opens the page in headless Chromium with software WebGL, at noon and at midnight. It reports JavaScript errors, blank, too dark or overexposed pictures, motion, night lights, dragging and the mouse wheel. When pi exited and the last `pagecheck` run in the log was not a pass, or there was none, the harness resumed the session with a fixed message. It did so at most 6 times per agent, within 90 minutes in the first step and 45 in the second, resumes included.
+Each agent ran in its own container, started and watched by a script. To test its work it could run `pagecheck`, which opens the page in headless Chromium with software WebGL, at noon and at midnight. It reports JavaScript errors, pictures that are blank, too dark or overexposed, whether the scene moves, whether lights come on at night, and whether dragging and the mouse wheel work.
+
+pi stops when the model answers without calling a tool. If an agent stopped before a passing `pagecheck`, the harness reopened the same session with a fixed message asking it to continue, up to 6 times. Each agent had 90 minutes in the first step and 45 in the second, restarts included.
 
 ## Results
 
-All 12 pages, 6 from each step, pass the final `pagecheck` that the harness ran after each agent. Times run from an agent's start to the end of that check. In the first step each agent took from 11 min 39 s (N = 1) to 33 min 49 s (Inkling 2 Mini) and ran `pagecheck` 1 to 27 times. In the second step each agent took from 2 min 36 s (N = 4) to 7 min 20 s (N = 5).
+All 12 pages, 6 from each step, pass the final `pagecheck` that the harness ran after each agent. Each time below runs from the agent's start to the end of that final check. In the first step each agent took from 11 min 39 s (N = 1) to 33 min 49 s (Inkling 2 Mini) and ran `pagecheck` 1 to 27 times. In the second step each agent took from 2 min 36 s (N = 4) to 7 min 20 s (N = 5).
 
 ## The 6 pages
 
-Each preview shows the page's first minute from noon, captured in headless Chrome with software WebGL: 30 frames taken 2 seconds apart, played 10 times faster. Under it are, for each step, the agent's time, its `pagecheck` runs and its resumes. A click opens the page exactly as its agent wrote it.
+Each preview is the page's first minute from noon: 30 frames taken 2 seconds apart in headless Chrome with software WebGL, played 10 times faster. Under it, for each step: the agent's time, how many times it ran `pagecheck` and how many times it was restarted. A click opens the page exactly as its agent wrote it.
 
 <Pages>
-  <Page href="/blog/varloop-colosseum/n1/index.html" preview="n1" label="N = 1" alt="The first minute of the page at N = 1, from noon" first="First step: 11 min 39 s, 7 pagecheck runs, 0 resumes" second="Second step: 3 min 26 s, 1 pagecheck run, 1 resume" />
-  <Page href="/blog/varloop-colosseum/n2/index.html" preview="n2" label="N = 2" alt="The first minute of the page at N = 2, from noon" first="First step: 12 min 44 s, 4 pagecheck runs, 0 resumes" second="Second step: 3 min 33 s, 3 pagecheck runs, 1 resume" />
-  <Page href="/blog/varloop-colosseum/n3/index.html" preview="n3" label="N = 3" alt="The first minute of the page at N = 3, from noon" first="First step: 31 min 20 s, 27 pagecheck runs, 3 resumes" second="Second step: 2 min 57 s, 1 pagecheck run, 1 resume" />
-  <Page href="/blog/varloop-colosseum/n4/index.html" preview="n4" label="N = 4" alt="The first minute of the page at N = 4, from noon" first="First step: 27 min 53 s, 11 pagecheck runs, 5 resumes" second="Second step: 2 min 36 s, 1 pagecheck run, 0 resumes" />
-  <Page href="/blog/varloop-colosseum/n5/index.html" preview="n5" label="N = 5" alt="The first minute of the page at N = 5, from noon" first="First step: 28 min 4 s, 1 pagecheck run, 1 resume" second="Second step: 7 min 20 s, 7 pagecheck runs, 6 resumes" />
-  <Page href="/blog/varloop-colosseum/mini/index.html" preview="mini" label="Inkling 2 Mini" alt="The first minute of the page of Inkling 2 Mini, from noon" first="First step: 33 min 49 s, 10 pagecheck runs, 0 resumes" second="Second step: 5 min 44 s, 2 pagecheck runs, 0 resumes" />
+  <Page href="/blog/varloop-colosseum/n1/index.html" preview="n1" label="N = 1" alt="The first minute of the page at N = 1, from noon" first="First step: 11 min 39 s, 7 pagecheck runs, 0 restarts" second="Second step: 3 min 26 s, 1 pagecheck run, 1 restart" />
+  <Page href="/blog/varloop-colosseum/n2/index.html" preview="n2" label="N = 2" alt="The first minute of the page at N = 2, from noon" first="First step: 12 min 44 s, 4 pagecheck runs, 0 restarts" second="Second step: 3 min 33 s, 3 pagecheck runs, 1 restart" />
+  <Page href="/blog/varloop-colosseum/n3/index.html" preview="n3" label="N = 3" alt="The first minute of the page at N = 3, from noon" first="First step: 31 min 20 s, 27 pagecheck runs, 3 restarts" second="Second step: 2 min 57 s, 1 pagecheck run, 1 restart" />
+  <Page href="/blog/varloop-colosseum/n4/index.html" preview="n4" label="N = 4" alt="The first minute of the page at N = 4, from noon" first="First step: 27 min 53 s, 11 pagecheck runs, 5 restarts" second="Second step: 2 min 36 s, 1 pagecheck run, 0 restarts" />
+  <Page href="/blog/varloop-colosseum/n5/index.html" preview="n5" label="N = 5" alt="The first minute of the page at N = 5, from noon" first="First step: 28 min 4 s, 1 pagecheck run, 1 restart" second="Second step: 7 min 20 s, 7 pagecheck runs, 6 restarts" />
+  <Page href="/blog/varloop-colosseum/mini/index.html" preview="mini" label="Inkling 2 Mini" alt="The first minute of the page of Inkling 2 Mini, from noon" first="First step: 33 min 49 s, 10 pagecheck runs, 0 restarts" second="Second step: 5 min 44 s, 2 pagecheck runs, 0 restarts" />
 </Pages>
 
-At N = 2 to 5 the minute of the preview ends at night. These pages cap the time step of each frame at 0.05 s, so their clock falls behind when frames are slow, as in software rendering.
+At N = 2 to 5 the preview ends at night instead of back at noon. These pages limit how far a single frame can move the clock, so with the slow frames of software rendering their day lasts longer than 60 seconds.
 
 The prompt asks for the whole tile in view at the default zoom. At N = 2 and N = 4 the camera starts too close, and at N = 3 the top and bottom corners of the tile are cut.
 
-In the second step the agent of N = 5 ran `pagecheck` 7 times, always with a pass, but deleted its log. The harness reads that log to decide whether to resume an agent, and it resumed this one 6 times, the limit.
+In the second step the agent of N = 5 ran `pagecheck` 7 times, always with a pass, but then deleted the folder where `pagecheck` keeps its log. The harness reads that log to decide whether to restart an agent, so it restarted this one 6 times, the limit.
 
 The pages of the first step, before the Colosseum was made intact: [N = 1](/blog/varloop-colosseum/first-step/n1/index.html), [N = 2](/blog/varloop-colosseum/first-step/n2/index.html), [N = 3](/blog/varloop-colosseum/first-step/n3/index.html), [N = 4](/blog/varloop-colosseum/first-step/n4/index.html), [N = 5](/blog/varloop-colosseum/first-step/n5/index.html) and [Inkling 2 Mini](/blog/varloop-colosseum/first-step/mini/index.html).
