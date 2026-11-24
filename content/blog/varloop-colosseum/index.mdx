@@ -33,29 +33,15 @@ Each server gave its agent the longest context its key-value (KV) cache could ho
 
 Each agent ran in its own container, started and watched by a script. To test its work it could run `pagecheck`, which opens the page in headless Chromium with software WebGL, at noon and at midnight. It reports JavaScript errors, pictures that are blank, too dark or overexposed, whether the scene moves, whether lights come on at night, and whether dragging and the mouse wheel work.
 
-pi stops when the model answers without calling a tool. If an agent stopped before a passing `pagecheck`, the harness reopened the same session with a fixed message asking it to continue, up to 6 times. Each agent had 90 minutes in the first step and 45 in the second, restarts included.
-
-## Results
-
-All 12 pages, 6 from each step, pass the final `pagecheck` that the harness ran after each agent. Each time below runs from the agent's start to the end of that final check. In the first step each agent took from 11 min 39 s (N = 1) to 33 min 49 s (Inkling 2 Mini) and ran `pagecheck` 1 to 27 times. In the second step each agent took from 2 min 36 s (N = 4) to 7 min 20 s (N = 5).
+pi stops when the model answers without calling a tool. If an agent stopped before a passing `pagecheck`, the harness reopened the same session with a fixed message asking it to continue, up to 6 times. Each agent had 90 minutes in the first step and 45 in the second, restarts included. In the first step each agent took from 11 min 39 s (N = 1) to 33 min 49 s (Inkling 2 Mini) and ran `pagecheck` 1 to 27 times. In the second step each agent took from 2 min 36 s (N = 4) to 7 min 20 s (N = 5).
 
 ## The 6 pages
 
-Each preview is the page's first minute from noon: 30 frames taken 2 seconds apart in headless Chrome with software WebGL, played 10 times faster. Under it, for each step: the agent's time, how many times it ran `pagecheck` and how many times it was restarted. A click opens the page exactly as its agent wrote it.
-
 <Pages>
-  <Page href="/blog/varloop-colosseum/n1/index.html" preview="n1" label="N = 1" alt="The first minute of the page at N = 1, from noon" first="First step: 11 min 39 s, 7 pagecheck runs, 0 restarts" second="Second step: 3 min 26 s, 1 pagecheck run, 1 restart" />
-  <Page href="/blog/varloop-colosseum/n2/index.html" preview="n2" label="N = 2" alt="The first minute of the page at N = 2, from noon" first="First step: 12 min 44 s, 4 pagecheck runs, 0 restarts" second="Second step: 3 min 33 s, 3 pagecheck runs, 1 restart" />
-  <Page href="/blog/varloop-colosseum/n3/index.html" preview="n3" label="N = 3" alt="The first minute of the page at N = 3, from noon" first="First step: 31 min 20 s, 27 pagecheck runs, 3 restarts" second="Second step: 2 min 57 s, 1 pagecheck run, 1 restart" />
-  <Page href="/blog/varloop-colosseum/n4/index.html" preview="n4" label="N = 4" alt="The first minute of the page at N = 4, from noon" first="First step: 27 min 53 s, 11 pagecheck runs, 5 restarts" second="Second step: 2 min 36 s, 1 pagecheck run, 0 restarts" />
-  <Page href="/blog/varloop-colosseum/n5/index.html" preview="n5" label="N = 5" alt="The first minute of the page at N = 5, from noon" first="First step: 28 min 4 s, 1 pagecheck run, 1 restart" second="Second step: 7 min 20 s, 7 pagecheck runs, 6 restarts" />
-  <Page href="/blog/varloop-colosseum/mini/index.html" preview="mini" label="Inkling 2 Mini" alt="The first minute of the page of Inkling 2 Mini, from noon" first="First step: 33 min 49 s, 10 pagecheck runs, 0 restarts" second="Second step: 5 min 44 s, 2 pagecheck runs, 0 restarts" />
+  <Page href="/blog/varloop-colosseum/n1/index.html" preview="n1" label="N = 1" alt="The first minute of the page at N = 1, from noon" first="Built in 11 min 39 s, with 7 pagecheck runs and 0 restarts" second="Colosseum made intact in 3 min 26 s, with 1 pagecheck run and 1 restart" />
+  <Page href="/blog/varloop-colosseum/n2/index.html" preview="n2" label="N = 2" alt="The first minute of the page at N = 2, from noon" first="Built in 12 min 44 s, with 4 pagecheck runs and 0 restarts" second="Colosseum made intact in 3 min 33 s, with 3 pagecheck runs and 1 restart" />
+  <Page href="/blog/varloop-colosseum/n3/index.html" preview="n3" label="N = 3" alt="The first minute of the page at N = 3, from noon" first="Built in 31 min 20 s, with 27 pagecheck runs and 3 restarts" second="Colosseum made intact in 2 min 57 s, with 1 pagecheck run and 1 restart" />
+  <Page href="/blog/varloop-colosseum/n4/index.html" preview="n4" label="N = 4" alt="The first minute of the page at N = 4, from noon" first="Built in 27 min 53 s, with 11 pagecheck runs and 5 restarts" second="Colosseum made intact in 2 min 36 s, with 1 pagecheck run and 0 restarts" />
+  <Page href="/blog/varloop-colosseum/n5/index.html" preview="n5" label="N = 5" alt="The first minute of the page at N = 5, from noon" first="Built in 28 min 4 s, with 1 pagecheck run and 1 restart" second="Colosseum made intact in 7 min 20 s, with 7 pagecheck runs and 6 restarts" />
+  <Page href="/blog/varloop-colosseum/mini/index.html" preview="mini" label="Inkling 2 Mini" alt="The first minute of the page of Inkling 2 Mini, from noon" first="Built in 33 min 49 s, with 10 pagecheck runs and 0 restarts" second="Colosseum made intact in 5 min 44 s, with 2 pagecheck runs and 0 restarts" />
 </Pages>
-
-At N = 2 to 5 the preview ends at night instead of back at noon. These pages limit how far a single frame can move the clock, so with the slow frames of software rendering their day lasts longer than 60 seconds.
-
-The prompt asks for the whole tile in view at the default zoom. At N = 2 and N = 4 the camera starts too close, and at N = 3 the top and bottom corners of the tile are cut.
-
-In the second step the agent of N = 5 ran `pagecheck` 7 times, always with a pass, but then deleted the folder where `pagecheck` keeps its log. The harness reads that log to decide whether to restart an agent, so it restarted this one 6 times, the limit.
-
-The pages of the first step, before the Colosseum was made intact: [N = 1](/blog/varloop-colosseum/first-step/n1/index.html), [N = 2](/blog/varloop-colosseum/first-step/n2/index.html), [N = 3](/blog/varloop-colosseum/first-step/n3/index.html), [N = 4](/blog/varloop-colosseum/first-step/n4/index.html), [N = 5](/blog/varloop-colosseum/first-step/n5/index.html) and [Inkling 2 Mini](/blog/varloop-colosseum/first-step/mini/index.html).
