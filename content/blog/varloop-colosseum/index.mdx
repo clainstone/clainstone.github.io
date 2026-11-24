@@ -33,7 +33,18 @@ Each server gave its agent the longest context its key-value (KV) cache could ho
 
 Each agent ran in its own container, started and watched by a script. To test its work it could run `pagecheck`, which opens the page in headless Chromium with software WebGL, at noon and at midnight. It reports JavaScript errors, pictures that are blank, too dark or overexposed, whether the scene moves, whether lights come on at night, and whether dragging and the mouse wheel work.
 
-pi stops when the model answers without calling a tool. If an agent stopped before a passing `pagecheck`, the harness reopened the same session with a fixed message asking it to continue, up to 6 times. Each agent had 90 minutes in the first step and 45 in the second, restarts included. In the first step each agent took from 11 min 39 s (N = 1) to 33 min 49 s (Inkling 2 Mini) and ran `pagecheck` 1 to 27 times. In the second step each agent took from 2 min 36 s (N = 4) to 7 min 20 s (N = 5).
+pi stops when the model answers without calling a tool. If an agent stopped before a passing `pagecheck`, the harness reopened the same session with a fixed message asking it to continue, up to 6 times. Each agent had 90 minutes in the first step and 45 in the second, restarts included.
+
+The time each agent took, from its start to the end of the final `pagecheck` that the harness ran on its page:
+
+| | Built in | Colosseum made intact in |
+| :-- | --: | --: |
+| N = 1 | 11 min 39 s | 3 min 26 s |
+| N = 2 | 12 min 44 s | 3 min 33 s |
+| N = 3 | 31 min 20 s | 2 min 57 s |
+| N = 4 | 27 min 53 s | 2 min 36 s |
+| N = 5 | 28 min 4 s | 7 min 20 s |
+| Inkling 2 Mini | 33 min 49 s | 5 min 44 s |
 
 ## The 6 pages
 
