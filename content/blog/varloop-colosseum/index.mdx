@@ -46,16 +46,16 @@ The time each agent took, from its start to the end of the final `pagecheck` tha
 | LOOP_COUNT = 5 | 28 min 4 s | 7 min 20 s |
 | Inkling 2 Mini | 33 min 49 s | 5 min 44 s |
 
-Generation speed of each agent, in tokens per second (tok/s): the tokens the model generated divided by the time of its replies, prompt processing included, as pi logs them, averaged over every reply of the step. The context is not fixed: it grew during each step from the first request to the largest one, both given here in tokens.
+Generation speed of each agent in the first step, in tokens per second (tok/s): the tokens the model generated divided by the time of its replies, prompt processing included, as pi logs them, averaged over every reply of the step. The context grew during the step from the first request to the largest one, both given here in tokens.
 
-| | First step, tok/s | Context, first step | Second step, tok/s | Context, second step |
-| :-- | --: | --: | --: | --: |
-| LOOP_COUNT = 1 | 179.8 | 2,937 to 146,419 | 131.3 | 2,130 to 64,319 |
-| LOOP_COUNT = 2 | 129.6 | 2,975 to 120,417 | 83.8 | 2,114 to 52,838 |
-| LOOP_COUNT = 3 | 103.7 | 2,937 to 152,631 | 89.4 | 2,113 to 30,352 |
-| LOOP_COUNT = 4 | 91.4 | 2,929 to 115,599 | 58.4 | 2,105 to 31,677 |
-| LOOP_COUNT = 5 | 81.3 | 2,937 to 93,783 | 55.9 | 2,109 to 47,380 |
-| Inkling 2 Mini | 110.4 | 2,937 to 189,111 | 78.2 | 2,115 to 66,618 |
+| | First step, tok/s | Context, first step |
+| :-- | --: | --: |
+| LOOP_COUNT = 1 | 179.8 | 2,937 to 146,419 |
+| LOOP_COUNT = 2 | 129.6 | 2,975 to 120,417 |
+| LOOP_COUNT = 3 | 103.7 | 2,937 to 152,631 |
+| LOOP_COUNT = 4 | 91.4 | 2,929 to 115,599 |
+| LOOP_COUNT = 5 | 81.3 | 2,937 to 93,783 |
+| Inkling 2 Mini | 110.4 | 2,937 to 189,111 |
 
 ## The 6 pages
 
