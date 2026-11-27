@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lighthouse Cove</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #121631;
+  }
+  #scene-canvas {
+    display: block;
+    position: absolute;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+  }
+  #ui {
+    position: absolute;
+    left: clamp(12px, 1.25vw, 28px);
+    bottom: clamp(10px, 1.042vw, 26px);
+    pointer-events: none;
+    user-select: none;
+    color: #d6c7a1;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    z-index: 10;
+  }
+  #ui .label {
+    font-size: clamp(6px, 0.573vw, 13px);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: #d6c7a1;
+    margin: 0 0 clamp(4px, 0.417vw, 10px) 0;
+  }
+  #ui .title {
+    font-family: Georgia, "Times New Roman", "DejaVu Serif", serif;
+    font-weight: 700;
+    font-size: clamp(30px, 3.542vw, 80px);
+    line-height: 1.0;
+    color: #ffffff;
+    text-shadow: 0 2px 14px rgba(0, 0, 0, .45);
+    margin: 0 0 clamp(5px, 0.521vw, 12px) 0;
+  }
+  #ui .subtitle {
+    font-size: clamp(7px, 0.729vw, 16px);
+    color: #c9ccc4;
+    margin: 0 0 clamp(9px, 0.9375vw, 24px) 0;
+  }
+  #ui .controls {
+    display: flex;
+    align-items: center;
+    gap: clamp(5px, 0.521vw, 12px);
+    pointer-events: auto;
+  }
+  #ui button {
+    appearance: none;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    height: clamp(18px, 2.083vw, 46px);
+    padding: 0 clamp(8px, 0.9375vw, 24px);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-size: clamp(7px, 0.677vw, 15px);
+    font-weight: 500;
+    line-height: 1;
+    color: #e6ebf0;
+    background: rgba(20, 26, 36, .55);
+    transition: background .15s ease, border-color .15s ease;
+  }
+  #ui button.active {
+    background: rgba(210, 145, 90, .3);
+    border-color: rgba(230, 185, 130, .7);
+  }
+  #ui .seg {
+    display: flex;
+    align-items: center;
+    border: 1px solid rgba(20, 26, 36, .55);
+    border-radius: 999px;
+    overflow: hidden;
+    background: rgba(20, 26, 36, .55);
+  }
+  #ui .seg .seg-label {
+    padding: 0 clamp(8px, 0.9375vw, 24px);
+    font-size: clamp(6px, 0.573vw, 13px);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: #9aa3ad;
+    white-space: nowrap;
+  }
+  #ui .seg button {
+    border: 1px solid transparent;
+    border-left: 1px solid rgba(20, 26, 36, .55);
+    background: rgba(20, 26, 36, .55);
+  }
+  #ui .seg button.active {
+    background: rgba(175, 118, 78, .5);
+    border-color: #c08a60;
+  }
+</style>
+</head>
+<body>
+<div id="ui">
+  <div class="label">Interactive 3D Voxel Diorama</div>
+  <div class="title">Lighthouse Cove</div>
+  <div class="subtitle">A tiny island harbour built from micro-voxels</div>
+  <div class="controls">
+    <button id="btn-orbit" class="active">Toggle Auto-Orbit</button>
+    <button id="btn-daynight">Day / Night</button>
+    <div class="seg">
+      <span class="seg-label">Sea</span>
+      <button id="btn-calm" class="active">Calm</button>
+      <button id="btn-rough">Rough</button>
+    </div>
+  </div>
+</div>
+
+<script type="importmap">{"imports":{"three":"./lib/three.module.js","three/addons/":"./lib/addons/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+// ---------------------------------------------------------------------------
+// Constants
+// ---------------------------------------------------------------------------
+const TILE = 72;
+const SLAB = 3;                 // water slab: y in [-3, 0], top = water level
+const T = TILE;
+
+// Time of day: 0 = midnight, 0.5 = noon, 1 = midnight again
+const urlTime = new URLSearchParams(location.search).get('time');
+let time = (urlTime !== null && !isNaN(parseFloat(urlTime))) ? (parseFloat(urlTime) % 1 + 1) % 1 : 0.5;
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+const TAU = Math.PI * 2;
+function hash(x, z, salt) {
+  let h = (x * 374761393 + z * 668265263 + salt * 1442695040) | 0;
+  h = ((h ^ (h >> 13)) * 1274126177) | 0;
+  h = h ^ (h >> 16);
+  return (h >>> 0) / 4294967295;
+}
+function lerp(a, b, t) { return a + (b - a) * t; }
+function clampv(a, b, c) { return a < b ? b : (a > c ? c : a); }
+
+const C = {};
+const hex = (n) => new THREE.Color(n);
+function jitter(hexc, t) {
+  const c = hex(hexc);
+  const h = c.getHSL(new THREE.Color());
+  c.setHSL(h.h, h.s, clampv(h.l + t * 0.06, 0.0, 1.0));
+  return c;
+}
+function mixHex(a, b, t) {
+  return new THREE.Color(a).lerp(new THREE.Color(b), t);
+}
+
+// palette
+C.grass   = '#4a492c';
+C.olive   = '#66633a';
+C.sand    = '#d58444';
+C.rock    = '#7d6a6a';
+C.wood    = '#704530';
+C.darkWood = '#3f2b1c';
+C.terra   = '#a8322a';
+C.darkRoof = '#5a3a2a';
+C.cream   = '#e8d6c0';
+C.ochre   = '#d9b07a';
+C.bush    = '#a29b4f';
+C.flowerRed = '#d83a3a';
+C.flowerOrange = '#e8854f';
+C.flowerPink = '#ecc0b0';
+C.soil    = '#7c4e47';
+C.slab    = '#164a47';
+C.glow    = '#fff0c8';
+C.glassDay = '#2b3038';
+
+// ---------------------------------------------------------------------------
+// Renderer / scene / camera
+// ---------------------------------------------------------------------------
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(58, innerWidth / innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFShadowMap;
+renderer.toneMapping = THREE.NoToneMapping;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+document.body.appendChild(renderer.domElement);
+renderer.domElement.id = 'scene-canvas';
+
+window.__diorama = { scene, camera, renderer };
+
+// Camera: target tile centre, 5 voxels above slab bottom (y = -3 + 5 = 2)
+// distance 1.15 tile widths, elevation 20°, azimuth 45° (corner facing viewer)
+const TARGET = new THREE.Vector3(TILE / 2, 2, TILE / 2);
+{
+  const dist = 1.15 * TILE;
+  const el = THREE.MathUtils.degToRad(20);
+  const az = THREE.MathUtils.degToRad(45);
+  camera.position.set(
+    TARGET.x + dist * Math.cos(el) * Math.sin(az),
+    TARGET.y + dist * Math.sin(el),
+    TARGET.z + dist * Math.cos(el) * Math.sin(az)
+  );
+  camera.lookAt(TARGET);
+}
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.minDistance = 0.6 * TILE;
+controls.maxDistance = 2.5 * TILE;
+controls.maxPolarAngle = THREE.MathUtils.degToRad(80);
+controls.target.copy(TARGET);
+controls.autoRotate = true;
+controls.autoRotateSpeed = 2.0;
+
+// ---------------------------------------------------------------------------
+// Lights (fixed set; only colour / intensity / position change over time)
+// ---------------------------------------------------------------------------
+const sun = new THREE.DirectionalLight(0xffffff, 1.6);
+sun.castShadow = true;
+sun.shadow.mapSize.set(1024, 1024);
+sun.shadow.radius = 3;
+sun.shadow.intensity = 0.85;
+sun.shadow.bias = -0.0004;
+sun.shadow.camera.near = 10;
+sun.shadow.camera.far = 300;
+const shadowHalf = 55;
+sun.shadow.camera.left = -shadowHalf;
+sun.shadow.camera.right = shadowHalf;
+sun.shadow.camera.top = shadowHalf;
+sun.shadow.camera.bottom = -shadowHalf;
+sun.target.position.set(TILE / 2, 0, TILE / 2);
+scene.add(sun);
+scene.add(sun.target);
+
+const hemi = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.9);
+scene.add(hemi);
+
+// Spot that sweeps with the lighthouse beam (no shadow), intensity 0 by day
+const spot = new THREE.SpotLight(0xfff0c8, 0, 150, THREE.MathUtils.degToRad(8), 0.6, 1);
+spot.castShadow = false;
+scene.add(spot);
+const spotTarget = new THREE.Object3D();
+scene.add(spotTarget);
+spot.target = spotTarget;
+
+// ---------------------------------------------------------------------------
+// Sky dome (vertical gradient, updated by uniforms each frame)
+// ---------------------------------------------------------------------------
+const skyGeo = new THREE.SphereGeometry(400, 32, 16);
+const skyMat = new THREE.ShaderMaterial({
+  side: THREE.BackSide,
+  depthWrite: false,
+  uniforms: {
+    uTop: { value: new THREE.Color('#121631') },
+    uBottom: { value: new THREE.Color('#3a3766') },
+    uHorizonY: { value: -3 },
+    uTopY: { value: 120 }
+  },
+  vertexShader: `
+    varying float vY;
+    void main() {
+      vY = position.y;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `,
+  fragmentShader: `
+    varying float vY;
+    uniform vec3 uTop;
+    uniform vec3 uBottom;
+    uniform float uHorizonY;
+    uniform float uTopY;
+    void main() {
+      float t = clamp((vY - uHorizonY) / (uTopY - uHorizonY), 0.0, 1.0);
+      gl_FragColor = vec4(mix(uBottom, uTop, t), 1.0);
+    }
+  `
+});
+const sky = new THREE.Mesh(skyGeo, skyMat);
+scene.add(sky);
+
+// ---------------------------------------------------------------------------
+// Stars (~150 points, above horizon, dim at noon)
+// ---------------------------------------------------------------------------
+function makeStars() {
+  const count = 150;
+  const positions = new Float32Array(count * 3);
+  const colors = new Float32Array(count * 3);
+  const starColors = [0xffffff, 0xfff2e0, 0xe8ecff, 0xfff6d8, 0xdfe8ff];
+  for (let i = 0; i < count; i++) {
+    // random point on upper hemisphere of a large sphere
+    const u = Math.random() * 2 - 1;
+    const phi = Math.random() * TAU;
+    const r = Math.sqrt(1 - u * u);
+    let y = u;
+    const x = r * Math.cos(phi);
+    const z = r * Math.sin(phi);
+    // bias above the horizon
+    if (y < 0.05) y = 0.05 + Math.random() * 0.1;
+    const R = 300;
+    positions[i * 3] = x * R;
+    positions[i * 3 + 1] = y * R;
+    positions[i * 3 + 2] = z * R;
+    const c = hex(starColors[(hash(i, 0, 7) * starColors.length) | 0]);
+    colors[i * 3] = c.r; colors[i * 3 + 1] = c.g; colors[i * 3 + 2] = c.b;
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  const mat = new THREE.PointsMaterial({
+    size: 0.7, sizeAttenuation: true, vertexColors: true, transparent: true,
+    opacity: 1.0, depthWrite: false, fog: false
+  });
+  const points = new THREE.Points(geo, mat);
+  scene.add(points);
+  return { points, mat };
+}
+const stars = makeStars();
+
+// ---------------------------------------------------------------------------
+// Sea (flat disc, ring with vertex colours by radius)
+// ---------------------------------------------------------------------------
+const seaR = 1.7 * TILE;
+const seaGeo = new THREE.RingGeometry(0, seaR, 96, 8);
+const seaMat = new THREE.MeshPhongMaterial({
+  vertexColors: true, shininess: 12, specular: 0xffffff, side: THREE.DoubleSide,
+  flatShading: false
+});
+const sea = new THREE.Mesh(seaGeo, seaMat);
+sea.position.set(TILE / 2, -SLAB, TILE / 2);
+sea.rotation.x = -Math.PI / 2; // lay the ring flat in the XZ plane (normal +Y)
+scene.add(sea);
+
+// precompute per-vertex radius (relative to centre)
+const seaPos = seaGeo.attributes.position;
+const seaRadii = new Float32Array(seaPos.count);
+for (let i = 0; i < seaPos.count; i++) {
+  const x = seaPos.getX(i), y = seaPos.getY(i);
+  seaRadii[i] = Math.hypot(x, y);
+}
+const seaColorAttr = new THREE.BufferAttribute(new Float32Array(seaPos.count * 3), 3);
+seaGeo.setAttribute('color', seaColorAttr);
+const seaInnerDay = hex('#4a675b'), seaInnerNight = hex('#474e4c');
+const seaRimDay = hex('#888a74'), seaRimNight = hex('#836858');
+const _seaInner = new THREE.Color();
+const _seaRim = new THREE.Color();
+const _seaC = new THREE.Color();
+function updateSea(day) {
+  _seaInner.copy(seaInnerDay).lerp(seaInnerNight, 1 - day);
+  _seaRim.copy(seaRimDay).lerp(seaRimNight, 1 - day);
+  const arr = seaColorAttr.array;
+  const innerR = 1.1 * TILE;
+  const rimR = seaR;
+  for (let i = 0; i < seaPos.count; i++) {
+    const r = seaRadii[i];
+    let t = (r - innerR) / (rimR - innerR);
+    t = clampv(t, 0, 1);
+    // ease the blend so the inner area stays flat
+    t = t * t * (3 - 2 * t);
+    _seaC.copy(_seaInner).lerp(_seaRim, t);
+    arr[i * 3] = _seaC.r; arr[i * 3 + 1] = _seaC.g; arr[i * 3 + 2] = _seaC.b;
+  }
+  seaColorAttr.needsUpdate = true;
+}
+updateSea(1);
+
+// ---------------------------------------------------------------------------
+// Terrain generation
+// ---------------------------------------------------------------------------
+function inCove(x, z) {
+  if (x < 0 || x >= T || z < 0 || z >= T) return false;
+  const a = 13, b = 30;
+  return ((x - 31) * (x - 31)) / (a * a) + ((z - 71) * (z - 71)) / (b * b) < 1 && z <= 71;
+}
+function isWater(x, z) {
+  if (x < 0 || x >= T || z < 0 || z >= T) return false;
+  if (x === 0 || x === T - 1 || z === 0 || z === T - 1) return true;
+  return inCove(x, z);
+}
+// distance to water (8-neighbour BFS)
+const dist = Array.from({ length: T }, () => new Array(T).fill(Infinity));
+{
+  const q = [];
+  for (let z = 0; z < T; z++) for (let x = 0; x < T; x++) {
+    if (isWater(x, z)) { dist[z][x] = 0; q.push(x + z * T); }
+  }
+  const dirs = [1, -1, T, -T, 1 + T, 1 - T, -1 + T, -1 - T];
+  let head = 0;
+  while (head < q.length) {
+    const idx = q[head++];
+    const x = idx % T, z = (idx / T) | 0;
+    for (const d of dirs) {
+      const nx = x + (d === T || d === -T ? 0 : (d > 0 ? 1 : -1));
+      const nz = z + (d === T ? 1 : d === -T ? -1 : 0);
+      if (nx < 0 || nx >= T || nz < 0 || nz >= T) continue;
+      if (isWater(nx, nz)) continue;
+      if (dist[nz][nx] === Infinity) { dist[nz][nx] = dist[z][x] + 1; q.push(nx + nz * T); }
+    }
+  }
+}
+function hill(x, z, cx, cz, r, hmax) {
+  const d = Math.hypot(x - cx, z - cz);
+  if (d >= r) return 0;
+  return hmax * (1 - (d / r) * (d / r));
+}
+const H = Array.from({ length: T }, () => new Array(T).fill(0));
+for (let z = 0; z < T; z++) for (let x = 0; x < T; x++) {
+  if (isWater(x, z)) { H[z][x] = 0; continue; }
+  const d = dist[z][x];
+  let h;
+  if (d <= 1) h = 1;
+  else if (d === 2) h = 2;
+  else if (d === 3) h = 3;
+  else {
+    const dt = Math.hypot(x - 18, z - 18);
+    let hh = 3;
+    if (dt <= 4) hh = 11;               // lighthouse terrace
+    else {
+      hh += hill(x, z, 18, 18, 13, 8);  // headland -> peak 11
+      hh += hill(x, z, 52, 44, 10, 3);  // meadow hill
+      hh += hill(x, z, 60, 18, 9, 3);   // right hill
+      hh += hill(x, z, 46, 28, 7, 2);   // small hill
+    }
+    h = clampv(Math.round(hh), 3, 12);
+  }
+  H[z][x] = h;
+}
+function solidAt(x, y, z) {
+  if (x < 0 || x >= T || z < 0 || z >= T) return false;
+  if (y < 0) return y >= -SLAB;            // water slab
+  return !isWater(x, z) && y >= 0 && y < H[z][x];
+}
+
+// ---- collect static instances ----
+const instances = [];   // {x, y, z, sx, sy, sz, color}
+function addBox(x, y, z, color, sx = 1, sy = 1, sz = 1) {
+  instances.push({ x, y, z, sx, sy, sz, color });
+}
+function topColor(x, z) {
+  const d = dist[z][x];
+  if (d <= 3) return hex(C.sand);
+  const dt = Math.hypot(x - 18, z - 18);
+  if (dt <= 4) return hex(C.grass);
+  const dh = Math.hypot(x - 18, z - 18);
+  if (dh >= 6 && dh <= 10 && hash(x, z, 2) < 0.25) return hex(C.rock);
+  return hash(x, z, 1) < 0.25 ? hex(C.olive) : hex(C.grass);
+}
+{
+  // iterate all cells, emit surface voxels (slab + land)
+  const colVar = {};
+  for (let z = 0; z < T; z++) for (let x = 0; x < T; x++) {
+    const h = H[z][x];
+    const minY = -SLAB;
+    const maxY = h - 1;
+    if (maxY < minY) continue;
+    const cv = colVar[x + z * T] = (hash(x, z, 5) * 2 - 1) * 0.05;
+    for (let y = minY; y <= maxY; y++) {
+      if (!solidAt(x, y, z)) continue;
+      const n = [
+        solidAt(x + 1, y, z), solidAt(x - 1, y, z),
+        solidAt(x, y + 1, z), solidAt(x, y - 1, z),
+        solidAt(x, y, z + 1), solidAt(x, y, z - 1)
+      ];
+      if (n.every(Boolean)) continue;
+      let color;
+      if (y < 0) {
+        color = hex(C.slab);
+      } else if (y === h - 1) {
+        color = topColor(x, z);
+      } else {
+        // exposed wall cube: stratified soil
+        if (y === 0) color = hex(C.sand);
+        else {
+          color = hex(C.soil);
+          const hsl = color.getHSL(new THREE.Color());
+          color.setHSL(hsl.h, hsl.s, clampv(hsl.l + cv, 0, 1));
+        }
+      }
+      // per-voxel ±6% lightness jitter for land (slab stays flat)
+      if (y >= 0) {
+        const t = (hash(x + y * 13, z, 9) * 2 - 1);
+        const hsl = color.getHSL(new THREE.Color());
+        color.setHSL(hsl.h, hsl.s, clampv(hsl.l + t * 0.06, 0, 1));
+      }
+      addBox(x, y, z, color);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Lighthouse (on the terrace at (18,18), base y=11)
+// ---------------------------------------------------------------------------
+{
+  const cx = 18, cz = 18;
+  const baseY = 11;
+  const towerH = 14;
+  // tower: round, 7 across at base -> 5 at top
+  for (let y = 0; y < towerH; y++) {
+    const r = lerp(3.5, 2.5, y / (towerH - 1));
+    for (let dx = -4; dx <= 4; dx++) for (let dz = -4; dz <= 4; dz++) {
+      const d = Math.hypot(dx, dz);
+      if (d > r + 0.25 || d < 0.1) continue;
+      let color = hex(C.cream);
+      // two terracotta bands
+      if ((y >= 4 && y <= 5) || (y >= 10 && y <= 11)) color = hex(C.terra);
+      const hsl = color.getHSL(new THREE.Color());
+      const t = (hash(cx + dx, cz + dz, 20) * 2 - 1);
+      color.setHSL(hsl.h, hsl.s, clampv(hsl.l + t * 0.06, 0, 1));
+      addBox(cx + dx, baseY + y, cz + dz, color);
+    }
+  }
+  // gallery platform (1 cube thick) at top of tower
+  for (let dx = -4; dx <= 4; dx++) for (let dz = -4; dz <= 4; dz++) {
+    const d = Math.hypot(dx, dz);
+    if (d > 3.2) continue;
+    const color = hex(C.cream);
+    const hsl = color.getHSL(new THREE.Color());
+    const t = (hash(cx + dx, cz + dz, 21) * 2 - 1);
+    color.setHSL(hsl.h, hsl.s, clampv(hsl.l + t * 0.06, 0, 1));
+    addBox(cx + dx, baseY + towerH, cz + dz, color);
+  }
+  // gallery railing: thin dark posts + rail
+  const railY = baseY + towerH + 1;
+  for (let a = 0; a < 8; a++) {
+    const ang = a / 8 * TAU;
+    const rx = Math.round(cx + 3.0 * Math.cos(ang));
+    const rz = Math.round(cz + 3.0 * Math.sin(ang));
+    addBox(rx, railY, rz, hex(C.darkWood), 0.18, 1, 0.18);
+  }
+  // thin rail ring (4 sides)
+  const railZ = 3.0;
+  for (let i = -3; i <= 3; i += 1) {
+    addBox(cx + i, railY + 0.5, cz - railZ, hex(C.darkWood), 1, 0.12, 0.12);
+    addBox(cx + i, railY + 0.5, cz + railZ, hex(C.darkWood), 1, 0.12, 0.12);
+    addBox(cx - railZ, railY + 0.5, cz + i, hex(C.darkWood), 0.12, 0.12, 1);
+    addBox(cx + railZ, railY + 0.5, cz + i, hex(C.darkWood), 0.12, 0.12, 1);
+  }
+  // lantern room: 3x3x3, dark corner posts + glass (glass handled in glow mesh)
+  const lanternY = baseY + towerH + 1;
+  for (let dx = -1; dx <= 1; dx++) for (let dz = -1; dz <= 1; dz++) for (let dy = 0; dy < 3; dy++) {
+    const isCorner = Math.abs(dx) === 1 && Math.abs(dz) === 1;
+    if (isCorner) {
+      const color = hex(C.darkWood);
+      addBox(cx + dx, lanternY + dy, cz + dz, color);
+    }
+    // top frame
+    if (dy === 2) {
+      const color = hex(C.darkWood);
+      addBox(cx + dx, lanternY + dy, cz + dz, color);
+    }
+  }
+  // stepped terracotta cap (top ~34 above slab bottom)
+  let capY = lanternY + 3;
+  const capColors = [
+    [5, 5, 1], [3, 3, 1]
+  ];
+  for (const [w, w2, hh] of capColors) {
+    for (let dx = -w; dx <= w; dx++) for (let dz = -w; dz <= w; dz++) {
+      if (Math.abs(dx) > w2 || Math.abs(dz) > w2) continue;
+      const color = hex(C.terra);
+      addBox(cx + dx, capY, cz + dz, color);
+    }
+    capY += hh;
+  }
+  // small finial
+  addBox(cx, capY, cz, hex(C.darkWood), 0.3, 0.4, 0.3);
+}
+
+// ---------------------------------------------------------------------------
+// Glow mesh (windows, lantern glass, lamps): MeshBasicMaterial, day->night colour
+// ---------------------------------------------------------------------------
+const glowInstances = [];
+function addGlow(x, y, z, color = null) {
+  glowInstances.push({ x, y, z, color });
+}
+// We'll fill the glow set after placing buildings / lighthouse. Re-collect here.
+// (Lantern glass cubes)
+{
+  const cx = 18, cz = 18;
+  const lanternY = 11 + 14 + 1;
+  // glass panels: non-corner cubes at dy 0..1 (dy=2 is the solid roof frame)
+  for (let dx = -1; dx <= 1; dx++) for (let dz = -1; dz <= 1; dz++) for (let dy = 0; dy < 2; dy++) {
+    const isCorner = Math.abs(dx) === 1 && Math.abs(dz) === 1;
+    if (!isCorner) addGlow(cx + dx, lanternY + dy, cz + dz);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Village: 6 cottages on terraces around the inner shore of the cove
+// ---------------------------------------------------------------------------
+const reserved = new Set();
+function reserve(x, z) { reserved.add(x + z * T); }
+function groundH(x, z) {
+  if (isWater(x, z)) return 0;
+  return H[z][x];
+}
+const cottageSpots = [
+  [15, 56], [13, 50], [22, 44], [37, 44], [44, 52], [46, 62]
+];
+{
+  const roofColors = [C.terra, C.darkRoof, C.terra, C.darkRoof, C.cream, C.terra];
+  const wallColors = [C.cream, C.ochre, C.cream, C.cream, C.ochre, C.cream];
+  for (let ci = 0; ci < cottageSpots.length; ci++) {
+    const [sx, sz] = cottageSpots[ci];
+    const w = 5 + (hash(sx, sz, 30) < 0.5 ? 0 : 1);   // 5 or 6
+    const d = 6 + (hash(sx, sz, 31) < 0.5 ? 0 : 1);   // 6 or 7
+    // orient long axis roughly toward the cove (pointing +z / inward)
+    const baseY = groundH(sx, sz);
+    const wx0 = sx - Math.floor(w / 2), wx1 = sx + Math.floor((w - 1) / 2);
+    const wz0 = sz - Math.floor(d / 2), wz1 = sz + Math.floor((d - 1) / 2);
+    const wallH = 4;
+    const wallCol = hex(wallColors[ci]);
+    for (let x = wx0; x <= wx1; x++) for (let z = wz0; z <= wz1; z++) {
+      if (isWater(x, z) || H[z][x] < baseY) continue;
+      for (let y = 0; y < wallH; y++) {
+        // only build above ground
+        if (baseY + y < H[z][x]) continue;
+        let color = wallCol;
+        // a few walls in ochre
+        if (hash(x, z, 40) < 0.15) color = hex(C.ochre);
+        const hsl = color.getHSL(new THREE.Color());
+        const t = (hash(x + y, z, 41) * 2 - 1);
+        color.setHSL(hsl.h, hsl.s, clampv(hsl.l + t * 0.06, 0, 1));
+        addBox(x, baseY + y, z, color);
+        reserve(x, z);
+      }
+    }
+    // stepped gable roof (3 high)
+    const roofH = 3;
+    for (let layer = 0; layer < roofH; layer++) {
+      const rw = w - 2 * layer, rd = d - 2 * layer;
+      if (rw < 1 || rd < 1) continue;
+      const y = baseY + wallH + layer;
+      for (let x = sx - Math.floor(rw / 2); x <= sx + Math.floor((rw - 1) / 2); x++) {
+        for (let z = sz - Math.floor(rd / 2); z <= sz + Math.floor((rd - 1) / 2); z++) {
+          const color = hex(roofColors[ci]);
+          const hsl = color.getHSL(new THREE.Color());
+          const t = (hash(x, z, 42) * 2 - 1);
+          color.setHSL(hsl.h, hsl.s, clampv(hsl.l + t * 0.06, 0, 1));
+          addBox(x, y, z, color);
+          reserve(x, z);
+        }
+      }
+    }
+    // dark door (front = toward cove, +z side)
+    const doorX = sx, doorZ = wz1;
+    addBox(doorX, baseY, doorZ, hex(C.darkWood), 1, 1, 1);
+    // windows (glow mesh)
+    addGlow(sx - 1, baseY + 2, doorZ, C.glow);
+    addGlow(sx + 1, baseY + 2, doorZ, C.glow);
+    addGlow(wx0, baseY + 2, sz, C.glow);
+    addGlow(wx1, baseY + 2, sz, C.glow);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Pier: 2 wide, 12 long into the cove; planks on dark posts; lamp post at end
+// ---------------------------------------------------------------------------
+{
+  // pier from the beach at the cove tip (31, 40) into the water (31, 51)
+  const px = 31, pz0 = 40, pz1 = 51;
+  const deckY = 1; // 1 above water
+  for (let z = pz0; z <= pz1; z++) {
+    for (let x = px - 1; x <= px; x++) {
+      addBox(x, deckY, z, hex(C.wood));
+      reserve(x, z);
+    }
+    // posts under deck
+    if (z === pz0 || z === pz1 || z === (pz0 + pz1) / 2) {
+      for (let x = px - 1; x <= px; x++) {
+        addBox(x, 0, z, hex(C.darkWood));
+      }
+    }
+  }
+  // lamp post at the end
+  const lx = px, lz = pz1;
+  for (let y = deckY; y <= deckY + 3; y++) addBox(lx, y, lz, hex(C.darkWood));
+  addGlow(lx, deckY + 4, lz, C.glow);
+}
+
+// ---------------------------------------------------------------------------
+// Trees (8-10), rocks, flower meadows
+// ---------------------------------------------------------------------------
+const treeTones = [
+  { main: '#dd5c38', light: '#e88a63' },   // coral-orange
+  { main: '#c6563a', light: '#d97a58' },   // red-coral
+  { main: '#a82f42', light: '#d18884' },   // rose (pale pink)
+  { main: '#d4968b', light: '#e8c4bb' },   // blossom
+  { main: '#3f5734', light: '#5f7d4a' },   // dark green
+  { main: '#4f6844', light: '#71895c' }    // mid green
+];
+const treeSpots = [
+  [52, 12], [58, 16], [63, 22], [66, 30], [62, 40],
+  [55, 35], [50, 28], [47, 18], [60, 50], [55, 55]
+];
+{
+  for (const [tx, tz] of treeSpots) {
+    const gh = groundH(tx, tz);
+    if (isWater(tx, tz) || gh < 3) continue;
+    const tone = treeTones[(hash(tx, tz, 50) * treeTones.length) | 0];
+    // trunk 1-2 wide, 2-3 high
+    const trunkW = hash(tx, tz, 51) < 0.5 ? 1 : 2;
+    const trunkH = 2 + (hash(tx, tz, 52) < 0.5 ? 0 : 1);
+    const trunkCells = trunkW === 1 ? [[0, 0]] : [[0, 0], [1, 0], [0, 1], [1, 1]];
+    for (let y = 0; y < trunkH; y++) {
+      for (const [dx, dz] of trunkCells) {
+        addBox(tx + dx, gh + y, tz + dz, hex(C.wood));
+        reserve(tx + dx, tz + dz);
+      }
+    }
+    // canopy: rough voxel sphere / blobs, 6-11 across
+    const radius = 3 + (hash(tx, tz, 53) * 3 | 0); // 3..5 -> 6..10 across
+    const canopyBase = gh + trunkH;
+    for (let dx = -radius; dx <= radius; dx++) {
+      for (let dz = -radius; dz <= radius; dz++) {
+        const d = Math.hypot(dx, dz);
+        if (d > radius + 0.3) continue;
+        if (isWater(tx + dx, tz + dz)) continue; // don't overhang the water
+        // rough sphere: y offset
+        const maxH = radius * (1 - (d / radius) * (d / radius)) + 0.5;
+        for (let dy = 0; dy < Math.floor(maxH); dy++) {
+          // some surface cubes missing
+          if (hash(tx + dx, tz + dz, 54 + dy) < 0.18) continue;
+          let color = hex(tone.main);
+          if (hash(tx + dx, tz + dz, 55) < 0.25) color = hex(tone.light);
+          const hsl = color.getHSL(new THREE.Color());
+          const t = (hash(tx + dx + dy, tz + dz, 56) * 2 - 1);
+          color.setHSL(hsl.h, hsl.s, clampv(hsl.l + t * 0.06, 0, 1));
+          addBox(tx + dx, canopyBase + dy, tz + dz, color);
+          reserve(tx + dx, tz + dz);
+        }
+      }
+    }
+  }
+}
+// rocks around the headland foot
+{
+  for (let z = 8; z <= 28; z++) for (let x = 8; x <= 28; x++) {
+    const dh = Math.hypot(x - 18, z - 18);
+    if (dh < 6 || dh > 11) continue;
+    if (isWater(x, z)) continue;
+    if (hash(x, z, 60) < 0.18) {
+      const gh = groundH(x, z);
+      const n = 1 + (hash(x, z, 61) * 3 | 0);
+      for (let i = 0; i < n; i++) {
+        const ox = (hash(x + i, z, 62) * 2 - 1);
+        const oz = (hash(x + i, z, 63) * 2 - 1);
+        const rx = Math.round(x + ox), rz = Math.round(z + oz);
+        if (isWater(rx, rz)) continue;
+        addBox(rx, groundH(rx, rz), rz, hex(C.rock));
+      }
+    }
+  }
+}
+// flower / bush meadow extras (skip reserved columns)
+{
+  for (let z = 0; z < T; z++) for (let x = 0; x < T; x++) {
+    if (isWater(x, z)) continue;
+    const d = dist[z][x];
+    if (d < 4) continue;
+    const dt = Math.hypot(x - 18, z - 18);
+    if (dt <= 4) continue; // terrace
+    if (reserved.has(x + z * T)) continue;
+    const h = H[z][x];
+    if (hash(x, z, 3) < 0.15) {
+      if (hash(x, z, 4) < 0.6) {
+        addBox(x, h, z, hex(C.bush));
+      } else {
+        const fc = [C.flowerRed, C.flowerOrange, C.flowerPink][(hash(x, z, 5) * 3) | 0];
+        addBox(x, h, z, hex(fc));
+      }
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Build the main static InstancedMesh
+// ---------------------------------------------------------------------------
+const boxGeo = new THREE.BoxGeometry(1, 1, 1);
+const boxMat = new THREE.MeshLambertMaterial();
+const mainMesh = new THREE.InstancedMesh(boxGeo, boxMat, instances.length);
+const M4 = new THREE.Matrix4();
+const V3 = new THREE.Vector3();
+for (let i = 0; i < instances.length; i++) {
+  const it = instances[i];
+  M4.makeScale(it.sx, it.sy, it.sz);
+  M4.setPosition(it.x + 0.5, it.y + 0.5, it.z + 0.5);
+  mainMesh.setMatrixAt(i, M4);
+  mainMesh.setColorAt(i, it.color);
+}
+mainMesh.instanceMatrix.needsUpdate = true;
+mainMesh.instanceColor.needsUpdate = true;
+mainMesh.castShadow = true;
+mainMesh.receiveShadow = true;
+scene.add(mainMesh);
+console.info('Lighthouse Cove: static voxel instances =', instances.length);
+
+// ---------------------------------------------------------------------------
+// Glow InstancedMesh (windows, lantern glass, lamps)
+// ---------------------------------------------------------------------------
+const glowGeo = new THREE.BoxGeometry(1, 1, 1);
+const glowMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(C.glassDay) });
+const glowMesh = new THREE.InstancedMesh(glowGeo, glowMat, glowInstances.length);
+for (let i = 0; i < glowInstances.length; i++) {
+  const it = glowInstances[i];
+  M4.makeScale(1, 1, 1);
+  M4.setPosition(it.x + 0.5, it.y + 0.5, it.z + 0.5);
+  glowMesh.setMatrixAt(i, M4);
+}
+glowMesh.instanceMatrix.needsUpdate = true;
+scene.add(glowMesh);
+
+// ---------------------------------------------------------------------------
+// Boats (moving): 3 hulls 7x3, 2 high, with wooden rim; one with mast + sail
+// ---------------------------------------------------------------------------
+const boatDefs = [
+  { x: 26, z: 55, color: '#b0392f', sail: true },
+  { x: 33, z: 60, color: '#3f5734', sail: false },
+  { x: 38, z: 50, color: '#e8d6c0', sail: false }
+];
+const boatInstances = [];
+function boatBox(x, y, z, color, sx = 1, sy = 1, sz = 1) {
+  boatInstances.push({ x, y, z, sx, sy, sz, color });
+}
+for (const b of boatDefs) {
+  const w = 7, d = 3, h = 2;
+  for (let dx = -3; dx <= 3; dx++) for (let dz = -1; dz <= 1; dz++) for (let dy = 0; dy < h; dy++) {
+    const isRim = dy === h - 1 && (Math.abs(dx) === 3 || Math.abs(dz) === 1);
+    boatBox(b.x + dx, dy, b.z + dz, isRim ? hex(C.wood) : hex(b.color));
+  }
+  if (b.sail) {
+    // mast
+    boatBox(b.x, 2, b.z, hex(C.wood), 0.15, 4, 0.15);
+    // cream triangular sail: 3 thin boxes of decreasing width (wide at base, narrow at apex)
+    boatBox(b.x, 2.5, b.z + 1.25, hex(C.cream), 0.12, 1, 2.5);
+    boatBox(b.x, 3.5, b.z + 0.75, hex(C.cream), 0.12, 1, 1.5);
+    boatBox(b.x, 4.5, b.z + 0.25, hex(C.cream), 0.12, 1, 0.5);
+  }
+}
+const boatGeo = new THREE.BoxGeometry(1, 1, 1);
+const boatMat = new THREE.MeshLambertMaterial();
+const boatMesh = new THREE.InstancedMesh(boatGeo, boatMat, boatInstances.length);
+for (let i = 0; i < boatInstances.length; i++) {
+  const it = boatInstances[i];
+  M4.makeScale(it.sx, it.sy, it.sz);
+  M4.setPosition(it.x + 0.5, it.y + 0.5, it.z + 0.5);
+  boatMesh.setMatrixAt(i, M4);
+  boatMesh.setColorAt(i, it.color);
+}
+boatMesh.instanceMatrix.needsUpdate = true;
+boatMesh.instanceColor.needsUpdate = true;
+boatMesh.castShadow = true;
+boatMesh.receiveShadow = true;
+scene.add(boatMesh);
+
+// ---------------------------------------------------------------------------
+// Gulls (5): white body, light grey wings, ~5 cubes each; circle the lighthouse
+// ---------------------------------------------------------------------------
+const gullDefs = [
+  { r: 20, h: 26, phase: 0 },
+  { r: 24, h: 30, phase: 1.3 },
+  { r: 28, h: 34, phase: 2.6 },
+  { r: 32, h: 30, phase: 3.9 },
+  { r: 26, h: 36, phase: 5.2 }
+];
+// store per-gull parts in local space (repositioned each frame)
+// Body: 3 cubes along x; wings: 4 cubes (2 per side, flap by lifting)
+const gullParts = []; // {body:[{x,y,z}...], wings:[{x,y,z}...]}
+for (const g of gullDefs) {
+  const body = [
+    { x: 0, y: 0, z: 0 }, { x: -1, y: 0, z: 0 }, { x: 1, y: 0, z: 0 }
+  ];
+  const wings = [
+    { x: 0, y: 0, z: -1 }, { x: 0, y: 0, z: 1 },
+    { x: -1, y: 0, z: -1 }, { x: -1, y: 0, z: 1 }
+  ];
+  gullParts.push({ body, wings });
+}
+const GULL_PARTS_PER = 7; // 3 body + 4 wings
+const gullCount = gullParts.length * GULL_PARTS_PER;
+const gullMesh = new THREE.InstancedMesh(boxGeo, new THREE.MeshLambertMaterial(), gullCount);
+gullMesh.castShadow = false;
+gullMesh.receiveShadow = false;
+scene.add(gullMesh);
+// pre-set colours: body white (3), wings light grey (4)
+{
+  const white = new THREE.Color(0xffffff);
+  const grey = new THREE.Color(0xc9c9c9);
+  for (let i = 0; i < gullParts.length; i++) {
+    for (let k = 0; k < 3; k++) gullMesh.setColorAt(i * GULL_PARTS_PER + k, white);
+    for (let k = 3; k < GULL_PARTS_PER; k++) gullMesh.setColorAt(i * GULL_PARTS_PER + k, grey);
+  }
+  gullMesh.instanceColor.needsUpdate = true;
+}
+
+// ---------------------------------------------------------------------------
+// Foam: flattened white cubes (0.3 high) one off the beaches, pulsing
+// ---------------------------------------------------------------------------
+const foamInstances = [];
+for (let z = 0; z < T; z++) for (let x = 0; x < T; x++) {
+  if (isWater(x, z)) continue;
+  const d = dist[z][x];
+  if (d !== 1) continue;
+  if (hash(x, z, 70) < 0.6) {
+    foamInstances.push({ x, z, phase: hash(x, z, 71) * TAU, y: 0 });
+  }
+}
+const foamGeo = new THREE.BoxGeometry(1, 1, 1);
+const foamMat = new THREE.MeshLambertMaterial({ color: new THREE.Color('#f5f2ec') });
+const foamMesh = new THREE.InstancedMesh(foamGeo, foamMat, foamInstances.length);
+for (let i = 0; i < foamInstances.length; i++) {
+  M4.makeScale(1, 0.3, 1);
+  M4.setPosition(foamInstances[i].x + 0.5, foamInstances[i].y + 0.15, foamInstances[i].z + 0.5);
+  foamMesh.setMatrixAt(i, M4);
+}
+foamMesh.instanceMatrix.needsUpdate = true;
+scene.add(foamMesh);
+
+// ---------------------------------------------------------------------------
+// Clouds (6): stepped slabs beyond the rim
+// ---------------------------------------------------------------------------
+const cloudDefs = [];
+for (let i = 0; i < 6; i++) {
+  const ang = (i / 6) * TAU + 0.3;
+  const r = 150 + hash(i, 0, 80) * 40;
+  const elev = (5 + hash(i, 1, 81) * 10) * Math.PI / 180;
+  cloudDefs.push({
+    ang, r,
+    y: -SLAB + r * Math.tan(elev),
+    baseW: 5 + (hash(i, 2, 82) * 3 | 0),   // 5-7 cubes wide (total)
+    topW: 3 + (hash(i, 3, 83) * 2 | 0),   // 3-4 cubes wide (total)
+    layers: 2 + (hash(i, 4, 84) < 0.5 ? 0 : 1)
+  });
+}
+const cloudInstances = [];
+for (const c of cloudDefs) {
+  const bw = Math.floor(c.baseW / 2);
+  const tw = Math.floor(c.topW / 2);
+  // base layer (shaded face)
+  for (let dx = -bw; dx <= bw; dx++)
+    for (let dz = -bw; dz <= bw; dz++)
+      cloudInstances.push({ x: dx, y: 0, z: dz, type: 'shaded', sx: 1, sy: 1, sz: 1 });
+  // upper layer(s) (lit face)
+  for (let layer = 1; layer < c.layers; layer++) {
+    for (let dx = -tw; dx <= tw; dx++)
+      for (let dz = -tw; dz <= tw; dz++)
+        cloudInstances.push({ x: dx, y: layer, z: dz, type: 'lit', sx: 1, sy: 1, sz: 1 });
+  }
+}
+// cloud face colours: day vs night
+const cloudLitDay = hex('#e8c4a8'), cloudLitNight = hex('#8a7072');
+const cloudShadedDay = hex('#b08a7c'), cloudShadedNight = hex('#6c585e');
+const _cloudLit = new THREE.Color();
+const _cloudShaded = new THREE.Color();
+function updateCloudColors(day) {
+  _cloudLit.copy(cloudLitDay).lerp(cloudLitNight, 1 - day);
+  _cloudShaded.copy(cloudShadedDay).lerp(cloudShadedNight, 1 - day);
+  for (let i = 0; i < cloudInstances.length; i++) {
+    cloudMesh.setColorAt(i, cloudInstances[i].type === 'lit' ? _cloudLit : _cloudShaded);
+  }
+  cloudMesh.instanceColor.needsUpdate = true;
+}
+const cloudGeo = new THREE.BoxGeometry(1, 1, 1);
+const cloudMat = new THREE.MeshLambertMaterial();
+const cloudMesh = new THREE.InstancedMesh(cloudGeo, cloudMat, cloudInstances.length);
+for (let i = 0; i < cloudInstances.length; i++) {
+  const it = cloudInstances[i];
+  M4.makeScale(it.sx, it.sy, it.sz);
+  M4.setPosition(it.x + 0.5, it.y + 0.5, it.z + 0.5);
+  cloudMesh.setMatrixAt(i, M4);
+}
+cloudMesh.instanceMatrix.needsUpdate = true;
+cloudMesh.castShadow = false;
+scene.add(cloudMesh);
+updateCloudColors(1); // also initializes instanceColor via setColorAt
+// store cloud anchors for animation
+const cloudAnchors = [];
+{
+  let idx = 0;
+  for (const c of cloudDefs) {
+    const bw = Math.floor(c.baseW / 2), tw = Math.floor(c.topW / 2);
+    const count = (2 * bw + 1) * (2 * bw + 1) + Math.max(0, c.layers - 1) * (2 * tw + 1) * (2 * tw + 1);
+    cloudAnchors.push({ c, startIdx: idx, count });
+    idx += count;
+  }
+}
+function updateClouds() {
+  for (const anchor of cloudAnchors) {
+    const c = anchor.c;
+    const a = c.ang + cloudAngle;
+    const ax = TILE / 2 + c.r * Math.sin(a);
+    const az = TILE / 2 + c.r * Math.cos(a);
+    const ay = c.y;
+    for (let i = anchor.startIdx; i < anchor.startIdx + anchor.count; i++) {
+      const it = cloudInstances[i];
+      M4.makeScale(it.sx, it.sy, it.sz);
+      M4.setPosition(ax + it.x + 0.5, ay + it.y + 0.5, az + it.z + 0.5);
+      cloudMesh.setMatrixAt(i, M4);
+    }
+  }
+  cloudMesh.instanceMatrix.needsUpdate = true;
+}
+
+// ---------------------------------------------------------------------------
+// Motes (~60): soft round points (canvas sprite), warm white, within 1 tile width
+// ---------------------------------------------------------------------------
+function makeMoteTexture() {
+  const c = document.createElement('canvas');
+  c.width = c.height = 64;
+  const ctx = c.getContext('2d');
+  const g = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+  g.addColorStop(0, 'rgba(255, 240, 210, 1)');
+  g.addColorStop(0.4, 'rgba(255, 235, 200, 0.6)');
+  g.addColorStop(1, 'rgba(255, 235, 200, 0)');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, 64, 64);
+  const tex = new THREE.CanvasTexture(c);
+  return tex;
+}
+const motes = [];
+let motes_pts;
+{
+  const count = 60;
+  const positions = new Float32Array(count * 3);
+  for (let i = 0; i < count; i++) {
+    const x = TILE / 2 + (hash(i, 100) * 2 - 1) * TILE;
+    const y = 1 + hash(i, 101) * 14;
+    const z = TILE / 2 + (hash(i, 102) * 2 - 1) * TILE;
+    positions[i * 3] = x; positions[i * 3 + 1] = y; positions[i * 3 + 2] = z;
+    motes.push({ x, y, z, vx: (hash(i, 103) * 2 - 1) * 0.5, vz: (hash(i, 104) * 2 - 1) * 0.5, ph: hash(i, 105) * TAU });
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  const mat = new THREE.PointsMaterial({
+    size: 0.5, sizeAttenuation: true, map: makeMoteTexture(), transparent: true,
+    opacity: 0.5, depthWrite: false, blending: THREE.AdditiveBlending, color: 0xfff0c8
+  });
+  const pts = new THREE.Points(geo, mat);
+  scene.add(pts);
+  motes_pts = pts;
+}
+
+// ---------------------------------------------------------------------------
+// Lighthouse beam (2 opposite cones) + spot + glow sprite
+// ---------------------------------------------------------------------------
+const beamGroup = new THREE.Group();
+{
+  const len = 1.2 * TILE; // 86.4
+  const endR = 6;
+  const coneGeo = new THREE.CylinderGeometry(0.4, endR, len, 16, 1, true);
+  // vertex colours: 35% of #fff0c8 at lantern -> black at far end
+  const colAttr = new THREE.BufferAttribute(new Float32Array(coneGeo.attributes.position.count * 3), 3);
+  const base = new THREE.Color(C.glow).multiplyScalar(0.35);
+  const pos = coneGeo.attributes.position;
+  for (let i = 0; i < pos.count; i++) {
+    const y = pos.getY(i);
+    // cone local: centre at 0, top (small) at +len/2, bottom (large) at -len/2
+    const t = clampv((len / 2 - y) / len, 0, 1); // 0 at lantern, 1 at far end
+    const c = base.clone().lerp(new THREE.Color(0x000000), t);
+    colAttr.setXYZ(i, c.r, c.g, c.b);
+  }
+  coneGeo.setAttribute('color', colAttr);
+  const coneMat = new THREE.MeshBasicMaterial({
+    vertexColors: true, side: THREE.DoubleSide, transparent: true,
+    blending: THREE.AdditiveBlending, depthWrite: false
+  });
+  const cone1 = new THREE.Mesh(coneGeo, coneMat);
+  // orient cone so small end is at origin, large end in +x direction
+  cone1.rotation.z = Math.PI / 2; // axis along x
+  cone1.position.x = len / 2;
+  beamGroup.add(cone1);
+  const cone2 = new THREE.Mesh(coneGeo, coneMat);
+  cone2.rotation.z = -Math.PI / 2;
+  cone2.position.x = -len / 2;
+  beamGroup.add(cone2);
+}
+const LANTERN = new THREE.Vector3(18, 11 + 14 + 1 + 1, 18);
+beamGroup.position.copy(LANTERN);
+scene.add(beamGroup);
+
+// spot light (sweeps with beam 1)
+{
+  spot.position.copy(LANTERN);
+}
+// glow sprite on lantern
+const glowSprite = new THREE.Sprite(new THREE.SpriteMaterial({
+  map: makeMoteTexture(), color: new THREE.Color(C.glow), transparent: true,
+  opacity: 0.0, depthWrite: false, blending: THREE.AdditiveBlending
+}));
+glowSprite.position.copy(LANTERN);
+glowSprite.scale.setScalar(6);
+scene.add(glowSprite);
+
+// ---------------------------------------------------------------------------
+// Day / night palette (lerp between midnight and noon)
+// ---------------------------------------------------------------------------
+const noon = {
+  sunColor: new THREE.Color('#ffd6a8'), sunIntensity: 7.5, sunPos: new THREE.Vector3(-50.9, 88.1, 122.9),
+  hemiSky: new THREE.Color('#9fa8c8'), hemiGround: new THREE.Color('#6b5a48'), hemiIntensity: 2.5,
+  skyTop: new THREE.Color('#121631'), skyBottom: new THREE.Color('#3a3766'),
+  starOpacity: 0.15, beamFade: 0.0, spotIntensity: 0.0, glow: 0.0
+};
+const midnight = {
+  sunColor: new THREE.Color('#ffc9a0'), sunIntensity: 5.5, sunPos: new THREE.Vector3(90, 33, -38),
+  hemiSky: new THREE.Color('#4b4f8f'), hemiGround: new THREE.Color('#2a2230'), hemiIntensity: 2.3,
+  skyTop: new THREE.Color('#171834'), skyBottom: new THREE.Color('#422e57'),
+  starOpacity: 1.0, beamFade: 1.0, spotIntensity: 14.0, glow: 1.0
+};
+function getLighting(day) {
+  const n = noon, m = midnight;
+  return {
+    sunColor: n.sunColor.clone().lerp(m.sunColor, 1 - day),
+    sunIntensity: lerp(n.sunIntensity, m.sunIntensity, 1 - day),
+    sunPos: n.sunPos.clone().lerp(m.sunPos, 1 - day),
+    hemiSky: n.hemiSky.clone().lerp(m.hemiSky, 1 - day),
+    hemiGround: n.hemiGround.clone().lerp(m.hemiGround, 1 - day),
+    hemiIntensity: lerp(n.hemiIntensity, m.hemiIntensity, 1 - day),
+    skyTop: n.skyTop.clone().lerp(m.skyTop, 1 - day),
+    skyBottom: n.skyBottom.clone().lerp(m.skyBottom, 1 - day),
+    starOpacity: lerp(n.starOpacity, m.starOpacity, 1 - day),
+    beamFade: lerp(n.beamFade, m.beamFade, 1 - day),
+    spotIntensity: lerp(n.spotIntensity, m.spotIntensity, 1 - day),
+    glow: lerp(n.glow, m.glow, 1 - day)
+  };
+}
+
+// ---------------------------------------------------------------------------
+// UI wiring
+// ---------------------------------------------------------------------------
+const btnOrbit = document.getElementById('btn-orbit');
+const btnDayNight = document.getElementById('btn-daynight');
+const btnCalm = document.getElementById('btn-calm');
+const btnRough = document.getElementById('btn-rough');
+
+let autoOrbit = true;
+let seaState = 'calm';
+let timeAnim = null; // {from, to, start}
+const ANIM_DUR = 2.5;
+
+btnOrbit.addEventListener('click', () => {
+  autoOrbit = !autoOrbit;
+  controls.autoRotate = autoOrbit;
+  btnOrbit.classList.toggle('active', autoOrbit);
+});
+btnDayNight.addEventListener('click', () => {
+  // target the opposite of the current nearest day/night
+  const toNoon = time > 0.25; // if closer to noon, go to night; else to noon
+  const target = toNoon ? 0 : 0.5;
+  timeAnim = { from: time, to: target, start: performance.now() };
+});
+btnCalm.addEventListener('click', () => { seaState = 'calm'; btnCalm.classList.add('active'); btnRough.classList.remove('active'); });
+btnRough.addEventListener('click', () => { seaState = 'rough'; btnRough.classList.add('active'); btnCalm.classList.remove('active'); });
+
+// ---------------------------------------------------------------------------
+// Animation loop
+// ---------------------------------------------------------------------------
+const clock = new THREE.Clock();
+let beamAngle = 0;
+let cloudAngle = 0;
+
+function easeInOut(t) { return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2; }
+
+function animate() {
+  const dt = Math.min(clock.getDelta(), 0.05);
+  const now = performance.now();
+
+  // time of day
+  if (timeAnim) {
+    const p = clampv((now - timeAnim.start) / (ANIM_DUR * 1000), 0, 1);
+    time = lerp(timeAnim.from, timeAnim.to, easeInOut(p));
+    if (p >= 1) { time = timeAnim.to; timeAnim = null; }
+  } else {
+    time += dt / 60; // ~60s full cycle
+    if (time >= 1) time -= 1;
+  }
+  const day = 0.5 - 0.5 * Math.cos(TAU * time);
+  const L = getLighting(day);
+
+  // sun / moon
+  sun.color.copy(L.sunColor);
+  sun.intensity = L.sunIntensity;
+  sun.position.copy(L.sunPos);
+  sun.target.position.set(TILE / 2, 0, TILE / 2);
+
+  // hemisphere
+  hemi.color.copy(L.hemiSky);
+  hemi.groundColor.copy(L.hemiGround);
+  hemi.intensity = L.hemiIntensity;
+
+  // sky
+  skyMat.uniforms.uTop.value.copy(L.skyTop);
+  skyMat.uniforms.uBottom.value.copy(L.skyBottom);
+
+  // stars
+  stars.mat.opacity = L.starOpacity;
+
+  // sea
+  updateSea(day);
+
+  // glow (windows, lantern, lamps)
+  const glowColor = new THREE.Color(C.glassDay).lerp(new THREE.Color(C.glow), L.glow);
+  glowMat.color.copy(glowColor);
+
+  // beam (night only, fades in below day = 0.35)
+  const beamFade = clampv((0.35 - day) / 0.35, 0, 1);
+  beamAngle += (TAU / 8) * dt; // one turn every 8 s
+  beamGroup.rotation.y = beamAngle;
+  beamGroup.visible = beamFade > 0.001;
+  if (beamFade > 0) {
+    // fade via material opacity on both cones (shared material)
+    beamGroup.children[0].material.opacity = beamFade;
+  }
+  // spot sweeps with beam 1
+  spot.intensity = 320 * beamFade;
+  const dir = new THREE.Vector3(Math.sin(beamAngle), 0, Math.cos(beamAngle));
+  spot.position.copy(LANTERN);
+  spotTarget.position.copy(LANTERN).addScaledVector(dir, 1.2 * TILE);
+  spot.target = spotTarget;
+
+  // glow sprite on lantern
+  glowSprite.material.opacity = 0.5 * L.glow;
+
+  // boats (heave + roll), period 4 s
+  const rough = seaState === 'rough' ? 2 : 1;
+  const t = now / 1000;
+  boatDefs.forEach((b, i) => {
+    const ph = i * 1.3;
+    const heave = 0.2 * Math.sin(TAU * t / 4 + ph) * rough;
+    const roll = THREE.MathUtils.degToRad(4) * Math.sin(TAU * t / 4 + ph + 0.5) * rough;
+    // apply to all boat instances belonging to boat i (we stored them contiguously)
+    // (handled in updateBoats below via offsets)
+    b._heave = heave; b._roll = roll;
+  });
+  updateBoats();
+
+  // gulls: circle the lighthouse, alternating glide and wing flap
+  const gullSpeed = seaState === 'rough' ? 2 : 1;
+  gullParts.forEach((parts, i) => {
+    const g = gullDefs[i];
+    const ang = t * (0.35 * gullSpeed) + g.phase;
+    const gx = 18 + g.r * Math.cos(ang);
+    const gz = 18 + g.r * Math.sin(ang);
+    const gy = -SLAB + g.h + 0.5 * Math.sin(TAU * t / 3 + g.phase);
+    // wings flap (alternate glide and flap)
+    const flap = Math.sin(TAU * t / 1.5 + g.phase) > 0 ? 1 : -1;
+    const base = i * GULL_PARTS_PER;
+    // body (3 cubes)
+    for (let k = 0; k < 3; k++) {
+      const p = parts.body[k];
+      M4.makeScale(1, 1, 1);
+      M4.setPosition(gx + p.x + 0.5, gy + p.y + 0.5, gz + p.z + 0.5);
+      gullMesh.setMatrixAt(base + k, M4);
+    }
+    // wings (4 cubes)
+    for (let k = 0; k < 4; k++) {
+      const p = parts.wings[k];
+      const wy = p.y + 0.3 * flap;
+      M4.makeScale(1, 1, 1);
+      M4.setPosition(gx + p.x + 0.5, gy + wy + 0.5, gz + p.z + 0.5);
+      gullMesh.setMatrixAt(base + 3 + k, M4);
+    }
+  });
+  gullMesh.instanceMatrix.needsUpdate = true;
+
+  // foam pulse (in/out along shore)
+  const foamScale = seaState === 'rough' ? 2 : 1;
+  foamInstances.forEach((it, i) => {
+    const s = 1 + 0.3 * Math.sin(TAU * t / 2 + it.phase) * foamScale;
+    M4.makeScale(s, 0.3, s);
+    M4.setPosition(it.x + 0.5, it.y + 0.15, it.z + 0.5);
+    foamMesh.setMatrixAt(i, M4);
+  });
+  foamMesh.instanceMatrix.needsUpdate = true;
+
+  // clouds drift (rough only)
+  if (seaState === 'rough') {
+    cloudAngle += (3 * Math.PI / 180) * dt;
+  }
+  cloudMesh.position.set(0, 0, 0);
+  // reposition cloud instances around the tile centre using per-cloud anchors
+  updateClouds();
+  updateCloudColors(day);
+
+  // motes drift slowly
+  motes.forEach((m, i) => {
+    m.x += m.vx * dt;
+    m.y += 0.1 * Math.sin(t + m.ph) * dt;
+    m.z += m.vz * dt;
+    if (Math.abs(m.x - TILE / 2) > TILE) m.x = TILE / 2 + (Math.random() * 2 - 1) * TILE;
+    if (Math.abs(m.z - TILE / 2) > TILE) m.z = TILE / 2 + (Math.random() * 2 - 1) * TILE;
+    motes_pts.geometry.attributes.position.array[i * 3] = m.x;
+    motes_pts.geometry.attributes.position.array[i * 3 + 1] = m.y;
+    motes_pts.geometry.attributes.position.array[i * 3 + 2] = m.z;
+  });
+  motes_pts.geometry.attributes.position.needsUpdate = true;
+
+  // controls
+  controls.update(dt);
+
+  renderer.render(scene, camera);
+  requestAnimationFrame(animate);
+}
+
+// boat instance layout: boatInstances is built in order per boat; store per-boat index lists
+let boatIdxLists = null;
+{
+  boatIdxLists = [];
+  let idx = 0;
+  for (const b of boatDefs) {
+    const list = [];
+    for (let dx = -3; dx <= 3; dx++) for (let dz = -1; dz <= 1; dz++) for (let dy = 0; dy < 2; dy++) {
+      list.push(idx); idx++;
+    }
+    if (b.sail) {
+      list.push(idx); idx++; // mast
+      list.push(idx); idx++; // sail base
+      list.push(idx); idx++; // sail mid
+      list.push(idx); idx++; // sail top
+    }
+    boatIdxLists.push(list);
+  }
+}
+function updateBoats() {
+  boatIdxLists.forEach((list, i) => {
+    const b = boatDefs[i];
+    const heave = b._heave || 0;
+    const roll = b._roll || 0;
+    const cosr = Math.cos(roll), sinr = Math.sin(roll);
+    for (const ii of list) {
+      const it = boatInstances[ii];
+      // local position relative to boat centre (boat centre at (b.x, b.z), deck base y=0)
+      const lx = it.x - b.x;
+      const lz = it.z - b.z;
+      const ly = it.y;
+      // rotate around boat centre by roll (around z axis? boats roll around their long axis = x)
+      // roll around x axis: rotate (y,z)
+      const ry = ly * cosr - lz * sinr;
+      const rz = ly * sinr + lz * cosr;
+      const wx = b.x + lx;
+      const wz = b.z + rz;
+      const wy = heave + ry;
+      M4.makeScale(it.sx, it.sy, it.sz);
+      M4.setPosition(wx + 0.5, wy + 0.5, wz + 0.5);
+      boatMesh.setMatrixAt(ii, M4);
+    }
+  });
+  boatMesh.instanceMatrix.needsUpdate = true;
+}
+
+// ---------------------------------------------------------------------------
+// Resize
+// ---------------------------------------------------------------------------
+function onResize() {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  // scale star size with canvas height
+  stars.mat.size = (1.5 / (innerHeight / 2)) * Math.tan(THREE.MathUtils.degToRad(29)) * 300;
+}
+addEventListener('resize', onResize);
+onResize();
+
+// ---------------------------------------------------------------------------
+// Start
+// ---------------------------------------------------------------------------
+animate();
+</script>
+</body>
+</html>
