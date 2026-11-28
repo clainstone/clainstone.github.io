@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lighthouse Cove</title>
+<style>
+  html, body { margin: 0; padding: 0; overflow: hidden; height: 100%; background: #171834; }
+  canvas { display: block; }
+  #overlay {
+    position: fixed; left: 24px; bottom: 20px; z-index: 10;
+    pointer-events: none; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  #overlay .label {
+    font-size: clamp(7px, 0.57vw, 11px); letter-spacing: 0.3em; text-transform: uppercase;
+    color: #d6c7a1; margin-bottom: 8px;
+  }
+  #overlay h1 {
+    font-family: Georgia, "Times New Roman", "DejaVu Serif", serif;
+    font-weight: 700; font-size: clamp(45px, 3.54vw, 68px); color: #ffffff;
+    text-shadow: 0 2px 14px rgba(0,0,0,.45); margin: 0; line-height: 1.05;
+  }
+  #overlay .sub {
+    font-size: clamp(9px, 0.73vw, 14px); color: #c9ccc4; margin: 10px 0 0 0;
+  }
+  #overlay .controls { display: flex; gap: 10px; margin-top: 18px; align-items: center; flex-wrap: wrap; }
+  .pill {
+    pointer-events: auto; height: clamp(27px, 2.08vw, 40px); padding: 0 18px;
+    border: 0; border-radius: 999px; background: rgba(20,26,36,.55);
+    color: #e6ebf0; font-size: clamp(9px, 0.68vw, 13px); font-family: inherit; cursor: pointer;
+  }
+  .pill.active { background: rgba(210,145,90,.3); border: 1px solid rgba(230,185,130,.7); }
+  .seg {
+    pointer-events: auto; display: flex; align-items: center; gap: 6px;
+    background: rgba(20,26,36,.55); border-radius: 999px; padding: 0 8px;
+    height: clamp(27px, 2.08vw, 40px);
+  }
+  .seg .seg-label { font-size: clamp(6px, 0.57vw, 11px); letter-spacing: 0.2em; text-transform: uppercase; color: #9aa3ad; }
+  .opt {
+    height: calc(clamp(27px, 2.08vw, 40px) - 10px); padding: 0 14px; border: 0; border-radius: 999px;
+    background: transparent; color: #e6ebf0; font-size: clamp(9px, 0.68vw, 13px); font-family: inherit; cursor: pointer;
+  }
+  .opt.active { background: rgba(175,118,78,.5); border: 1px solid #c08a60; }
+</style>
+<script type="importmap">{"imports":{"three":"./lib/three.module.js","three/addons/":"./lib/addons/"}}</script>
+</head>
+<body>
+<div id="overlay">
+  <div class="label">Interactive 3D Voxel Diorama</div>
+  <h1>Lighthouse Cove</h1>
+  <p class="sub">A tiny island harbour built from micro-voxels.</p>
+  <div class="controls">
+    <button id="btnOrbit" class="pill active">Auto-Orbit</button>
+    <button id="btnDay" class="pill">Day / Night</button>
+    <div class="seg">
+      <span class="seg-label">Sea</span>
+      <button id="btnCalm" class="opt active">Calm</button>
+      <button id="btnRough" class="opt">Rough</button>
+    </div>
+  </div>
+</div>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+/* ---------------- parameters ---------------- */
+const params = new URLSearchParams(location.search);
+let time = params.has('time') ? parseFloat(params.get('time')) : 0.5;
+if (!isFinite(time)) time = 0.5;
+time = ((time % 1) + 1) % 1;
+let seaMode = 'calm';
+let timeTween = null;
+
+const TILE = 72;
+const HALF = TILE / 2;
+const LIGHTHOUSE = { x: 18, z: 18 };
+
+/* ---------------- renderer / scene / camera ---------------- */
+const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFShadowMap;
+renderer.toneMapping = THREE.NoToneMapping;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(58, window.innerWidth / window.innerHeight, 0.1, 800);
+const TARGET = new THREE.Vector3(HALF, 2, HALF); // tile centre, 5 voxels above slab bottom (slab bottom at y=-3)
+const EL = THREE.MathUtils.degToRad(25);
+const AZ = THREE.MathUtils.degToRad(45);
+const DIST = 1.10 * TILE;
+camera.position.set(
+  TARGET.x + DIST * Math.cos(EL) * Math.sin(AZ),
+  TARGET.y + DIST * Math.sin(EL),
+  TARGET.z + DIST * Math.cos(EL) * Math.cos(AZ)
+);
+camera.lookAt(TARGET);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.copy(TARGET);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.minDistance = 0.6 * TILE;
+controls.maxDistance = 2.5 * TILE;
+controls.maxPolarAngle = THREE.MathUtils.degToRad(80);
+controls.autoRotate = true;
+controls.autoRotateSpeed = 2.0;
+
+/* ---------------- lights ---------------- */
+const dir = new THREE.DirectionalLight(0xffd6a8, 2.6);
+dir.castShadow = true;
+dir.shadow.mapSize.set(1024, 1024);
+dir.shadow.camera.left = -55; dir.shadow.camera.right = 55;
+dir.shadow.camera.top = 55; dir.shadow.camera.bottom = -55;
+dir.shadow.camera.near = 10; dir.shadow.camera.far = 260;
+dir.shadow.radius = 3;
+dir.shadow.intensity = 0.85;
+dir.shadow.bias = -0.0015;
+scene.add(dir); scene.add(dir.target);
+dir.target.position.set(HALF, 0, HALF);
+
+const hemi = new THREE.HemisphereLight(0x9fa8c8, 0x6b5a48, 0.95);
+scene.add(hemi);
+
+/* ---------------- sky gradient background ---------------- */
+const skyCanvas = document.createElement('canvas');
+skyCanvas.width = 2; skyCanvas.height = 256;
+const skyCtx = skyCanvas.getContext('2d');
+const skyTex = new THREE.CanvasTexture(skyCanvas);
+skyTex.colorSpace = THREE.SRGBColorSpace;
+scene.background = skyTex;
+function drawSky(day) {
+  const topN = new THREE.Color('#171834'), topD = new THREE.Color('#121631');
+  const botN = new THREE.Color('#422e57'), botD = new THREE.Color('#3a3766');
+  const top = topN.clone().lerp(topD, day), bot = botN.clone().lerp(botD, day);
+  const g = skyCtx.createLinearGradient(0, 0, 0, 256);
+  g.addColorStop(0, '#' + top.getHexString());
+  g.addColorStop(1, '#' + bot.getHexString());
+  skyCtx.fillStyle = g; skyCtx.fillRect(0, 0, 2, 256);
+  skyTex.needsUpdate = true;
+}
+
+/* ---------------- stars ---------------- */
+const STAR_COUNT = 150;
+const starGeo = new THREE.BufferGeometry();
+{
+  const pos = new Float32Array(STAR_COUNT * 3);
+  const col = new Float32Array(STAR_COUNT * 3);
+  const c = new THREE.Color();
+  for (let i = 0; i < STAR_COUNT; i++) {
+    const az = Math.random() * Math.PI * 2;
+    const el = Math.random() * 1.1 + 0.12;
+    const r = 260;
+    pos[i*3] = Math.cos(el) * Math.cos(az) * r;
+    pos[i*3+1] = Math.sin(el) * r;
+    pos[i*3+2] = Math.cos(el) * Math.sin(az) * r;
+    const warm = Math.random() < 0.5;
+    c.set(warm ? '#fff2dd' : '#e8ecff').multiplyScalar(0.55 + Math.random() * 0.45);
+    col[i*3] = c.r; col[i*3+1] = c.g; col[i*3+2] = c.b;
+  }
+  starGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  starGeo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+}
+const starMat = new THREE.PointsMaterial({ size: 1.4, sizeAttenuation: false, vertexColors: true, transparent: true, opacity: 0.8, depthWrite: false });
+const stars = new THREE.Points(starGeo, starMat);
+scene.add(stars);
+
+/* ---------------- sea ---------------- */
+const SEA_R = 1.7 * TILE;
+const seaGeo = new THREE.RingGeometry(0.01, SEA_R, 96, 8);
+seaGeo.rotateX(-Math.PI / 2);
+const seaMat = new THREE.MeshPhongMaterial({ shininess: 12, specular: 0xc19676, vertexColors: true });
+const sea = new THREE.Mesh(seaGeo, seaMat);
+sea.position.set(HALF, -3, HALF);
+sea.receiveShadow = true;
+scene.add(sea);
+const seaPos = seaGeo.attributes.position;
+const seaColAttr = new THREE.BufferAttribute(new Float32Array(seaPos.count * 3), 3);
+seaGeo.setAttribute('color', seaColAttr);
+function updateSea(day) {
+  const inner = new THREE.Color('#4a675b').lerp(new THREE.Color('#474e4c'), 1 - day);
+  const rim = new THREE.Color('#888a74').lerp(new THREE.Color('#836858'), 1 - day);
+  const c = new THREE.Color();
+  const innerR = 1.1 * TILE;
+  for (let i = 0; i < seaPos.count; i++) {
+    const x = seaPos.getX(i), z = seaPos.getZ(i);
+    const r = Math.sqrt(x * x + z * z);
+    const f = THREE.MathUtils.clamp((r - innerR) / (SEA_R - innerR), 0, 1);
+    c.copy(inner).lerp(rim, f);
+    seaColAttr.setXYZ(i, c.r, c.g, c.b);
+  }
+  seaColAttr.needsUpdate = true;
+  seaMat.specular.set('#c19676').lerp(new THREE.Color('#9a8f7a'), day);
+}
+
+/* ---------------- water slab ---------------- */
+const slab = new THREE.Mesh(new THREE.BoxGeometry(TILE, 3, TILE), new THREE.MeshLambertMaterial({ color: 0x164a47 }));
+slab.position.set(HALF, -1.5, HALF);
+slab.receiveShadow = true;
+scene.add(slab);
+
+/* ---------------- occupancy grid ---------------- */
+const grid = new Map(); // key `${x},${y},${z}` -> THREE.Color (base albedo)
+function setCell(x, y, z, color) { grid.set(`${x},${y},${z}`, new THREE.Color(color)); }
+function getCell(x, y, z) { return grid.get(`${x},${y},${z}`); }
+function hash(x, z) { const h = Math.sin(x * 127.1 + z * 311.7) * 43758.5453; return h - Math.floor(h); }
+
+const SAND = '#d58444', SOIL = '#7c4e47', ROCK = '#7d6a6a', WOOD = '#704530', DARK_WOOD = '#3f2b1c';
+const CREAM = '#e8d6c0', OCHRE = '#d9b07a', TERRACOTTA = '#a8322a', DARK_BROWN = '#5a3a2a';
+const GRASS = '#4a492c', GRASS_LT = '#66633a', BUSH = '#a29b4f';
+
+function coveLine(x) {
+  const t = THREE.MathUtils.clamp((x - 18) / 26, 0, 1);
+  return 40 + 4 * Math.sin(t * Math.PI);
+}
+function isCove(x, z) { return x >= 18 && x <= 44 && z >= coveLine(x) && z <= 70; }
+function sandBand(x, z) { return x >= 17 && x <= 45 && z >= coveLine(x) - 3 && z < coveLine(x); }
+
+/* path cells (sand) from shore to lighthouse */
+const pathCells = new Set();
+{
+  let px = 31, pz = 40;
+  let guard = 0;
+  while ((px !== 18 || pz !== 18) && guard++ < 100) {
+    pathCells.add(`${px},${pz}`);
+    pathCells.add(`${px + 1},${pz}`);
+    pathCells.add(`${px},${pz + 1}`);
+    px += Math.sign(18 - px); pz += Math.sign(18 - pz);
+  }
+  pathCells.add('18,18');
+}
+
+/* cottage terraces (flattened) */
+const cottages = [
+  { x: 20, z: 34, w: 5, d: 6, ochre: false, roof: TERRACOTTA },
+  { x: 27, z: 33, w: 6, d: 7, ochre: false, roof: DARK_BROWN },
+  { x: 36, z: 33, w: 6, d: 6, ochre: true, roof: TERRACOTTA },
+  { x: 42, z: 35, w: 5, d: 6, ochre: false, roof: TERRACOTTA },
+  { x: 20, z: 28, w: 6, d: 6, ochre: true, roof: DARK_BROWN },
+  { x: 41, z: 28, w: 5, d: 7, ochre: false, roof: TERRACOTTA },
+];
+function inCottage(x, z) {
+  for (const c of cottages) {
+    if (x >= c.x - Math.floor(c.w / 2) && x <= c.x + Math.floor((c.w - 1) / 2) &&
+        z >= c.z - Math.floor(c.d / 2) && z <= c.z + Math.floor((c.d - 1) / 2)) return true;
+  }
+  return false;
+}
+
+const ROCK_FOOTRULE = 9;
+function rockCell(x, z) {
+  const dx = x - LIGHTHOUSE.x, dz = z - LIGHTHOUSE.z;
+  const d = Math.sqrt(dx * dx + dz * dz);
+  return d >= 6 && d <= ROCK_FOOTRULE && hash(x * 3 + 1, z * 3 + 2) < 0.55;
+}
+
+function baseHeight(x, z) {
+  if (isCove(x, z)) return 0;
+  if (inCottage(x, z)) return 4;
+  if (sandBand(x, z)) return 1;
+  const dx = x - LIGHTHOUSE.x, dz = z - LIGHTHOUSE.z;
+  const d2 = dx * dx + dz * dz;
+  let h = 4 + 7 * Math.exp(-d2 / 110) + (hash(x, z) - 0.5) * 1.4 + (x > 52 ? 0.8 : 0);
+  if (rockCell(x, z)) h = Math.max(h, 3);
+  return Math.max(2, Math.round(h));
+}
+
+function surfaceColor(x, z, h) {
+  if (sandBand(x, z)) return SAND;
+  if (pathCells.has(`${x},${z}`)) return SAND;
+  if (rockCell(x, z) && h <= 5) return ROCK;
+  if (inCottage(x, z)) return SAND;
+  return hash(x * 7 + 3, z * 5 + 1) < 0.25 ? GRASS_LT : GRASS;
+}
+
+/* build terrain */
+for (let x = 1; x <= 70; x++) {
+  for (let z = 1; z <= 70; z++) {
+    const h = baseHeight(x, z);
+    if (h <= 0) continue;
+    const col = surfaceColor(x, z, h);
+    const soilVar = 1 + (hash(x * 11, z * 13) - 0.5) * 0.10;
+    const soil = new THREE.Color(SOIL).multiplyScalar(soilVar);
+    for (let y = 0; y < h; y++) {
+      if (y === 0) setCell(x, y, z, SAND);
+      else if (y === h - 1) setCell(x, y, z, col);
+      else setCell(x, y, z, soil.getHex());
+    }
+    // extra cube on some meadow cells: bush or flower
+    const isMeadow = h >= 3 && !sandBand(x, z) && !pathCells.has(`,`) && !rockCell(x, z) && !inCottage(x, z) && !isCove(x, z);
+    if (isMeadow && hash(x * 23 + 5, z * 29 + 7) < 0.15) {
+      const hh = hash(x * 31 + 1, z * 37 + 2);
+      let extra;
+      if (hh < 0.6) extra = BUSH;
+      else extra = ['#d83a3a', '#e8854f', '#ecc0b0'][Math.floor(hash(x * 41 + 3, z * 43 + 1) * 3)];
+      setCell(x, h, z, extra);
+    }
+  }
+}
+
+/* ---------------- lighthouse ---------------- */
+const TOWER_BASE_Y = 11;
+for (let lx = 0; lx < 14; lx++) {
+  const r = 3.5 - (lx / 13) * 1.0;
+  for (let x = Math.floor(LIGHTHOUSE.x - 4); x <= LIGHTHOUSE.x + 4; x++) {
+    for (let z = Math.floor(LIGHTHOUSE.z - 4); z <= LIGHTHOUSE.z + 4; z++) {
+      const dx = x - LIGHTHOUSE.x, dz = z - LIGHTHOUSE.z;
+      if (Math.sqrt(dx * dx + dz * dz) > r) continue;
+      const band = (lx >= 4 && lx <= 5) || (lx >= 9 && lx <= 10);
+      setCell(x, TOWER_BASE_Y + lx, z, band ? TERRACOTTA : CREAM);
+    }
+  }
+}
+// gallery ring (1 thick) + railing handled as mesh; lantern floor/posts/cap
+for (let x = LIGHTHOUSE.x - 3; x <= LIGHTHOUSE.x + 3; x++) {
+  for (let z = LIGHTHOUSE.z - 3; z <= LIGHTHOUSE.z + 3; z++) {
+    const dx = x - LIGHTHOUSE.x, dz = z - LIGHTHOUSE.z;
+    const d = Math.sqrt(dx * dx + dz * dz);
+    if (d <= 3.5 && d > 1.5) setCell(x, TOWER_BASE_Y + 14, z, CREAM); // gallery ring
+    if (d <= 1.5) setCell(x, TOWER_BASE_Y + 14, z, CREAM); // lantern floor
+    if (d <= 1.5) setCell(x, TOWER_BASE_Y + 17, z, CREAM); // lantern top slab
+    if (d <= 1.5) setCell(x, TOWER_BASE_Y + 18, z, TERRACOTTA); // cap step 1
+    if (d <= 1.0 && Math.abs(dx) <= 1 && Math.abs(dz) <= 1) {
+      if (Math.sqrt(dx * dx + dz * dz) <= 1.0) setCell(x, TOWER_BASE_Y + 19, z, TERRACOTTA);
+    }
+  }
+}
+setCell(LIGHTHOUSE.x, TOWER_BASE_Y + 20, LIGHTHOUSE.z, TERRACOTTA); // cap tip
+// lantern corner posts (dark) + glass cubes (glow mesh)
+const glowCells = [];
+for (const [ox, oz] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) {
+  setCell(LIGHTHOUSE.x + ox, TOWER_BASE_Y + 15, LIGHTHOUSE.z + oz, DARK_WOOD);
+  setCell(LIGHTHOUSE.x + ox, TOWER_BASE_Y + 16, LIGHTHOUSE.z + oz, DARK_WOOD);
+}
+for (const [ox, oz] of [[0, -1], [0, 1], [-1, 0], [1, 0]]) {
+  glowCells.push([LIGHTHOUSE.x + ox, TOWER_BASE_Y + 15, LIGHTHOUSE.z + oz]);
+}
+// terraces: flatten headland top so tower base sits on it
+for (let x = LIGHTHOUSE.x - 4; x <= LIGHTHOUSE.x + 4; x++) {
+  for (let z = LIGHTHOUSE.z - 4; z <= LIGHTHOUSE.z + 4; z++) {
+    for (let y = 0; y < TOWER_BASE_Y; y++) {
+      const k = `${x},${y},${z}`;
+      if (grid.has(k)) grid.delete(k);
+    }
+    for (let y = 0; y < TOWER_BASE_Y; y++) {
+      const soil = new THREE.Color(SOIL).multiplyScalar(1 + (hash(x * 11, z * 13) - 0.5) * 0.1);
+      if (y === 0) setCell(x, y, z, SAND);
+      else if (y === TOWER_BASE_Y - 1) setCell(x, y, z, ROCK);
+      else setCell(x, y, z, soil.getHex());
+    }
+  }
+}
+
+/* ---------------- cottages ---------------- */
+for (const c of cottages) {
+  const x0 = c.x - Math.floor(c.w / 2), x1 = c.x + Math.floor((c.w - 1) / 2);
+  const z0 = c.z - Math.floor(c.d / 2), z1 = c.z + Math.floor((c.d - 1) / 2);
+  const wallCol = c.ochre ? OCHRE : CREAM;
+  // terrace surface
+  for (let x = x0; x <= x1; x++) for (let z = z0; z <= z1; z++) setCell(x, 3, z, SAND);
+  // walls y=4..7
+  for (let x = x0; x <= x1; x++) for (let z = z0; z <= z1; z++) {
+    const onPerimeter = x === x0 || x === x1 || z === z0 || z === z1;
+    if (!onPerimeter) continue;
+    for (let y = 4; y <= 7; y++) {
+      if (y === 4 && z === z1 && x === c.x) setCell(x, y, z, DARK_WOOD); // door
+      else setCell(x, y, z, wallCol);
+    }
+  }
+  // windows (glow) on front face
+  glowCells.push([c.x - 1, 5, z1], [c.x + 1, 5, z1]);
+  // stepped gable roof rows y=8..10
+  for (let r = 0; r < 3; r++) {
+    const half = Math.floor((c.w - 1 - r * 2) / 2);
+    for (let x = c.x - half; x <= c.x + half; x++) {
+      for (let z = z0; z <= z1; z++) setCell(x, 8 + r, z, c.roof);
+    }
+  }
+}
+
+/* ---------------- trees ---------------- */
+const CANOPY_TONES = [
+  ['#dd5c38', '#e8915e'], ['#c6563a', '#dd7a58'], ['#a82f42', '#c66a78'],
+  ['#d18884', '#e8c0b4'], ['#d4968b', '#eec4b4'], ['#3f5734', '#5d7a48'], ['#4f6844', '#6d8a5a'],
+];
+const treeSpots = [[54, 12], [62, 22], [58, 34], [64, 48], [52, 56], [60, 64], [40, 12], [26, 8], [8, 30], [10, 44]];
+for (const [tx, tz] of treeSpots) {
+  const trunkH = 2 + Math.floor(hash(tx, tz) * 2);
+  const trunkW = hash(tx * 2, tz * 2) < 0.5 ? 1 : 2;
+  const baseH = baseHeight(tx, tz);
+  for (let x = tx - (trunkW - 1); x <= tx; x++) {
+    for (let z = tz - (trunkW - 1); z <= tz; z++) {
+      for (let y = baseH; y < baseH + trunkH; y++) setCell(x, y, z, WOOD);
+    }
+  }
+  const tone = CANOPY_TONES[Math.floor(hash(tx * 5, tz * 7) * CANOPY_TONES.length)];
+  const main = new THREE.Color(tone[0]);
+  const lighter = new THREE.Color(tone[1]);
+  const mixAmt = 0.2 + hash(tx * 3, tz * 3) * 0.1;
+  const canopy = main.clone().lerp(lighter, mixAmt);
+  const cy = baseH + trunkH + 2;
+  const r = 3 + hash(tx * 9, tz * 4) * 1.5; // 3..4.5
+  for (let x = tx - 4; x <= tx + 4; x++) {
+    for (let z = tz - 4; z <= tz + 4; z++) {
+      for (let y = cy - 3; y <= cy + 3; y++) {
+        const d = Math.sqrt((x - tx) * (x - tx) + (y - cy) * (y - cy) * 1.2 + (z - tz) * (z - tz));
+        if (d > r) continue;
+        if (hash(x * 13 + y, z * 17 + y) < 0.18) continue; // missing surface voxels
+        setCell(x, y, z, canopy.getHex());
+      }
+    }
+  }
+}
+
+/* ---------------- emit surface voxels ---------------- */
+const cells = [];
+for (const [key, color] of grid) {
+  const [x, y, z] = key.split(',').map(Number);
+  const n = (xx, yy, zz) => getCell(xx, yy, zz);
+  if (n(x+1,y,z) && n(x-1,y,z) && n(x,y+1,z) && n(x,y-1,z) && n(x,y,z+1) && n(x,y,z-1)) continue; // interior
+  cells.push({ x, y, z, color });
+}
+console.info(`Static instances: ${cells.length}`);
+
+const unitBox = new THREE.BoxGeometry(1, 1, 1);
+const voxelMat = new THREE.MeshLambertMaterial({ color: 0xffffff });
+const voxelMesh = new THREE.InstancedMesh(unitBox, voxelMat, cells.length);
+voxelMesh.castShadow = true;
+voxelMesh.receiveShadow = true;
+const dummy = new THREE.Object3D();
+const jitter = new THREE.Color();
+cells.forEach((c, i) => {
+  dummy.position.set(c.x + 0.5, c.y + 0.5, c.z + 0.5);
+  dummy.updateMatrix();
+  voxelMesh.setMatrixAt(i, dummy.matrix);
+  jitter.copy(c.color).offsetHSL(0, 0, (hash(c.x * 31 + c.y * 7, c.z * 37 + c.y) - 0.5) * 0.12);
+  voxelMesh.setColorAt(i, jitter);
+});
+voxelMesh.instanceMatrix.needsUpdate = true;
+if (voxelMesh.instanceColor) voxelMesh.instanceColor.needsUpdate = true;
+scene.add(voxelMesh);
+
+/* ---------------- glow instanced mesh (windows / lantern glass / lamps) ---------------- */
+const glowMesh = new THREE.InstancedMesh(unitBox, new THREE.MeshBasicMaterial({ color: 0xffffff }), glowCells.length);
+{
+  const d = new THREE.Object3D();
+  glowCells.forEach(([x, y, z], i) => {
+    d.position.set(x + 0.5, y + 0.5, z + 0.5);
+    d.updateMatrix();
+    glowMesh.setMatrixAt(i, d.matrix);
+    glowMesh.setColorAt(i, new THREE.Color('#2b3038'));
+  });
+  glowMesh.instanceMatrix.needsUpdate = true;
+  if (glowMesh.instanceColor) glowMesh.instanceColor.needsUpdate = true;
+}
+scene.add(glowMesh);
+
+/* ---------------- railing (thin dark boxes) around gallery ---------------- */
+const railingMat = new THREE.MeshLambertMaterial({ color: DARK_WOOD });
+{
+  const ry = TOWER_BASE_Y + 15;
+  const mk = (len, px, pz, rotY) => {
+    const m = new THREE.Mesh(new THREE.BoxGeometry(len, 0.9, 0.18), railingMat);
+    m.position.set(px, ry + 0.45, pz);
+    m.rotation.y = rotY;
+    m.castShadow = true;
+    scene.add(m);
+  };
+  const L = LIGHTHOUSE.x, Z = LIGHTHOUSE.z;
+  mk(7, L, Z - 3.4, 0); mk(7, L, Z + 3.4, 0);
+  mk(7, L - 3.4, Z, Math.PI / 2); mk(7, L + 3.4, Z, Math.PI / 2);
+}
+
+/* ---------------- lantern glow sprite ---------------- */
+function makeGlowTexture() {
+  const cv = document.createElement('canvas'); cv.width = cv.height = 64;
+  const cx = cv.getContext('2d');
+  const g = cx.createRadialGradient(32, 32, 0, 32, 32, 32);
+  g.addColorStop(0, 'rgba(255,240,200,1)');
+  g.addColorStop(0.4, 'rgba(255,230,180,0.5)');
+  g.addColorStop(1, 'rgba(255,220,160,0)');
+  cx.fillStyle = g; cx.fillRect(0, 0, 64, 64);
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+const glowTex = makeGlowTexture();
+const lanternGlow = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: 0xfff0c8, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending }));
+lanternGlow.position.set(LIGHTHOUSE.x + 0.5, TOWER_BASE_Y + 16, LIGHTHOUSE.z + 0.5);
+lanternGlow.scale.set(12, 12, 1);
+scene.add(lanternGlow);
+
+/* ---------------- beams ---------------- */
+const BEAM_LEN = 1.2 * TILE;
+const beamGroup = new THREE.Group();
+beamGroup.position.set(LIGHTHOUSE.x + 0.5, TOWER_BASE_Y + 16, LIGHTHOUSE.z + 0.5);
+scene.add(beamGroup);
+function makeBeam(flip) {
+  const geo = new THREE.ConeGeometry(6, BEAM_LEN, 16, 8, true);
+  geo.translate(0, -BEAM_LEN / 2, 0); // apex at origin, extends -y
+  const pos = geo.attributes.position;
+  const col = new Float32Array(pos.count * 3);
+  const base = new THREE.Color('#fff0c8').multiplyScalar(0.2);
+  for (let i = 0; i < pos.count; i++) {
+    const y = pos.getY(i);
+    const t = THREE.MathUtils.clamp(-y / BEAM_LEN, 0, 1);
+    const c = base.clone().multiplyScalar(1 - t);
+    col[i*3] = c.r; col[i*3+1] = c.g; col[i*3+2] = c.b;
+  }
+  geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  const mat = new THREE.MeshBasicMaterial({ vertexColors: true, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide });
+  const m = new THREE.Mesh(geo, mat);
+  m.rotation.x = Math.PI / 2; // -y -> -z? rotate so beam extends along +z/-z
+  m.rotation.y = flip ? Math.PI : 0;
+  m.rotation.x = Math.PI / 2;
+  m.rotation.z = 0;
+  m.rotation.order = 'YXZ';
+  m.rotation.x = Math.PI / 2;
+  // after rotation.x=PI/2, local -y points along +z... verify: rotation about x by +90deg: (0,-1,0) -> (0,0,-1)? 
+  // Rx(90): y' = y cos - z sin = -z? Actually (0,-1,0) -> (0, 0, -1)? compute: y'=y*cosθ - z*sinθ = -1*0 - 0 = 0; z' = y*sinθ + z*cosθ = -1*1 + 0 = -1. So (0,0,-1). Beam extends toward -z.
+  return m;
+}
+const beam1 = makeBeam(false);
+const beam2 = makeBeam(true);
+beamGroup.add(beam1, beam2);
+
+/* spotlight with one beam */
+const spot = new THREE.SpotLight(0xfff0c8, 0, 220, 0.36, 0.55, 1.1);
+spot.position.copy(beamGroup.position);
+scene.add(spot); scene.add(spot.target);
+
+/* ---------------- pier ---------------- */
+const pier = new THREE.Group();
+const plankMat = new THREE.MeshLambertMaterial({ color: WOOD });
+const postMat = new THREE.MeshLambertMaterial({ color: DARK_WOOD });
+for (let z = 40; z <= 51; z++) {
+  const plank = new THREE.Mesh(new THREE.BoxGeometry(2, 0.35, 1), plankMat);
+  plank.position.set(31.5, 1.2, z + 0.5);
+  plank.castShadow = true; plank.receiveShadow = true;
+  pier.add(plank);
+  if (z % 3 === 0) {
+    for (const px of [31.3, 32.7]) {
+      const post = new THREE.Mesh(new THREE.BoxGeometry(0.5, 2.4, 0.5), postMat);
+      post.position.set(px, 0.2, z + 0.5);
+      post.castShadow = true;
+      pier.add(post);
+    }
+  }
+}
+const lampPost = new THREE.Mesh(new THREE.BoxGeometry(0.35, 3.2, 0.35), postMat);
+lampPost.position.set(31.5, 2.8, 51.5);
+lampPost.castShadow = true;
+pier.add(lampPost);
+const pierLampGlow = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.55, 0.55), new THREE.MeshBasicMaterial({ color: 0x2b3038 }));
+pierLampGlow.position.set(31.5, 4.5, 51.5);
+pier.add(pierLampGlow);
+scene.add(pier);
+
+/* ---------------- boats ---------------- */
+const boats = [];
+function makeBoat(color, hasSail, pos, phase) {
+  const g = new THREE.Group();
+  const mat = new THREE.MeshLambertMaterial({ color });
+  const rimMat = new THREE.MeshLambertMaterial({ color: WOOD });
+  const hull1 = new THREE.Mesh(new THREE.BoxGeometry(7, 1, 3), mat);
+  hull1.position.y = 0.5; hull1.castShadow = true;
+  const hull2 = new THREE.Mesh(new THREE.BoxGeometry(6, 1, 2), mat);
+  hull2.position.y = 1.4; hull2.castShadow = true;
+  g.add(hull1, hull2);
+  const rimF = new THREE.Mesh(new THREE.BoxGeometry(7, 0.3, 0.3), rimMat); rimF.position.set(0, 1.95, 1.35);
+  const rimB = new THREE.Mesh(new THREE.BoxGeometry(7, 0.3, 0.3), rimMat); rimB.position.set(0, 1.95, -1.35);
+  const rimL = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.3, 3), rimMat); rimL.position.set(-3.35, 1.95, 0);
+  const rimR = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.3, 3), rimMat); rimR.position.set(3.35, 1.95, 0);
+  g.add(rimF, rimB, rimL, rimR);
+  if (hasSail) {
+    const mast = new THREE.Mesh(new THREE.BoxGeometry(0.25, 6.5, 0.25), rimMat);
+    mast.position.set(0.4, 4.8, 0); mast.castShadow = true;
+    g.add(mast);
+    const sail = new THREE.Mesh(new THREE.BoxGeometry(0.12, 3.6, 2.6), new THREE.MeshLambertMaterial({ color: 0xefe4cc }));
+    sail.position.set(0.9, 4.6, 0); sail.rotation.z = 0.12; sail.castShadow = true;
+    g.add(sail);
+  }
+  g.position.set(pos.x, 0, pos.z);
+  g.rotation.y = pos.rot || 0;
+  scene.add(g);
+  boats.push({ g, phase, baseY: 0, rot: pos.rot || 0 });
+  return g;
+}
+makeBoat('#b0392f', false, { x: 26, z: 57, rot: 0.25 }, 0);
+makeBoat('#3f5734', true, { x: 37, z: 55, rot: -0.35 }, 2.1);
+makeBoat('#e8d6c0', false, { x: 31, z: 64, rot: 0.9 }, 4.2);
+
+/* ---------------- foam ---------------- */
+const foamMeshes = [];
+const foamGeo = new THREE.BoxGeometry(1, 0.3, 1);
+const foamMat = new THREE.MeshLambertMaterial({ color: 0xf0ead8 });
+for (let x = 19; x <= 43; x += 2) {
+  const z = coveLine(x) + 1.2;
+  const m = new THREE.Mesh(foamGeo, foamMat);
+  m.position.set(x + 0.5, 0.18, z + 0.5);
+  scene.add(m);
+  foamMeshes.push({ m, i: x });
+}
+
+/* ---------------- gulls ---------------- */
+const gulls = [];
+const gullBodyMat = new THREE.MeshLambertMaterial({ color: 0xf2f0ea });
+const gullWingMat = new THREE.MeshLambertMaterial({ color: 0xc8c4bd });
+for (let i = 0; i < 5; i++) {
+  const g = new THREE.Group();
+  const body = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.4, 1.5), gullBodyMat);
+  body.castShadow = true;
+  g.add(body);
+  const wingGeo = new THREE.BoxGeometry(1.6, 0.12, 0.85);
+  wingGeo.translate(0.8, 0, 0);
+  const wl = new THREE.Mesh(wingGeo, gullWingMat); wl.position.set(0.25, 0, 0);
+  const wr = new THREE.Mesh(wingGeo, gullWingMat); wr.position.set(-0.25, 0, 0); wr.rotation.y = Math.PI;
+  g.add(wl, wr);
+  scene.add(g);
+  gulls.push({ g, wl, wr, r: 20 + hash(i, 1) * 15, h: 26 + hash(i, 2) * 12, speed: 0.25 + hash(i, 3) * 0.2, phase: hash(i, 4) * Math.PI * 2 });
+}
+
+/* ---------------- clouds ---------------- */
+const clouds = new THREE.Group();
+scene.add(clouds);
+const cloudMats = {
+  top: new THREE.MeshLambertMaterial({ color: 0xe8c4a8 }),
+  side: new THREE.MeshLambertMaterial({ color: 0xb08a7c }),
+};
+const cloudMatArray = [cloudMats.side, cloudMats.side, cloudMats.top, cloudMats.side, cloudMats.side, cloudMats.side];
+for (let i = 0; i < 6; i++) {
+  const g = new THREE.Group();
+  const w = 6 + Math.floor(hash(i, 10) * 3);
+  const d = 4 + Math.floor(hash(i, 11) * 3);
+  const base = new THREE.Mesh(new THREE.BoxGeometry(w, 1.1, d), cloudMatArray);
+  g.add(base);
+  const l2 = new THREE.Mesh(new THREE.BoxGeometry(w - 2, 1.1, d - 1.5), cloudMatArray);
+  l2.position.y = 1.1; g.add(l2);
+  if (hash(i, 12) < 0.6) {
+    const l3 = new THREE.Mesh(new THREE.BoxGeometry(w - 4, 1.1, d - 2.5), cloudMatArray);
+    l3.position.y = 2.2; g.add(l3);
+  }
+  const ang = (i / 6) * Math.PI * 2 + hash(i, 13) * 0.8;
+  const rad = 128 + hash(i, 14) * 14;
+  g.position.set(HALF + Math.cos(ang) * rad, 38 + hash(i, 15) * 22, HALF + Math.sin(ang) * rad);
+  g.rotation.y = hash(i, 16) * Math.PI;
+  clouds.add(g);
+}
+
+/* ---------------- motes ---------------- */
+const MOTE_COUNT = 60;
+const moteGeo = new THREE.BufferGeometry();
+const motePos = new Float32Array(MOTE_COUNT * 3);
+const moteBase = [];
+for (let i = 0; i < MOTE_COUNT; i++) {
+  const bx = Math.random() * TILE, bz = Math.random() * TILE, by = 2 + Math.random() * 40;
+  moteBase.push({ bx, bz, by, ph: Math.random() * Math.PI * 2, sp: 0.2 + Math.random() * 0.4, amp: 2 + Math.random() * 4 });
+  motePos[i*3] = bx; motePos[i*3+1] = by; motePos[i*3+2] = bz;
+}
+moteGeo.setAttribute('position', new THREE.BufferAttribute(motePos, 3));
+const moteMat = new THREE.PointsMaterial({ size: 1.6, map: glowTex, transparent: true, opacity: 0.6, depthWrite: false, color: 0xfff6e0, sizeAttenuation: true });
+const motes = new THREE.Points(moteGeo, moteMat);
+scene.add(motes);
+
+/* ---------------- time / day-night ---------------- */
+const nightF = () => 1 - day;
+let day = 0.5;
+
+function applyTime() {
+  day = 0.5 - 0.5 * Math.cos(2 * Math.PI * time);
+  const f = day, n = 1 - day;
+  drawSky(day);
+  // sun / moon
+  const noonDir = new THREE.Vector3(-0.707, Math.sin(THREE.MathUtils.degToRad(35)), 0.707).normalize();
+  const nightDir = new THREE.Vector3(0.707, Math.sin(THREE.MathUtils.degToRad(20)), -0.707).normalize();
+  const ld = nightDir.clone().lerp(noonDir, day).normalize();
+  dir.position.set(HALF + ld.x * 100, ld.y * 100, HALF + ld.z * 100);
+  dir.color.set('#ffc9a0').lerp(new THREE.Color('#ffd6a8'), day);
+  dir.intensity = 5.2 + (7.2 - 5.2) * day;
+  hemi.color.set('#4b4f8f').lerp(new THREE.Color('#9fa8c8'), day);
+  hemi.groundColor.set('#2a2230').lerp(new THREE.Color('#6b5a48'), day);
+  hemi.intensity = 3.3 + (3.1 - 3.3) * day;
+  updateSea(day);
+  starMat.opacity = n * 0.85 + 0.05;
+  // windows glow
+  const glassCol = new THREE.Color('#2b3038').lerp(new THREE.Color('#fff0c8'), n);
+  for (let i = 0; i < glowCells.length; i++) glowMesh.setColorAt(i, glassCol);
+  if (glowMesh.instanceColor) glowMesh.instanceColor.needsUpdate = true;
+  pierLampGlow.material.color.copy(glassCol);
+  lanternGlow.material.opacity = n * 0.95;
+  const beamOp = THREE.MathUtils.clamp((0.35 - day) / 0.35, 0, 1) * 0.42;
+  beam1.material.opacity = beamOp; beam2.material.opacity = beamOp;
+  beam1.visible = beam2.visible = beamOp > 0.01;
+  spot.intensity = n * 900;
+  // clouds
+  cloudMats.top.color.set('#8a7072').lerp(new THREE.Color('#e8c4a8'), day);
+  cloudMats.side.color.set('#6c585e').lerp(new THREE.Color('#b08a7c'), day);
+}
+
+/* drag: pause auto-orbit, snap to nearest 90deg on release */
+let snap = null;
+let dragStartYaw = 0;
+let autoOrbitWanted = true;
+let resumeTimer = null;
+controls.addEventListener('start', () => {
+  controls.autoRotate = false;
+  snap = null;
+  dragStartYaw = controls.getAzimuthalAngle();
+  if (resumeTimer) { clearTimeout(resumeTimer); resumeTimer = null; }
+});
+controls.addEventListener('end', () => {
+  if (controls._sphericalDelta) { controls._sphericalDelta.theta = 0; controls._sphericalDelta.phi = 0; }
+  if (controls._panOffset) controls._panOffset.set(0, 0, 0);
+  const cur = controls.getAzimuthalAngle();
+  let total = cur - dragStartYaw;
+  while (total > Math.PI) total -= Math.PI * 2;
+  while (total < -Math.PI) total += Math.PI * 2;
+  const snapped = Math.round(total / (Math.PI / 2)) * (Math.PI / 2);
+  snap = { from: cur, to: cur + (snapped - total), start: performance.now(), dur: 600 };
+  resumeTimer = setTimeout(() => { if (autoOrbitWanted) controls.autoRotate = true; }, 2600);
+});
+
+/* ---------------- UI ---------------- */
+const btnOrbit = document.getElementById('btnOrbit');
+const btnDay = document.getElementById('btnDay');
+const btnCalm = document.getElementById('btnCalm');
+const btnRough = document.getElementById('btnRough');
+
+btnOrbit.addEventListener('click', () => {
+  autoOrbitWanted = !autoOrbitWanted;
+  controls.autoRotate = autoOrbitWanted;
+  btnOrbit.classList.toggle('active', autoOrbitWanted);
+});
+btnDay.addEventListener('click', () => {
+  const target = day > 0.5 ? 0 : 0.5;
+  timeTween = { from: time, to: target, start: performance.now(), dur: 2500 };
+});
+btnCalm.addEventListener('click', () => setSea('calm'));
+btnRough.addEventListener('click', () => setSea('rough'));
+function setSea(mode) {
+  seaMode = mode;
+  btnCalm.classList.toggle('active', mode === 'calm');
+  btnRough.classList.toggle('active', mode === 'rough');
+}
+
+/* ---------------- resize ---------------- */
+function onResize() {
+  const w = window.innerWidth, h = window.innerHeight;
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(w, h);
+  starMat.size = 1.4 * (h / 720) * Math.min(window.devicePixelRatio, 2);
+  moteMat.size = 1.6 * (h / 720);
+}
+window.addEventListener('resize', onResize);
+onResize();
+
+/* ---------------- animation ---------------- */
+let elapsed = 0;
+let last = performance.now();
+let cloudAngle = 0;
+
+function animate() {
+  requestAnimationFrame(animate);
+  const now = performance.now();
+  const dt = Math.min((now - last) / 1000, 0.05);
+  last = now;
+  elapsed += dt;
+
+  if (timeTween) {
+    const t = Math.min((now - timeTween.start) / timeTween.dur, 1);
+    const e = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    time = timeTween.from + (timeTween.to - timeTween.from) * e;
+    if (t >= 1) { time = timeTween.to; timeTween = null; }
+    applyTime();
+  } else {
+    time = (time + dt / 60) % 1;
+    applyTime();
+  }
+
+  // snap azimuth to nearest 90deg after a drag
+  if (snap) {
+    const t = Math.min((now - snap.start) / snap.dur, 1);
+    const e = 1 - Math.pow(1 - t, 3);
+    const cur = controls.getAzimuthalAngle();
+    const desired = snap.from + (snap.to - snap.from) * e;
+    const d = desired - cur;
+    if (Math.abs(d) > 1e-5) {
+      const off = camera.position.clone().sub(controls.target);
+      off.applyAxisAngle(new THREE.Vector3(0, 1, 0), d);
+      camera.position.copy(controls.target).add(off);
+    }
+    if (t >= 1) snap = null;
+  }
+
+  controls.update(dt);
+
+  const rough = seaMode === 'rough';
+  const heave = rough ? 0.4 : 0.2;
+  const roll = rough ? 8 : 4;
+  const gullSpeed = rough ? 2 : 1;
+
+  // boats
+  for (const b of boats) {
+    const w = 2 * Math.PI / 4;
+    b.g.position.y = b.baseY + Math.sin(elapsed * w + b.phase) * heave;
+    b.g.rotation.z = Math.sin(elapsed * w + b.phase + 0.6) * THREE.MathUtils.degToRad(roll);
+    b.g.rotation.x = Math.sin(elapsed * w * 0.5 + b.phase) * THREE.MathUtils.degToRad(roll * 0.4);
+  }
+
+  // foam
+  for (const f of foamMeshes) {
+    const s = 0.5 + 0.5 * Math.sin(elapsed * (rough ? 3.4 : 1.7) + f.i * 1.7);
+    f.m.scale.set(0.5 + s * 0.7, 1, 0.5 + s * 0.7);
+  }
+
+  // gulls
+  for (const gl of gulls) {
+    const w = gl.speed * gullSpeed;
+    const a = elapsed * w + gl.phase;
+    const gx = LIGHTHOUSE.x + 0.5 + Math.cos(a) * gl.r;
+    const gz = LIGHTHOUSE.z + 0.5 + Math.sin(a) * gl.r;
+    const gy = gl.h;
+    gl.g.position.set(gx, gy, gz);
+    gl.g.rotation.y = Math.atan2(-Math.sin(a), Math.cos(a)) + Math.PI / 2; // orient along tangent
+    const glide = Math.sin(elapsed * 0.4 * gullSpeed + gl.phase) > 0.2;
+    const flap = glide ? 0.08 : Math.sin(elapsed * 11 * gullSpeed + gl.phase) * 0.7;
+    gl.wl.rotation.z = flap;
+    gl.wr.rotation.z = -flap;
+  }
+
+  // clouds
+  if (rough) cloudAngle += dt * THREE.MathUtils.degToRad(3);
+  clouds.rotation.y = cloudAngle;
+
+  // motes
+  for (let i = 0; i < MOTE_COUNT; i++) {
+    const m = moteBase[i];
+    motePos[i*3] = m.bx + Math.sin(elapsed * m.sp + m.ph) * m.amp;
+    motePos[i*3+1] = m.by + Math.sin(elapsed * m.sp * 0.7 + m.ph * 2) * m.amp * 0.5;
+    motePos[i*3+2] = m.bz + Math.cos(elapsed * m.sp * 0.8 + m.ph) * m.amp;
+  }
+  moteGeo.attributes.position.needsUpdate = true;
+
+  // beams rotate one turn every 8 s
+  const beamAngle = (elapsed / 8) * Math.PI * 2;
+  beamGroup.rotation.y = beamAngle;
+  const dirVec = new THREE.Vector3(0, 0, -1).applyAxisAngle(new THREE.Vector3(0, 1, 0), beamAngle);
+  spot.target.position.set(beamGroup.position.x + dirVec.x * 100, beamGroup.position.y, beamGroup.position.z + dirVec.z * 100);
+
+  renderer.render(scene, camera);
+}
+
+/* ---------------- init ---------------- */
+applyTime();
+window.__diorama = { scene, camera, renderer };
+animate();
+</script>
+</body>
+</html>
